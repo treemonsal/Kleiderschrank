@@ -4,6 +4,8 @@ Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vit
 
 Version 0.5 ergänzt echte lokale KI-Freistellung als experimentelle Option: Vorschau prüfen, bewusst übernehmen, Original behalten. Kleiderschrank, Farbprobe, lokale Outfit-Vorschläge, Vorlieben, Kalender und freiwilliges Wetter sind integriert. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
 
+**Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — am 15. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
+
 ## Lokal starten
 
 Node.js 24 LTS und npm verwenden (siehe `.nvmrc`).
@@ -103,9 +105,9 @@ Die Browserprüfungen starten selbst eine Produktionsvorschau auf Port 4173. Sie
 
 In der vorbereiteten Cloud-Umgebung wird automatisch `/usr/bin/chromium` verwendet; dort ist kein Browserdownload nötig. Ein anderer vorhandener Chromium lässt sich mit `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` auswählen. Optional: `npx playwright install webkit` und `npm run test:e2e:webkit` für zusätzliche WebKit-Prüfungen. Browserdownloads benötigen die offizielle Playwright-CDN-Freigabe; WebKit wird in der aktuellen Cloud-Netzwerkfreigabe nicht heruntergeladen.
 
-Die Wetter-Browserprüfungen verwenden kontrollierte API-Antworten, Fehler und eine Testposition; sie übertragen keinen echten Gerätestandort. Nach der Domainfreigabe wurden am 15. Oktober 2026 beide echten Endpunkte per HTTPS erfolgreich erreicht: Zürcher Ortssuche und sieben Vorhersagetage mit erwarteten Einheiten/Zeitzone. Der zusätzliche Live-Browserabruf scheitert in Cloud-Chromium noch an dessen Vertrauen in das Cloud-Proxy-Zertifikat (`ERR_CERT_AUTHORITY_INVALID`). Eine Erweiterung des Browser-Vertrauensspeichers wurde von der automatischen Freigabeprüfung abgelehnt und nicht ausgeführt. Reales Browser-CORS, Safari und HTTPS-Bereitstellung sind damit weiterhin unbestätigt. TLS-Prüfungen bleiben aktiv.
+Die Wetter-Browserprüfungen verwenden kontrollierte API-Antworten, Fehler und eine Testposition; sie übertragen keinen echten Gerätestandort. Nach der Domainfreigabe wurden am 15. Oktober 2026 beide echten Endpunkte per HTTPS erfolgreich erreicht: Zürcher Ortssuche und sieben Vorhersagetage mit erwarteten Einheiten/Zeitzone. Die öffentliche App ist ebenfalls über HTTPS erreichbar; Skripte, Styles, Manifest, Icons, Service Worker, Worker, Modell und WASM wurden mit HTTP 200 und korrekten Binär-Prüfsummen bestätigt. Cloud-Chromiums zusätzlicher Live-Browserabruf scheitert weiterhin am Vertrauen in das Cloud-Proxy-Zertifikat (`ERR_CERT_AUTHORITY_INVALID`). Reales Browser-CORS und echtes iPhone/Safari sind dadurch nicht nachgewiesen. Keine TLS-Prüfung wurde abgeschaltet.
 
-## Später kostenlos bereitstellen
+## Veröffentlichte Website und weitere Updates
 
 Die App besteht ausschliesslich aus statischen Dateien in `dist/`. Sie lässt sich beispielsweise über GitHub Pages für ein öffentliches Repository im kostenlosen Tarif bereitstellen. Für private Repositories hängt die Pages-Verfügbarkeit vom GitHub-Tarif ab. Keine Zahlungsdaten für dieses Projekt hinterlegen; Tarif und Sichtbarkeit vor Aktivierung prüfen. Eine Veröffentlichung macht den Anwendungscode öffentlich erreichbar, aber überträgt keine lokal gespeicherten Kleidungsfotos.
 
@@ -125,6 +127,6 @@ Der fertige manuell auslösbare Workflow liegt in `.github/workflows/pages.yml`.
 
 Der Workflow startet nicht automatisch, verwendet Standard-Runner und überspringt private Repositories, um keine privaten kostenpflichtigen Minuten oder einen Tarifwechsel auszulösen. Die Sichtbarkeit wird nicht geändert. Ohne passenden kostenlosen Pages-Zugang kann der Root-Build als statische Website auf einem anderen kostenlosen HTTPS-Host bereitgestellt werden; keine kostenpflichtige Option aktivieren. Für eine eigene Root-Adresse genügt `npm run build`.
 
-GitHub-API und Pages-Domain sind hier derzeit durch die Cloud-Netzwerkfreigabe blockiert; die nötigen Ergänzungen sind im Konfigurationsentwurf gespeichert. Der Workflow ist vorbereitet, wurde aber noch nicht auf GitHub ausgeführt. Veröffentlichung und ein echter iPhone-Test bleiben externe Nachweise. Der Gerätetest ist in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
+Das Repository wurde vom Nutzer öffentlich gestellt und Pages aktiviert. Anschließend wurde der [Workflow-Lauf 38783006210](https://github.com/treemonsal/Kleiderschrank/actions/runs/38783006210) erfolgreich gestartet: Installation, Formatprüfung, Datentests, Build, Upload und Deployment bestanden. Die veröffentlichte Anwendung stammt aus Commit `ca4af46a32520603fd42eb1a12a49a0cfdbbdf4f`. Normale Code-Pushes veröffentlichen nicht automatisch; nach späteren App-Änderungen den Workflow erneut starten. Der echte Gerätetest bleibt offen und ist in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
 
 Funktionsumfang und weitere Phasen: [PRODUCT.md](PRODUCT.md), [ROADMAP.md](ROADMAP.md).

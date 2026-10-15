@@ -62,11 +62,11 @@ Version 0.4 lieferte die Farbprobe. Version 0.5 ergänzt echte U2NETP-Inferenz i
 - [x] Manuell startbarer GitHub-Pages-Workflow mit festen Action-Commits, Format-/Datenprüfung und Projektpfad-Build
 - [x] Private Repositories im Workflow überspringen; keine Sichtbarkeits- oder Tarifänderung
 - [x] Einfache Installations- und echte Gerätecheckliste in IPHONE_CHECK.md
-- [ ] GitHub Pages aktivieren, Workflow tatsächlich ausführen und öffentliche HTTPS-Seite prüfen
+- [x] GitHub Pages aktivieren, Workflow tatsächlich ausführen und öffentliche HTTPS-Seite prüfen
 - [ ] Cloud-Browser-Vertrauen für echten Wetter-/CORS-Test ausdrücklich freigeben
 - [ ] Echten iPhone-Test durchführen
 
-GitHub-API und Pages-Domain wurden in dieser Cloud mit Proxy-403 abgewiesen. Erforderliche Domainergänzungen sind als Entwurf gespeichert; Speichern ist kein Laufzeit-/Veröffentlichungsnachweis. Die erneut versuchte Aufnahme der Cloud-Proxy-CA wurde trotz allgemeiner Fertigstellungsfreigabe vom Auto-Review abgelehnt: Diese dauerhafte Vertrauensänderung erfordert eine ausdrückliche Einzelzustimmung. Keine Änderung ausgeführt, kein TLS-Bypass.
+Die früheren Netzwerk-/Administrationsblocker für die Veröffentlichung sind überwunden: Der Nutzer hat Repository-Sichtbarkeit und Pages eingestellt; Workflow-Start über den vorhandenen Zugang, Build und Deployment sowie öffentliche HTTPS-Prüfung waren erfolgreich. Cloud-Chromium meldet weiterhin ERR_CERT_AUTHORITY_INVALID für die Cloud-Proxy-CA. Deren Aufnahme wurde vom Auto-Review abgelehnt; keine Vertrauensänderung oder TLS-Umgehung ausgeführt. Dies verhindert den zusätzlichen Cloud-Browsernachweis, nicht die bestätigte öffentliche Auslieferung.
 
 ## Testprotokoll
 
@@ -125,3 +125,7 @@ Die Grenzen für echte iPhone-/Safari-, Kamera-, Installations-, Hosting- und We
 - Projektpfad `/Kleiderschrank/` separat einschließlich Icons, echter Inferenz und Offline-Neuladen/erneuter Inferenz geprüft. Passende Base-Konfiguration auch beim lokalen Preview nötig. KI-Vorschau auf synthetischem Testhemd visuell geprüft.
 - Manuell auslösbarer GitHub-Pages-Workflow und Gerätecheckliste vorbereitet. Keine öffentliche Veröffentlichung behauptet. Echte iPhone-/Safari-/Kamera-/HEIC-/Speicherdruck-/Modelldatenqualitätsprüfungen bleiben offen.
 - Entwicklungsstart nach `npm ci` separat mit echter KI geprüft. Nachträgliche Vite-Neuladung beim ersten Worker durch frühzeitige ONNX-Abhängigkeitsoptimierung behoben; ungespeicherter Testname bleibt erhalten.
+
+### Öffentliche Veröffentlichung
+
+Am 15. Oktober 2026 nach manueller Pages-Einrichtung durch den Nutzer veröffentlicht: https://treemonsal.github.io/Kleiderschrank/. GitHub-Lauf 38783006210 für Commit ca4af46a32520603fd42eb1a12a49a0cfdbbdf4f: Build und Deployment erfolgreich. Öffentliche HTML-/JS-/CSS-Dateien, Installationsmanifest/-icons, Service Worker, KI-Worker und beide KI-Binärdateien liefern HTTP 200. Modell und WASM stimmen mit den gepinnten SHA-256-Werten überein. Manifest-Scope/Startpfad passen; große KI-Binärdateien bleiben außerhalb des automatischen Precache. Echter iPhone-Test bleibt offen; Cloud-Browser-HTTPS blockiert durch bestehendes CA-Vertrauen.
