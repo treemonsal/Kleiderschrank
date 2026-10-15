@@ -22,9 +22,9 @@ Privater Fashion-Begleiter für das eigene iPhone. Eine installierbare, deutschs
 
 ## Spätere Funktionen
 
-1. Outfit-Kalender für geplante/getragene Kombinationen und darauf aufbauende Nutzungshäufigkeit.
+1. Erweiterte Kalenderauswertung und Nutzerfeedback nach Erprobung im Alltag.
 2. Genauere Farbangaben und weitere nachvollziehbare Kombinationsregeln nach Erprobung der ersten Vorschläge.
-3. Optionales Wetter über Open-Meteo. Standort ausschliesslich nach Freigabe, alternativ manueller Ort. Keine Standortabfrage in Version 1.
+3. Feinere Wetterregeln nach Ergänzung zuverlässiger Material- und Wärmeangaben.
 4. Erweiterte persönliche Empfehlungen anhand tatsächlich getragener Outfits.
 5. Automatische Merkmale und lokale Freistellung erst nach Evaluation von Zuverlässigkeit, iPhone-Leistung und kostenloser Lizenzierung. Immer manuell korrigierbar.
 6. Outfit-Fotobewertung nur bei realistisch kostenloser, zuverlässiger Bildanalyse. Keine simulierte KI-Bewertung; bis dahin allenfalls klar gekennzeichnete manuelle Stil-Checkliste.
@@ -32,6 +32,16 @@ Privater Fashion-Begleiter für das eigene iPhone. Eine installierbare, deutschs
 ## Datenschutz und Grenzen
 
 Alle Kleidungsdaten bleiben im Browserprofil des Geräts. Kein Analytics, keine externen Fonts, kein Backend und keine geheimen Schlüssel im Frontend. App-Downloads und Hostingzugriffe sind technisch notwendige Netzwerkzugriffe. Backups enthalten private Fotos und sind nicht verschlüsselt. Gerätecode und sichere Aufbewahrung sind wichtig.
+
+## Version 0.3 – Alltag und freiwilliges Wetter
+
+- Kalender mit einem gespeicherten Look pro lokalem Tag, geplant/getragen, korrigierbarem Status und Notizen. Zukünftige Looks können nicht als getragen erfasst werden. Bis 3000 Tage, Notizen bis 200 Zeichen.
+- Aus bestätigten Tagen berechnete Tragehäufigkeit; keine doppelten oder verwaisten Zähler. Kleine zusätzliche Gewichtung bereits getragener Stücke.
+- Manuelle Ortssuche oder einmaliger Standortzugriff erst nach Nutzeraktion. Koordinaten werden auf zwei Dezimalstellen gerundet. Wetterabruf und Berücksichtigung in Vorschlägen sind separate bewusste Aktionen.
+- Open-Meteo ohne Schlüssel für privaten Gebrauch. Bis sieben Wettertage, sichtbare Quelle/Zeitzone/Datenstand, sechs Stunden Aktualitätsgrenze, Offline-Anzeige und lokales Vergessen. Keine automatischen Wetteraufrufe und keine Übertragung von Fotos oder Kleidung. Der Dienst erhält Ortsnamen beziehungsweise gerundete Koordinaten und technisch die IP-Adresse.
+- Grobe Temperatur-/Saisonregeln und Regenhinweis, keine behauptete Material-, Passform- oder Wasserdichtigkeitsanalyse.
+- Datenbankversion 3 erhält die bisherigen Daten. Sicherungsformat 3 enthält Kalender und gegebenenfalls Ortsdaten/Vorhersage; Format 1 und 2 bleiben lesbar. Backups enthalten Ortsdaten unverschlüsselt, wenn Wetter eingerichtet wurde.
+- Live-Wetterabruf in der Cloud noch durch die Netzwerkfreigabe blockiert. Kontrollierte API-Tests ersetzen diesen Nachweis und einen echten iPhone-Test nicht.
 
 iOS kann Website-Daten entfernen; privates Surfen, Löschen von Safari-Daten, Deinstallation, Gerätewechsel und eine andere Domain können den Bestand unzugänglich machen. Regelmässig eine Sicherung in Dateien/iCloud Drive ablegen. Browserdaten sind kein dauerhaft garantiertes Backup. Ein Export enthält höchstens 100 MB und 1000 Stücke; grössere Sammlungen benötigen später ein gestreamtes Archivformat. Einzelne Fotoquellen höchstens 20 MB. Kein Hintergrundabgleich zwischen Geräten.
 

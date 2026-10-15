@@ -445,9 +445,9 @@ function Detail({
           <div className="delete-confirm" role="alert">
             <h4>Dieses Stück wirklich löschen?</h4>
             <p>
-              Auch das Foto sowie gespeicherte Outfits und Rückmeldungen mit
-              diesem Stück werden entfernt. Das lässt sich nur mit einer
-              Sicherung rückgängig machen.
+              Auch das Foto sowie gespeicherte Outfits, Kalendereinträge und
+              Rückmeldungen mit diesem Stück werden entfernt. Das lässt sich nur
+              mit einer Sicherung rückgängig machen.
             </p>
             <div className="photo-actions">
               <button

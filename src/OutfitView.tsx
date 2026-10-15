@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
   Bookmark,
+  CalendarDays,
   Check,
   Heart,
   Plus,
@@ -32,6 +33,11 @@ import {
   type SavedOutfit,
 } from './outfit-model'
 import { ErrorMessage, GarmentPicture, Sheet } from './ui'
+import { CalendarView } from './CalendarView'
+import { WeatherPanel } from './WeatherPanel'
+import { wornCounts } from './calendar'
+import { deleteOutfit } from './calendar-db'
+import type { WeatherDay } from './weather'
 
 function PreferenceEditor({
   current,
@@ -184,8 +190,8 @@ function SavedEditor({
       {confirm ? (
         <div className="delete-confirm" role="alert">
           <p>
-            Dieses Outfit löschen? Deine Kleidungsstücke und dein Feedback
-            bleiben erhalten.
+            Dieses Outfit und seine Kalendereinträge löschen? Deine
+            Kleidungsstücke und dein Feedback bleiben erhalten.
           </p>
           <div className="photo-actions">
             <button
@@ -201,7 +207,7 @@ function SavedEditor({
               onClick={async () => {
                 setBusy(true)
                 try {
-                  await db.outfits.delete(outfit.id)
+                  await deleteOutfit(outfit.id)
                   notify('Das Outfit wurde gelöscht.')
                   onClose()
                 } catch (error) {
@@ -276,17 +282,20 @@ export function OutfitView({
         db.outfits,
         db.preferences,
         db.feedback,
+        db.calendar,
         async () => ({
           outfits: await db.outfits.orderBy('updatedAt').reverse().toArray(),
           feedback: await db.feedback.toArray(),
           preferences:
             (await db.preferences.get('personal')) ?? DEFAULT_PREFERENCES,
+          calendar: await db.calendar.toArray(),
         }),
       ),
     [],
     null,
   )
-  const [tab, setTab] = useState<'discover' | 'saved'>('discover')
+  const [tab, setTab] = useState<'discover' | 'saved' | 'calendar'>('discover')
+  const [weatherDay, setWeatherDay] = useState<WeatherDay>()
   const [options, setOptions] = useState<OutfitOptions>({
     occasion: 'Alltag',
     season: 'Alle',
@@ -310,9 +319,11 @@ export function OutfitView({
             state.preferences,
             state.feedback,
             seed,
+            weatherDay,
+            wornCounts(state.calendar, state.outfits),
           )
         : [],
-    [items, options, requested, state, seed],
+    [items, options, requested, state, seed, weatherDay],
   )
   const rejectedCount =
     state?.feedback.filter((item) => item.verdict === 'rejected').length ?? 0
@@ -368,6 +379,14 @@ export function OutfitView({
           <Bookmark size={16} />
           Gespeichert ({state?.outfits.length ?? 0})
         </button>
+        <button
+          className={tab === 'calendar' ? 'active' : ''}
+          aria-pressed={tab === 'calendar'}
+          onClick={() => setTab('calendar')}
+        >
+          <CalendarDays size={16} />
+          Kalender
+        </button>
       </div>
       {!state ? (
         <p className="muted">Deine Outfits werden geladen …</p>
@@ -375,6 +394,7 @@ export function OutfitView({
         <>
           {tab === 'discover' ? (
             <>
+              <WeatherPanel onContext={setWeatherDay} />
               <section
                 className="outfit-options"
                 aria-label="Dein Anlass und Stil"
@@ -454,14 +474,15 @@ export function OutfitView({
                 <p className="generator-disclosure">
                   Lokale Kombinationsregeln, keine Bild-KI. Deine Angaben,
                   Farben und Vorlieben geben die Richtung vor. Passform, Wärme
-                  und Dresscode prüfst du selbst; Wetter folgt später.
+                  und Dresscode prüfst du selbst. Wetter wird nur nach
+                  ausdrücklicher Aktivierung berücksichtigt.
                 </p>
               </section>
               {requested && !candidates.length && (
                 <div className="outfit-empty" role="status">
                   <ShirtNotice />
                   <h2>Noch kein kompletter Look.</h2>
-                  <p>{missingOutfitMessage(items, options)}</p>
+                  <p>{missingOutfitMessage(items, options, weatherDay)}</p>
                   <button className="button secondary" onClick={onAdd}>
                     <Plus size={17} />
                     Kleiderschrank ergänzen
@@ -610,6 +631,13 @@ export function OutfitView({
                 </div>
               )}
             </>
+          ) : tab === 'calendar' ? (
+            <CalendarView
+              items={items}
+              onOpen={onOpen}
+              onDiscover={() => setTab('discover')}
+              notify={notify}
+            />
           ) : (
             <>
               <div className="collection-toolbar">

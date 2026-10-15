@@ -1,4 +1,5 @@
 import type { Garment } from './model'
+import type { WeatherDay } from './weather'
 import {
   outfitKey,
   type OutfitCandidate,
@@ -17,6 +18,7 @@ function noise(key: string, seed: number): number {
 export function eligibleGarments(
   items: Garment[],
   options: OutfitOptions,
+  weather?: WeatherDay,
 ): Garment[] {
   // Unknown seasons stay eligible; conflicting explicitly entered seasons do not.
   return items.filter(
@@ -30,14 +32,24 @@ export function eligibleGarments(
         item.styles.every(
           (style) => style === 'Sportlich' || style === 'Streetwear',
         )
+      ) &&
+      !(
+        weather &&
+        item.seasons.length > 0 &&
+        ((weather.max <= 10 &&
+          item.seasons.every((season) => season === 'Sommer')) ||
+          (weather.min >= 18 &&
+            weather.max >= 25 &&
+            item.seasons.every((season) => season === 'Winter')))
       ),
   )
 }
 export function missingOutfitMessage(
   items: Garment[],
   options: OutfitOptions,
+  weather?: WeatherDay,
 ): string {
-  const eligible = eligibleGarments(items, options)
+  const eligible = eligibleGarments(items, options, weather)
   const has = (category: string) =>
     eligible.some((item) => item.category === category)
   if (!has('Schuhe'))
@@ -53,8 +65,10 @@ export function generateOutfits(
   preferences: Preferences,
   feedback: OutfitFeedback[],
   seed = 0,
+  weather?: WeatherDay,
+  wearCounts: Map<string, number> = new Map(),
 ): OutfitCandidate[] {
-  const eligible = eligibleGarments(items, options)
+  const eligible = eligibleGarments(items, options, weather)
   const rejected = new Set(
     feedback
       .filter((entry) => entry.verdict === 'rejected')
@@ -84,7 +98,8 @@ export function generateOutfits(
       item.styles.includes('Elegant')
         ? 3
         : 0) +
-      (likedItems.get(item.id) || 0)
+      (likedItems.get(item.id) || 0) +
+      Math.min(1, (wearCounts.get(item.id) ?? 0) * 0.2)
     )
   }
   // Bounded search: at most 18³ + 18² base combinations, even for 1000 items.
@@ -111,7 +126,9 @@ export function generateOutfits(
   function add(base: Garment[]): void {
     const selected = [...base]
     if (
-      (options.season === 'Herbst' || options.season === 'Winter') &&
+      (weather
+        ? weather.min < 15
+        : options.season === 'Herbst' || options.season === 'Winter') &&
       jackets.length
     ) {
       selected.push(
@@ -177,17 +194,32 @@ export function generateOutfits(
       reasons.push('Deine Favoriten oder Stilvorlieben wurden berücksichtigt.')
     if (liked.has(key))
       reasons.push('Diese Kombination hat dir bereits gefallen.')
+    if (selected.some((item) => (wearCounts.get(item.id) ?? 0) > 0))
+      reasons.push('Bereits bestätigte Tragetage wurden leicht gewichtet.')
+    if (weather) {
+      reasons.push(
+        `Vorhersage für ${weather.day}: ${Math.round(weather.min)} bis ${Math.round(weather.max)} °C. Saisonangaben helfen bei der groben Auswahl; Material und Wärme bleiben ungeprüft.`,
+      )
+      if (weather.rain >= 50)
+        reasons.push(
+          'Regen ist möglich. Prüfe selbst, ob Schuhe und äussere Schicht wasserfest sind.',
+        )
+    }
     if (
       options.season !== 'Alle' &&
       selected.some((item) => !item.seasons.length)
     )
       reasons.push('Einige Stücke haben noch keine Saisonangabe.')
     if (
-      (options.season === 'Winter' || options.season === 'Herbst') &&
+      (weather
+        ? weather.min < 15
+        : options.season === 'Winter' || options.season === 'Herbst') &&
       !jackets.length
     )
       reasons.push(
-        'Eine passende Jacke fehlt. Prüfe die Wärme selbst; Wetter wird noch nicht berücksichtigt.',
+        weather
+          ? 'Eine passende Jacke fehlt für die kühlere Vorhersage. Prüfe die Wärme selbst.'
+          : 'Eine passende Jacke fehlt. Prüfe die Wärme selbst; Wetter ist nicht aktiviert.',
       )
     if (options.includeAccessory && !accessories.length)
       reasons.push('Für diese Auswahl ist kein Accessoire vorhanden.')

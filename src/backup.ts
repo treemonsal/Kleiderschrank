@@ -1,6 +1,8 @@
 import { CATEGORIES, COLORS, SEASONS, STYLES, type Garment } from './model'
 import { blobToDataURL } from './photos'
 import { db, type WardrobeDatabase } from './db'
+import { isDay, MAX_CALENDAR_ENTRIES, type CalendarEntry } from './calendar'
+import { parseSavedWeather, type WeatherState } from './weather'
 import {
   assertWardrobeCapacity,
   MAX_BACKUP_BYTES,
@@ -22,10 +24,12 @@ export interface BackupData {
   outfits: SavedOutfit[]
   feedback: OutfitFeedback[]
   preferences: Preferences | null
+  calendar?: CalendarEntry[]
+  weather?: WeatherState | null
 }
 const invalid = () =>
   new Error(
-    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1 oder 2). Es wurde nichts verändert.',
+    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1, 2 oder 3). Es wurde nichts verändert.',
   )
 export async function createDatabaseBackup(database = db): Promise<string> {
   const data = await database.transaction('r', database.tables, async () => ({
@@ -33,6 +37,8 @@ export async function createDatabaseBackup(database = db): Promise<string> {
     outfits: await database.outfits.toArray(),
     feedback: await database.feedback.toArray(),
     preferences: (await database.preferences.get('personal')) ?? null,
+    calendar: await database.calendar.toArray(),
+    weather: (await database.weather.get('local')) ?? null,
   }))
   return createBackup(data.garments, data)
 }
@@ -54,9 +60,11 @@ export async function createBackup(
     })
   const json = JSON.stringify({
     app: 'MyStyle',
-    version: 2,
+    version: 3,
     exportedAt: new Date().toISOString(),
     ...extra,
+    calendar: extra.calendar ?? [],
+    weather: extra.weather ?? null,
     garments,
   })
   if (new Blob([json]).size > MAX_BACKUP_BYTES)
@@ -68,6 +76,11 @@ export async function createBackup(
 function text(value: unknown, max: number): string {
   if (typeof value !== 'string' || value.length > max) throw invalid()
   return value
+}
+function identifier(value: unknown): string {
+  const id = text(value, 100)
+  if (!/^[A-Za-z0-9_.:-]+$/.test(id)) throw invalid()
+  return id
 }
 function choice<T extends string>(value: unknown, choices: readonly T[]): T {
   if (typeof value !== 'string' || !choices.includes(value as T))
@@ -125,7 +138,7 @@ export function parseFullBackup(json: string): BackupData {
   if (
     !data ||
     data.app !== 'MyStyle' ||
-    ![1, 2].includes(data.version) ||
+    ![1, 2, 3].includes(data.version) ||
     !Array.isArray(data.garments) ||
     data.garments.length > 1000
   )
@@ -134,7 +147,7 @@ export function parseFullBackup(json: string): BackupData {
   const garments: Garment[] = data.garments.map(
     (item: Record<string, unknown>) => {
       if (!item || typeof item !== 'object') throw invalid()
-      const id = text(item.id, 100)
+      const id = identifier(item.id)
       const name = text(item.name, 100).trim()
       if (!id || !name || ids.has(id) || typeof item.favorite !== 'boolean')
         throw invalid()
@@ -156,7 +169,14 @@ export function parseFullBackup(json: string): BackupData {
     },
   )
   if (data.version === 1)
-    return { garments, outfits: [], feedback: [], preferences: null }
+    return {
+      garments,
+      outfits: [],
+      feedback: [],
+      preferences: null,
+      calendar: [],
+      weather: null,
+    }
   if (
     !Array.isArray(data.outfits) ||
     data.outfits.length > MAX_OUTFITS ||
@@ -167,7 +187,7 @@ export function parseFullBackup(json: string): BackupData {
   const references = (value: unknown): string[] => {
     if (!Array.isArray(value) || value.length < 2 || value.length > 6)
       throw invalid()
-    const refs = value.map((id) => text(id, 100))
+    const refs = value.map(identifier)
     if (new Set(refs).size !== refs.length || refs.some((id) => !ids.has(id)))
       throw invalid()
     return refs
@@ -175,7 +195,7 @@ export function parseFullBackup(json: string): BackupData {
   const outfitIds = new Set<string>()
   const outfits: SavedOutfit[] = data.outfits.map((item: SavedOutfit) => {
     if (!item || typeof item !== 'object') throw invalid()
-    const id = text(item.id, 100),
+    const id = identifier(item.id),
       name = text(item.name, 100).trim()
     if (!id || !name || outfitIds.has(id) || typeof item.favorite !== 'boolean')
       throw invalid()
@@ -222,7 +242,38 @@ export function parseFullBackup(json: string): BackupData {
       updatedAt: timestamp(item.updatedAt),
     }
   }
-  return { garments, outfits, feedback, preferences }
+  const calendar: CalendarEntry[] = []
+  let weather: WeatherState | null = null
+  if (data.version === 3) {
+    if (
+      !Array.isArray(data.calendar) ||
+      data.calendar.length > MAX_CALENDAR_ENTRIES
+    )
+      throw invalid()
+    const calendarIds = new Set<string>()
+    for (const item of data.calendar) {
+      if (
+        !item ||
+        !isDay(item.day) ||
+        item.id !== item.day ||
+        calendarIds.has(item.id) ||
+        !outfitIds.has(item.outfitId)
+      )
+        throw invalid()
+      calendarIds.add(item.id)
+      calendar.push({
+        id: item.day,
+        day: item.day,
+        outfitId: identifier(item.outfitId),
+        status: choice(item.status, ['planned', 'worn']),
+        note: text(item.note, 200),
+        createdAt: timestamp(item.createdAt),
+        updatedAt: timestamp(item.updatedAt),
+      })
+    }
+    if (data.weather !== null) weather = parseSavedWeather(data.weather)
+  }
+  return { garments, outfits, feedback, preferences, calendar, weather }
 }
 export async function importBackup(
   items: Garment[],
@@ -246,6 +297,8 @@ export async function importFullBackup(
       await database.outfits.clear()
       await database.feedback.clear()
       await database.preferences.clear()
+      await database.calendar.clear()
+      await database.weather.clear()
     }
     const existingItems = await database.garments.toArray()
     const merged = new Map(existingItems.map((item) => [item.id, item]))
@@ -284,6 +337,22 @@ export async function importFullBackup(
       (await database.preferences.get('personal')) ?? DEFAULT_PREFERENCES
     if (data.preferences && data.preferences.updatedAt > current.updatedAt)
       await database.preferences.put(data.preferences)
+    for (const item of data.calendar ?? []) {
+      if (!(await database.outfits.get(item.outfitId))) throw invalid()
+      const existing = await database.calendar.get(item.id)
+      if (!existing || item.updatedAt > existing.updatedAt)
+        await database.calendar.put(item)
+    }
+    if ((await database.calendar.count()) > MAX_CALENDAR_ENTRIES)
+      throw new UserFacingError(
+        'Der Import würde die Kalendergrenze von 3000 Tagen überschreiten. Es wurde nichts verändert.',
+      )
+    const localWeather = await database.weather.get('local')
+    if (
+      data.weather &&
+      (!localWeather || data.weather.updatedAt > localWeather.updatedAt)
+    )
+      await database.weather.put(data.weather)
     return changed
   })
 }

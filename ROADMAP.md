@@ -24,11 +24,24 @@
 - [x] Additive Datenbankmigration und vollständige Sicherung Version 2; alte Sicherungen weiterhin lesen
 - [x] Gegenprüfungen, Regressionstests und neue Browserabläufe
 
-Nächster Entwicklungsschritt ist Phase 3. Keine automatische Bilderkennung oder vorgetäuschte KI-Bewertung in Version 0.2.
+Phase 2 ist abgeschlossen. Keine automatische Bilderkennung oder vorgetäuschte KI-Bewertung in Version 0.2.
 
 ## Phase 3 – Alltag und Wetter
 
-Outfit-Kalender, geplant/getragen, optionale Open-Meteo-Abfrage nach Standortfreigabe oder manueller Ortswahl. Offline-Fallback und sichtbarer Wetterzeitpunkt.
+- [x] Additive Datenbankversion 3 mit Kalender und optionalem Wetterort
+- [x] Lokale Kalendertage, Monatswechsel, geplante/getragene Looks und Notizen
+- [x] Zukünftige Tragebestätigungen verhindern; veraltete Änderungen/Löschungen erkennen
+- [x] Berechnete Tragehäufigkeit und leichte Gewichtung bereits getragener Stücke
+- [x] Abhängige Kalendereinträge atomar bei Outfit-/Kleidungsstück-Löschung entfernen
+- [x] Ortssuche und Standort ausschliesslich nach Nutzeraktion, gerundete Koordinaten
+- [x] Wetterabruf, bewusste Aktivierung für Vorschläge, Quelle/Zeitpunkt/Zeitzone und Aktualitätsgrenze
+- [x] Grobe Temperatur-/Saisonregeln, vorhandene Jacken und ehrlicher Regenhinweis
+- [x] Offline-Wetter, kein automatischer Abruf und lokales Vergessen
+- [x] Vollständige Sicherung Version 3; alte Sicherungen Version 1/2 lesen
+- [x] Automatisierte Daten-/Browserprüfungen und iPhone-Bildschirmgrössen
+- [ ] Echter Live-Wetterabruf nach Anwendung der Netzwerkfreigabe
+
+Die Softwarefunktionen sind in Version 0.3 implementiert. Die beiden Open-Meteo-Domains wurden im Cloud-Konfigurationsentwurf ergänzt; aktuelle Live-Anfragen scheiterten noch am Proxy (CONNECT 403). Die Netzwerkfreigabe muss in den Umgebungseinstellungen gespeichert/angewendet und die Umgebung veröffentlicht werden. Erst danach kann der echte Abruf bestätigt werden. Die automatisierten Wetterprüfungen verwenden kontrollierte Antworten, keine erfundenen Live-Daten.
 
 ## Phase 4 – lokale Assistenz evaluieren
 
@@ -63,3 +76,12 @@ Am selben Tag nach der Gegenprüfung und Implementierung von Phase 2 ausgeführt
 Der vollständige neue Browserablauf scheiterte zunächst an einem unpassenden Testselektor für das Kategorie-Auswahlfeld. Nach Auswahl über die tatsächliche Combobox-Rolle wurden die Abläufe erfolgreich ausgeführt. Dies war ein Testproblem; die Anwendung wurde nicht zum Umgehen des Tests vereinfacht.
 
 Die Grenzen für echte iPhone-/Safari-, Kamera-, Installations-, Hosting- und WebKit-Prüfungen gelten weiterhin. Details und behobene Befunde stehen in REVIEW.md.
+
+### Version 0.3
+
+- Produktionsbuild inklusive TypeScript und PWA bestanden.
+- `npm test`: 56 Tests bestanden. Neu: Migration von Version 2, Schaltjahre/Monatsgrenzen, lokale Tage, Tragehäufigkeit, zukünftige Tragetage, konkurrierende Kalenderbearbeitung/-löschung, abhängige Löschung, Wettervalidierung, Ablauf, gerundete Koordinaten und vollständige Sicherung/Wiederherstellung.
+- `npm run test:e2e`: vollständiger Lauf mit 22 Chromium-Prüfungen bestanden. Alle bisherigen Abläufe plus Kalenderplanung, Bestätigung, Offline-Wiederherstellung, Abhängigkeiten, bewusste Wetteranfragen, Standortablehnung/-freigabe, grobe Koordinaten, Serverfehler, Cache, Alterung, lokale Zeitzone und neue Layouts bei 375/390/430 Pixeln.
+- Die Kalender-/Wetterdarstellung und dunkle Kalenderansicht wurden anhand der erzeugten Screenshots visuell geprüft.
+- Ein Test-Matcher bewertete ein natives `option disabled` inkorrekt als aktiv. Die Prüfung verwendet jetzt die native `disabled`-Eigenschaft; zukünftige Tragebestätigungen werden zusätzlich im Datenmodell zurückgewiesen. Der vollständige Kalenderablauf besteht.
+- Live-API und echtes iPhone bleiben unbestätigt. Standort und Wetter in Browserprüfungen sind Testdaten; kein realer Gerätestandort wurde angefragt.

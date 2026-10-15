@@ -1650,6 +1650,325 @@ fieldset {
 .spin {
   animation: spin 1s linear infinite;
 }
+.weather-panel {
+  margin: 0 0 18px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 15px;
+  overflow: hidden;
+}
+.weather-panel > summary {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 17px;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 13px;
+  min-height: 64px;
+}
+.weather-panel summary small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 5px;
+}
+.weather-content {
+  padding: 0 17px 18px;
+}
+.weather-privacy,
+.weather-credit {
+  font-size: 11px;
+  line-height: 1.85;
+  color: var(--muted);
+}
+.weather-search {
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+  margin: 19px 0 6px;
+}
+.weather-search > .field {
+  flex: 1;
+}
+.weather-search > .icon-button {
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  height: 48px;
+  width: 48px;
+}
+.location-results {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.location-results button {
+  min-height: 48px;
+  text-align: left;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.location-results button + button {
+  border-top: 1px solid var(--line);
+}
+.chosen-location p {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 12px 0;
+}
+.weather-report {
+  background: var(--hero);
+  padding: 16px;
+  border-radius: 13px;
+  margin: 17px 0;
+}
+.weather-report-heading {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.weather-report-heading strong {
+  font-size: 13px;
+  font-weight: 550;
+}
+.weather-report-heading small {
+  display: block;
+  font-size: 10px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.weather-temperature {
+  font-family: Georgia, serif;
+  font-size: 28px;
+  margin-top: 19px;
+}
+.weather-temperature span {
+  display: block;
+  font-family: inherit;
+  font-size: 16px;
+  margin-top: 6px;
+}
+.weather-message,
+.weather-stale {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 12px 0;
+  color: var(--muted);
+}
+.weather-stale {
+  padding: 11px;
+  border: 1px dashed var(--accent);
+  border-radius: 9px;
+  color: var(--accent);
+}
+.weather-report .accessory-option {
+  font-size: 12px;
+  margin-top: 10px;
+}
+.weather-credit {
+  margin-top: 17px;
+  font-size: 10px;
+}
+.outfit-tabs > button {
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  min-height: 62px;
+  padding: 7px 3px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.calendar-month-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0 17px;
+}
+.calendar-month-heading h2 {
+  font-family: Georgia, serif;
+  font-size: 25px;
+  font-weight: 400;
+  text-transform: capitalize;
+}
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+}
+.calendar-weekdays {
+  margin-bottom: 8px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+}
+.calendar-grid > button {
+  min-width: 0;
+  min-height: 44px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 11px;
+  font-size: 13px;
+}
+.calendar-grid > button[aria-current='date'] {
+  border: 1px solid var(--accent);
+}
+.calendar-grid > button.selected {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.calendar-grid i {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.calendar-grid i.worn-dot {
+  background: currentColor;
+}
+.calendar-day-picker {
+  display: flex;
+  align-items: flex-end;
+  gap: 17px;
+  margin: 22px 0;
+}
+.calendar-day-picker > .field {
+  flex: 1;
+}
+.calendar-day-picker > .field input {
+  max-width: 100%;
+}
+.calendar-day-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  background: var(--surface);
+}
+.calendar-day-card > .eyebrow {
+  font-size: 9px;
+  letter-spacing: 1.1px;
+}
+.calendar-outfit-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 17px 0;
+}
+.calendar-outfit-heading h3 {
+  font-family: Georgia, serif;
+  font-size: 25px;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.calendar-status {
+  font-size: 10px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.calendar-status.worn {
+  background: var(--hero);
+  border-color: var(--hero);
+  color: var(--accent);
+}
+.calendar-entry-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 19px;
+  flex-wrap: wrap;
+}
+.calendar-entry-actions > .button {
+  flex: 1;
+}
+.calendar-note {
+  font-size: 13px;
+  line-height: 1.8;
+  margin-top: 19px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.calendar-weather {
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  margin-top: 18px;
+  padding-top: 15px;
+}
+.calendar-empty {
+  text-align: center;
+  padding: 24px 0 8px;
+}
+.calendar-empty > svg {
+  margin: 0 auto 17px;
+  color: var(--accent);
+}
+.calendar-empty h3 {
+  font-family: Georgia, serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+.calendar-empty p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin: 12px 0 21px;
+}
+.plan-form fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.plan-form > .micro-copy {
+  margin: 18px 0 12px;
+  text-align: center;
+}
+.wear-summary {
+  margin: 26px 0;
+}
+.wear-summary h3 {
+  font-family: Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+}
+.wear-summary > p,
+.wear-summary > small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.85;
+  margin: 12px 0;
+}
+.wear-summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+.wear-summary strong {
+  color: var(--accent);
+  font-weight: 500;
+}
+@media (max-width: 374px) {
+  .calendar-grid,
+  .calendar-weekdays {
+    margin-inline: -16px;
+  }
+}
 @keyframes spin {
   to {
     transform: rotate(360deg);

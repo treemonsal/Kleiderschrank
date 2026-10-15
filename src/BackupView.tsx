@@ -140,7 +140,7 @@ export function BackupView({
                 {busy ? 'Bitte einen Moment …' : 'Sicherung exportieren'}
               </strong>
               <small>
-                Alle {items.length} Stücke, Outfits & Vorlieben · JSON
+                Alle {items.length} Stücke, Outfits, Kalender & Vorlieben · JSON
               </small>
             </span>
             <ChevronRight size={18} />
@@ -300,7 +300,7 @@ export function BackupView({
       <p className="app-signature">
         MyStyle <span>·</span> Mit weniger mehr du sein.
         <br />
-        <small>Version 0.2 · Lokal & persönlich</small>
+        <small>Version 0.3 · Lokal & persönlich</small>
       </p>
       {pending && (
         <Sheet
@@ -318,8 +318,10 @@ export function BackupView({
                 {pending.garments.filter((i) => i.photo).length} mit Foto
               </strong>
               . Ausserdem: {pending.outfits.length} Outfits und{' '}
-              {pending.feedback.length} Rückmeldungen. Wie möchtest du sie
-              übernehmen?
+              {pending.feedback.length} Rückmeldungen sowie{' '}
+              {pending.calendar?.length ?? 0} Kalendertage
+              {pending.weather ? ' und ein gespeicherter Wetterort' : ''}. Wie
+              möchtest du sie übernehmen?
             </p>
             <label
               className={`import-choice ${mode === 'merge' ? 'selected' : ''}`}

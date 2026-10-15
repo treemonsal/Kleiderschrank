@@ -1,5 +1,7 @@
 import Dexie, { type Table } from 'dexie'
 import type { Garment, GarmentDraft } from './model'
+import type { CalendarEntry } from './calendar'
+import type { WeatherState } from './weather'
 import {
   assertWardrobeCapacity,
   MAX_OUTFITS,
@@ -20,6 +22,8 @@ export class WardrobeDatabase extends Dexie {
   outfits!: Table<SavedOutfit, string>
   feedback!: Table<OutfitFeedback, string>
   preferences!: Table<Preferences, string>
+  calendar!: Table<CalendarEntry, string>
+  weather!: Table<WeatherState, string>
   constructor(name = 'mystyle-private-wardrobe') {
     super(name)
     this.version(1).stores({ garments: 'id, category, updatedAt' })
@@ -27,6 +31,10 @@ export class WardrobeDatabase extends Dexie {
       outfits: 'id, updatedAt, *garmentIds',
       feedback: 'id, updatedAt, *garmentIds',
       preferences: 'id',
+    })
+    this.version(3).stores({
+      calendar: 'id, day, outfitId, status, updatedAt',
+      weather: 'id',
     })
   }
 }
@@ -36,7 +44,14 @@ export async function deleteGarment(id: string, database = db): Promise<void> {
     database.garments,
     database.outfits,
     database.feedback,
+    database.calendar,
     async () => {
+      const ids = await database.outfits
+        .where('garmentIds')
+        .equals(id)
+        .primaryKeys()
+      if (ids.length)
+        await database.calendar.where('outfitId').anyOf(ids).delete()
       await database.outfits.where('garmentIds').equals(id).delete()
       await database.feedback.where('garmentIds').equals(id).delete()
       await database.garments.delete(id)

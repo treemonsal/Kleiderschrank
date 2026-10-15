@@ -23,10 +23,28 @@ Der lokale Generator nutzt ausschliesslich vorhandene IDs und feste Basisregeln:
 
 Die additive Datenbankversion 2 erhält alte Kleidungsstücke. Outfits, Feedback und Vorlieben sind im neuen Sicherungsformat enthalten. Exporte lesen einen konsistenten Snapshot; Importe schreiben alle Datenarten in derselben Transaktion. Gelöschte Kleidungsstücke hinterlassen keine abhängigen Looks. Alte Sicherungen bleiben lesbar. Ein bewusster Ersetzungsimport löscht alle nicht enthaltenen Datenarten; die Oberfläche weist darauf hin.
 
-## Prüfstand
+## Prüfstand Version 0.2
 
 - Datentests: 37 bestanden, einschliesslich Migration, vollständiger Sicherung/Wiederherstellung, Zurückrollen bei Outfit-Schreibfehler, Referenzintegrität, Saison-/Anlassregeln, Ablehnungen und begrenzter Suche bei 900 Stücken.
 - Die ursprünglichen sieben Chromium-Browserprüfungen bestehen weiterhin. Sechs zusätzliche Chromium-Prüfungen bestanden für Outfit-Speicherung/Bearbeitung/Favoriten, Vorlieben, vollständige Wiederherstellung, Ablehnung/Zurücksetzen, abhängige Löschung, beschädigte Bilder und drei Bildschirmbreiten.
 - Start-/Sicherungsoberfläche und neue Outfit-/Vorliebenoberfläche bei 375, 390 und 430 Pixeln geprüft. Neue Ansichten auch im Dunkelmodus auf horizontalen Überlauf geprüft. Screenshots liegen in den ignorierten Testausgaben.
 
 Nicht als geprüft behauptet: echtes iPhone/Safari, reale Kamera und HEIC, Home-Bildschirm-Installation, Speicherdruck, WebKit und öffentliche Bereitstellung. Browserdialoge bei erzwungenem iOS-App-Ende sind grundsätzlich unzuverlässig. Wetter, Kalender, Nutzungshäufigkeit und automatische Fotoanalyse bleiben für nachfolgende Phasen offen.
+
+## Ergänzende Prüfung Version 0.3
+
+Die Kalender- und Wetterfunktionen sind inzwischen implementiert. Die Nachweise der Version 0.2 bleiben historisch; der aktuelle Stand ist:
+
+- Build/TypeScript/PWA, 56 Daten-/Logiktests und kompletter Lauf mit 22 Chromium-Browserprüfungen bestanden.
+- Datenbankmigration von Version 2 erhält vorhandene Outfits. Kalender und Wetterort sind im neuen Sicherungsformat 3 enthalten; 1 und 2 bleiben lesbar. Ein Schreibfehler im Kalender rollt den gesamten Import zurück. Beim Ersetzen mit älteren Backups werden nicht enthaltene neuere Datenarten bewusst gelöscht, mit Hinweis vor Bestätigung.
+- Eintrag-ID entspricht dem lokalen Tag, nicht dem UTC-Datum. Ein Browserfall um Mitternacht in Europe/Zurich am Tag des Sommerzeitwechsels bestätigt dies. Kalendertage und Schaltjahre werden validiert.
+- Tragehäufigkeit entsteht aus bestätigten Tagen bis heute. Wiederholtes Bestätigen erhöht keinen separaten Zähler. Löschen, Statuskorrektur und Abhängigkeiten bleiben konsistent. Veraltete Editorstände können einen neueren Eintrag weder überschreiben noch löschen.
+- Wetter bleibt optional. Keine Netzwerk- oder Standortanfrage beim Öffnen der App, nach Wiederherstellung oder beim Aufklappen der Wetterkarte. Browserprüfungen bestätigen beide Wege nach ausdrücklicher Aktion: manuelle Suche sowie freigegebene Testposition; eine verweigerte Freigabe lässt die Suche nutzbar.
+- Nur gerundete Koordinaten werden an die Vorhersage-API gesendet und gespeichert. Requests verwenden `credentials: omit` und `referrerPolicy: no-referrer`. Fotos, Kleidung und Outfits werden nicht mitgeschickt. Der Dienst sieht technisch IP-Adresse und angefragten Ort. Die Sicherung kann gerundete Ortsdaten enthalten, worauf die Oberfläche hinweist.
+- Antwortdaten werden auf echte Tage, sinnvolle Temperaturen, erwartete Einheiten, gültige WMO-Codes, Zeitzone und fehlende Werte geprüft. Fehler überschreiben den bestehenden Cache nicht. Nach sechs Stunden oder bei fehlendem Wettertag beeinflusst der Cache keine Vorschläge mehr. Ein Browserfall prüft sieben Stunden Alterung und die Entfernung der dadurch zuvor ergänzten Jacke.
+- Eine laufende Ortssuche sperrt die Eingabe, damit eine alte Antwort nicht einem inzwischen neu eingegebenen Suchwort zugeordnet wird. Unmount bricht laufende HTTP-Anfragen ab; keine automatischen Wiederholungen oder Hintergrund-Ortung.
+- Monatstasten, Datumsfeld, Planungsdialog und neue Wetterkarte wurden bei 375, 390 und 430 Pixeln geprüft. Screenshots des getragenen Looks, des dunklen Kalenders und der Wetterregeln visuell geprüft. Kein Nachweis eines echten iPhone-Geräts.
+
+**Offener externer Nachweis:** Die echten HTTPS-Wetterendpunkte wurden in der Cloud vom Netzwerkproxy mit CONNECT 403 abgewiesen. `api.open-meteo.com` und `geocoding-api.open-meteo.com` sind als erforderliche Ergänzungen im Konfigurationsentwurf gespeichert. Erst nach Anwendung der Freigabe kann ein Live-Abruf einschließlich realer Dienstantwort bestätigt werden. Kontrollierte API-Antworten beweisen Client-Verhalten und Fehlerbehandlung, nicht die momentane Verfügbarkeit des Dienstes oder echtes Safari/CORS-Verhalten.
+
+Weiterhin offen: echter iPhone-/Safari-Test, reale Kamera/HEIC, Home-Bildschirm-Installation, Speicherdruck, WebKit und öffentliche HTTPS-Bereitstellung. Lokale automatische Bildanalyse bleibt eine spätere Evaluationsphase.
