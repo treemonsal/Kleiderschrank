@@ -19,6 +19,10 @@
 - Foto wird an zwei klar benannte Drittanbieter gesendet. BiRefNet benutzt temporäre Upload-/Ergebnisdateien mit URLs; keine Garantie über deren Aufbewahrung/Löschung behauptet. Die Hinweise stehen vor der Gerätefreigabe. Bestehende Sammlung bleibt lokal, kein Schema-/Backupformatwechsel, Original separat erhalten. Verbindungseinstellungen nicht in Backups.
 - Keine bezahlten oder versteckten Ausweichdienste, begrenzte Text-/Bildantworten, PNG-Magie/Dimensionen/Decode geprüft, CORS und Eingabedaten durch echte Vertragsaufrufe ergänzt. Eigener Server bleibt separat optional; dessen alte Vorlage ist nicht mehr als kostenloses HF-Angebot beworben.
 
+## Veröffentlichung 0.6.1
+
+GitHub-Pages-Lauf [38793074783](https://github.com/treemonsal/Kleiderschrank/actions/runs/38793074783) für App-Commit `985aaed800c50e567790d88a761ad85242494f50` erfolgreich. Frozen-Installation, Formatierung, Datentests, PWA-Build und Deployment auf GitHub bestanden. Öffentliche HTTPS-Prüfung mit aktiver TLS-Verifikation bestätigt Version 0.6.1, Aktivierungsoberfläche, separates Community-Modul mit beiden festgelegten Anbietern und dunkles Manifest. Die App benötigt keinen HF_TOKEN und keinen eigenen Server mehr für die kostenlose Community-Option. Gerätefreigabe muss weiterhin bewusst auf dem iPhone erfolgen.
+
 ## Historie bis Version 0.6
 
 # Aktuelle Prüfung – Version 0.6, 15. Oktober 2026
