@@ -1,3 +1,14 @@
+# Aktuelle Prüfung – Version 0.6.2, 15. Oktober 2026
+
+- Nutzer ordnet den bisherigen Fehler der Bilderkennung zu und bestätigt funktionierende Freistellung. Alte Meldung war ein Sammelfehler; konkrete damalige Ursache nicht beweisbar. Beide öffentlichen Spaces meldeten beim Statuscheck RUNNING. Das ist keine Aussage über die GPU-Quota einer einzelnen Anfrage und kein Beleg für ein fixes Zwei-Scans-Limit.
+- HTTP-/SSE-Fehler und Qwens als vollständige Modellantwort zurückgegebene `[ERROR]`-Texte werden jetzt ausgewertet. Bestätigtes Limit/429, volle Queue, Ausfall, Zugriff, Netz und ungültige Antwort getrennt. Ein SSE-Fehler ohne Details bleibt unbekannt. Retry-After bzw. ausdrücklich genannte Wartezeit wird begrenzt übernommen; keine erfundene Rücksetzzeit und keine sensiblen Rohdaten angezeigt. Auch Aktivierungsprüfung nennt den betroffenen Dienst.
+- 100 Vitest-Tests und alle 46 Chromium-Browserfälle bestanden; Produktionsbuild und Formatprüfung bestanden. Neue kontrollierte Fälle: GPU-Quota im vollständigen SSE-Ergebnis, HTTP 429/503, unbekannter SSE-Fehler, Netzfehler, Anbieter-Wartezeit, kein Raw-Detail-Leak und keine automatischen Dauerversuche. Freistellung/Original bleiben bei Erkennungsfehler nutzbar. Vorhandene CRUD-/Backup-/Offline-/echte lokale Inferenz-/Outfit-/Kalender-/Wetterfälle weiterhin bestanden.
+- Apple-inspirierte Schwarz-/Graupalette und blaue Akzente, neutrale Fotoassistenz, angepasste Installationsicons. Durchscheinende Navigation mit Reflexen, Blur und gleitender Auswahlfläche; opake Alternative bei fehlendem Backdrop-Support oder angeforderter reduzierter Transparenz/erhöhtem Kontrast. Bestehende Regel für reduzierte Bewegung gilt auch für die neue Animation.
+- Layouts bei 375/390/430 Pixeln ohne horizontalen Überlauf, wichtige Navigationstasten mindestens 44 × 44 Pixel; ausgewählte Glasfläche folgt nach Seitenwechsel der aktiven Taste. Screenshots von Startseite, Einstellungen und Editor visuell kontrolliert. Glasoptik ist eine CSS-Annäherung, kein natives Apple-Material. Native Safari-/Geräteprüfung dieser Änderung nicht ausgeführt.
+- Zweiter Prüfdurchgang aus Sicht von Bestandsschutz, Datenschutz und Fehlerwahrheit: keine Schema-/Backupänderung, keine neuen Uploads beim Start, keine neuen Anbieter/Schlüssel, keine privaten Foto-/Fehler-Rohdaten gespeichert oder ausgegeben. Dienste und Inferenzparameter unverändert; Limits werden weder umgangen noch erhöht. Für Fehler-/Designprüfung keine erneuten echten Fotoanfragen verbraucht.
+
+## Vorherige Prüfung – Version 0.6.1
+
 # Aktuelle Prüfung – Version 0.6.1, 15. Oktober 2026
 
 ## Kosten und tatsächlicher Zugang

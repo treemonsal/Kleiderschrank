@@ -8,6 +8,7 @@ import {
   Heart,
   House,
   LoaderCircle,
+  Layers2,
   LockKeyhole,
   MoreHorizontal,
   Pencil,
@@ -622,11 +623,18 @@ export default function App() {
         )}
       </main>
       <nav className="bottom-nav" aria-label="Hauptnavigation">
+        <span
+          className="glass-selection"
+          aria-hidden="true"
+          style={{
+            transform: `translateX(${{ home: 0, wardrobe: 1, outfits: 2, settings: 3 }[view] * 100}%)`,
+          }}
+        />
         {(
           [
             { key: 'home', label: 'Heute', Icon: House },
             { key: 'wardrobe', label: 'Kleiderschrank', Icon: Shirt },
-            { key: 'outfits', label: 'Outfits', Icon: Sparkles },
+            { key: 'outfits', label: 'Outfits', Icon: Layers2 },
             { key: 'settings', label: 'Mehr', Icon: MoreHorizontal },
           ] as const
         ).map(({ key, label, Icon }) => (
@@ -640,7 +648,6 @@ export default function App() {
               <Icon size={23} strokeWidth={view === key ? 1.9 : 1.5} />
             </span>
             <span>{label}</span>
-            {view === key && <span className="nav-dot" />}
           </button>
         ))}
       </nav>

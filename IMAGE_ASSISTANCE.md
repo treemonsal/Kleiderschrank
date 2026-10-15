@@ -1,3 +1,11 @@
+# Update 0.6.2 – Fehlerursachen getrennt anzeigen
+
+Der Nutzer bestätigt gute Erkennung/Freistellung, meldet aber nach zwei Scans einen Fehler ausschliesslich bei der Erkennung. Die alte generische Meldung vermischte Limits, Ausfälle und ungültige Modellantworten. Daraus lässt sich kein bestimmtes Tageslimit oder sicherer damaliger Ausfall ableiten. Beide Spaces meldeten bei der aktuellen Statusabfrage RUNNING; das beweist keine freie GPU-Quota für diesen Nutzer.
+
+Qwens Router fängt auch GPU-Fehler ab und liefert sie teilweise als erfolgreiche Gradio-Antwort mit `[ERROR]`-Text. Diese werden jetzt zusätzlich zu HTTP-Status und SSE-Fehlerereignissen ausgewertet. Bestätigte Quota/429, volle Queue, Dienstausfall, verweigerter Zugriff, Netz und unbrauchbare Ausgabe haben eigene Meldungen. Unbekannte Fehler werden nicht als Limit bezeichnet. Retry-After oder explizite „Try again in …“-Zeit wird in die lokale Gerätezeit umgerechnet; ohne Anbieterzeit kein erfundener Countdown. Rohantworten, Foto-/Dateinamen und interne Details erscheinen nicht in der Oberfläche.
+
+Die Dienste, Foto-Freigabe und Inferenzparameter bleiben gleich. Keine automatischen Wiederholungen, Quota-Umgehung oder neuen Anbieter. Die Änderung hebt kostenlose GPU-Limits nicht auf; erfolgreiche Teilresultate und Original bleiben nutzbar. Fehlerprüfungen verwenden kontrollierte Anbieterantworten, keine erneuten echten Fotoanfragen zum Verbrauch weiterer Quota.
+
 # Aktueller Stand 0.6.1 – kostenlos ohne eigenen Server
 
 Die eigene HF-Serverbereitstellung wurde tatsächlich versucht. Der Token ist gültig, die E-Mail bestätigt, aber die Plattform verlangt aktuell PRO für Docker/Gradio-Spaces auf CPU Basic (HTTP 402). Offizielle Inference-Provider-Preise nennen für Free-Accounts ebenfalls keine Gratis-Credits mehr. Deshalb keine bezahlte Ressource und kein Umgehen einer Zugangsbeschränkung.

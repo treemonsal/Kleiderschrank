@@ -12,7 +12,11 @@ const attributes = {
   styles: ['Streetwear'],
   notes: 'Dunkle Ärmel und sichtbares Logo.',
 }
-async function mock(page: Page, visionFails = false) {
+async function mock(
+  page: Page,
+  failure:
+    'none' | 'limit' | 'gpu' | 'unavailable' | 'unknown' | 'network' = 'none',
+) {
   const png = await readFile('public/icon-192.png')
   const calls: string[] = []
   await page.route('https://*.hf.space/**', async (route) => {
@@ -26,16 +30,27 @@ async function mock(page: Page, visionFails = false) {
       })
     if (url === V + '/gradio_api/call/run_router') {
       expect(request.postDataJSON().data[0]).toBe('Qwen3-VL-4B-Instruct')
-      return visionFails
-        ? route.fulfill({ status: 429, body: 'limit' })
-        : route.fulfill({ json: { event_id: 'a'.repeat(32) } })
+      if (failure === 'limit')
+        return route.fulfill({ status: 429, body: 'limit' })
+      if (failure === 'unavailable')
+        return route.fulfill({ status: 503, body: 'Service unavailable' })
+      if (failure === 'network') return route.abort('failed')
+      return route.fulfill({ json: { event_id: 'a'.repeat(32) } })
     }
     if (url === V + '/gradio_api/call/run_router/' + 'a'.repeat(32))
       return route.fulfill({
         contentType: 'text/event-stream',
         body:
-          'event: generating\ndata: ["ignore"]\n\nevent: complete\ndata: ' +
-          JSON.stringify([JSON.stringify(attributes)]) +
+          'event: generating\ndata: ["ignore"]\n\nevent: ' +
+          (failure === 'unknown' ? 'error' : 'complete') +
+          '\ndata: ' +
+          (failure === 'unknown'
+            ? 'null'
+            : JSON.stringify([
+                failure === 'gpu'
+                  ? '[ERROR] You have exceeded your GPU quota. Try again in 01:23:45. private-detail'
+                  : JSON.stringify(attributes),
+              ])) +
           '\n\n',
       })
     if (url === B + '/gradio_api/upload')
@@ -118,7 +133,7 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
 test('Ausgeschöpftes Erkennungslimit verwirft weder Freistellung noch Original und löst keine Dauerversuche aus', async ({
   page,
 }) => {
-  const calls = await mock(page, true)
+  const calls = await mock(page, 'limit')
   await page.goto('/')
   await activate(page)
   await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
@@ -129,7 +144,7 @@ test('Ausgeschöpftes Erkennungslimit verwirft weder Freistellung noch Original 
     page.getByAltText('Online-KI: Freistellung prüfen'),
   ).toBeVisible()
   await expect(
-    page.getByText('Die kostenlose Bilderkennung ist gerade nicht verfügbar', {
+    page.getByText('Bilderkennung: Nutzungslimit des Dienstes erreicht', {
       exact: false,
     }),
   ).toBeVisible()
@@ -191,3 +206,44 @@ test('Widerruf während Verbindungsprüfung kann durch späte Antworten nicht r�
     page.getByText('Online-KI noch nicht verbunden.', { exact: false }),
   ).toBeVisible()
 })
+
+for (const [failure, message] of [
+  ['gpu', 'Bilderkennung: Nutzungslimit des Dienstes erreicht.'],
+  ['unavailable', 'Bilderkennung: Dienst vorübergehend nicht verfügbar.'],
+  [
+    'unknown',
+    'Bilderkennung: Der Dienst meldet einen Fehler, nennt aber keine eindeutige Ursache.',
+  ],
+  ['network', 'Bilderkennung: Verbindung zum Dienst fehlgeschlagen.'],
+] as const) {
+  test(`Erkennungsfehler ${failure} wird korrekt benannt und Freistellung bleibt nutzbar`, async ({
+    page,
+  }) => {
+    const calls = await mock(page, failure)
+    await page.goto('/')
+    await activate(page)
+    await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
+    await page
+      .getByLabel('Foto aus Mediathek')
+      .setInputFiles(path.resolve('public/icon-192.png'))
+    await expect(page.getByText(message, { exact: false })).toBeVisible()
+    if (failure === 'gpu')
+      await expect(
+        page.getByText('Vom Anbieter genannter neuer Versuch:', {
+          exact: false,
+        }),
+      ).toBeVisible()
+    await expect(
+      page.getByText('private-detail', { exact: false }),
+    ).toHaveCount(0)
+    await expect(
+      page.getByRole('button', {
+        name: 'Freistellung übernehmen',
+        exact: true,
+      }),
+    ).toBeEnabled()
+    expect(
+      calls.filter((url) => url === V + '/gradio_api/call/run_router'),
+    ).toHaveLength(1)
+  })
+}

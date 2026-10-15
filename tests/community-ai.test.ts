@@ -1,5 +1,11 @@
-import { describe, expect, it } from 'vitest'
-import { completedEvent, cutoutAsset, CUTOUT_HOST } from '../src/community-ai'
+import { describe, expect, it, vi } from 'vitest'
+import {
+  completedEvent,
+  cutoutAsset,
+  CUTOUT_HOST,
+  checkCommunity,
+} from '../src/community-ai'
+import { AIProviderError } from '../src/ai-errors'
 import { validateConnection } from '../src/cloud-ai'
 
 describe('Kostenlose Community-KI: echte Streaming-Verträge und feste Anbieter', () => {
@@ -11,7 +17,7 @@ describe('Kostenlose Community-KI: echte Streaming-Verträge und feste Anbieter'
     ).toEqual(['finished'])
     expect(() =>
       completedEvent('event: error\ndata: "quota exceeded"\n\n'),
-    ).toThrow('Tageslimit')
+    ).toThrow(AIProviderError)
     expect(() => completedEvent('event: generating\ndata: []\n\n')).toThrow(
       'ohne fertiges Ergebnis',
     )
@@ -55,4 +61,22 @@ describe('Kostenlose Community-KI: echte Streaming-Verträge und feste Anbieter'
       }),
     ).toThrow()
   })
+})
+
+it('Verbindungsprüfung nennt den betroffenen Dienst und zeigt keine internen Fehlercodes', async () => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: string) =>
+      url.includes('qwen3')
+        ? new Response('unavailable', { status: 503 })
+        : Response.json({ named_endpoints: { '/image': {} } }),
+    ),
+  )
+  try {
+    await expect(checkCommunity(new AbortController().signal)).rejects.toThrow(
+      'Bilderkennung: Dienst vorübergehend nicht verfügbar.',
+    )
+  } finally {
+    vi.unstubAllGlobals()
+  }
 })

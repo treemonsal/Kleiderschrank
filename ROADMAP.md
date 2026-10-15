@@ -147,3 +147,10 @@ Am 15. Oktober 2026 nach manueller Pages-Einrichtung durch den Nutzer veröffent
 - [x] Kein Token/Server im normalen App-Import mehr nötig. Klare Einwilligung und Hinweise auf temporäre Drittanbieter-Dateien/Limits.
 - [x] Echten Fotoimport inklusive aller Merkmale, transparenter Vorschau und Speichern erfolgreich durchlaufen.
 - [ ] Native Safari-/iPhone-Prüfung durch Benutzer; Cloud-Browser mit TLS-geprüfter HTTP-Brücke ersetzt das nicht.
+
+## Version 0.6.2 – Nutzerfeedback
+
+- [x] Alten Sammelfehler untersucht: Erkennung betroffen, Freistellung laut Nutzer funktionsfähig; alter Fehlergrund nicht mehr eindeutig rekonstruierbar.
+- [x] Anbieterfehler aus HTTP, Gradio-SSE und Qwens vollständiger `[ERROR]`-Antwort unterscheiden; eventuelle Wartezeit nur vom Anbieter übernehmen.
+- [x] Apple-inspirierte neutrale Dunkelpalette, blaue Akzente, Glasnavigation mit beweglicher Auswahlfläche und zugänglichen Alternativen.
+- [x] Regressionen für Limit, Ausfall, unbekannten Fehler, Netzwerk, Teilresultate und mobile Navigation ergänzen.

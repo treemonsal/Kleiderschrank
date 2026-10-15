@@ -1,8 +1,8 @@
 # MyStyle
 
-Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten, keine Accounts, keine Bildübertragung.
+Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.6.1 ergänzt kostenlose Community-KI: Qwen3-VL erkennt Kleidungsmerkmale, BiRefNet entfernt den Hintergrund. Einmal unter **Mehr → Online-Foto-KI** die Fotoübertragung erlauben und **Kostenlose KI aktivieren** wählen. Kein Token, Konto oder eigener Server nötig. Ohne Freigabe werden keine Fotos gesendet. Die lokale experimentelle Freistellung bleibt als Alternative. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
+Version 0.6.2 ergänzt eine Glasnavigation, schwarze/graue Flächen mit blauen Akzenten und präzise KI-Fehlermeldungen. Seit 0.6.1 verfügbar: kostenlose Community-KI. Qwen3-VL erkennt Kleidungsmerkmale, BiRefNet entfernt den Hintergrund. Einmal unter **Mehr → Online-Foto-KI** die Fotoübertragung erlauben und **Kostenlose KI aktivieren** wählen. Kein Token, Konto oder eigener Server nötig. Ohne Freigabe werden keine Fotos gesendet. Die lokale experimentelle Freistellung bleibt als Alternative. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — am 15. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
@@ -29,7 +29,7 @@ PWA-Service-Worker werden nur im Produktionsbuild registriert. Entwicklung benö
 Die bereitgestellte **HTTPS-Adresse in Safari** öffnen. Teilen → „Zum Home-Bildschirm“ → „Hinzufügen“. Die App einmal vollständig online laden, dann funktioniert der Kleiderschrank auch offline. Keine Cloud- oder localhost-Adresse aus einer fremden Maschine auf dem iPhone verwenden. Für lokale Netzwerkentwicklung sind ein erreichbarer Rechner und für Service Worker HTTPS nötig; eine kostenlose HTTPS-Bereitstellung ist meist einfacher.
 
 1. „Stück hinzufügen“ wählen und mit Kamera oder Fotomediathek ein Foto ergänzen.
-2. Name und Kategorie eintragen; weitere Merkmale sind optional und manuell korrigierbar.
+2. Mit aktivierter Online-Foto-KI die vorgeschlagenen Angaben prüfen; sonst Name und Kategorie eintragen. Alle Angaben bleiben korrigierbar.
 3. Ein Stück öffnen, um es zu bearbeiten oder zu löschen. Herzen markieren Favoriten.
 4. Unter „Mehr“ regelmässig eine Sicherung mit Fotos exportieren und in Dateien speichern. Import erst prüfen, dann bestätigen. Zusammenführen behält die neuere Version derselben ID; Ersetzen entfernt den vorhandenen Bestand und stellt die Sicherung wieder her.
 
@@ -37,7 +37,7 @@ Die bereitgestellte **HTTPS-Adresse in Safari** öffnen. Teilen → „Zum Home-
 
 Im Kleidungseditor ein Foto hinzufügen und bei **Farbe** auf **Farbe aus Foto wählen** tippen. Eine einfarbige Stelle am Stoff antippen; die Positionsregler und Pfeiltasten helfen beim genauen Auswählen. Erst **Blau übernehmen** (beziehungsweise die vorgeschlagene Farbe) ändert das Farbfeld. Danach das Stück normal speichern oder Änderungen verwerfen. Die Farbe lässt sich weiterhin manuell ändern.
 
-Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Merkmale sind über den optionalen Online-KI-Server vorbereitet; Outfit-Fotobewertung ist noch nicht eingebaut.
+Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Merkmale liefert nach Freigabe die kostenlose Online-KI; Outfit-Fotobewertung ist noch nicht eingebaut.
 
 ## Foto automatisch erfassen
 
@@ -47,6 +47,8 @@ Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert
 4. **Community-KI ausschalten** oder die Foto-Freigabe abwählen verhindert neue Übertragungen. Die vorhandene Sammlung bleibt auf deinem Gerät. Das Öffnen/Bearbeiten gespeicherter Stücke lädt sie nicht automatisch hoch.
 
 Die App nutzt die öffentlich angebotenen Gradio-APIs von [Qwen3-VL-Outpost](https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost) und der [offiziellen BiRefNet-Demo](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo). **Das sind öffentliche Community-Dienste, kein privater MyStyle-Server.** Das ausgewählte Foto wird an beide übertragen; die Freistellung nutzt temporäre Dateien auf dem Server des Anbieters. Speicher-/Löschdauer können wir nicht garantieren. Fotos mit Personen oder privaten Hintergründen vermeiden. Es gibt keine Verfügbarkeitsgarantie; Warteschlangen, Tageslimits und Abschaltungen sind möglich. Dann bleibt das Foto erhalten, ein brauchbares Teilergebnis wird nicht verworfen. Keine automatischen Ausweichanbieter, Provider-Schlüssel oder bezahlten Wiederholungen.
+
+Fehlermeldungen nennen ab 0.6.2 **Bilderkennung** oder **Freistellung** und unterscheiden bestätigtes Nutzungslimit (z. B. HTTP 429/GPU-Quota), volle Warteschlange, Verbindungsfehler, nicht verfügbaren Dienst und unbrauchbare Antworten. Eine Zeit für einen neuen Versuch wird nur angezeigt, wenn der Anbieter sie liefert. Ohne eindeutigen Fehlergrund behauptet die App kein Limit. Die frühere Sammelmeldung erlaubt keine sichere rückwirkende Diagnose; zwei erfolgreiche Scans bedeuten kein festes Zwei-Scans-Limit. Die Grenzen der kostenlosen Dienste bleiben bestehen.
 
 Ein eigener kompatibler Server bleibt unter **Eigenen Server verbinden** optional. Unsere frühere Annahme, einen Docker-Space auf Hugging Face kostenlos selbst zu betreiben, war falsch: Die aktuelle API verlangt dafür PRO (HTTP 402). Auch Inference Providers bieten Free-Accounts aktuell keine Gratis-Credits. Der kostenlose App-Modus verwendet diese kostenpflichtigen Angebote nicht.
 

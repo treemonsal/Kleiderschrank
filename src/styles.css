@@ -8,17 +8,18 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --background: #08090c;
-  --surface: #15161c;
-  --soft: #202129;
+  --background: #000000;
+  --surface: #1c1c1e;
+  --soft: #2c2c2e;
   --ink: #f5f5f7;
-  --muted: #a4a5b1;
-  --line: #30313b;
-  --accent: #b9b1ff;
-  --accent-ink: #17122f;
-  --hero: #191824;
-  --rose: #ff9cba;
-  --danger: #ff9b94;
+  --muted: #aeaeb2;
+  --line: #38383a;
+  --accent: #64a8ff;
+  --action: #0070e0;
+  --accent-ink: #ffffff;
+  --hero: #1c1c1e;
+  --rose: #ff375f;
+  --danger: #ff453a;
   --shadow: 0 16px 48px #0005;
   color-scheme: dark;
 }
@@ -136,7 +137,7 @@ fieldset {
 .profile-dot {
   width: 7px;
   height: 7px;
-  background: var(--accent);
+  background: var(--action);
   border: 2px solid var(--background);
   border-radius: 50%;
   position: absolute;
@@ -176,8 +177,7 @@ fieldset {
   background: var(--hero);
   border-radius: 30px;
   border: 1px solid #ffffff0c;
-  background:
-    radial-gradient(ellipse at 95% 95%, #353252, transparent 65%), var(--hero);
+  background: var(--hero);
   overflow: hidden;
   position: relative;
   min-height: 385px;
@@ -200,7 +200,7 @@ fieldset {
   display: inline-block;
   width: 16px;
   height: 1px;
-  background: var(--accent);
+  background: var(--action);
 }
 .hero-copy h1 {
   font-family: inherit;
@@ -213,7 +213,7 @@ fieldset {
 .hero-copy h1 em {
   font-style: normal;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--ink);
 }
 .hero-copy > p:last-child {
   font-size: 12px;
@@ -369,7 +369,7 @@ fieldset {
   transform: scale(0.98);
 }
 .button.primary {
-  background: var(--accent);
+  background: var(--action);
   color: var(--accent-ink);
 }
 .button.secondary {
@@ -410,53 +410,103 @@ fieldset {
   font-style: normal;
   font-size: 12px;
 }
+/* A translucent material with a moving selection lens; no external textures. */
 .bottom-nav {
   position: fixed;
   z-index: 10;
-  bottom: calc(10px + env(safe-area-inset-bottom));
+  bottom: calc(12px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 28px);
-  max-width: 600px;
+  width: calc(100% - 32px);
+  max-width: 520px;
   display: flex;
-  justify-content: space-around;
-  border: 1px solid #ffffff14;
-  border-radius: 30px;
-  box-shadow: 0 12px 40px #0008;
-  background: color-mix(in srgb, var(--background) 92%, transparent);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 9px 8px 7px;
+  padding: 6px;
+  border: 1px solid #ffffff26;
+  border-top-color: #ffffff4d;
+  border-bottom-color: #ffffff14;
+  border-radius: 34px;
+  background:
+    linear-gradient(160deg, #ffffff1a, #ffffff03 55%, #ffffff0a), #1c1c1e85;
+  box-shadow:
+    0 12px 36px #0007,
+    0 2px 5px #0003,
+    inset 0 1px 0 #ffffff1f;
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+}
+.bottom-nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 20% 0%, #ffffff14, transparent 65%);
+  pointer-events: none;
+}
+.glass-selection {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc((100% - 12px) / 4);
+  border-radius: 27px;
+  background: linear-gradient(160deg, #ffffff21, #ffffff0a);
+  box-shadow:
+    inset 0 1px 1px #ffffff29,
+    inset 0 -1px 1px #ffffff08,
+    0 2px 8px #0002;
+  transition: transform 260ms cubic-bezier(0.22, 0.8, 0.25, 1);
+  pointer-events: none;
 }
 .bottom-nav > button {
   position: relative;
-  min-height: 57px;
+  z-index: 1;
+  min-width: 0;
+  min-height: 58px;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 3px;
-  width: 25%;
-  color: var(--muted);
-  font-size: 10px;
+  color: #d1d1d6;
+  font-size: clamp(9px, 2.65vw, 11px);
+  font-weight: 500;
+  line-height: 1.2;
+  border-radius: 27px;
+  transition: color 180ms;
 }
 .bottom-nav > button.active {
-  color: var(--accent);
+  color: #ffffff;
   font-weight: 600;
 }
+.bottom-nav > button.active .nav-icon {
+  color: #64a8ff;
+}
+.bottom-nav > button:focus-visible {
+  outline-offset: -3px;
+}
 .nav-icon {
-  height: 29px;
+  height: 28px;
   display: grid;
   place-items: center;
 }
-.nav-dot {
-  display: none;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--accent);
-  position: absolute;
-  bottom: 0;
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .bottom-nav {
+    background: #1c1c1e;
+  }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .bottom-nav {
+    background: #1c1c1e;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: #8e8e93;
+  }
+  .glass-selection {
+    background: #3a3a3c;
+  }
 }
 .page-heading {
   margin: 32px 0 25px;
@@ -498,7 +548,7 @@ fieldset {
 }
 .primary-add {
   color: var(--accent-ink);
-  background: var(--accent);
+  background: var(--action);
   width: 44px;
   height: 44px;
   margin-top: 5px;
@@ -552,7 +602,7 @@ fieldset {
   height: 48px;
 }
 .filter-button.selected {
-  background: var(--accent);
+  background: var(--action);
   color: var(--accent-ink);
   border-color: var(--accent);
 }
@@ -575,7 +625,7 @@ fieldset {
 }
 .chip.active {
   color: var(--accent-ink);
-  background: var(--accent);
+  background: var(--action);
   border-color: var(--accent);
 }
 .category-tabs {
@@ -1900,7 +1950,7 @@ fieldset {
   border: 1px solid var(--accent);
 }
 .calendar-grid > button.selected {
-  background: var(--accent);
+  background: var(--action);
   color: var(--accent-ink);
 }
 .calendar-grid i {
@@ -2182,9 +2232,9 @@ fieldset {
 /* Photo-first import and grouped connection settings. */
 .photo-assistant {
   padding: 20px;
-  border: 1px solid #b9b1ff38;
+  border: 1px solid var(--line);
   border-radius: 22px;
-  background: linear-gradient(135deg, #28233b, var(--surface));
+  background: var(--surface);
   display: flex;
   flex-direction: column;
   gap: 16px;

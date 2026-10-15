@@ -1,5 +1,6 @@
 import { parseAttributes, type AIResult } from './cloud-ai'
 import { blobToDataURL, validateBackupPhotos } from './photos'
+import { AIProviderError, providerError, describeAIProblem } from './ai-errors'
 
 export const VISION_HOST = 'https://prithivmlmods-qwen3-vl-outpost.hf.space'
 export const CUTOUT_HOST = 'https://zhengpeng7-birefnet-demo.hf.space'
@@ -18,14 +19,58 @@ const options = {
   redirect: 'error',
 } as const
 
+async function fetchService(url: string, init: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init)
+  } catch (error) {
+    if (init.signal?.aborted) throw error
+    throw new AIProviderError('network')
+  }
+}
+async function errorBody(response: Response): Promise<string> {
+  const reader = response.body?.getReader()
+  if (!reader) return ''
+  const chunks: Uint8Array[] = []
+  let size = 0
+  try {
+    while (size < 8192) {
+      const part = await reader.read()
+      if (part.done) break
+      const chunk = part.value.subarray(0, 8192 - size)
+      chunks.push(chunk)
+      size += chunk.length
+    }
+  } catch {
+    /* HTTP status still provides useful evidence. */
+  } finally {
+    await reader.cancel().catch(() => {})
+  }
+  const data = new Uint8Array(size)
+  let offset = 0
+  for (const chunk of chunks) {
+    data.set(chunk, offset)
+    offset += chunk.length
+  }
+  return new TextDecoder().decode(data)
+}
 async function bytes(
   response: Response,
   maximum: number,
 ): Promise<Uint8Array<ArrayBuffer>> {
-  if (!response.ok)
-    throw new Error(
-      'Der kostenlose KI-Dienst ist gerade nicht verfügbar oder sein Limit ist erreicht. Bitte später erneut versuchen.',
+  if (!response.ok) {
+    const body = await errorBody(response)
+    let detail: unknown = body
+    try {
+      detail = JSON.parse(body)
+    } catch {
+      /* Plain-text provider error. */
+    }
+    throw providerError(
+      detail,
+      response.status,
+      response.headers.get('Retry-After'),
     )
+  }
   const reader = response.body?.getReader()
   if (!reader) throw new Error('Der KI-Dienst hat keine Antwort gesendet.')
   const chunks: Uint8Array[] = []
@@ -62,10 +107,19 @@ export function completedEvent(text: string): unknown {
       .find((line) => line.startsWith('event:'))
       ?.slice(6)
       .trim()
-    if (event === 'error')
-      throw new Error(
-        'Der Community-KI-Dienst konnte das Foto nicht verarbeiten. Möglicherweise ist die Warteschlange oder das Tageslimit erreicht.',
-      )
+    if (event === 'error') {
+      const data = lines
+        .filter((line) => line.startsWith('data:'))
+        .map((line) => line.slice(5).trimStart())
+        .join('\n')
+      let detail: unknown = data
+      try {
+        detail = JSON.parse(data)
+      } catch {
+        /* Plain-text event. */
+      }
+      throw providerError(detail)
+    }
     if (event === 'complete')
       return JSON.parse(
         lines
@@ -83,7 +137,7 @@ export async function callCommunity(
   signal: AbortSignal,
 ): Promise<unknown> {
   const submitted = (await json(
-    await fetch(`${host}/gradio_api/call/${endpoint}`, {
+    await fetchService(`${host}/gradio_api/call/${endpoint}`, {
       ...options,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -96,7 +150,7 @@ export async function callCommunity(
     !/^[a-f0-9]{32}$/.test(submitted.event_id)
   )
     throw new Error('Die KI hat keine gültige Auftragsnummer geliefert.')
-  const response = await fetch(
+  const response = await fetchService(
     `${host}/gradio_api/call/${endpoint}/${submitted.event_id}`,
     { ...options, signal },
   )
@@ -110,13 +164,21 @@ export async function checkCommunity(signal: AbortSignal) {
       [VISION_HOST, '/run_router'],
       [CUTOUT_HOST, '/image'],
     ].map(async ([host, endpoint]) => {
-      const info = (await json(
-        await fetch(`${host}/gradio_api/info`, { ...options, signal }),
-      )) as { named_endpoints?: Record<string, unknown> }
-      if (!info.named_endpoints?.[endpoint])
+      try {
+        const info = (await json(
+          await fetchService(`${host}/gradio_api/info`, { ...options, signal }),
+        )) as { named_endpoints?: Record<string, unknown> }
+        if (!info.named_endpoints?.[endpoint])
+          throw new AIProviderError('unavailable')
+      } catch (error) {
+        if (signal.aborted) throw error
         throw new Error(
-          'Der Community-Dienst bietet seine Foto-KI gerade nicht an. Bitte später erneut versuchen.',
+          describeAIProblem(
+            host === VISION_HOST ? 'Bilderkennung' : 'Freistellung',
+            error,
+          ),
         )
+      }
     }),
   )
 }
@@ -134,7 +196,12 @@ async function recognize(photo: Blob, signal: AbortSignal) {
     .trim()
     .replace(/^```(?:json)?\s*/, '')
     .replace(/\s*```$/, '')
-  return parseAttributes(JSON.parse(text))
+  try {
+    return parseAttributes(JSON.parse(text))
+  } catch {
+    if (/^\[ERROR\]/i.test(text)) throw providerError(text)
+    throw new AIProviderError('invalid')
+  }
 }
 export function cutoutAsset(value: unknown): string {
   // The public Gradio ImageSlider returns [original, transparent result].
@@ -158,7 +225,7 @@ async function removeBackground(photo: Blob, signal: AbortSignal) {
   const form = new FormData()
   form.append('files', photo, 'garment.jpg')
   const files = await json(
-    await fetch(`${CUTOUT_HOST}/gradio_api/upload`, {
+    await fetchService(`${CUTOUT_HOST}/gradio_api/upload`, {
       ...options,
       method: 'POST',
       body: form,
@@ -190,7 +257,7 @@ async function removeBackground(photo: Blob, signal: AbortSignal) {
     signal,
   )
   const data = await bytes(
-    await fetch(cutoutAsset(result), { ...options, signal }),
+    await fetchService(cutoutAsset(result), { ...options, signal }),
     6 * 1024 * 1024,
   )
   if (
@@ -221,17 +288,11 @@ export async function analyzeCommunityPhoto(
     throw new DOMException('Analyse abgebrochen.', 'AbortError')
   const warnings: string[] = []
   if (attributes.status === 'rejected')
-    warnings.push(
-      'Die kostenlose Bilderkennung ist gerade nicht verfügbar oder hat keine gültigen Angaben geliefert. Du kannst erneut versuchen oder selbst ergänzen.',
-    )
+    warnings.push(describeAIProblem('Bilderkennung', attributes.reason))
   if (cutout.status === 'rejected')
-    warnings.push(
-      'Der Hintergrund konnte nicht entfernt werden. Dein Original bleibt erhalten. Bitte später erneut versuchen.',
-    )
+    warnings.push(describeAIProblem('Freistellung', cutout.reason))
   if (attributes.status === 'rejected' && cutout.status === 'rejected')
-    throw new Error(
-      'Die Community-KI ist gerade nicht verfügbar oder ihr Nutzungslimit ist erreicht. Dein Foto bleibt erhalten. Bitte später erneut versuchen.',
-    )
+    throw new Error(warnings.join(' '))
   return {
     attributes:
       attributes.status === 'fulfilled' ? attributes.value : undefined,

@@ -77,3 +77,11 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 - Einmalige Foto-Freigabe in der App statt Serveradresse/Token. Fotos gehen gezielt an die beiden benannten Anbieter; BiRefNet verwendet temporäre Dateien, deren Löschdauer wir nicht garantieren können. Keine pauschale Behauptung „keine Bildspeicherung“ für Community-Betrieb.
 - Warteschlangen und Nutzungslimits sichtbar; begrenzte Antworten, nur definierte HTTPS-Anbieter, keine Credentials/Referrer, keine fremden Ergebnis-URLs oder automatischen Wiederholungen. Ausfall eines Teils erhält den anderen; Originale bleiben gespeichert.
 - Widerruf wirkt sofort, auch während Verbindungsprüfung. Bestandsfotos werden beim Öffnen/Bearbeiten nicht automatisch gesendet. Kein neues Datenschema oder Backupformat.
+
+## Version 0.6.2 – Glasnavigation und nachvollziehbare KI-Fehler
+
+- Schwarzer Hintergrund, neutrale iOS-Grautöne, blaue Akzente und Systemschrift; schwebende durchscheinende Navigation mit Reflexen und beweglicher Auswahlfläche.
+- Gut bedienbare Navigation bei 375/390/430 Pixeln; reduzierte Bewegung und reduzierte Transparenz/erhöhter Kontrast berücksichtigt. Glasoptik per CSS, kein natives Apple-Material.
+- Bilderkennung und Freistellung benennen ihre Fehler separat: bestätigtes Limit, volle Warteschlange, nicht verfügbar, Zugriff verweigert, Verbindung oder unbrauchbare Antwort. Unbekannte Fehler bleiben ausdrücklich unbekannt; keine pauschale Limitbehauptung.
+- Anbieterhinweise in HTTP- und Gradio-Fehlern einschliesslich Qwens `[ERROR]`-Text werden sicher ausgewertet. Wartezeit nur bei expliziter Anbieterangabe; sensible Rohdaten werden nicht angezeigt. Keine automatischen Wiederholungen und keine zusätzlichen Übertragungen oder Kosten.
+- Original und brauchbare Teilergebnisse bleiben erhalten. Datenschema und Sicherung bleiben Version 4.

@@ -238,7 +238,29 @@ for (const width of [375, 390, 430]) {
       path: testInfo.outputPath(`home-${width}.png`),
       fullPage: true,
     })
+    for (const button of await page
+      .getByRole('navigation', { name: 'Hauptnavigation' })
+      .getByRole('button')
+      .all()) {
+      const bounds = await button.boundingBox()
+      expect(bounds!.width).toBeGreaterThanOrEqual(44)
+      expect(bounds!.height).toBeGreaterThanOrEqual(44)
+    }
     await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+    await expect(
+      page.getByRole('button', { name: 'Mehr', exact: true }),
+    ).toHaveAttribute('aria-current', 'page')
+    await expect
+      .poll(async () => {
+        const lens = await page.locator('.glass-selection').boundingBox()
+        const selected = await page
+          .getByRole('button', { name: 'Mehr', exact: true })
+          .boundingBox()
+        return Math.abs(
+          lens!.x + lens!.width / 2 - selected!.x - selected!.width / 2,
+        )
+      })
+      .toBeLessThan(2)
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
     expect(
