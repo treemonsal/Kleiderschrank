@@ -192,7 +192,7 @@ describe('Migration und Datenintegrität', () => {
     await db.open()
     expect(await db.garments.toArray()).toEqual([closet[0]])
     expect(await db.outfits.count()).toBe(0)
-    expect(db.verno).toBe(3)
+    expect(db.verno).toBe(4)
   })
   it('verliert bei zwei gleichzeitigen Favoritenwechseln keine Aktion', async () => {
     await db.garments.put(closet[0])

@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten, keine Accounts, keine Bildübertragung.
 
-Version 0.4 ergänzt die lokale Farbprobe aus eigenen Fotos und schützt Outfit-Namen vor veralteten Bearbeitungen. Kalender, freiwilliges Wetter und lokale Outfit-Vorschläge bleiben erhalten. Prüfungen und Grenzen sind in [REVIEW.md](REVIEW.md) dokumentiert.
+Version 0.5 ergänzt echte lokale KI-Freistellung als experimentelle Option: Vorschau prüfen, bewusst übernehmen, Original behalten. Kleiderschrank, Farbprobe, lokale Outfit-Vorschläge, Vorlieben, Kalender und freiwilliges Wetter sind integriert. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
 
 ## Lokal starten
 
@@ -35,7 +35,16 @@ Die bereitgestellte **HTTPS-Adresse in Safari** öffnen. Teilen → „Zum Home-
 
 Im Kleidungseditor ein Foto hinzufügen und bei **Farbe** auf **Farbe aus Foto wählen** tippen. Eine einfarbige Stelle am Stoff antippen; die Positionsregler und Pfeiltasten helfen beim genauen Auswählen. Erst **Blau übernehmen** (beziehungsweise die vorgeschlagene Farbe) ändert das Farbfeld. Danach das Stück normal speichern oder Änderungen verwerfen. Die Farbe lässt sich weiterhin manuell ändern.
 
-Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Kleidererkennung, Freistellung und Outfit-Fotobewertung sind noch nicht eingebaut. Kandidaten und Voraussetzungen stehen in [IMAGE_ASSISTANCE.md](IMAGE_ASSISTANCE.md).
+Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Kleidererkennung und Outfit-Fotobewertung sind noch nicht eingebaut.
+
+## Hintergrund mit lokaler KI entfernen
+
+1. Ein Kleidungsstück mit Foto hinzufügen oder bearbeiten. **Hintergrund mit KI entfernen** aufklappen.
+2. Hinweise lesen und **Lokale KI starten** antippen. Beim ersten Start lädt die App etwa 19 MB Modelldaten und Laufzeit von derselben Website. Kein Foto wird gesendet. Ohne diese Aktion erfolgt kein Download dieser Dateien.
+3. Ergebnis prüfen. **Freistellung übernehmen** setzt die transparente Vorschau ins Formular; erst normales Speichern übernimmt sie dauerhaft. **Vorschau verwerfen** behält das bisherige Foto. Abbrechen beendet den laufenden Worker.
+4. **Originalfoto verwenden** holt das unverändert aufbewahrte Original zurück. Neue Fotoauswahl verwirft die dazugehörige alte Freistellung.
+
+Einzelne Stücke vor ruhigem Hintergrund eignen sich am besten. Das kleine U²-Net-Modell erkennt auffälligen Vordergrund; es versteht keine Kleidungskategorien, Passform oder Stilqualität. Kanten, Schatten und Muster können fehlerhaft sein. Die Funktion ist **experimentell und auf echtem iPhone noch nicht geprüft**; sie ist für die übrige App nicht erforderlich. Nach erfolgreichem ersten Laden arbeitet sie bei verfügbarem Cache auch offline. Unter **Mehr → KI-Dateien vom Gerät entfernen** lassen sich die etwa 19 MB Binärdateien löschen; Fotos und gespeicherte Freistellungen bleiben erhalten. Ein späterer Start benötigt dann wieder Netz. Quellen, Lizenzhinweise und Messgrenzen stehen in [IMAGE_ASSISTANCE.md](IMAGE_ASSISTANCE.md).
 
 ## Outfits und dein persönlicher Stil
 
@@ -50,7 +59,7 @@ Die Vorschläge verwenden lokale Regeln und deine manuell eingegebenen Merkmale.
 
 Wird ein Kleidungsstück gelöscht, werden gespeicherte Outfits, zugehörige Kalendereinträge und Rückmeldungen mit diesem Stück ebenfalls entfernt. Beim Löschen eines Outfits werden dessen Kalendereinträge entfernt; die Kleidung bleibt erhalten. Eine Änderung der Kategorie lässt den gespeicherten Look bestehen, zeigt aber bei einer dadurch unvollständigen Kombination einen Prüfhinweis.
 
-Neue Sicherungen (Version 3) enthalten Kleidung inklusive Fotos, Outfits, Rückmeldungen, Stilvorlieben, Kalender und gegebenenfalls den gerundeten Wetterort mit letzter Vorhersage aus einem konsistenten Datenbanksnapshot. Alte Sicherungen (Version 1 und 2) bleiben importierbar. **Ersetzen löscht alle Datenarten, die in der Sicherung fehlen**: Version 1 enthält keine Outfits/Vorlieben, Version 2 keinen Kalender/Wetterort. Beim Zusammenführen bleiben vorhandene Daten erhalten. Das Erscheinungsbild ist eine separate Browsereinstellung.
+Neue Sicherungen (Version 4) enthalten Kleidung inklusive Originalfotos und übernommener Freistellungen, Outfits, Rückmeldungen, Stilvorlieben, Kalender und gegebenenfalls den gerundeten Wetterort mit letzter Vorhersage. Alle Daten stammen aus einem konsistenten Datenbanksnapshot. Alte Sicherungen (Version 1, 2 und 3) bleiben importierbar. **Ersetzen löscht alle Datenarten, die in der Sicherung fehlen**: Version 1 enthält keine Outfits/Vorlieben, Version 2 keinen Kalender/Wetterort; Version 1–3 enthalten keine Freistellungen. Beim Zusammenführen bleiben fehlende Datensätze erhalten; bei gleicher ID wird der gesamte neuere Stückdatensatz gewählt. Das Erscheinungsbild und heruntergeladene KI-Dateien gehören nicht zur Sicherung.
 
 ## Kalender und Tragehäufigkeit
 
@@ -69,7 +78,7 @@ Wetter wird für bis zu sieben Tage gespeichert und mit Ortsname, Datenstand und
 
 Wetterquelle: [Open-Meteo](https://open-meteo.com/), Ortssuche basierend auf [GeoNames](https://www.geonames.org/), CC BY 4.0. Die kostenlose API ist für den privaten, nicht kommerziellen Gebrauch vorgesehen. Material, Isolation und Wasserdichtigkeit lassen sich aus den bisherigen Angaben nicht zuverlässig ableiten; Wetterregeln ersetzen keine eigene Prüfung.
 
-Fotos werden lokal auf maximal 1600 Pixel verkleinert und als JPEG neu erzeugt (weisser Hintergrund, keine Übernahme der ursprünglichen EXIF-Metadaten). HEIC funktioniert nur, wenn der Browser es decodieren kann; andernfalls JPEG/PNG/WebP verwenden. Die optionale Farbprobe benötigt keinen weiteren Modelldownload. Keine automatische Freistellung oder Kleidererkennung in Version 0.4.
+Originalfotos werden beim Import lokal auf maximal 1600 Pixel verkleinert und als JPEG neu erzeugt (weisser Hintergrund, keine Übernahme der ursprünglichen EXIF-Metadaten). Freistellungen werden separat als transparente PNGs bis 1200 Pixel gespeichert. HEIC funktioniert nur, wenn der Browser es decodieren kann; andernfalls JPEG/PNG/WebP verwenden. Die Farbprobe benötigt keinen Modelldownload. Die Freistellung ist echte lokale KI, keine Kleidungs- oder Outfitbewertung.
 
 ## Datenschutz und Sicherung
 
@@ -106,6 +115,16 @@ Für eine GitHub-Projektseite unter `/Kleiderschrank/` bauen:
 VITE_BASE_PATH=/Kleiderschrank/ npm run build
 ```
 
-Dann den Inhalt von `dist/` mit GitHub Pages bereitstellen (z. B. später über einen GitHub-Actions-Pages-Workflow) und die erzeugte HTTPS-Adresse auf dem iPhone öffnen. Für Hosting auf einer eigenen Root-Adresse genügt `npm run build`. Eine Veröffentlichung ist in dieser Entwicklungsphase nicht automatisch eingerichtet.
+Auch eine lokale Vite-Vorschau dieses Builds benötigt denselben Pfad: `VITE_BASE_PATH=/Kleiderschrank/ npm run preview`. Danach für normale Root-Tests wieder mit `npm run build` bauen.
+
+Der fertige manuell auslösbare Workflow liegt in `.github/workflows/pages.yml`. Er prüft Format/Daten und baut einschließlich eigener KI-Dateien für den richtigen Unterpfad:
+
+1. Bei einem **bereits öffentlichen Repository** auf GitHub unter **Settings → Pages → Source** „GitHub Actions“ wählen.
+2. Unter **Actions → MyStyle auf GitHub Pages → Run workflow** die Veröffentlichung starten.
+3. Nach erfolgreichem Lauf die vom Deployment ausgegebene HTTPS-Adresse in Safari öffnen. Keine Adresse als live betrachten, bevor der Lauf erfolgreich und die Seite erreichbar ist.
+
+Der Workflow startet nicht automatisch, verwendet Standard-Runner und überspringt private Repositories, um keine privaten kostenpflichtigen Minuten oder einen Tarifwechsel auszulösen. Die Sichtbarkeit wird nicht geändert. Ohne passenden kostenlosen Pages-Zugang kann der Root-Build als statische Website auf einem anderen kostenlosen HTTPS-Host bereitgestellt werden; keine kostenpflichtige Option aktivieren. Für eine eigene Root-Adresse genügt `npm run build`.
+
+GitHub-API und Pages-Domain sind hier derzeit durch die Cloud-Netzwerkfreigabe blockiert; die nötigen Ergänzungen sind im Konfigurationsentwurf gespeichert. Der Workflow ist vorbereitet, wurde aber noch nicht auf GitHub ausgeführt. Veröffentlichung und ein echter iPhone-Test bleiben externe Nachweise. Der Gerätetest ist in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
 
 Funktionsumfang und weitere Phasen: [PRODUCT.md](PRODUCT.md), [ROADMAP.md](ROADMAP.md).

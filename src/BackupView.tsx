@@ -23,6 +23,8 @@ import { validateBackupPhotos } from './photos'
 import type { Garment } from './model'
 import { storageError } from './db'
 import { ErrorMessage, Sheet } from './ui'
+import { AI_CACHE } from './background-model'
+import { version } from '../package.json'
 
 export type Theme = 'system' | 'light' | 'dark'
 export function BackupView({
@@ -50,6 +52,7 @@ export function BackupView({
     filename: string
   } | null>(null)
   const [help, setHelp] = useState(false)
+  const [aiMessage, setAiMessage] = useState('')
   useEffect(() => {
     void navigator.storage
       ?.estimate?.()
@@ -117,6 +120,39 @@ export function BackupView({
             Tracking, keine Bildübertragung.
           </p>
         </div>
+      </section>
+      <section className="settings-section">
+        <div className="section-heading">
+          <h2>Lokale Foto-KI</h2>
+        </div>
+        <p className="muted section-intro">
+          Die experimentelle Freistellung startet im Fotoeditor nur auf deinen
+          Wunsch. Ihre etwa 19 MB Modelldaten lassen sich entfernen. Deine Fotos
+          und gespeicherten Freistellungen bleiben dabei erhalten.
+        </p>
+        <button
+          type="button"
+          className="button secondary full"
+          onClick={async () => {
+            try {
+              await caches.delete(AI_CACHE)
+              setAiMessage(
+                'Die zwischengespeicherten KI-Dateien wurden entfernt. Beim nächsten Start ist eine Internetverbindung nötig.',
+              )
+            } catch {
+              setAiMessage(
+                'Der KI-Zwischenspeicher konnte nicht geöffnet werden. Deine Fotos sind unverändert.',
+              )
+            }
+          }}
+        >
+          KI-Dateien vom Gerät entfernen
+        </button>
+        {aiMessage && (
+          <p className="muted section-intro" role="status">
+            {aiMessage}
+          </p>
+        )}
       </section>
       <section className="settings-section">
         <div className="section-heading">
@@ -300,7 +336,7 @@ export function BackupView({
       <p className="app-signature">
         MyStyle <span>·</span> Mit weniger mehr du sein.
         <br />
-        <small>Version 0.3 · Lokal & persönlich</small>
+        <small>Version {version} · Lokal & persönlich</small>
       </p>
       {pending && (
         <Sheet

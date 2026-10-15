@@ -79,10 +79,10 @@ export function GarmentPicture({
   item,
   large = false,
 }: {
-  item: Pick<Garment, 'photo' | 'name' | 'category'>
+  item: Pick<Garment, 'photo' | 'cutout' | 'name' | 'category'>
   large?: boolean
 }) {
-  const url = usePhotoUrl(item.photo)
+  const url = usePhotoUrl(item.cutout ?? item.photo)
   return (
     <div className={`garment-picture ${large ? 'large' : ''}`}>
       {url ? (

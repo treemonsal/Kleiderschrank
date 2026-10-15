@@ -12,6 +12,7 @@ import { preparePhoto } from './photos'
 import { saveGarment, storageError } from './db'
 import { ErrorMessage, Sheet, usePhotoUrl } from './ui'
 import { PhotoColorPicker } from './PhotoColorPicker'
+import { BackgroundRemoval } from './BackgroundRemoval'
 
 export function Editor({
   item,
@@ -39,12 +40,13 @@ export function Editor({
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [processing, setProcessing] = useState(false)
+  const [assisting, setAssisting] = useState(false)
   const [dirty, setDirty] = useState(false)
   const [confirmDiscard, setConfirmDiscard] = useState(false)
   const [photoRevision, setPhotoRevision] = useState(0)
   const library = useRef<HTMLInputElement>(null)
   const camera = useRef<HTMLInputElement>(null)
-  const url = usePhotoUrl(draft.photo)
+  const url = usePhotoUrl(draft.cutout ?? draft.photo)
   useEffect(() => {
     if (!dirty) return
     const warn = (event: BeforeUnloadEvent) => {
@@ -68,6 +70,7 @@ export function Editor({
     setError('')
     try {
       update('photo', await preparePhoto(file))
+      update('cutout', undefined)
       setPhotoRevision((previous) => previous + 1)
     } catch (err) {
       setError(
@@ -148,6 +151,7 @@ export function Editor({
                 aria-label="Foto entfernen"
                 onClick={() => {
                   update('photo', undefined)
+                  update('cutout', undefined)
                   setPhotoRevision((previous) => previous + 1)
                 }}
               >
@@ -155,6 +159,15 @@ export function Editor({
               </button>
             )}
           </div>
+          {draft.photo && (
+            <BackgroundRemoval
+              key={photoRevision}
+              photo={draft.photo}
+              cutout={draft.cutout}
+              onChoose={(blob) => update('cutout', blob)}
+              onBusy={setAssisting}
+            />
+          )}
           <input
             ref={library}
             type="file"
@@ -327,7 +340,7 @@ export function Editor({
           <button
             className="button primary full"
             type="submit"
-            disabled={busy || processing || !draft.name.trim()}
+            disabled={busy || processing || assisting || !draft.name.trim()}
           >
             {busy ? <LoaderCircle className="spin" size={18} /> : null}
             {busy

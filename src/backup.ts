@@ -29,7 +29,7 @@ export interface BackupData {
 }
 const invalid = () =>
   new Error(
-    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1, 2 oder 3). Es wurde nichts verändert.',
+    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1, 2, 3 oder 4). Es wurde nichts verändert.',
   )
 export async function createDatabaseBackup(database = db): Promise<string> {
   const data = await database.transaction('r', database.tables, async () => ({
@@ -57,10 +57,11 @@ export async function createBackup(
     garments.push({
       ...item,
       photo: item.photo ? await blobToDataURL(item.photo) : undefined,
+      cutout: item.cutout ? await blobToDataURL(item.cutout) : undefined,
     })
   const json = JSON.stringify({
     app: 'MyStyle',
-    version: 3,
+    version: 4,
     exportedAt: new Date().toISOString(),
     ...extra,
     calendar: extra.calendar ?? [],
@@ -138,7 +139,7 @@ export function parseFullBackup(json: string): BackupData {
   if (
     !data ||
     data.app !== 'MyStyle' ||
-    ![1, 2, 3].includes(data.version) ||
+    ![1, 2, 3, 4].includes(data.version) ||
     !Array.isArray(data.garments) ||
     data.garments.length > 1000
   )
@@ -151,6 +152,9 @@ export function parseFullBackup(json: string): BackupData {
       const name = text(item.name, 100).trim()
       if (!id || !name || ids.has(id) || typeof item.favorite !== 'boolean')
         throw invalid()
+      const original = photo(item.photo)
+      const cutout = data.version >= 4 ? photo(item.cutout) : undefined
+      if (cutout && (!original || cutout.type !== 'image/png')) throw invalid()
       ids.add(id)
       return {
         id,
@@ -164,7 +168,8 @@ export function parseFullBackup(json: string): BackupData {
         favorite: item.favorite,
         createdAt: timestamp(item.createdAt),
         updatedAt: timestamp(item.updatedAt),
-        photo: photo(item.photo),
+        photo: original,
+        ...(cutout ? { cutout } : {}),
       }
     },
   )
@@ -244,7 +249,7 @@ export function parseFullBackup(json: string): BackupData {
   }
   const calendar: CalendarEntry[] = []
   let weather: WeatherState | null = null
-  if (data.version === 3) {
+  if (data.version >= 3) {
     if (
       !Array.isArray(data.calendar) ||
       data.calendar.length > MAX_CALENDAR_ENTRIES

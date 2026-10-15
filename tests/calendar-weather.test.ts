@@ -130,7 +130,7 @@ describe('Kalender, Migration und vollständige Sicherung', () => {
     try {
       expect(await upgraded.outfits.get(original.id)).toEqual(original)
       expect(await upgraded.calendar.count()).toBe(0)
-      expect(upgraded.verno).toBe(3)
+      expect(upgraded.verno).toBe(4)
     } finally {
       await upgraded.delete()
     }

@@ -50,11 +50,23 @@ Die Softwarefunktionen sind in Version 0.3 implementiert. Nach der Domainfreigab
 - [x] Kleine lokale Farbprobe ohne Modell oder Upload, mit expliziter Übernahme und manueller Korrektur
 - [x] Antippen, Tastatur/Positionsregler, Offline und unveränderte Fotodaten prüfen
 - [x] Unabhängige Gegenprüfung: Outfit-Namenskonflikte verhindern und Ersetzungswarnung vervollständigen
-- [ ] Konkrete Modellgewichte einschließlich Lizenz und Offline-Auslieferung auswählen
+- [x] Konkrete U2NETP-Modellgewichte einschließlich Lizenz, Prüfsumme und Offline-Auslieferung auswählen
 - [ ] Freistellung/Erkennung auf echtem iPhone prüfen: Genauigkeit, Downloadgröße, Speicher und Laufzeit
-- [ ] Erst nach geeignetem Ergebnis automatische Merkmale/Freistellung integrieren
+- [x] Echte Freistellung als getrennte experimentelle Option mit Vorschau und erhaltenem Original integrieren
+- [ ] Erst nach geeigneter Geräteprüfung Freistellung als stabile iPhone-Funktion einstufen; automatische Merkmale bleiben offen
 
-Version 0.4 liefert die Farbprobe; sie ist keine Kleidungs-KI. Bildbewertung bleibt ausstehend, solange keine geeignete kostenlose Lösung validiert ist. Keine Bildübertragung ohne ausdrückliche Zustimmung. Nächster Freigabeschritt für Modelle ist die dokumentierte Geräteprüfung, keine behauptete Simulation.
+Version 0.4 lieferte die Farbprobe. Version 0.5 ergänzt echte U2NETP-Inferenz im Browser, bewusst experimentell bis zur Geräteprüfung. Bildbewertung und Kleiderklassifikation bleiben ausstehend. Keine Bildübertragung ohne ausdrückliche Zustimmung. Der nächste Qualitätsnachweis für das Modell ist der dokumentierte echte iPhone-Test, keine behauptete Simulation.
+
+## Bereitstellung und letzte externe Nachweise
+
+- [x] Manuell startbarer GitHub-Pages-Workflow mit festen Action-Commits, Format-/Datenprüfung und Projektpfad-Build
+- [x] Private Repositories im Workflow überspringen; keine Sichtbarkeits- oder Tarifänderung
+- [x] Einfache Installations- und echte Gerätecheckliste in IPHONE_CHECK.md
+- [ ] GitHub Pages aktivieren, Workflow tatsächlich ausführen und öffentliche HTTPS-Seite prüfen
+- [ ] Cloud-Browser-Vertrauen für echten Wetter-/CORS-Test ausdrücklich freigeben
+- [ ] Echten iPhone-Test durchführen
+
+GitHub-API und Pages-Domain wurden in dieser Cloud mit Proxy-403 abgewiesen. Erforderliche Domainergänzungen sind als Entwurf gespeichert; Speichern ist kein Laufzeit-/Veröffentlichungsnachweis. Die erneut versuchte Aufnahme der Cloud-Proxy-CA wurde trotz allgemeiner Fertigstellungsfreigabe vom Auto-Review abgelehnt: Diese dauerhafte Vertrauensänderung erfordert eine ausdrückliche Einzelzustimmung. Keine Änderung ausgeführt, kein TLS-Bypass.
 
 ## Testprotokoll
 
@@ -104,3 +116,12 @@ Die Grenzen für echte iPhone-/Safari-, Kamera-, Installations-, Hosting- und We
 - Dunkle Farbprobe bei 390 Pixeln anhand Screenshot visuell geprüft. Synthetische Farbflächen belegen Funktion, keine Genauigkeit bei realer Kleidung.
 - Echte Wetterendpunkte nun per HTTPS erfolgreich; Live-Browserprüfung durch Cloud-Chromiums Zertifikatsvertrauen blockiert. Kein GPS verwendet, keine Prüfung umgangen. Details oben und in REVIEW.md.
 - Echte iPhone-/Safari-/WebKit-/HEIC-/Installations-/Speicherdruck- und Hostingprüfungen sowie Modellbenchmarks weiterhin nicht ausgeführt.
+
+### Version 0.5
+
+- Echtes U2NETP-Modell, Lizenzhinweise und ONNX Runtime Web lokal integriert. Vorschau/Übernahme, erhaltenes Original, Abbruch und separat löschbarer Offline-Cache. Keine Fotos übertragen, keine kostenpflichtige API. Experimentell bis zum echten iPhone-Test.
+- Datenbank-/Sicherungsformat 4 mit Original und transparentem PNG; Formate 1–3 lesbar. Beide Bilder validiert und in Kapazitätsgrenzen einbezogen.
+- `npm ci`, Produktionsbuild/TypeScript/PWA, 79 Datentests, 35 Chromium-Browserprüfungen und Formatprüfung bestanden. Tests umfassen echte Inferenz, Offline-Cache, Bilder-Wiederherstellung und Fehlerfälle. `npm audit --omit=dev` ohne bekannte Laufzeit-Schwachstellen zum Prüfzeitpunkt.
+- Projektpfad `/Kleiderschrank/` separat einschließlich Icons, echter Inferenz und Offline-Neuladen/erneuter Inferenz geprüft. Passende Base-Konfiguration auch beim lokalen Preview nötig. KI-Vorschau auf synthetischem Testhemd visuell geprüft.
+- Manuell auslösbarer GitHub-Pages-Workflow und Gerätecheckliste vorbereitet. Keine öffentliche Veröffentlichung behauptet. Echte iPhone-/Safari-/Kamera-/HEIC-/Speicherdruck-/Modelldatenqualitätsprüfungen bleiben offen.
+- Entwicklungsstart nach `npm ci` separat mit echter KI geprüft. Nachträgliche Vite-Neuladung beim ersten Worker durch frühzeitige ONNX-Abhängigkeitsoptimierung behoben; ungespeicherter Testname bleibt erhalten.

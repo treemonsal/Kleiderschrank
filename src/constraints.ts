@@ -14,9 +14,10 @@ export function assertWardrobeCapacity(items: Garment[]): void {
     )
   let bytes = 0
   for (const item of items) {
-    const { photo, ...metadata } = item
+    const { photo, cutout, ...metadata } = item
     bytes += new Blob([JSON.stringify(metadata)]).size + 64
     if (photo) bytes += 4 * Math.ceil(photo.size / 3) + 64
+    if (cutout) bytes += 4 * Math.ceil(cutout.size / 3) + 64
   }
   if (bytes > 90 * 1024 * 1024)
     throw new UserFacingError(

@@ -36,6 +36,7 @@ export class WardrobeDatabase extends Dexie {
       calendar: 'id, day, outfitId, status, updatedAt',
       weather: 'id',
     })
+    this.version(4).stores({ garments: 'id, category, updatedAt' })
   }
 }
 export async function deleteGarment(id: string, database = db): Promise<void> {

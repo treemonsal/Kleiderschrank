@@ -6,6 +6,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   // VITE_BASE_PATH=/Kleiderschrank/ npm run build for GitHub project Pages.
   base: process.env.VITE_BASE_PATH || '/',
+  // Worker-only inference dependency must be ready before editing a photo;
+  // late discovery would reload Vite and discard an unsaved draft.
+  optimizeDeps: { include: ['onnxruntime-web/wasm'] },
   plugins: [
     react(),
     tailwindcss(),
@@ -34,10 +37,12 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Models/WASM are fetched only after explicit opt-in by the user.
         globPatterns: ['**/*.{js,css,html,png,svg,webmanifest}'],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
       },
     }),
   ],
+  worker: { format: 'es' },
 })

@@ -1,8 +1,8 @@
 export const MAX_PHOTO_BYTES = 20 * 1024 * 1024
 export async function validateBackupPhotos(
-  items: { photo?: Blob }[],
+  items: { photo?: Blob; cutout?: Blob }[],
 ): Promise<void> {
-  for (const { photo } of items) {
+  for (const photo of items.flatMap((item) => [item.photo, item.cutout])) {
     if (!photo) continue
     const url = URL.createObjectURL(photo)
     try {

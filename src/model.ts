@@ -43,6 +43,7 @@ export interface Garment {
   notes: string
   favorite: boolean
   photo?: Blob
+  cutout?: Blob
   createdAt: string
   updatedAt: string
 }

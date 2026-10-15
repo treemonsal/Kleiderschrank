@@ -52,3 +52,12 @@ Version 0.4 ergänzt eine optionale lokale Farbprobe mit expliziter Übernahme i
 Reale, überprüfbare Funktionen; verständliche Fehler und leere Zustände; keine Attrappen. Automatisierte Daten- und Browserprüfungen, Darstellung bei 375, 390 und 430 Pixeln sowie dunkles Design. Echte iPhone-Tests bleiben vor langfristiger Verwendung nötig (Kamera, Fotomediathek, Download/Import, Homescreen, Offline, Speicherdruck).
 
 Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
+
+## Version 0.5 – echte lokale Freistellung und Bereitstellung
+
+- Optionale experimentelle Freistellung mit U2NETP/ONNX Runtime Web, ohne Fotoübertragung oder kostenpflichtige API. Einmaliger bewusster Download von rund 19 MB, lokale SHA-256-Prüfung und Offline-Cache; kein Hintergrunddownload des Modells.
+- Berechnung in beendbarem Worker mit einem CPU/WASM-Thread; Vorschau, bewusste Übernahme, Verwerfen und Rückkehr zum Original. Original und transparente PNG werden separat gespeichert. Keine automatische Kleidungs-/Stilerkennung oder Fotobewertung behauptet.
+- Additive Datenbankversion 4; Sicherungsversion 4 umfasst beide Fotovarianten. Formate 1–3 bleiben lesbar, alle Bilddateien werden vor Import decodiert. Kapazitätsgrenzen zählen beide Blobs.
+- Selbst gehostete Modell-/Laufzeitdateien und Lizenzhinweise. Keine Bezahlangebote, keine zusätzlichen Schlüssel. Cache kann ohne Verlust von Fotos entfernt werden.
+- Root-/GitHub-Projektseiten-Build und manuell auslösbarer Pages-Workflow. Keine Änderung der Repository-Sichtbarkeit; private Repositories werden vom Workflow übersprungen.
+- Qualitätsnachweis auf echtem iPhone und tatsächliche öffentliche Bereitstellung fehlen weiterhin. Die experimentelle Option wird getrennt von den bereits nutzbaren Kernfunktionen angeboten; sie ist keine Zusicherung zuverlässiger iPhone-Segmentierung.
