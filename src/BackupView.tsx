@@ -111,8 +111,8 @@ export function BackupView({
           <h2>Privat ist hier der Standard.</h2>
           <p>
             Dein Kleiderschrank wird auf diesem Gerät gespeichert. Nur mit
-            aktivierter Online-KI wird das ausgewählte Foto an deinen
-            verbundenen KI-Server gesendet. Kein Tracking.
+            aktivierter Online-KI wird das ausgewählte Foto an die von dir
+            freigegebenen KI-Dienste gesendet. MyStyle verwendet kein Tracking.
           </p>
         </div>
       </section>

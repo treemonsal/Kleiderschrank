@@ -1,3 +1,26 @@
+# Aktuelle Prüfung – Version 0.6.1, 15. Oktober 2026
+
+## Kosten und tatsächlicher Zugang
+
+- Sicher gespeicherter HF_TOKEN ist in dieser Sitzung angekommen. `/api/whoami-v2` bestätigt HTTP 200 und Rolle `write`; E-Mail bestätigt. Es wurden keine Tokenwerte ausgegeben oder ins Frontend kopiert.
+- Beide tatsächlichen Erstellungsversuche (explizites CPU Basic und dokumentierter Standard ohne Hardwareparameter) wurden mit HTTP 402 abgewiesen. Anbietertext: Docker/Gradio auf CPU Basic erfordert PRO; nur Static Spaces bleiben allgemein gratis. Kontostand `canPay=false`, keine bestehenden Spaces und kein neuer Space angelegt. Offizielle [Provider-Preise](https://huggingface.co/docs/inference-providers/pricing) nennen aktuell keine Gratis-Credits für Free-Accounts. Keine Zahlung oder kostenpflichtige Ressource ausgelöst. Frühere Hostingannahme korrigiert.
+
+## Echte kostenlose Verarbeitung
+
+- Öffentlich dokumentierte Gradio-APIs ohne Anbieterschlüssel von Qwen3-VL-Outpost und offizieller BiRefNet-Demo verwendet. Keine versteckten Endpunkte, keine Zugriffsbeschränkung umgangen, keine Identitätswechsel, keine automatischen Limit-Wiederholungen. Öffentliche Demo-Verfügbarkeit ist keine dauerhafte SLA.
+- Drei echte öffentliche Kleidungsbilder aus `levihsu/OOTDiffusion/run/examples/garment/`: VANS-Shirt, FILA-Shirt und gestreiftes langärmeliges Oberteil. VANS/FILA korrekt gelesen, beim nicht eindeutig lesbaren Etikett die Marke leer gelassen. Kategorie jeweils Oberteile; sichtbare Farben/Details plausibel. Zweiter/dritter Erkennungsaufruf 12,4 s/6,2 s. Beim Streifenoberteil ist „Strickpullover“ als Name eine Modellinterpretation; Material/Art und Saison können falsch sein. Kleine Stichprobe, keine allgemeine Qualitätsgarantie.
+- Vollständiger echter PWA-Ablauf: Freigabe/Verbindungsprüfung → JPEG-Upload → beide Dienste → alle Merkmale → transparente PNG-Vorschau → bewusste Übernahme → lokales Speichern. Acht echte HTTP-Anfragen, keine Anbieter-Credentials und keine Seitenfehler. VANS, Violett, Oberteile geprüft. Screenshot visuell kontrolliert: Hintergrund entfernt, Shirt vollständig erhalten.
+- Cloud-Chromium vertraut dem Proxy-Zertifikat weiterhin nicht. Für diesen Live-Browserlauf wurden externe Requests durch eine Host-HTTP-Brücke mit aktiver System-TLS-Prüfung transportiert; keine TLS-Prüfung ausgeschaltet. Echte Anbieterantworten/CORS erlauben `https://treemonsal.github.io`. Dies ist ausdrücklich kein nativer Safari-/iPhone-Test.
+- Die optionale eigene Qwen2B-Inferenz läuft nach angewandter CDN-Freigabe ebenfalls tatsächlich: passendes Vans/Violett-Ergebnis, 428,9 s inklusive Download/Import, 12.606 MiB Spitzen-RSS. Kein kostenloser dauerhafter HF-Server daraus entstanden.
+
+## Daten, Fehler und Tests
+
+- 90 Vitest-Tests und alle 42 Chromium-Fälle bestanden. Neue Prüfungen: fertige SSE-Antwort statt Zwischenstand, feste Ergebnis-Hosts, keine Anbieter-Keys, explizite Community-Freigabe, keine Fotoübertragung beim Öffnen der App/Bestandsbearbeitung, intaktes Teilergebnis trotz 429, keine wiederholten Limit-Aufrufe und sofortiger Widerruf während laufender Aktivierung. Bestehende lokale Freistellung/Offline/Backup/CRUD/Outfit/Kalender/Wetter-Fälle weiterhin bestanden.
+- Foto wird an zwei klar benannte Drittanbieter gesendet. BiRefNet benutzt temporäre Upload-/Ergebnisdateien mit URLs; keine Garantie über deren Aufbewahrung/Löschung behauptet. Die Hinweise stehen vor der Gerätefreigabe. Bestehende Sammlung bleibt lokal, kein Schema-/Backupformatwechsel, Original separat erhalten. Verbindungseinstellungen nicht in Backups.
+- Keine bezahlten oder versteckten Ausweichdienste, begrenzte Text-/Bildantworten, PNG-Magie/Dimensionen/Decode geprüft, CORS und Eingabedaten durch echte Vertragsaufrufe ergänzt. Eigener Server bleibt separat optional; dessen alte Vorlage ist nicht mehr als kostenloses HF-Angebot beworben.
+
+## Historie bis Version 0.6
+
 # Aktuelle Prüfung – Version 0.6, 15. Oktober 2026
 
 - Gewünschter Dunkelmodus und Apple-inspirierte Systemtypografie/Flächen/Navigation umgesetzt. Farben der PWA und Installationsicons angepasst. Bei hellem Betriebssystem und alter gespeicherter Hell-Auswahl bleibt die App dunkel. Keine Kleiderschrank-Migration nötig.

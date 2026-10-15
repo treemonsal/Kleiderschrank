@@ -138,3 +138,12 @@ Am 15. Oktober 2026 nach manueller Pages-Einrichtung durch den Nutzer veröffent
 - [x] Getrennte Fehlerpfade, Schema-/Uploadprüfung und Verbindung mit ausdrücklicher Foto-Freigabe.
 - [ ] Kostenlosen Hosting-Account verbinden und Server bereitstellen (HF_TOKEN fehlt).
 - [ ] Echte Kleidungsfotos auf bereitgestelltem Server und Safari/iPhone prüfen; Cloud-Vertragstests ersetzen keine Qualitätsprüfung.
+
+## Version 0.6.1 – kostenloser Betrieb tatsächlich geprüft
+
+- [x] HF-Zugang sicher eingebunden und mit Write-Rolle bestätigt.
+- [x] Hostingannahme durch echten API-Aufruf geprüft: HF-Docker benötigt PRO, deshalb kein eigener Server erstellt und keine Kosten ausgelöst.
+- [x] Alternative über kostenlose öffentliche Community-APIs mit echten Fotoanfragen geprüft und integriert.
+- [x] Kein Token/Server im normalen App-Import mehr nötig. Klare Einwilligung und Hinweise auf temporäre Drittanbieter-Dateien/Limits.
+- [x] Echten Fotoimport inklusive aller Merkmale, transparenter Vorschau und Speichern erfolgreich durchlaufen.
+- [ ] Native Safari-/iPhone-Prüfung durch Benutzer; Cloud-Browser mit TLS-geprüfter HTTP-Brücke ersetzt das nicht.

@@ -9,23 +9,23 @@ pinned: false
 license: mit
 ---
 
-MyStyle: kostenlose CPU-Bildverarbeitung für die private Kleiderschrank-PWA.
+MyStyle: optionale selbst gehostete CPU-Bildverarbeitung. **Nicht der aktuelle kostenlose Standardweg der App.** Seit dem tatsächlichen Deploymentversuch am 15.10.2026 bestätigt die Hugging-Face-API HTTP 402: Auch Docker mit CPU Basic benötigt dort PRO. Es wurde kein kostenpflichtiger Dienst angelegt. Der Softwarecode ist frei nutzbar, die Hostingkosten hängen vom Anbieter ab.
 
-- **Qwen3-VL-2B-Instruct** (Apache 2.0): Bildverständnis, deutsche Merkmale. Unsichere Marken leer lassen. Kein erfundenes Material.
-- **BiRefNet-General-Lite** über rembg (MIT): Freistellung auf dem Server statt iPhone-WASM. Separate Vorschau, Original bleibt erhalten.
-- Keine bezahlte API. Nur kostenlose **CPU Basic** Hardware wählen; keine GPU, Upgrades oder Zahlungsdaten erforderlich. Bei Inaktivität schläft der Space. Modellstart und CPU-Erkennung können mehrere Minuten dauern. Eine kostenlose Instanz bietet keine Verfügbarkeitsgarantie.
-- Fotos werden nur im Arbeitsspeicher verarbeitet, nicht absichtlich gespeichert oder geloggt. Hugging Face betreibt die Infrastruktur; deren Datenschutzbedingungen gelten. Keine vollständige Sammlung hochladen, sondern nur das ausgewählte vorbereitete JPEG.
+- **Qwen3-VL-2B-Instruct** (Apache 2.0) erkennt deutsche Merkmale.
+- **BiRefNet-General-Lite** über rembg (MIT) erstellt Freistellungen.
+- Fotos werden vom eigenen Server nur im RAM verarbeitet und nicht absichtlich gespeichert oder geloggt. Das gilt nicht automatisch für andere Hostinganbieter oder die separaten öffentlichen Community-Dienste.
+- Die App bietet alternativ kostenlose Community-KI ohne Account/Token an. Hinweise im Haupt-README. Keine Serverbereitstellung nötig.
 
 ## Bereitstellen
 
-1. Kostenlosen Hugging-Face-Account erstellen. Neuen **Docker Space**, **Blank**, **CPU Basic / Free** erstellen. Sichtbarkeit kann öffentlich sein: Quellcode ist öffentlich, Foto-Endpunkt benötigt immer einen Code.
+1. Nur auf bereits verfügbarer eigener Infrastruktur oder einem ausdrücklich autorisierten Hostingplan betreiben. Für Hugging Face wäre aktuell PRO erforderlich; das ist nicht mit der Kosten-Null-Vorgabe dieser Aufgabe vereinbar. Keine kostenpflichtige Bereitstellung ohne gesonderten Auftrag. Die folgenden Space-Schritte beschreiben nur die technische Vorlage: **Docker Space**, **Blank**, **CPU Basic**. Sichtbarkeit kann öffentlich sein: Quellcode ist öffentlich, Foto-Endpunkt benötigt immer einen Code.
 2. Dateien dieses Ordners in den Space hochladen (Dockerfile muss im Space-Root liegen).
 3. Unter Settings → Variables and secrets als **Secret** `MYSTYLE_ACCESS_CODE` setzen: mindestens 24 zufällige Zeichen, empfohlen `python -c "import secrets; print(secrets.token_urlsafe(32))"`. Diesen persönlichen Verbindungscode nur auf deinem Gerät eingeben. Niemals einen Hugging-Face- oder GitHub-Token in der PWA verwenden.
 4. Variable `ALLOWED_ORIGINS=https://treemonsal.github.io` setzen. Ohne Konfiguration ist das der Standard. Für lokale Tests zusätzlich den eigenen exakten Entwicklungs-Origin erlauben.
 5. Wenn der Space „Running“ anzeigt: seine direkte **https://… .hf.space**-Adresse in MyStyle → Mehr → Online-Foto-KI eintragen, Verbindungscode eingeben, Fotoübertragung aktivieren, verbinden.
 6. Neues Kleidungsfoto hinzufügen. Angaben werden automatisch vorbereitet; Freistellung vor dem Speichern prüfen. Ein einzelnes Stück bei gutem Licht hilft der Erkennung. Eine Etikettaufnahme ist für eine unbekannte Marke weiter nötig.
 
-Ein Entwickler mit sicher eingebundenem `HF_TOKEN` (Write-Scope für Spaces) kann stattdessen `python scripts/deploy_photo_ai.py --name mystyle-photo-ai` im Hauptrepository ausführen. Das Skript wählt ausdrücklich CPU Basic und legt keine kostenpflichtige Hardware an. Es veröffentlicht diese Serverdateien im öffentlichen Space, nicht deine Fotos. Der persönliche Verbindungscode wird zufällig erzeugt und als Space-Secret sowie lokal in einer ignorierten Datei abgelegt.
+Ein Entwickler mit sicher eingebundenem `HF_TOKEN` (Write-Scope für Spaces) kann stattdessen `python scripts/deploy_photo_ai.py --name mystyle-photo-ai` im Hauptrepository ausführen. Das Skript wählt ausdrücklich CPU Basic an. Das schützt vor GPU-Upgrades, beseitigt aber nicht die inzwischen bestätigte PRO-Pflicht. Für diese kostenlose App nicht mehr als Standard-Deployment verwenden. Es veröffentlicht diese Serverdateien im öffentlichen Space, nicht deine Fotos. Der persönliche Verbindungscode wird zufällig erzeugt und als Space-Secret sowie lokal in einer ignorierten Datei abgelegt.
 
 ## Betrieb und Grenzen
 

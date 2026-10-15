@@ -5,6 +5,7 @@ export interface AIConnection {
   url: string
   code: string
   enabled: boolean
+  mode?: 'server' | 'community'
 }
 export type PhotoAttributes = Pick<
   GarmentDraft,
@@ -17,6 +18,18 @@ export interface AIResult {
 }
 const KEY = 'mystyle-photo-ai'
 export function validateConnection(value: AIConnection): AIConnection {
+  if (typeof value.enabled !== 'boolean')
+    throw new Error('Die Foto-Freigabe ist ungültig.')
+  if (value.mode === 'community') {
+    if (
+      value.url !== 'https://prithivmlmods-qwen3-vl-outpost.hf.space' ||
+      value.code !== ''
+    )
+      throw new Error('Der Community-Dienst ist ungültig.')
+    return { ...value, mode: 'community' }
+  }
+  if (value.mode !== undefined && value.mode !== 'server')
+    throw new Error('Unbekannte KI-Verbindung.')
   const url = new URL(value.url.trim())
   if (
     url.protocol !== 'https:' ||
@@ -130,6 +143,10 @@ export async function checkAIConnection(
   signal: AbortSignal,
 ) {
   const c = validateConnection(connection)
+  if (c.mode === 'community') {
+    const { checkCommunity } = await import('./community-ai')
+    return checkCommunity(signal)
+  }
   const response = await fetch(`${c.url}/health`, {
     headers: { Authorization: `Bearer ${c.code}` },
     signal,
@@ -153,6 +170,10 @@ export async function analyzePhoto(
     throw new Error(
       'Das Foto ist für die Online-KI zu gross oder nicht vorbereitet.',
     )
+  if (c.mode === 'community') {
+    const { analyzeCommunityPhoto } = await import('./community-ai')
+    return analyzeCommunityPhoto(photo, signal)
+  }
   const response = await fetch(`${c.url}/v1/garment`, {
     method: 'POST',
     headers: {

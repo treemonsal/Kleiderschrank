@@ -99,7 +99,7 @@ export function PhotoAssistant({
           <p>
             {connection?.enabled
               ? 'Erkennen, ausfüllen und freistellen.'
-              : 'Online-KI noch nicht verbunden. Einrichtung unter Mehr → Online-Foto-KI. Du kannst dein Stück jederzeit manuell speichern.'}
+              : 'Online-KI noch nicht verbunden. Kostenlose KI unter Mehr → Online-Foto-KI aktivieren. Du kannst dein Stück jederzeit manuell speichern.'}
           </p>
         </div>
       </div>
@@ -112,8 +112,9 @@ export function PhotoAssistant({
                 {status}
               </p>
               <p className="muted">
-                Kostenloser Server: Der Start und die Analyse können mehrere
-                Minuten dauern.
+                {connection.mode === 'community'
+                  ? 'Community-Dienste können Warteschlangen und Tageslimits haben. Bitte halte die App während der Analyse geöffnet.'
+                  : 'Der Start und die Analyse können mehrere Minuten dauern.'}
               </p>
               <button
                 className="button secondary full"

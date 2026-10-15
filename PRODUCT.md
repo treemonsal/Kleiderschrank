@@ -1,6 +1,6 @@
 # MyStyle
 
-Privater Fashion-Begleiter für das eigene iPhone. Eine installierbare, deutschsprachige PWA, die Kleidung lokal verwaltet. Kein App Store, keine Abonnements, keine bezahlten APIs, kein Konto für den lokalen Kleiderschrank. Optionale externe Bild-KI ist ausdrücklich gewünscht, bleibt kostenlos und benötigt einen eigenen kostenlosen Hosting-Zugang. Eigene Gestaltung, inspiriert von klaren iPhone-Oberflächen und moderner Fashion-Ästhetik.
+Privater Fashion-Begleiter für das eigene iPhone. Eine installierbare, deutschsprachige PWA, die Kleidung lokal verwaltet. Kein App Store, keine Abonnements, keine bezahlten APIs, kein Konto für den lokalen Kleiderschrank. Optionale externe Bild-KI ist ausdrücklich gewünscht, bleibt kostenlos und nutzt nach Freigabe klar benannte öffentliche Community-Dienste. Ein eigener Server ist optional, aber kein kostenloses HF-Docker-Hosting. Eigene Gestaltung, inspiriert von klaren iPhone-Oberflächen und moderner Fashion-Ästhetik.
 
 ## Erste Version
 
@@ -69,3 +69,11 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 - Nach verbundener und freigegebener Online-KI startet ein neues Foto automatisch die Analyse: Name, Kategorie, Farbe, Marke, Saison, Stil, Notizen. Alles bleibt korrigierbar. Während der Anfrage geänderte Felder haben Vorrang. Marken unbekannt lassen; Material nicht erfinden.
 - Servervorlage für kostenloses Hugging Face CPU Basic: Qwen3-VL-2B-Instruct für Merkmale, BiRefNet-General-Lite für Freistellung. Keine bezahlte API. Getrennte Teilergebnisse und Freistellungsvorschau; Original, Backup und lokale Daten bleiben erhalten.
 - Server-Verbindung benötigt eigenen Hosting-Zugang. Code und Dateien sind vorbereitet; ohne Deployment ist die Online-KI ausdrücklich nicht betriebsbereit. Kaltstart, echte Qualität und Laufzeiten sind gesondert zu prüfen. CPU kann langsam sein, kostenloses Hosting schläft.
+
+## Version 0.6.1 – echte kostenlose Community-Erkennung
+
+- Gültiger HF-Write-Token bestätigt. Tatsächliche Erstellung eines eigenen CPU-Docker-Spaces scheitert an neuer PRO-Pflicht (HTTP 402). Keine kostenpflichtige Ressource angelegt; frühere kostenlose Hostingannahme korrigiert.
+- Stattdessen zwei öffentlich angebotene, ohne Provider-Key aufrufbare Gradio-APIs: Qwen3-VL-Outpost (4B Instruct) und offizielle BiRefNet-Demo. Echte Bildverarbeitung und ganzer Fotoimport erfolgreich geprüft, nicht nur Mock-Antworten.
+- Einmalige Foto-Freigabe in der App statt Serveradresse/Token. Fotos gehen gezielt an die beiden benannten Anbieter; BiRefNet verwendet temporäre Dateien, deren Löschdauer wir nicht garantieren können. Keine pauschale Behauptung „keine Bildspeicherung“ für Community-Betrieb.
+- Warteschlangen und Nutzungslimits sichtbar; begrenzte Antworten, nur definierte HTTPS-Anbieter, keine Credentials/Referrer, keine fremden Ergebnis-URLs oder automatischen Wiederholungen. Ausfall eines Teils erhält den anderen; Originale bleiben gespeichert.
+- Widerruf wirkt sofort, auch während Verbindungsprüfung. Bestandsfotos werden beim Öffnen/Bearbeiten nicht automatisch gesendet. Kein neues Datenschema oder Backupformat.

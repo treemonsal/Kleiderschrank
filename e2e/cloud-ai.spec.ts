@@ -176,6 +176,7 @@ test('Verbindung benötigt Foto-Freigabe; Ausschalten verhindert weitere Uploads
   })
   await page.goto('/')
   await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page.getByText('Eigenen Server verbinden', { exact: true }).click()
   await page.getByLabel('KI-Server', { exact: true }).fill(url)
   await page.getByLabel('Verbindungscode', { exact: true }).fill(code)
   await expect(

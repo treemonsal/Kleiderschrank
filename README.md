@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten, keine Accounts, keine Bildübertragung.
 
-Version 0.6 bringt einen konsequenten Dunkelmodus und den automatischen Fotoimport über einen optionalen kostenlosen KI-Server. Der Server muss einmal eingerichtet werden; ohne Verbindung werden keine Fotos gesendet. Die lokale experimentelle Freistellung bleibt als Alternative. Kleiderschrank, Farbprobe, lokale Outfit-Vorschläge, Vorlieben, Kalender und freiwilliges Wetter sind integriert. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
+Version 0.6.1 ergänzt kostenlose Community-KI: Qwen3-VL erkennt Kleidungsmerkmale, BiRefNet entfernt den Hintergrund. Einmal unter **Mehr → Online-Foto-KI** die Fotoübertragung erlauben und **Kostenlose KI aktivieren** wählen. Kein Token, Konto oder eigener Server nötig. Ohne Freigabe werden keine Fotos gesendet. Die lokale experimentelle Freistellung bleibt als Alternative. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — am 15. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
@@ -41,13 +41,14 @@ Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert
 
 ## Foto automatisch erfassen
 
-1. Einmal den kostenlosen KI-Server nach [server/README.md](server/README.md) einrichten. GitHub Pages selbst kann keine Server-KI ausführen. Keine bezahlte API und kein Zahlungsprofil nötig.
-2. **Mehr → Online-Foto-KI**: eigene `https://… .hf.space`-Adresse und persönlichen Verbindungscode eingeben, Fotoübertragung freigeben und verbinden. Keinen GitHub-/Hugging-Face-Token in die App eingeben.
-3. Neues Foto aufnehmen oder aus der Mediathek wählen. Die KI bereitet alle Angaben vor. Stil/Saison sind Schätzungen; Marke bleibt ohne lesbares Logo leer. Während der Analyse selbst geänderte Felder werden erhalten.
-4. Freistellung prüfen und bei gutem Ergebnis übernehmen. Mit **Zum Kleiderschrank hinzufügen** speichern. Die Originalaufnahme bleibt zusätzlich erhalten. Bei Fehlern kannst du wiederholen oder manuell speichern.
-5. **Online-KI ausschalten** beendet die Freigabe für weitere Fotos. Bereits lokal gespeicherte Stücke bleiben erhalten. Verbindung und Code werden nicht in Backups exportiert.
+1. **Mehr → Online-Foto-KI** öffnen. Die genannten Anbieter und Datenschutzhinweise lesen, Fotoübertragung erlauben und **Kostenlose KI aktivieren** antippen. Dafür brauchst du keinen Token und kein Abo.
+2. Neues Foto aufnehmen oder aus der Mediathek wählen. Qwen3-VL-Outpost erkennt Name, Kategorie, Farbe und sichtbare Marke sowie Notizen, Stil und Saison. Marke ohne lesbares Zeichen leer lassen; Stil/Saison sind Schätzungen. Alle Angaben bleiben korrigierbar. Während der Analyse selbst geänderte Felder bleiben erhalten.
+3. BiRefNet erstellt eine transparente Vorschau. **Freistellung übernehmen** oder **Original behalten** wählen, dann das Stück speichern. Das vorbereitete Originalfoto bleibt zusätzlich erhalten und wird mitgesichert.
+4. **Community-KI ausschalten** oder die Foto-Freigabe abwählen verhindert neue Übertragungen. Die vorhandene Sammlung bleibt auf deinem Gerät. Das Öffnen/Bearbeiten gespeicherter Stücke lädt sie nicht automatisch hoch.
 
-Kostenlose CPU-Server können schlafen; Start und Analyse können Minuten dauern. Der Code enthält keine bezahlten Ausweichdienste. Die Erkennung braucht einen echten Qualitätstest nach Bereitstellung. Angaben und Freistellung funktionieren unabhängig: ein fehlgeschlagener Teil verwirft keinen brauchbaren anderen Teil.
+Die App nutzt die öffentlich angebotenen Gradio-APIs von [Qwen3-VL-Outpost](https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost) und der [offiziellen BiRefNet-Demo](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo). **Das sind öffentliche Community-Dienste, kein privater MyStyle-Server.** Das ausgewählte Foto wird an beide übertragen; die Freistellung nutzt temporäre Dateien auf dem Server des Anbieters. Speicher-/Löschdauer können wir nicht garantieren. Fotos mit Personen oder privaten Hintergründen vermeiden. Es gibt keine Verfügbarkeitsgarantie; Warteschlangen, Tageslimits und Abschaltungen sind möglich. Dann bleibt das Foto erhalten, ein brauchbares Teilergebnis wird nicht verworfen. Keine automatischen Ausweichanbieter, Provider-Schlüssel oder bezahlten Wiederholungen.
+
+Ein eigener kompatibler Server bleibt unter **Eigenen Server verbinden** optional. Unsere frühere Annahme, einen Docker-Space auf Hugging Face kostenlos selbst zu betreiben, war falsch: Die aktuelle API verlangt dafür PRO (HTTP 402). Auch Inference Providers bieten Free-Accounts aktuell keine Gratis-Credits. Der kostenlose App-Modus verwendet diese kostenpflichtigen Angebote nicht.
 
 ## Hintergrund mit lokaler KI entfernen
 
@@ -141,6 +142,6 @@ Das Repository wurde vom Nutzer öffentlich gestellt und Pages aktiviert. Anschl
 
 Funktionsumfang und weitere Phasen: [PRODUCT.md](PRODUCT.md), [ROADMAP.md](ROADMAP.md).
 
-## Update 0.6
+## Historie: Update 0.6
 
-Die neue dunkle Oberfläche ist unter derselben App-Adresse veröffentlicht. Öffne MyStyle online und tippe bei „Eine neue Version ist bereit“ auf **Jetzt aktualisieren**. Deine lokale Sammlung bleibt erhalten. Neue Icons können auf bereits angelegten iPhone-Verknüpfungen vom Betriebssystem zwischengespeichert sein. Die Online-KI benötigt weiterhin den einmalig einzurichtenden kostenlosen Server; ein App-Update allein verbindet ihn nicht.
+Die neue dunkle Oberfläche ist unter derselben App-Adresse veröffentlicht. Öffne MyStyle online und tippe bei „Eine neue Version ist bereit“ auf **Jetzt aktualisieren**. Deine lokale Sammlung bleibt erhalten. Neue Icons können auf bereits angelegten iPhone-Verknüpfungen vom Betriebssystem zwischengespeichert sein. Diese Server-Voraussetzung galt für die frühere Version 0.6. Ab 0.6.1 kann stattdessen die kostenlose Community-KI direkt in der App freigegeben werden.

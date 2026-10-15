@@ -1,3 +1,17 @@
+# Aktueller Stand 0.6.1 – kostenlos ohne eigenen Server
+
+Die eigene HF-Serverbereitstellung wurde tatsächlich versucht. Der Token ist gültig, die E-Mail bestätigt, aber die Plattform verlangt aktuell PRO für Docker/Gradio-Spaces auf CPU Basic (HTTP 402). Offizielle Inference-Provider-Preise nennen für Free-Accounts ebenfalls keine Gratis-Credits mehr. Deshalb keine bezahlte Ressource und kein Umgehen einer Zugangsbeschränkung.
+
+Aktueller Standard ist nach ausdrücklicher Freigabe die kostenlose Nutzung zweier öffentlich angebotener Gradio-APIs: `prithivMLmods/Qwen3-VL-Outpost` (`/run_router`, Qwen3-VL-4B-Instruct) für strukturierte Merkmale und `ZhengPeng7/BiRefNet_demo` (`/image`) für den transparenten Hintergrund. Keine Anbieterschlüssel und kein eigener Server. Öffentlich dokumentierte Schnittstellen ohne Authentifizierung verwendet; keine versteckten Qwen-Demo-Endpunkte umgangen. Nutzungslimits werden als Fehler angezeigt, nicht mit Identitäts-/IP-Wechseln umgangen.
+
+Beide Anbieter und Datenübertragung werden vor Aktivierung sichtbar benannt. BiRefNet erhält einen Upload und stellt temporäre Ergebnisdateien bereit; Aufbewahrung/Löschung ist nicht unter unserer Kontrolle. Nicht behaupten, diese Drittanbieterverarbeitung wäre ausschliesslich im RAM oder privat selbst gehostet. Fotos mit Personen/privaten Hintergründen vermeiden. Bestehende Sammlung bleibt lokal; nur bewusst ausgewählte Fotos werden übertragen. Widerruf blockiert auch verspätete Aktivierungsantworten.
+
+Der vollständige Ablauf wurde mit einem realen öffentlichen VANS-T-Shirt geprüft: Farbe Violett, Kategorie Oberteile, Marke VANS, passende sichtbare Notizen sowie Stil/Saison übernommen; transparente PNG-Vorschau geprüft und gespeichert. Browserprüfung lief mit einer HTTP-Brücke, die jede externe HTTPS-Verbindung mit dem vorhandenen Systemvertrauen prüft. Das umgeht keine TLS-Prüfung und ist keine native Safari-Prüfung. CORS des echten Anbieters erlaubte den Pages-Origin. Einzelne passende Beispiele sind keine generelle Genauigkeitsgarantie.
+
+Auch die frühere optionale eigene Qwen2B-Inferenz konnte nach Anwendung der CDN-Freigabe wirklich auf der Cloud-CPU ausgeführt werden: passende Merkmale/Vans erkannt, 428,9 s inklusive Download/Import und 12.606 MiB Spitzen-RSS. Funktioniert, bietet aber keine kostenlose dauerhafte HF-Hostinglösung.
+
+## Historischer Stand 0.6
+
 # Bild-KI – aktueller Stand 0.6
 
 Der Benutzer hat externe Foto-KI ausdrücklich gewünscht und die Vorgabe „komplett kostenlos“ bestätigt. Die bisherige U2NETP-Freistellung hat auf seinem iPhone nicht das gewünschte Ergebnis geliefert. Ein bestandener synthetischer Browserfall beweist keine Qualität für reale Kleidung.
