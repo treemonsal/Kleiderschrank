@@ -11,12 +11,21 @@ Privater Fashion-Begleiter für das eigene iPhone. Eine installierbare, deutschs
 - Versionierte JSON-Sicherungen inklusive Fotos, validierter Import mit Zusammenführen oder bewusstem Ersetzen des Bestands.
 - Helles, dunkles oder systemgesteuertes Erscheinungsbild, Safe Areas, zugängliche Navigation, Offline-App-Shell und PWA-Installation.
 
+## Version 0.2 – lokale Outfits
+
+- Nachvollziehbarer, begrenzter regelbasierter Generator für vollständige Looks aus vorhandenem Bestand; Anlass, Saison, gewünschter Stil und optionale Accessoires.
+- Saisonfilter und konservative Anlassregeln anhand eigener Angaben. Einfache Farbakzent-Regeln, keine Bildanalyse, keine garantierte Harmonie, kein Wetter.
+- Outfits speichern, benennen, löschen und favorisieren; Stücke referenzieren existierende IDs. Abhängige Outfits und Rückmeldungen werden bei Kleidungsstück-Löschung atomar entfernt.
+- Lieblingsfarben/-stile, Kleidungsfavoriten und positives Feedback beeinflussen die Gewichtung. Ablehnungen gelten für die konkrete Kombination und sind zurücksetzbar.
+- Datenbankmigration erhält den bestehenden Kleiderschrank. Sicherungsformat 2 umfasst auch Outfits, Feedback und Vorlieben; Format 1 bleibt lesbar.
+- Gegenprüfungen und Fehlerbehebungen siehe REVIEW.md.
+
 ## Spätere Funktionen
 
-1. Nachvollziehbarer, lokaler Outfit-Generator ausschliesslich aus vorhandenen Stücken; Farbharmonie, Stil, Anlass, Saison, Favoriten und Ablehnungen.
-2. Outfit-Speicherung und Kalender für geplante/getragene Kombinationen.
+1. Outfit-Kalender für geplante/getragene Kombinationen und darauf aufbauende Nutzungshäufigkeit.
+2. Genauere Farbangaben und weitere nachvollziehbare Kombinationsregeln nach Erprobung der ersten Vorschläge.
 3. Optionales Wetter über Open-Meteo. Standort ausschliesslich nach Freigabe, alternativ manueller Ort. Keine Standortabfrage in Version 1.
-4. Persönliche Präferenzen und Nutzungsfeedback.
+4. Erweiterte persönliche Empfehlungen anhand tatsächlich getragener Outfits.
 5. Automatische Merkmale und lokale Freistellung erst nach Evaluation von Zuverlässigkeit, iPhone-Leistung und kostenloser Lizenzierung. Immer manuell korrigierbar.
 6. Outfit-Fotobewertung nur bei realistisch kostenloser, zuverlässiger Bildanalyse. Keine simulierte KI-Bewertung; bis dahin allenfalls klar gekennzeichnete manuelle Stil-Checkliste.
 
@@ -30,4 +39,4 @@ iOS kann Website-Daten entfernen; privates Surfen, Löschen von Safari-Daten, De
 
 Reale, überprüfbare Funktionen; verständliche Fehler und leere Zustände; keine Attrappen. Automatisierte Daten- und Browserprüfungen, Darstellung bei 375, 390 und 430 Pixeln sowie dunkles Design. Echte iPhone-Tests bleiben vor langfristiger Verwendung nötig (Kamera, Fotomediathek, Download/Import, Homescreen, Offline, Speicherdruck).
 
-Es wird auf ausdrücklichen Wunsch keine AGENTS.md erstellt.
+Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.

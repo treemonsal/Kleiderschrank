@@ -2,6 +2,8 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten, keine Accounts, keine Bildübertragung.
 
+Version 0.2 ergänzt lokale Outfit-Vorschläge, gespeicherte Looks, Favoriten und persönliche Stilvorlieben. Die erneute Prüfung und behobene Fehler sind in [REVIEW.md](REVIEW.md) dokumentiert.
+
 ## Lokal starten
 
 Node.js 24 LTS und npm verwenden (siehe `.nvmrc`).
@@ -29,11 +31,28 @@ Die bereitgestellte **HTTPS-Adresse in Safari** öffnen. Teilen → „Zum Home-
 3. Ein Stück öffnen, um es zu bearbeiten oder zu löschen. Herzen markieren Favoriten.
 4. Unter „Mehr“ regelmässig eine Sicherung mit Fotos exportieren und in Dateien speichern. Import erst prüfen, dann bestätigen. Zusammenführen behält die neuere Version derselben ID; Ersetzen entfernt den vorhandenen Bestand und stellt die Sicherung wieder her.
 
+## Outfits und dein persönlicher Stil
+
+Unter **Outfits → Entdecken** Anlass, Saison und gewünschten Stil wählen und „Outfits zusammenstellen“ antippen. Für einen vollständigen Look brauchst du ein Paar Schuhe und entweder ein Kleid oder ein Oberteil mit Hose. Im Herbst/Winter wird eine vorhandene passende Jacke ergänzt; Accessoires sind optional. Stücke mit ausdrücklich anderer Saison werden ausgeschlossen. Ausschliesslich sportlich/Streetwear markierte Stücke werden für Büro und Abend nicht gewählt.
+
+Die Vorschläge verwenden lokale Regeln und deine manuell eingegebenen Merkmale. Sie analysieren keine Bilder und garantieren keinen Dresscode, keine Passform oder ausreichende Wärme. Wetter und Temperatur sind noch nicht angebunden. Fehlende Angaben und Kategorien werden erklärt. „Warum diese Kombination?“ zeigt die Begründung. Die Suche betrachtet höchstens 18 Kandidaten je Kategorie; bei grossen Sammlungen „Neu kombinieren“ verwenden, um weitere gleichermassen geeignete Stücke einzubeziehen.
+
+- **Speichern:** einen Look später unter „Gespeichert“ wiederfinden, benennen, favorisieren oder löschen. Einzelne Stücke öffnen weiterhin ihre Angaben.
+- **Daumen hoch:** diese Kombination und ihre Stücke erhalten mehr Gewicht in künftigen Vorschlägen.
+- **Passt nicht:** genau diese Kombination wird nicht mehr vorgeschlagen. Ablehnungen lassen sich bewusst zurücksetzen; bis zu 1000 Rückmeldungen bleiben erhalten, ältere werden zuerst entfernt.
+- **Regler oben rechts:** bevorzugte Farben und Stilrichtungen lokal speichern. Sie beeinflussen die Gewichtung, sind keine harten Filter.
+
+Wird ein Kleidungsstück gelöscht, werden gespeicherte Outfits und Rückmeldungen mit diesem Stück ebenfalls entfernt. Eine Änderung seiner Kategorie lässt den gespeicherten Look bestehen, zeigt aber bei einer dadurch unvollständigen Kombination einen Prüfhinweis.
+
+Neue Sicherungen (Version 2) enthalten Kleidung inklusive Fotos, Outfits, Rückmeldungen und Stilvorlieben aus einem konsistenten Datenbanksnapshot. Alte Sicherungen (Version 1) bleiben importierbar. **Ersetzen mit einer alten Sicherung löscht vorhandene Outfits und Vorlieben**, weil sie darin noch nicht enthalten sind. Beim Zusammenführen bleiben sie erhalten. Das Erscheinungsbild ist eine separate Browsereinstellung.
+
 Fotos werden lokal auf maximal 1600 Pixel verkleinert und als JPEG neu erzeugt (weisser Hintergrund, keine Übernahme der ursprünglichen EXIF-Metadaten). HEIC funktioniert nur, wenn der Browser es decodieren kann; andernfalls JPEG/PNG/WebP verwenden. Keine automatische Freistellung oder Bilderkennung in Version 1.
 
 ## Datenschutz und Sicherung
 
 Browserdaten können von iOS entfernt werden. Privates Surfen, Safari-Daten löschen, Gerätewechsel und Domainwechsel können Datenverlust oder einen anderen lokalen Bestand bedeuten. Auch Safari und die installierte App können getrennte Speicherbereiche verwenden: bei Bedarf per Export/Import übertragen. Speicheranforderungen sind keine Garantie. Backups sind unverschlüsselte JSON-Dateien mit privaten Fotos: sicher aufbewahren. Grenze: 100 MB/1000 Stücke pro Sicherung, 20 MB pro ausgewähltem Originalfoto. Regelmässig exportieren und Wiederherstellung prüfen.
+
+Damit der Bestand sicherbar bleibt, werden Schreibvorgänge und zusammengeführte Importe oberhalb von 1000 Stücken oder etwa 90 MB Foto-/Kleidungsdaten im Sicherungsformat vollständig abgelehnt. Der übrige Platz ist für bis zu 1000 gespeicherte Outfits und die Vorlieben reserviert. Die App erklärt den Fehler; vorhandene Daten bleiben erhalten. Ein zwischenzeitlich gelöschtes oder geändertes Stück wird beim Speichern eines alten Bearbeitungsdialogs nicht stillschweigend überschrieben.
 
 Bei einem App-Update erst Eingaben speichern, dann den eingeblendeten Updatehinweis verwenden. Ein Update löscht den Kleiderschrank nicht. Es gibt keinen automatischen Geräteabgleich.
 
@@ -45,6 +64,7 @@ npm test
 npm run build
 npx playwright install chromium
 npm run test:e2e
+npm run format:check
 ```
 
 Die Browserprüfungen starten selbst eine Produktionsvorschau auf Port 4173. Sie prüfen unter anderem reale Fotoverarbeitung, lokale Persistenz, Bearbeitung, Filter, Favoriten, Backups, Löschen, Offline-Betrieb und schmale Layouts. Screenshots entstehen in `test-results/` (nicht im Repository). Ein echter iPhone-Test wird dadurch nicht ersetzt.

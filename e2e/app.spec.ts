@@ -3,33 +3,58 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 
 async function addGarment(page: Page, name: string, photo = false) {
-  await page.getByRole('button', { name: /Erstes Stück hinzufügen|^Stück hinzufügen$/ }).first().click()
+  await page
+    .getByRole('button', { name: /Erstes Stück hinzufügen|^Stück hinzufügen$/ })
+    .first()
+    .click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
   if (photo) {
-    await dialog.getByLabel('Foto aus Mediathek').setInputFiles(path.resolve('public/icon-192.png'))
-    await expect(dialog.getByAltText('Vorschau des Kleidungsstücks')).toBeVisible()
+    await dialog
+      .getByLabel('Foto aus Mediathek')
+      .setInputFiles(path.resolve('public/icon-192.png'))
+    await expect(
+      dialog.getByAltText('Vorschau des Kleidungsstücks'),
+    ).toBeVisible()
   }
   await dialog.getByLabel('Name', { exact: false }).fill(name)
   await dialog.getByLabel('Marke', { exact: true }).fill('Arket')
   await dialog.getByRole('button', { name: 'Weiss', exact: true }).click()
   await dialog.getByRole('button', { name: 'Sommer', exact: true }).click()
-  await dialog.getByRole('button', { name: 'Minimalistisch', exact: true }).click()
-  await dialog.getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' }).click()
+  await dialog
+    .getByRole('button', { name: 'Minimalistisch', exact: true })
+    .click()
+  await dialog
+    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
+    .click()
   await expect(dialog).not.toBeVisible()
-  await expect(page.getByRole('button', { name: `${name} öffnen` })).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: `${name} öffnen` }),
+  ).toBeVisible()
 }
 
-test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Suchen, Favorisieren und Löschen funktionieren', async ({ page }) => {
+test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Suchen, Favorisieren und Löschen funktionieren', async ({
+  page,
+}) => {
   const errors: string[] = []
   const external: string[] = []
-  page.on('pageerror', error => errors.push(error.message))
-  page.on('request', request => { if (/^https?:/.test(request.url()) && !request.url().startsWith('http://127.0.0.1:4173')) external.push(request.url()) })
+  page.on('pageerror', (error) => errors.push(error.message))
+  page.on('request', (request) => {
+    if (
+      /^https?:/.test(request.url()) &&
+      !request.url().startsWith('http://127.0.0.1:4173')
+    )
+      external.push(request.url())
+  })
   await page.goto('/')
-  await expect(page.getByText('Dein erstes Lieblingsstück.', { exact: true })).toBeVisible()
+  await expect(
+    page.getByText('Dein erstes Lieblingsstück.', { exact: true }),
+  ).toBeVisible()
   await addGarment(page, 'Leinenhemd', true)
   await page.reload()
-  await expect(page.getByRole('button', { name: 'Leinenhemd öffnen' })).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: 'Leinenhemd öffnen' }),
+  ).toBeVisible()
   await page.getByRole('button', { name: 'Leinenhemd öffnen' }).click()
   let dialog = page.getByRole('dialog')
   await expect(dialog.getByAltText('Leinenhemd')).toBeVisible()
@@ -39,18 +64,30 @@ test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Suchen, Favorisieren un
   await dialog.getByLabel('Name', { exact: false }).fill('Sommerhemd')
   await dialog.getByLabel('Notizen').fill('Für warme Tage.\nLeicht und luftig.')
   await dialog.getByRole('button', { name: 'Änderungen speichern' }).click()
-  await page.getByRole('button', { name: 'Sommerhemd: Als Favorit markieren' }).click()
-  await expect(page.getByRole('button', { name: 'Sommerhemd: Favorit entfernen' })).toHaveAttribute('aria-pressed', 'true')
-  await page.getByRole('button', { name: 'Kleiderschrank', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Sommerhemd: Als Favorit markieren' })
+    .click()
+  await expect(
+    page.getByRole('button', { name: 'Sommerhemd: Favorit entfernen' }),
+  ).toHaveAttribute('aria-pressed', 'true')
+  await page
+    .getByRole('button', { name: 'Kleiderschrank', exact: true })
+    .click()
   await page.getByRole('searchbox', { name: 'Kleidung suchen' }).fill('arket')
-  await expect(page.getByRole('button', { name: 'Sommerhemd öffnen' })).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: 'Sommerhemd öffnen' }),
+  ).toBeVisible()
   await page.getByRole('button', { name: 'Schuhe', exact: true }).click()
   await expect(page.getByText('Noch kein Treffer.')).toBeVisible()
   await page.getByRole('button', { name: 'Filter zurücksetzen' }).click()
   await page.getByRole('button', { name: 'Nur Favoriten' }).click()
-  await expect(page.getByRole('button', { name: 'Sommerhemd öffnen' })).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: 'Sommerhemd öffnen' }),
+  ).toBeVisible()
   await page.getByRole('button', { name: 'Sommerhemd öffnen' }).click()
-  await expect(page.getByRole('dialog').getByText('Für warme Tage.', { exact: false })).toBeVisible()
+  await expect(
+    page.getByRole('dialog').getByText('Für warme Tage.', { exact: false }),
+  ).toBeVisible()
   await page.getByRole('button', { name: 'Stück löschen', exact: true }).click()
   await expect(page.getByText('Dieses Stück wirklich löschen?')).toBeVisible()
   await page.getByRole('button', { name: 'Behalten', exact: true }).click()
@@ -58,12 +95,16 @@ test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Suchen, Favorisieren un
   await page.getByRole('button', { name: 'Endgültig löschen' }).click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   await page.reload()
-  await expect(page.getByText('Dein erstes Lieblingsstück.', { exact: true })).toBeVisible()
+  await expect(
+    page.getByText('Dein erstes Lieblingsstück.', { exact: true }),
+  ).toBeVisible()
   expect(errors).toEqual([])
   expect(external).toEqual([])
 })
 
-test('Sicherung exportiert Fotos und stellt sie wieder her; fehlerhafte Dateien verändern nichts', async ({ page }) => {
+test('Sicherung exportiert Fotos und stellt sie wieder her; fehlerhafte Dateien verändern nichts', async ({
+  page,
+}) => {
   await page.goto('/')
   await addGarment(page, 'Mein Mantel', true)
   await page.getByRole('button', { name: 'Mehr', exact: true }).click()
@@ -76,75 +117,145 @@ test('Sicherung exportiert Fotos und stellt sie wieder her; fehlerhafte Dateien 
   expect(data.garments[0].photo).toMatch(/^data:image\/jpeg;base64,/)
   expect(data.garments[0].name).toBe('Mein Mantel')
   // Delete through the real UI, then restore from the downloaded file.
-  await page.getByRole('button', { name: 'Kleiderschrank', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Kleiderschrank', exact: true })
+    .click()
   await page.getByRole('button', { name: 'Mein Mantel öffnen' }).click()
   await page.getByRole('button', { name: 'Stück löschen', exact: true }).click()
   await page.getByRole('button', { name: 'Endgültig löschen' }).click()
   await page.getByRole('button', { name: 'Mehr', exact: true }).click()
-  await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({ name: 'backup.json', mimeType: 'application/json', buffer: Buffer.from(json) })
+  await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
+    name: 'backup.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(json),
+  })
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByText('1 mit Foto', { exact: true })).toBeVisible()
-  await dialog.getByRole('button', { name: 'Sicherung importieren', exact: true }).click()
+  await dialog
+    .getByRole('button', { name: 'Sicherung importieren', exact: true })
+    .click()
   await expect(dialog).not.toBeVisible()
-  await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({ name: 'broken.json', mimeType: 'application/json', buffer: Buffer.from('{"garments":[]}') })
-  await expect(page.getByRole('alert')).toContainText('keine gültige MyStyle-Sicherung')
-  await page.getByRole('button', { name: 'Kleiderschrank', exact: true }).click()
+  await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
+    name: 'broken.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from('{"garments":[]}'),
+  })
+  await expect(page.getByRole('alert')).toContainText(
+    'keine gültige MyStyle-Sicherung',
+  )
+  await page
+    .getByRole('button', { name: 'Kleiderschrank', exact: true })
+    .click()
   await page.getByRole('button', { name: 'Mein Mantel öffnen' }).click()
   const image = page.getByRole('dialog').getByAltText('Mein Mantel')
   await expect(image).toBeVisible()
-  expect(await image.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(192)
+  expect(
+    await image.evaluate((img: HTMLImageElement) => img.naturalWidth),
+  ).toBe(192)
 })
 
-test('Offline-Neustart lädt die installierbare App mit lokalen Fotos', async ({ page, context }) => {
+test('Offline-Neustart lädt die installierbare App mit lokalen Fotos', async ({
+  page,
+  context,
+}) => {
   await page.goto('/')
   await addGarment(page, 'Offline-Hemd', true)
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready
-    if (!navigator.serviceWorker.controller) await new Promise<void>(resolve => navigator.serviceWorker.addEventListener('controllerchange', () => resolve(), { once: true }))
+    if (!navigator.serviceWorker.controller)
+      await new Promise<void>((resolve) =>
+        navigator.serviceWorker.addEventListener(
+          'controllerchange',
+          () => resolve(),
+          { once: true },
+        ),
+      )
   })
-  const manifest = await page.evaluate(async () => (await fetch(document.querySelector<HTMLLinkElement>('link[rel="manifest"]')!.href)).json())
+  const manifest = await page.evaluate(async () =>
+    (
+      await fetch(
+        document.querySelector<HTMLLinkElement>('link[rel="manifest"]')!.href,
+      )
+    ).json(),
+  )
   expect(manifest.display).toBe('standalone')
   expect(manifest.icons).toHaveLength(3)
   await context.setOffline(true)
   await page.reload()
-  await expect(page.getByText('Du bist offline.', { exact: false })).toBeVisible()
+  await expect(
+    page.getByText('Du bist offline.', { exact: false }),
+  ).toBeVisible()
   await page.getByRole('button', { name: 'Offline-Hemd öffnen' }).click()
   const image = page.getByRole('dialog').getByAltText('Offline-Hemd')
   await expect(image).toBeVisible()
-  expect(await image.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
+  expect(
+    await image.evaluate((img: HTMLImageElement) => img.naturalWidth),
+  ).toBeGreaterThan(0)
 })
 
-test('Ungespeicherte Eingaben gehen beim Schliessen nicht unbemerkt verloren', async ({ page }) => {
+test('Ungespeicherte Eingaben gehen beim Schliessen nicht unbemerkt verloren', async ({
+  page,
+}) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
   await page.getByLabel('Name', { exact: false }).fill('Noch nicht gespeichert')
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
-  await expect(page.getByText('Ungespeicherte Änderungen verwerfen?')).toBeVisible()
+  await expect(
+    page.getByText('Ungespeicherte Änderungen verwerfen?'),
+  ).toBeVisible()
   await page.getByRole('button', { name: 'Weiter bearbeiten' }).click()
-  await expect(page.getByLabel('Name', { exact: false })).toHaveValue('Noch nicht gespeichert')
+  await expect(page.getByLabel('Name', { exact: false })).toHaveValue(
+    'Noch nicht gespeichert',
+  )
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
   await page.getByRole('button', { name: 'Verwerfen', exact: true }).click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  await expect(page.getByText('Dein erstes Lieblingsstück.', { exact: true })).toBeVisible()
+  await expect(
+    page.getByText('Dein erstes Lieblingsstück.', { exact: true }),
+  ).toBeVisible()
 })
 
 for (const width of [375, 390, 430]) {
-  test(`iPhone-Layout ${width}px, Hell-/Dunkelmodus und Editor ohne horizontalen Überlauf`, async ({ page }, testInfo) => {
+  test(`iPhone-Layout ${width}px, Hell-/Dunkelmodus und Editor ohne horizontalen Überlauf`, async ({
+    page,
+  }, testInfo) => {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
-    await expect(page.getByRole('heading', { name: 'Dein Stil. Dein Moment.' })).toBeVisible()
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-    await page.screenshot({ path: testInfo.outputPath(`home-${width}.png`), fullPage: true })
+    await expect(
+      page.getByRole('heading', { name: 'Dein Stil. Dein Moment.' }),
+    ).toBeVisible()
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true)
+    await page.screenshot({
+      path: testInfo.outputPath(`home-${width}.png`),
+      fullPage: true,
+    })
     await page.getByRole('button', { name: 'Mehr', exact: true }).click()
     await page.getByRole('button', { name: 'Dunkel', exact: true }).click()
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-    await page.screenshot({ path: testInfo.outputPath(`settings-dark-${width}.png`), fullPage: true })
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true)
+    await page.screenshot({
+      path: testInfo.outputPath(`settings-dark-${width}.png`),
+      fullPage: true,
+    })
     await page.reload()
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
     await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    expect(await page.getByRole('dialog').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
-    await page.screenshot({ path: testInfo.outputPath(`editor-dark-${width}.png`) })
+    expect(
+      await page
+        .getByRole('dialog')
+        .evaluate((el) => el.scrollWidth <= el.clientWidth),
+    ).toBe(true)
+    await page.screenshot({
+      path: testInfo.outputPath(`editor-dark-${width}.png`),
+    })
   })
 }

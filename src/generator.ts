@@ -1,0 +1,228 @@
+import type { Garment } from './model'
+import {
+  outfitKey,
+  type OutfitCandidate,
+  type OutfitFeedback,
+  type OutfitOptions,
+  type Preferences,
+} from './outfit-model'
+
+const neutral = new Set(['Schwarz', 'Weiss', 'Grau', 'Beige', 'Braun'])
+function noise(key: string, seed: number): number {
+  let value = seed | 0
+  for (let i = 0; i < key.length; i++)
+    value = Math.imul(value ^ key.charCodeAt(i), 16777619)
+  return (value >>> 0) / 4294967296
+}
+export function eligibleGarments(
+  items: Garment[],
+  options: OutfitOptions,
+): Garment[] {
+  // Unknown seasons stay eligible; conflicting explicitly entered seasons do not.
+  return items.filter(
+    (item) =>
+      (options.season === 'Alle' ||
+        !item.seasons.length ||
+        item.seasons.includes(options.season)) &&
+      !(
+        (options.occasion === 'Büro' || options.occasion === 'Abend') &&
+        item.styles.length > 0 &&
+        item.styles.every(
+          (style) => style === 'Sportlich' || style === 'Streetwear',
+        )
+      ),
+  )
+}
+export function missingOutfitMessage(
+  items: Garment[],
+  options: OutfitOptions,
+): string {
+  const eligible = eligibleGarments(items, options)
+  const has = (category: string) =>
+    eligible.some((item) => item.category === category)
+  if (!has('Schuhe'))
+    return 'Für diese Auswahl fehlen passende Schuhe. Ergänze ein Paar oder ändere Saison und Anlass.'
+  if (!has('Kleider') && !(has('Oberteile') && has('Hosen')))
+    return 'Für diese Auswahl brauchst du ein Kleid oder ein Oberteil mit Hose. Ergänze Stücke oder passe deine Auswahl an.'
+  return 'In der aktuellen Auswahl gibt es keinen neuen Vorschlag. Du kannst neu kombinieren, Ablehnungen zurücksetzen oder deine Auswahl ändern.'
+}
+
+export function generateOutfits(
+  items: Garment[],
+  options: OutfitOptions,
+  preferences: Preferences,
+  feedback: OutfitFeedback[],
+  seed = 0,
+): OutfitCandidate[] {
+  const eligible = eligibleGarments(items, options)
+  const rejected = new Set(
+    feedback
+      .filter((entry) => entry.verdict === 'rejected')
+      .map((entry) => entry.id),
+  )
+  const liked = new Set(
+    feedback
+      .filter((entry) => entry.verdict === 'liked')
+      .map((entry) => entry.id),
+  )
+  const likedItems = new Map<string, number>()
+  for (const entry of feedback.filter((entry) => entry.verdict === 'liked')) {
+    for (const id of entry.garmentIds)
+      likedItems.set(id, Math.min(1.5, (likedItems.get(id) || 0) + 0.3))
+  }
+  function suitability(item: Garment): number {
+    return (
+      (item.favorite ? 1.5 : 0) +
+      (preferences.colors.includes(item.color) ? 2 : 0) +
+      (item.styles.some((style) => preferences.styles.includes(style))
+        ? 2
+        : 0) +
+      (options.style !== 'Alle' && item.styles.includes(options.style)
+        ? 3
+        : 0) +
+      ((options.occasion === 'Büro' || options.occasion === 'Abend') &&
+      item.styles.includes('Elegant')
+        ? 3
+        : 0) +
+      (likedItems.get(item.id) || 0)
+    )
+  }
+  // Bounded search: at most 18³ + 18² base combinations, even for 1000 items.
+  // Seeded variation rotates equally suitable pieces into the search window.
+  function group(category: string): Garment[] {
+    return eligible
+      .filter((item) => item.category === category)
+      .sort(
+        (a, b) =>
+          suitability(b) +
+            noise(b.id, seed) * 4 -
+            (suitability(a) + noise(a.id, seed) * 4) ||
+          a.id.localeCompare(b.id),
+      )
+      .slice(0, 18)
+  }
+  const tops = group('Oberteile'),
+    bottoms = group('Hosen'),
+    shoes = group('Schuhe')
+  const dresses = group('Kleider'),
+    jackets = group('Jacken'),
+    accessories = group('Accessoires')
+  const candidates: OutfitCandidate[] = []
+  function add(base: Garment[]): void {
+    const selected = [...base]
+    if (
+      (options.season === 'Herbst' || options.season === 'Winter') &&
+      jackets.length
+    ) {
+      selected.push(
+        jackets[
+          Math.floor(
+            noise(outfitKey(base.map((item) => item.id)), seed) *
+              jackets.length,
+          )
+        ],
+      )
+    }
+    if (options.includeAccessory && accessories.length)
+      selected.push(accessories[0])
+    const ids = selected.map((item) => item.id),
+      key = outfitKey(ids)
+    if (rejected.has(key)) return
+    const colors = [
+      ...new Set(selected.map((item) => item.color).filter(Boolean)),
+    ]
+    const accents = colors.filter((color) => !neutral.has(color))
+    let score =
+      selected.reduce((sum, item) => sum + suitability(item), 0) /
+      selected.length
+    score += accents.length <= 1 ? 3 : accents.length === 2 ? 1 : -2
+    if (liked.has(key)) score += 4
+    score += noise(key, seed) * 3
+    const reasons = [
+      base[0].category === 'Kleider'
+        ? 'Kleid und Schuhe bilden die Basis.'
+        : 'Oberteil, Hose und Schuhe bilden die Basis.',
+    ]
+    if (!selected.every((item) => item.color))
+      reasons.push(
+        'Farbangaben fehlen teilweise; die Harmonie bitte selbst prüfen.',
+      )
+    else if (accents.length <= 1)
+      reasons.push(
+        'Neutrale Farben und höchstens ein Farbakzent halten den Look ruhig.',
+      )
+    else
+      reasons.push(
+        'Mehrere Farbakzente machen diesen Vorschlag bewusst lebhafter.',
+      )
+    if (options.style !== 'Alle') {
+      const desired = options.style
+      const matches = selected.filter((item) =>
+        item.styles.some((style) => style === desired),
+      ).length
+      reasons.push(
+        matches
+          ? `${matches} Stücke passen laut deinen Angaben zum Stil ${options.style}.`
+          : `Für ${options.style} fehlen passende Stilangaben; dies ist eine Alternative.`,
+      )
+    }
+    if (
+      selected.some(
+        (item) =>
+          item.favorite ||
+          preferences.colors.includes(item.color) ||
+          item.styles.some((style) => preferences.styles.includes(style)),
+      )
+    )
+      reasons.push('Deine Favoriten oder Stilvorlieben wurden berücksichtigt.')
+    if (liked.has(key))
+      reasons.push('Diese Kombination hat dir bereits gefallen.')
+    if (
+      options.season !== 'Alle' &&
+      selected.some((item) => !item.seasons.length)
+    )
+      reasons.push('Einige Stücke haben noch keine Saisonangabe.')
+    if (
+      (options.season === 'Winter' || options.season === 'Herbst') &&
+      !jackets.length
+    )
+      reasons.push(
+        'Eine passende Jacke fehlt. Prüfe die Wärme selbst; Wetter wird noch nicht berücksichtigt.',
+      )
+    if (options.includeAccessory && !accessories.length)
+      reasons.push('Für diese Auswahl ist kein Accessoire vorhanden.')
+    candidates.push({ key, garmentIds: ids, reasons, score })
+  }
+  for (const shoe of shoes) {
+    for (const dress of dresses) add([dress, shoe])
+    for (const top of tops)
+      for (const bottom of bottoms) add([top, bottom, shoe])
+  }
+  candidates.sort((a, b) => b.score - a.score || a.key.localeCompare(b.key))
+  const results: OutfitCandidate[] = []
+  // Prefer visibly different bases over three looks that only swap a shoe.
+  while (candidates.length && results.length < 3) {
+    let best = 0,
+      bestScore = -Infinity
+    for (let index = 0; index < candidates.length; index++) {
+      const candidate = candidates[index]
+      const overlap = results.length
+        ? Math.max(
+            ...results.map(
+              (result) =>
+                candidate.garmentIds.filter((id) =>
+                  result.garmentIds.includes(id),
+                ).length / candidate.garmentIds.length,
+            ),
+          )
+        : 0
+      const score = candidate.score - overlap * 5
+      if (score > bestScore) {
+        best = index
+        bestScore = score
+      }
+    }
+    results.push(candidates.splice(best, 1)[0])
+  }
+  return results
+}
