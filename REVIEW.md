@@ -10,6 +10,8 @@
 - Produktionsbuild, **104 Vitest-Tests und alle 53 Chromium-Browserprüfungen bestanden**. Neue Prüfungen umfassen stabile automatische Auswahl und Speichern, Kalender-Vorrang, fehlende Teile, Wetter/Accessoires/Ablehnungen, atomare parallele Vorlieben und Backup-Roundtrip, Neustart-Persistenz, keine ungewollten Fotoanfragen, automatisches Schliessen, native Touch-Navigation, spätes Standortergebnis und vergessenen Ort während eines Refreshs. Bestehende CRUD-/Foto-/Sicherungs-/Offline-/echte lokale Inferenz-/Outfit-/Kalender-/Wetterfälle weiterhin bestanden.
 - Layouts bei 375/390/430 Pixeln ohne horizontalen Überlauf; Screenshots von neuer Startseite, Tageslook/Wetter und Einstellungen kontrolliert. Bestätigungen jetzt ebenfalls dunkel. Fehlerfälle für Wetter/Fotodienste wurden kontrolliert geliefert; diese Änderung verbrauchte keine zusätzlichen echten Foto-KI-Scans. Neue iPhone-/Safari-Geräteprüfung nicht ausgeführt; in IPHONE_CHECK.md ergänzt.
 
+Veröffentlichung 0.7.0: [GitHub-Pages-Lauf 38801012506](https://github.com/treemonsal/Kleiderschrank/actions/runs/38801012506) für App-Commit `ec21d2357c05b56261e517d1f0121532a5b8b654` erfolgreich. Anschliessend öffentliche HTML-/JS-/CSS-Auslieferung mit aktiver HTTPS-Prüfung bestätigt: Version, Tageslook und Wetterzeile, gespeicherte Einstellungen, kompakte KI-Ansicht und Touch-Handler enthalten; alter Begrüssungstext entfernt. Schwarzes Manifest, bestehender Installationspfad, gültige Icons, Service Worker und unverändertes Foto-KI-Modul erreichbar. Keine privaten Fotos übertragen und keine TLS-Prüfung abgeschaltet.
+
 ## Vorherige Prüfung – Version 0.6.2
 
 # Aktuelle Prüfung – Version 0.6.2, 15. Oktober 2026
