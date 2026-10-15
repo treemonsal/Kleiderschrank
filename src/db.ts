@@ -135,22 +135,28 @@ export async function setOutfitFeedback(
 }
 export async function updateOutfit(
   id: string,
-  patch: { name?: string; favorite?: boolean },
+  patch: { name: string; expectedUpdatedAt: string } | { favorite: boolean },
   database = db,
 ): Promise<void> {
   await database.transaction('rw', database.outfits, async () => {
     const existing = await database.outfits.get(id)
     if (!existing)
       throw new UserFacingError('Dieses Outfit wurde bereits entfernt.')
-    const name = (patch.name ?? existing.name).trim()
+    if ('name' in patch && existing.updatedAt !== patch.expectedUpdatedAt)
+      throw new UserFacingError(
+        'Dieses Outfit wurde inzwischen geändert. Deine Eingabe bleibt hier sichtbar. Öffne den Look erneut, damit keine neueren Angaben überschrieben werden.',
+      )
+    const name = ('name' in patch ? patch.name : existing.name).trim()
     if (!name || name.length > 100)
       throw new UserFacingError(
         'Bitte gib einen Outfit-Namen mit höchstens 100 Zeichen ein.',
       )
     await database.outfits.update(id, {
-      ...patch,
       name,
-      updatedAt: new Date().toISOString(),
+      favorite: 'favorite' in patch ? patch.favorite : existing.favorite,
+      updatedAt: new Date(
+        Math.max(Date.now(), Date.parse(existing.updatedAt) + 1),
+      ).toISOString(),
     })
   })
 }

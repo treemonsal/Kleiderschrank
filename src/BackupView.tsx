@@ -354,9 +354,11 @@ export function BackupView({
               <span>
                 <strong>Vorhandenen Bestand ersetzen</strong>
                 <small>
-                  Alle {items.length} vorhandenen Stücke, Outfits und Vorlieben
-                  werden durch die Sicherung ersetzt. Alte Sicherungen enthalten
-                  noch keine Outfits. Exportiere zuerst ein Backup.
+                  Alle {items.length} vorhandenen Stücke, Outfits,
+                  Rückmeldungen, Stilvorlieben, Kalendereinträge und
+                  gespeicherten Wetterdaten werden vollständig durch diese
+                  Sicherung ersetzt. Datenarten, die in älteren Sicherungen
+                  fehlen, werden dabei gelöscht. Exportiere zuerst ein Backup.
                 </small>
               </span>
             </label>

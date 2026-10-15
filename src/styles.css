@@ -1139,6 +1139,98 @@ fieldset {
   grid-template-columns: repeat(6, 1fr);
   gap: 9px 3px;
 }
+.photo-color-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--soft);
+  line-height: 1.6;
+  font-weight: 400;
+}
+.photo-color-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.photo-color-heading h3 {
+  font-size: 15px;
+  font-weight: 550;
+}
+.photo-color-heading .icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.color-sample-photo {
+  display: block;
+  position: relative;
+  max-width: 100%;
+  padding: 0;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 9px;
+  cursor: crosshair;
+  background: #fff;
+}
+.color-sample-photo canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.color-sample-marker {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #222;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.color-sample-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.color-sample-controls label {
+  display: flex;
+  flex-direction: column;
+}
+.field .color-sample-controls input[type='range'] {
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  accent-color: var(--accent);
+  background: transparent;
+  border: 0;
+}
+.color-sample-result {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.color-sample-result p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+.color-sample-swatch {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border: 1px solid #8888;
+  border-radius: 50%;
+  margin-right: 3px;
+}
+.photo-color-note {
+  color: var(--muted);
+  font-size: 11px;
+}
 .color-option {
   display: flex;
   flex-direction: column;

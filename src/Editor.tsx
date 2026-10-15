@@ -11,6 +11,7 @@ import {
 import { preparePhoto } from './photos'
 import { saveGarment, storageError } from './db'
 import { ErrorMessage, Sheet, usePhotoUrl } from './ui'
+import { PhotoColorPicker } from './PhotoColorPicker'
 
 export function Editor({
   item,
@@ -40,6 +41,7 @@ export function Editor({
   const [processing, setProcessing] = useState(false)
   const [dirty, setDirty] = useState(false)
   const [confirmDiscard, setConfirmDiscard] = useState(false)
+  const [photoRevision, setPhotoRevision] = useState(0)
   const library = useRef<HTMLInputElement>(null)
   const camera = useRef<HTMLInputElement>(null)
   const url = usePhotoUrl(draft.photo)
@@ -66,6 +68,7 @@ export function Editor({
     setError('')
     try {
       update('photo', await preparePhoto(file))
+      setPhotoRevision((previous) => previous + 1)
     } catch (err) {
       setError(
         err instanceof Error
@@ -143,7 +146,10 @@ export function Editor({
                 type="button"
                 className="icon-button"
                 aria-label="Foto entfernen"
-                onClick={() => update('photo', undefined)}
+                onClick={() => {
+                  update('photo', undefined)
+                  setPhotoRevision((previous) => previous + 1)
+                }}
               >
                 <Trash2 size={19} />
               </button>
@@ -212,6 +218,13 @@ export function Editor({
               Farbe{' '}
               <span className="optional">{draft.color || 'optional'}</span>
             </span>
+            {draft.photo && (
+              <PhotoColorPicker
+                key={photoRevision}
+                photo={draft.photo}
+                onChoose={(color) => update('color', color)}
+              />
+            )}
             <div className="color-options">
               {COLORS.map((c) => (
                 <button

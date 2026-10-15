@@ -41,11 +41,13 @@ Alle Kleidungsdaten bleiben im Browserprofil des Geräts. Kein Analytics, keine 
 - Open-Meteo ohne Schlüssel für privaten Gebrauch. Bis sieben Wettertage, sichtbare Quelle/Zeitzone/Datenstand, sechs Stunden Aktualitätsgrenze, Offline-Anzeige und lokales Vergessen. Keine automatischen Wetteraufrufe und keine Übertragung von Fotos oder Kleidung. Der Dienst erhält Ortsnamen beziehungsweise gerundete Koordinaten und technisch die IP-Adresse.
 - Grobe Temperatur-/Saisonregeln und Regenhinweis, keine behauptete Material-, Passform- oder Wasserdichtigkeitsanalyse.
 - Datenbankversion 3 erhält die bisherigen Daten. Sicherungsformat 3 enthält Kalender und gegebenenfalls Ortsdaten/Vorhersage; Format 1 und 2 bleiben lesbar. Backups enthalten Ortsdaten unverschlüsselt, wenn Wetter eingerichtet wurde.
-- Live-Wetterabruf in der Cloud noch durch die Netzwerkfreigabe blockiert. Kontrollierte API-Tests ersetzen diesen Nachweis und einen echten iPhone-Test nicht.
+- Beide echten Wetterendpunkte inzwischen per HTTPS erreichbar. Cloud-Chromiums Proxy-Zertifikatsvertrauen verhindert noch den zusätzlichen Live-Browsernachweis; kontrollierte API-Tests ersetzen diesen und einen echten iPhone-Test nicht.
 
 iOS kann Website-Daten entfernen; privates Surfen, Löschen von Safari-Daten, Deinstallation, Gerätewechsel und eine andere Domain können den Bestand unzugänglich machen. Regelmässig eine Sicherung in Dateien/iCloud Drive ablegen. Browserdaten sind kein dauerhaft garantiertes Backup. Ein Export enthält höchstens 100 MB und 1000 Stücke; grössere Sammlungen benötigen später ein gestreamtes Archivformat. Einzelne Fotoquellen höchstens 20 MB. Kein Hintergrundabgleich zwischen Geräten.
 
 ## Qualitätsziel
+
+Version 0.4 ergänzt eine optionale lokale Farbprobe mit expliziter Übernahme in das vorhandene Farbfeld. Keine Fotoübertragung, neue Laufzeitabhängigkeit oder Modelldatei. Fotos bleiben unverändert; manuelle Korrektur und normales Speichern/Verwerfen gelten weiter. Ausführliche Entscheidung zu Bild-KI und ausstehenden Geräteprüfungen in IMAGE_ASSISTANCE.md. Eine veraltete Outfit-Namensbearbeitung wird nun mit Konflikthinweis abgewiesen; Ersetzungsimporte nennen sämtliche betroffenen Datenarten.
 
 Reale, überprüfbare Funktionen; verständliche Fehler und leere Zustände; keine Attrappen. Automatisierte Daten- und Browserprüfungen, Darstellung bei 375, 390 und 430 Pixeln sowie dunkles Design. Echte iPhone-Tests bleiben vor langfristiger Verwendung nötig (Kamera, Fotomediathek, Download/Import, Homescreen, Offline, Speicherdruck).
 

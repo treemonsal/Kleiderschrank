@@ -39,13 +39,22 @@ Phase 2 ist abgeschlossen. Keine automatische Bilderkennung oder vorgetäuschte 
 - [x] Offline-Wetter, kein automatischer Abruf und lokales Vergessen
 - [x] Vollständige Sicherung Version 3; alte Sicherungen Version 1/2 lesen
 - [x] Automatisierte Daten-/Browserprüfungen und iPhone-Bildschirmgrössen
-- [ ] Echter Live-Wetterabruf nach Anwendung der Netzwerkfreigabe
+- [x] Echte Ortssuche und Vorhersage per HTTPS nach Anwendung der Netzwerkfreigabe
+- [ ] Zusätzlicher Live-Browser-/CORS-Nachweis und echter iPhone-Test
 
-Die Softwarefunktionen sind in Version 0.3 implementiert. Die beiden Open-Meteo-Domains wurden im Cloud-Konfigurationsentwurf ergänzt; aktuelle Live-Anfragen scheiterten noch am Proxy (CONNECT 403). Die Netzwerkfreigabe muss in den Umgebungseinstellungen gespeichert/angewendet und die Umgebung veröffentlicht werden. Erst danach kann der echte Abruf bestätigt werden. Die automatisierten Wetterprüfungen verwenden kontrollierte Antworten, keine erfundenen Live-Daten.
+Die Softwarefunktionen sind in Version 0.3 implementiert. Nach der Domainfreigabe lieferten beide echten Open-Meteo-Endpunkte am 15. Oktober 2026 HTTP 200: Zürcher Ort und sieben Vorhersagetage in Europe/Zurich mit erwarteten Einheiten. Die automatisierten Wetterprüfungen verwenden weiterhin kontrollierte Antworten. Cloud-Chromium meldet beim zusätzlichen echten Browserabruf ERR_CERT_AUTHORITY_INVALID für das Cloud-Proxy-Zertifikat. Dessen Aufnahme in den Browser-Vertrauensspeicher wurde von der automatischen Freigabeprüfung abgelehnt und nicht durchgeführt. Browser-CORS und iPhone bleiben offen; keine TLS-Prüfung deaktiviert.
 
-## Phase 4 – lokale Assistenz evaluieren
+## Phase 4 – lokale Assistenz
 
-Bildfreistellung und Erkennung auf realem iPhone prüfen: Genauigkeit, Downloadgrösse, Speicherverbrauch, Laufzeit und Lizenz. Bildbewertung bleibt ausstehend, solange keine geeignete kostenlose Lösung existiert. Keine Bildübertragung ohne ausdrückliche Zustimmung.
+- [x] Offizielle Dokumentation und Lizenzen lokaler Verfahren prüfen; Grenzen und Quellen in IMAGE_ASSISTANCE.md
+- [x] Kleine lokale Farbprobe ohne Modell oder Upload, mit expliziter Übernahme und manueller Korrektur
+- [x] Antippen, Tastatur/Positionsregler, Offline und unveränderte Fotodaten prüfen
+- [x] Unabhängige Gegenprüfung: Outfit-Namenskonflikte verhindern und Ersetzungswarnung vervollständigen
+- [ ] Konkrete Modellgewichte einschließlich Lizenz und Offline-Auslieferung auswählen
+- [ ] Freistellung/Erkennung auf echtem iPhone prüfen: Genauigkeit, Downloadgröße, Speicher und Laufzeit
+- [ ] Erst nach geeignetem Ergebnis automatische Merkmale/Freistellung integrieren
+
+Version 0.4 liefert die Farbprobe; sie ist keine Kleidungs-KI. Bildbewertung bleibt ausstehend, solange keine geeignete kostenlose Lösung validiert ist. Keine Bildübertragung ohne ausdrückliche Zustimmung. Nächster Freigabeschritt für Modelle ist die dokumentierte Geräteprüfung, keine behauptete Simulation.
 
 ## Testprotokoll
 
@@ -85,3 +94,13 @@ Die Grenzen für echte iPhone-/Safari-, Kamera-, Installations-, Hosting- und We
 - Die Kalender-/Wetterdarstellung und dunkle Kalenderansicht wurden anhand der erzeugten Screenshots visuell geprüft.
 - Ein Test-Matcher bewertete ein natives `option disabled` inkorrekt als aktiv. Die Prüfung verwendet jetzt die native `disabled`-Eigenschaft; zukünftige Tragebestätigungen werden zusätzlich im Datenmodell zurückgewiesen. Der vollständige Kalenderablauf besteht.
 - Live-API und echtes iPhone bleiben unbestätigt. Standort und Wetter in Browserprüfungen sind Testdaten; kein realer Gerätestandort wurde angefragt.
+
+### Version 0.4
+
+- Produktionsbuild/TypeScript/PWA und Formatprüfung bestanden; keine neue Laufzeitabhängigkeit. Datenbank-/Sicherungsformat bleibt Version 3.
+- `npm test`: 75 Tests bestanden. Neu: Farbzuordnung, Medianprobe, Positionen/Ränder/Transparenz, unveränderte Pixel sowie konkurrierende Outfit-Bearbeitung, gelöschte Looks und monotoner Versionszeitpunkt auch bei zurückgestellter Uhr.
+- `npm run test:e2e`: kompletter Lauf mit 31 Chromium-Prüfungen bestanden. Neu: bewusste Farbübernahme, Verwerfen, Persistenz, identische exportierte Fotodaten, Tastatur, Offline ohne externe Anfragen, Fotowechsel/Entfernen, defektes Ersatzfoto und drei dunkle Bildschirmbreiten. Zwei-Tab-Konflikt und vollständiger Hinweis vor Ersetzen mit älterem Backup geprüft.
+- Der erste neue Layoutlauf verwendete versehentlich „Start“ als Testselektor statt des vorhandenen Navigationslabels „Heute“. Selektor korrigiert; danach kompletter Lauf erfolgreich. Keine Anwendungseinschränkung zum Umgehen des Tests.
+- Dunkle Farbprobe bei 390 Pixeln anhand Screenshot visuell geprüft. Synthetische Farbflächen belegen Funktion, keine Genauigkeit bei realer Kleidung.
+- Echte Wetterendpunkte nun per HTTPS erfolgreich; Live-Browserprüfung durch Cloud-Chromiums Zertifikatsvertrauen blockiert. Kein GPS verwendet, keine Prüfung umgangen. Details oben und in REVIEW.md.
+- Echte iPhone-/Safari-/WebKit-/HEIC-/Installations-/Speicherdruck- und Hostingprüfungen sowie Modellbenchmarks weiterhin nicht ausgeführt.

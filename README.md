@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten, keine Accounts, keine Bildübertragung.
 
-Version 0.3 ergänzt Outfit-Kalender, bestätigte Tragetage und freiwillige Wetterabfragen. Lokale Outfit-Vorschläge, gespeicherte Looks und persönliche Vorlieben bleiben ohne Netz nutzbar. Prüfungen und Grenzen sind in [REVIEW.md](REVIEW.md) dokumentiert.
+Version 0.4 ergänzt die lokale Farbprobe aus eigenen Fotos und schützt Outfit-Namen vor veralteten Bearbeitungen. Kalender, freiwilliges Wetter und lokale Outfit-Vorschläge bleiben erhalten. Prüfungen und Grenzen sind in [REVIEW.md](REVIEW.md) dokumentiert.
 
 ## Lokal starten
 
@@ -30,6 +30,12 @@ Die bereitgestellte **HTTPS-Adresse in Safari** öffnen. Teilen → „Zum Home-
 2. Name und Kategorie eintragen; weitere Merkmale sind optional und manuell korrigierbar.
 3. Ein Stück öffnen, um es zu bearbeiten oder zu löschen. Herzen markieren Favoriten.
 4. Unter „Mehr“ regelmässig eine Sicherung mit Fotos exportieren und in Dateien speichern. Import erst prüfen, dann bestätigen. Zusammenführen behält die neuere Version derselben ID; Ersetzen entfernt den vorhandenen Bestand und stellt die Sicherung wieder her.
+
+## Farbe aus einem Foto wählen
+
+Im Kleidungseditor ein Foto hinzufügen und bei **Farbe** auf **Farbe aus Foto wählen** tippen. Eine einfarbige Stelle am Stoff antippen; die Positionsregler und Pfeiltasten helfen beim genauen Auswählen. Erst **Blau übernehmen** (beziehungsweise die vorgeschlagene Farbe) ändert das Farbfeld. Danach das Stück normal speichern oder Änderungen verwerfen. Die Farbe lässt sich weiterhin manuell ändern.
+
+Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Kleidererkennung, Freistellung und Outfit-Fotobewertung sind noch nicht eingebaut. Kandidaten und Voraussetzungen stehen in [IMAGE_ASSISTANCE.md](IMAGE_ASSISTANCE.md).
 
 ## Outfits und dein persönlicher Stil
 
@@ -63,7 +69,7 @@ Wetter wird für bis zu sieben Tage gespeichert und mit Ortsname, Datenstand und
 
 Wetterquelle: [Open-Meteo](https://open-meteo.com/), Ortssuche basierend auf [GeoNames](https://www.geonames.org/), CC BY 4.0. Die kostenlose API ist für den privaten, nicht kommerziellen Gebrauch vorgesehen. Material, Isolation und Wasserdichtigkeit lassen sich aus den bisherigen Angaben nicht zuverlässig ableiten; Wetterregeln ersetzen keine eigene Prüfung.
 
-Fotos werden lokal auf maximal 1600 Pixel verkleinert und als JPEG neu erzeugt (weisser Hintergrund, keine Übernahme der ursprünglichen EXIF-Metadaten). HEIC funktioniert nur, wenn der Browser es decodieren kann; andernfalls JPEG/PNG/WebP verwenden. Keine automatische Freistellung oder Bilderkennung in Version 1.
+Fotos werden lokal auf maximal 1600 Pixel verkleinert und als JPEG neu erzeugt (weisser Hintergrund, keine Übernahme der ursprünglichen EXIF-Metadaten). HEIC funktioniert nur, wenn der Browser es decodieren kann; andernfalls JPEG/PNG/WebP verwenden. Die optionale Farbprobe benötigt keinen weiteren Modelldownload. Keine automatische Freistellung oder Kleidererkennung in Version 0.4.
 
 ## Datenschutz und Sicherung
 
@@ -88,7 +94,7 @@ Die Browserprüfungen starten selbst eine Produktionsvorschau auf Port 4173. Sie
 
 In der vorbereiteten Cloud-Umgebung wird automatisch `/usr/bin/chromium` verwendet; dort ist kein Browserdownload nötig. Ein anderer vorhandener Chromium lässt sich mit `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` auswählen. Optional: `npx playwright install webkit` und `npm run test:e2e:webkit` für zusätzliche WebKit-Prüfungen. Browserdownloads benötigen die offizielle Playwright-CDN-Freigabe; WebKit wird in der aktuellen Cloud-Netzwerkfreigabe nicht heruntergeladen.
 
-Die Wetter-Browserprüfungen verwenden kontrollierte API-Antworten, Fehler und eine Testposition; sie benötigen keine externen Wetterdienste und übertragen keinen echten Gerätestandort. Live-Abfragen wurden in dieser Cloud vom Netzwerkproxy mit 403 abgewiesen. Die erforderlichen Domains `api.open-meteo.com` und `geocoding-api.open-meteo.com` sind im Konfigurationsentwurf ergänzt. Für einen echten Abruf die Umgebungseinstellungen prüfen/speichern und die Umgebung veröffentlichen; danach den Live-Abruf erneut testen. Dies ist von der HTTPS-Bereitstellung der App und einem echten iPhone-Test getrennt.
+Die Wetter-Browserprüfungen verwenden kontrollierte API-Antworten, Fehler und eine Testposition; sie übertragen keinen echten Gerätestandort. Nach der Domainfreigabe wurden am 15. Oktober 2026 beide echten Endpunkte per HTTPS erfolgreich erreicht: Zürcher Ortssuche und sieben Vorhersagetage mit erwarteten Einheiten/Zeitzone. Der zusätzliche Live-Browserabruf scheitert in Cloud-Chromium noch an dessen Vertrauen in das Cloud-Proxy-Zertifikat (`ERR_CERT_AUTHORITY_INVALID`). Eine Erweiterung des Browser-Vertrauensspeichers wurde von der automatischen Freigabeprüfung abgelehnt und nicht ausgeführt. Reales Browser-CORS, Safari und HTTPS-Bereitstellung sind damit weiterhin unbestätigt. TLS-Prüfungen bleiben aktiv.
 
 ## Später kostenlos bereitstellen
 

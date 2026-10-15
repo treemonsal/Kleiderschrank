@@ -158,8 +158,12 @@ function SavedEditor({
         onSubmit={async (event) => {
           event.preventDefault()
           setBusy(true)
+          setError('')
           try {
-            await updateOutfit(outfit.id, { name })
+            await updateOutfit(outfit.id, {
+              name,
+              expectedUpdatedAt: outfit.updatedAt,
+            })
             notify('Der Outfit-Name wurde gespeichert.')
             onClose()
           } catch (error) {
