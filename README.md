@@ -140,3 +140,7 @@ Der Workflow startet nicht automatisch, verwendet Standard-Runner und übersprin
 Das Repository wurde vom Nutzer öffentlich gestellt und Pages aktiviert. Anschließend wurde der [Workflow-Lauf 38783006210](https://github.com/treemonsal/Kleiderschrank/actions/runs/38783006210) erfolgreich gestartet: Installation, Formatprüfung, Datentests, Build, Upload und Deployment bestanden. Die veröffentlichte Anwendung stammt aus Commit `ca4af46a32520603fd42eb1a12a49a0cfdbbdf4f`. Normale Code-Pushes veröffentlichen nicht automatisch; nach späteren App-Änderungen den Workflow erneut starten. Der echte Gerätetest bleibt offen und ist in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
 
 Funktionsumfang und weitere Phasen: [PRODUCT.md](PRODUCT.md), [ROADMAP.md](ROADMAP.md).
+
+## Update 0.6
+
+Die neue dunkle Oberfläche ist unter derselben App-Adresse veröffentlicht. Öffne MyStyle online und tippe bei „Eine neue Version ist bereit“ auf **Jetzt aktualisieren**. Deine lokale Sammlung bleibt erhalten. Neue Icons können auf bereits angelegten iPhone-Verknüpfungen vom Betriebssystem zwischengespeichert sein. Die Online-KI benötigt weiterhin den einmalig einzurichtenden kostenlosen Server; ein App-Update allein verbindet ihn nicht.

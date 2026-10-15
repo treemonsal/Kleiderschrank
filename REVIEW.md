@@ -9,6 +9,10 @@
 - Docker-Build gestartet und Proxy-DNS im Build diagnostiziert: nach korrekter Proxy-Zuordnung erreicht APT die Paketquellen, pip scheitert am im Container nicht vertrauten Cloud-Proxy-Zertifikat. Build nicht als bestanden gewertet; keine TLS-Prüfung deaktiviert und kein neues CA-Vertrauen installiert. Python-Abhängigkeiten sind auf dem Host mit bestehendem Systemvertrauen installiert und getestet.
 - Ausstehend: HF_TOKEN im sicheren Umgebungs-Secret fehlt. Kein Space erstellt, keine externe Server-KI live geschaltet. Notwendige Netzwerkdomänen und Secret-Anforderung im Umgebungsentwurf gespeichert; Speichern des Entwurfs führt kein Deployment aus. Echte Server-/Safari-/iPhone-Prüfung und Qualität mehrerer realer Fotos bleiben offen.
 
+## Veröffentlichung 0.6
+
+GitHub-Pages-Lauf [38788316012](https://github.com/treemonsal/Kleiderschrank/actions/runs/38788316012) für App-Commit `84967c98ea9c712f11c00b39b4ef19d33c99627f` erfolgreich: Installation, Formatierung, Datentests, Build und Deployment bestanden. Die öffentliche HTTPS-Auslieferung wurde für HTML, CSS/JS, dunkles Manifest, Icons, Service Worker sowie lokale KI-Dateien und Prüfsummen bestätigt. Neues Frontend enthält Version 0.6.0 und Online-KI-Einstellungen. Dies aktiviert noch keinen externen KI-Server. Nach der letzten Einwilligungs-Korrektur wurden alle vier betroffenen Online-Browserfälle erneut bestanden; Abwählen der Foto-Freigabe löscht die Verbindung sofort.
+
 ## Frühere Prüfungen bis Version 0.5
 
 # Gegenprüfung und Phase 2
