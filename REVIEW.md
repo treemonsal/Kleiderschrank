@@ -7,6 +7,8 @@
 - Layouts bei 375/390/430 Pixeln ohne horizontalen Überlauf, wichtige Navigationstasten mindestens 44 × 44 Pixel; ausgewählte Glasfläche folgt nach Seitenwechsel der aktiven Taste. Screenshots von Startseite, Einstellungen und Editor visuell kontrolliert. Glasoptik ist eine CSS-Annäherung, kein natives Apple-Material. Native Safari-/Geräteprüfung dieser Änderung nicht ausgeführt.
 - Zweiter Prüfdurchgang aus Sicht von Bestandsschutz, Datenschutz und Fehlerwahrheit: keine Schema-/Backupänderung, keine neuen Uploads beim Start, keine neuen Anbieter/Schlüssel, keine privaten Foto-/Fehler-Rohdaten gespeichert oder ausgegeben. Dienste und Inferenzparameter unverändert; Limits werden weder umgangen noch erhöht. Für Fehler-/Designprüfung keine erneuten echten Fotoanfragen verbraucht.
 
+Veröffentlichung 0.6.2: [GitHub-Pages-Lauf 38797055243](https://github.com/treemonsal/Kleiderschrank/actions/runs/38797055243) für App-Commit `00fc515f21b3d45c7bba3d5bfa4238b71085cb07` erfolgreich. Öffentliche HTTPS-Auslieferung anschliessend mit aktiver TLS-Prüfung bestätigt: Version 0.6.2 im App-Skript, neue Glasnavigation im CSS, getrennte Fehlertexte im Community-Modul, schwarzes Manifest, gültige Installationsicons und Service Worker. Relative Start-/Scope-Angaben lösen zur bestehenden `/Kleiderschrank/`-Adresse auf. Keine Fotoanfrage beim Auslieferungscheck.
+
 ## Vorherige Prüfung – Version 0.6.1
 
 # Aktuelle Prüfung – Version 0.6.1, 15. Oktober 2026
