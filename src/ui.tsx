@@ -48,29 +48,29 @@ export function WardrobeArt() {
       />
       <path
         d="M99 96l-24 14-20 39 24 13 12-18-3 76h62l-3-76 12 18 24-13-20-39-25-14c-5 14-34 14-39 0Z"
-        fill="#e8dfd2"
-        stroke="#a79680"
+        fill="#d8d8ed"
+        stroke="#9294af"
         strokeWidth="1.5"
       />
       <path
         d="M100 98c3 20 33 20 37 0m-19 18v104"
-        stroke="#a79680"
+        stroke="#9294af"
         strokeWidth="1.5"
       />
       <path
         d="M201 98l-17 9 9 122h55l9-122-18-9-18 10-20-10Z"
-        fill="#78867a"
-        stroke="#59695d"
+        fill="#7977ac"
+        stroke="#aaa6df"
         strokeWidth="1.5"
       />
       <path
         d="M222 110v119m-35-120 16 36 19-35 18 35 14-36M202 178h13m14 0h13"
-        stroke="#e4e6dc"
+        stroke="#e5e3fa"
         strokeWidth="1.3"
         opacity=".8"
       />
-      <path d="m265 157 4-8 4 8 8 4-8 4-4 8-4-8-8-4 8-4Z" fill="#b59b6e" />
-      <circle cx="66" cy="197" r="3" fill="#b59b6e" />
+      <path d="m265 157 4-8 4 8 8 4-8 4-4 8-4-8-8-4 8-4Z" fill="#b9b1ff" />
+      <circle cx="66" cy="197" r="3" fill="#b9b1ff" />
     </svg>
   )
 }

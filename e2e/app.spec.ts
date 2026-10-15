@@ -216,11 +216,16 @@ test('Ungespeicherte Eingaben gehen beim Schliessen nicht unbemerkt verloren', a
 })
 
 for (const width of [375, 390, 430]) {
-  test(`iPhone-Layout ${width}px, Hell-/Dunkelmodus und Editor ohne horizontalen Überlauf`, async ({
+  test(`iPhone-Layout ${width}px, dauerhafter Dunkelmodus und Editor ohne horizontalen Überlauf`, async ({
     page,
   }, testInfo) => {
     await page.setViewportSize({ width, height: 844 })
+    await page.emulateMedia({ colorScheme: 'light' })
+    await page.addInitScript(() =>
+      localStorage.setItem('mystyle-theme', 'light'),
+    )
     await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
     await expect(
       page.getByRole('heading', { name: 'Dein Stil. Dein Moment.' }),
     ).toBeVisible()
@@ -234,7 +239,7 @@ for (const width of [375, 390, 430]) {
       fullPage: true,
     })
     await page.getByRole('button', { name: 'Mehr', exact: true }).click()
-    await page.getByRole('button', { name: 'Dunkel', exact: true }).click()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
     expect(
       await page.evaluate(

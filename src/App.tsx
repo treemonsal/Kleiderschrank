@@ -24,7 +24,7 @@ import { db, deleteGarment, storageError, toggleFavorite } from './db'
 import { OutfitView } from './OutfitView'
 import { CATEGORIES, filterGarments, type Garment } from './model'
 import { Editor } from './Editor'
-import { BackupView, type Theme } from './BackupView'
+import { BackupView } from './BackupView'
 import {
   ErrorMessage,
   GarmentCard,
@@ -34,15 +34,6 @@ import {
 } from './ui'
 
 type View = 'home' | 'wardrobe' | 'outfits' | 'settings'
-function initialTheme(): Theme {
-  try {
-    const value = localStorage.getItem('mystyle-theme')
-    if (value === 'light' || value === 'dark') return value
-  } catch {
-    /* Browser may block localStorage. */
-  }
-  return 'system'
-}
 
 function Home({
   items,
@@ -154,7 +145,7 @@ function Home({
             </div>
             <h3>Dein erstes Lieblingsstück.</h3>
             <p>
-              Ein Foto, ein Name — und dein
+              Ein Foto — und dein
               <br />
               Kleiderschrank bekommt ein neues Zuhause.
             </p>
@@ -163,7 +154,7 @@ function Home({
               Erstes Stück hinzufügen
             </button>
             <span className="micro-copy">
-              <LockKeyhole size={12} /> Deine Fotos bleiben auf deinem Gerät.
+              <LockKeyhole size={12} /> Dein Kleiderschrank bleibt bei dir.
             </span>
           </div>
         )}
@@ -503,7 +494,6 @@ export default function App() {
     null,
   )
   const [view, setView] = useState<View>('home')
-  const [theme, setTheme] = useState<Theme>(initialTheme)
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [toast, setToast] = useState('')
@@ -525,13 +515,13 @@ export default function App() {
     return () => clearTimeout(timer)
   }, [toast])
   useEffect(() => {
-    document.documentElement.dataset.theme = theme
+    document.documentElement.dataset.theme = 'dark'
     try {
-      localStorage.setItem('mystyle-theme', theme)
+      localStorage.setItem('mystyle-theme', 'dark')
     } catch {
-      /* Styling still works for this session. */
+      /* Styling still works when storage is blocked. */
     }
-  }, [theme])
+  }, [])
   useEffect(() => {
     const online = () => setOffline(false)
     const offline = () => setOffline(true)
@@ -628,12 +618,7 @@ export default function App() {
             notify={notify}
           />
         ) : (
-          <BackupView
-            items={items}
-            theme={theme}
-            onTheme={setTheme}
-            notify={notify}
-          />
+          <BackupView items={items} notify={notify} />
         )}
       </main>
       <nav className="bottom-nav" aria-label="Hauptnavigation">

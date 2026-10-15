@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten, keine Accounts, keine Bildübertragung.
 
-Version 0.5 ergänzt echte lokale KI-Freistellung als experimentelle Option: Vorschau prüfen, bewusst übernehmen, Original behalten. Kleiderschrank, Farbprobe, lokale Outfit-Vorschläge, Vorlieben, Kalender und freiwilliges Wetter sind integriert. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
+Version 0.6 bringt einen konsequenten Dunkelmodus und den automatischen Fotoimport über einen optionalen kostenlosen KI-Server. Der Server muss einmal eingerichtet werden; ohne Verbindung werden keine Fotos gesendet. Die lokale experimentelle Freistellung bleibt als Alternative. Kleiderschrank, Farbprobe, lokale Outfit-Vorschläge, Vorlieben, Kalender und freiwilliges Wetter sind integriert. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — am 15. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
@@ -37,7 +37,17 @@ Die bereitgestellte **HTTPS-Adresse in Safari** öffnen. Teilen → „Zum Home-
 
 Im Kleidungseditor ein Foto hinzufügen und bei **Farbe** auf **Farbe aus Foto wählen** tippen. Eine einfarbige Stelle am Stoff antippen; die Positionsregler und Pfeiltasten helfen beim genauen Auswählen. Erst **Blau übernehmen** (beziehungsweise die vorgeschlagene Farbe) ändert das Farbfeld. Danach das Stück normal speichern oder Änderungen verwerfen. Die Farbe lässt sich weiterhin manuell ändern.
 
-Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Kleidererkennung und Outfit-Fotobewertung sind noch nicht eingebaut.
+Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Merkmale sind über den optionalen Online-KI-Server vorbereitet; Outfit-Fotobewertung ist noch nicht eingebaut.
+
+## Foto automatisch erfassen
+
+1. Einmal den kostenlosen KI-Server nach [server/README.md](server/README.md) einrichten. GitHub Pages selbst kann keine Server-KI ausführen. Keine bezahlte API und kein Zahlungsprofil nötig.
+2. **Mehr → Online-Foto-KI**: eigene `https://… .hf.space`-Adresse und persönlichen Verbindungscode eingeben, Fotoübertragung freigeben und verbinden. Keinen GitHub-/Hugging-Face-Token in die App eingeben.
+3. Neues Foto aufnehmen oder aus der Mediathek wählen. Die KI bereitet alle Angaben vor. Stil/Saison sind Schätzungen; Marke bleibt ohne lesbares Logo leer. Während der Analyse selbst geänderte Felder werden erhalten.
+4. Freistellung prüfen und bei gutem Ergebnis übernehmen. Mit **Zum Kleiderschrank hinzufügen** speichern. Die Originalaufnahme bleibt zusätzlich erhalten. Bei Fehlern kannst du wiederholen oder manuell speichern.
+5. **Online-KI ausschalten** beendet die Freigabe für weitere Fotos. Bereits lokal gespeicherte Stücke bleiben erhalten. Verbindung und Code werden nicht in Backups exportiert.
+
+Kostenlose CPU-Server können schlafen; Start und Analyse können Minuten dauern. Der Code enthält keine bezahlten Ausweichdienste. Die Erkennung braucht einen echten Qualitätstest nach Bereitstellung. Angaben und Freistellung funktionieren unabhängig: ein fehlgeschlagener Teil verwirft keinen brauchbaren anderen Teil.
 
 ## Hintergrund mit lokaler KI entfernen
 

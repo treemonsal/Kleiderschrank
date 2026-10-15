@@ -13,6 +13,8 @@ import { saveGarment, storageError } from './db'
 import { ErrorMessage, Sheet, usePhotoUrl } from './ui'
 import { PhotoColorPicker } from './PhotoColorPicker'
 import { BackgroundRemoval } from './BackgroundRemoval'
+import { PhotoAssistant } from './PhotoAssistant'
+import type { PhotoAttributes } from './cloud-ai'
 
 export function Editor({
   item,
@@ -41,6 +43,8 @@ export function Editor({
   const [busy, setBusy] = useState(false)
   const [processing, setProcessing] = useState(false)
   const [assisting, setAssisting] = useState(false)
+  const [onlineBusy, setOnlineBusy] = useState(false)
+  const [recognized, setRecognized] = useState(false)
   const [dirty, setDirty] = useState(false)
   const [confirmDiscard, setConfirmDiscard] = useState(false)
   const [photoRevision, setPhotoRevision] = useState(0)
@@ -115,9 +119,10 @@ export function Editor({
             ) : (
               <div className="photo-picker-empty">
                 <ImagePlus size={32} strokeWidth={1.3} />
-                <p>Gib deinem Stück ein Gesicht</p>
+                <p>Dein Foto ist der Anfang</p>
                 <span>
-                  Ein Foto ist optional. Du kannst es später ergänzen.
+                  Mit verbundener Online-KI werden die Angaben automatisch
+                  vorbereitet. Ohne Foto kannst du sie selbst eintragen.
                 </span>
               </div>
             )}
@@ -160,6 +165,34 @@ export function Editor({
             )}
           </div>
           {draft.photo && (
+            <PhotoAssistant
+              key={`online-${photoRevision}`}
+              photo={draft.photo}
+              autoRun={photoRevision > 0}
+              onBusy={setOnlineBusy}
+              onChoose={(blob) => update('cutout', blob)}
+              onAttributes={(values: PhotoAttributes) => {
+                const baseline = draft
+                setDraft((current) => {
+                  if (current.photo !== baseline.photo) return current
+                  const next = { ...current }
+                  for (const key of Object.keys(
+                    values,
+                  ) as (keyof PhotoAttributes)[]) {
+                    if (
+                      JSON.stringify(current[key]) ===
+                      JSON.stringify(baseline[key])
+                    )
+                      Object.assign(next, { [key]: values[key] })
+                  }
+                  return next
+                })
+                setRecognized(true)
+                setDirty(true)
+              }}
+            />
+          )}
+          {draft.photo && !onlineBusy && (
             <BackgroundRemoval
               key={photoRevision}
               photo={draft.photo}
@@ -191,6 +224,11 @@ export function Editor({
               e.target.value = ''
             }}
           />
+          {recognized && (
+            <p className="ai-ready" role="status">
+              Angaben aus deinem Foto vorbereitet. Du kannst alles ändern.
+            </p>
+          )}
           <label className="field">
             Name <span className="required-hint">Pflichtfeld</span>
             <input
@@ -336,11 +374,19 @@ export function Editor({
           </div>
         )}
         <div className="sheet-footer">
-          <p className="micro-copy">Nur auf deinem Gerät. Ganz dein Stil.</p>
+          <p className="micro-copy">
+            Erst mit Speichern in deinem Kleiderschrank.
+          </p>
           <button
             className="button primary full"
             type="submit"
-            disabled={busy || processing || assisting || !draft.name.trim()}
+            disabled={
+              busy ||
+              processing ||
+              assisting ||
+              onlineBusy ||
+              !draft.name.trim()
+            }
           >
             {busy ? <LoaderCircle className="spin" size={18} /> : null}
             {busy

@@ -129,3 +129,12 @@ Die Grenzen für echte iPhone-/Safari-, Kamera-, Installations-, Hosting- und We
 ### Öffentliche Veröffentlichung
 
 Am 15. Oktober 2026 nach manueller Pages-Einrichtung durch den Nutzer veröffentlicht: https://treemonsal.github.io/Kleiderschrank/. GitHub-Lauf 38783006210 für Commit ca4af46a32520603fd42eb1a12a49a0cfdbbdf4f: Build und Deployment erfolgreich. Öffentliche HTML-/JS-/CSS-Dateien, Installationsmanifest/-icons, Service Worker, KI-Worker und beide KI-Binärdateien liefern HTTP 200. Modell und WASM stimmen mit den gepinnten SHA-256-Werten überein. Manifest-Scope/Startpfad passen; große KI-Binärdateien bleiben außerhalb des automatischen Precache. Echter iPhone-Test bleibt offen; Cloud-Browser-HTTPS blockiert durch bestehendes CA-Vertrauen.
+
+## Version 0.6 – neuer Benutzerauftrag
+
+- [x] Ausschliesslich dunkle Apple-inspirierte Gestaltung mit Systemschrift und schwebender Navigation.
+- [x] Fotoimport für automatische Merkmale, Freistellungsvorschau, Abbruch und Erhalt eigener Eingaben.
+- [x] Kostenlose CPU-Servervorlage: Qwen3-VL-2B + BiRefNet-General-Lite, authentifizierte Endpunkte, keine Fotodateien/-logs.
+- [x] Getrennte Fehlerpfade, Schema-/Uploadprüfung und Verbindung mit ausdrücklicher Foto-Freigabe.
+- [ ] Kostenlosen Hosting-Account verbinden und Server bereitstellen (HF_TOKEN fehlt).
+- [ ] Echte Kleidungsfotos auf bereitgestelltem Server und Safari/iPhone prüfen; Cloud-Vertragstests ersetzen keine Qualitätsprüfung.

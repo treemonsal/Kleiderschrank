@@ -1,3 +1,15 @@
+# Bild-KI – aktueller Stand 0.6
+
+Der Benutzer hat externe Foto-KI ausdrücklich gewünscht und die Vorgabe „komplett kostenlos“ bestätigt. Die bisherige U2NETP-Freistellung hat auf seinem iPhone nicht das gewünschte Ergebnis geliefert. Ein bestandener synthetischer Browserfall beweist keine Qualität für reale Kleidung.
+
+Die neue Online-Anbindung und Servervorlage stehen in [server/README.md](server/README.md): Qwen3-VL-2B für alle vorhandenen Merkmalsfelder, BiRefNet-General-Lite für Segmentierung. Modelle laufen auf einem kostenlosen, eigenen HF CPU Basic Space, ohne bezahlte Anbieter-API. Fotos werden nach aktivierter Freigabe einzeln übertragen, im RAM verarbeitet und nicht absichtlich gespeichert oder geloggt. Hugging Face ist der Infrastrukturbetreiber.
+
+Ohne bereitgestellten Server wird keine Online-Erkennung vorgetäuscht. Die PWA enthält eine echte Verbindungseinrichtung, keine Anbieter-Schlüssel. Gesundheitsprüfung bestätigt nur Erreichbarkeit/Auth/API-Version, keine Modellqualität. CPU-Laufzeit, RAM und echte Kleidung müssen zusätzlich geprüft werden. Notizen beschreiben nur sichtbare Details, Marke ohne lesbares Zeichen leer, Stil/Saison als Schätzungen.
+
+Schema-/Browser-/API-Tests prüfen auch Teilausfälle, ungültige PNGs, Abbruch und eigene Änderungen während einer Anfrage. Ein altes Foto darf nach Fotowechsel keine Merkmale mehr übernehmen. Die KI füllt Felder automatisch, Freistellung wird bewusst übernommen und erst normales Speichern persistiert. Backup-Schema 4 bleibt erhalten.
+
+## Historie: lokale Freistellung 0.5
+
 # Lokale Fotoassistenz
 
 Bewertung vom 15. Oktober 2026. Ziel: kostenlose Verarbeitung eigener Kleidungsfotos auf dem iPhone, ohne Upload, Schlüssel oder laufende Dienste. Eine Dokumentationsprüfung ist kein Gerätebenchmark.

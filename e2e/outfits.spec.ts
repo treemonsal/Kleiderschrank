@@ -275,7 +275,7 @@ test('Eine gefälschte Bildsignatur reicht nicht für einen gültigen Import', a
 })
 
 for (const width of [375, 390, 430]) {
-  test(`Outfit-Bereich ${width}px bleibt in beiden Darstellungen bedienbar`, async ({
+  test(`Outfit-Bereich ${width}px bleibt im Dunkelmodus bedienbar`, async ({
     page,
   }, testInfo) => {
     await page.setViewportSize({ width, height: 844 })
@@ -294,7 +294,7 @@ for (const width of [375, 390, 430]) {
       fullPage: true,
     })
     await page.getByRole('button', { name: 'Mehr', exact: true }).click()
-    await page.getByRole('button', { name: 'Dunkel', exact: true }).click()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
     await page.getByRole('button', { name: 'Outfits', exact: true }).click()
     await page.getByRole('button', { name: 'Stilvorlieben bearbeiten' }).click()
     expect(

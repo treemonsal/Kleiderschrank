@@ -2,14 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import {
   ArrowDownToLine,
   ArrowUpFromLine,
-  Check,
   ChevronRight,
   Database,
   HardDrive,
   LockKeyhole,
   Moon,
   ShieldCheck,
-  Sun,
   Smartphone,
 } from 'lucide-react'
 import {
@@ -24,18 +22,14 @@ import type { Garment } from './model'
 import { storageError } from './db'
 import { ErrorMessage, Sheet } from './ui'
 import { AI_CACHE } from './background-model'
+import { AISettings } from './AISettings'
 import { version } from '../package.json'
 
-export type Theme = 'system' | 'light' | 'dark'
 export function BackupView({
   items,
-  theme,
-  onTheme,
   notify,
 }: {
   items: Garment[]
-  theme: Theme
-  onTheme: (theme: Theme) => void
   notify: (message: string) => void
 }) {
   const input = useRef<HTMLInputElement>(null)
@@ -116,14 +110,16 @@ export function BackupView({
         <div>
           <h2>Privat ist hier der Standard.</h2>
           <p>
-            Deine Fotos und Angaben bleiben auf diesem Gerät. Kein Konto, kein
-            Tracking, keine Bildübertragung.
+            Dein Kleiderschrank wird auf diesem Gerät gespeichert. Nur mit
+            aktivierter Online-KI wird das ausgewählte Foto an deinen
+            verbundenen KI-Server gesendet. Kein Tracking.
           </p>
         </div>
       </section>
+      <AISettings />
       <section className="settings-section">
         <div className="section-heading">
-          <h2>Lokale Foto-KI</h2>
+          <h2>Lokale Freistellung als Alternative</h2>
         </div>
         <p className="muted section-intro">
           Die experimentelle Freistellung startet im Fotoeditor nur auf deinen
@@ -248,33 +244,13 @@ export function BackupView({
       </section>
       <section className="settings-section">
         <div className="section-heading">
-          <h2>So fühlt sich MyStyle an</h2>
-          <Sun size={19} />
+          <h2>Für die Nacht gemacht</h2>
+          <Moon size={19} />
         </div>
-        <div
-          className="theme-picker"
-          role="group"
-          aria-label="Erscheinungsbild"
-        >
-          {(
-            [
-              { value: 'light', label: 'Hell', Icon: Sun },
-              { value: 'dark', label: 'Dunkel', Icon: Moon },
-              { value: 'system', label: 'System', Icon: Smartphone },
-            ] as const
-          ).map(({ value, label, Icon }) => (
-            <button
-              key={value}
-              aria-pressed={theme === value}
-              className={theme === value ? 'selected' : ''}
-              onClick={() => onTheme(value)}
-            >
-              <Icon size={19} strokeWidth={1.5} />
-              <span>{label}</span>
-              {theme === value && <Check size={14} />}
-            </button>
-          ))}
-        </div>
+        <p className="muted section-intro">
+          Tiefes Schwarz, klare Schrift und ruhige Oberflächen. MyStyle bleibt
+          dunkel.
+        </p>
       </section>
       <section className="settings-section">
         <div className="section-heading">

@@ -8,51 +8,19 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --background: #f7f6f2;
-  --surface: #fffefa;
-  --soft: #efede6;
-  --ink: #292d29;
-  --muted: #747870;
-  --line: #dedfd5;
-  --accent: #465d4d;
-  --accent-ink: #fffefa;
-  --hero: #ebece2;
-  --rose: #9e6260;
-  --danger: #ae4545;
-  --shadow: 0 12px 38px #282f2410;
-  color-scheme: light;
-}
-:root[data-theme='dark'] {
-  --background: #191e1b;
-  --surface: #232a25;
-  --soft: #2b342d;
-  --ink: #eeeee5;
-  --muted: #adb5a9;
-  --line: #3a453d;
-  --accent: #b6c8ac;
-  --accent-ink: #202c24;
-  --hero: #2a352b;
-  --rose: #e5a29d;
-  --danger: #e79895;
-  --shadow: 0 12px 38px #0002;
+  --background: #08090c;
+  --surface: #15161c;
+  --soft: #202129;
+  --ink: #f5f5f7;
+  --muted: #a4a5b1;
+  --line: #30313b;
+  --accent: #b9b1ff;
+  --accent-ink: #17122f;
+  --hero: #191824;
+  --rose: #ff9cba;
+  --danger: #ff9b94;
+  --shadow: 0 16px 48px #0005;
   color-scheme: dark;
-}
-@media (prefers-color-scheme: dark) {
-  :root[data-theme='system'] {
-    --background: #191e1b;
-    --surface: #232a25;
-    --soft: #2b342d;
-    --ink: #eeeee5;
-    --muted: #adb5a9;
-    --line: #3a453d;
-    --accent: #b6c8ac;
-    --accent-ink: #202c24;
-    --hero: #2a352b;
-    --rose: #e5a29d;
-    --danger: #e79895;
-    --shadow: 0 12px 38px #0002;
-    color-scheme: dark;
-  }
 }
 * {
   box-sizing: border-box;
@@ -129,8 +97,8 @@ fieldset {
   justify-content: space-between;
   align-items: center;
   margin: 0 26px;
-  height: 91px;
-  border-bottom: 1px solid var(--line);
+  height: 78px;
+  border-bottom: 0;
 }
 .wordmark {
   font-size: 30px;
@@ -151,16 +119,16 @@ fieldset {
 }
 .edition {
   font-size: 9px;
-  letter-spacing: 2.2px;
+  letter-spacing: 1.5px;
   color: var(--muted);
 }
 .profile-button {
-  width: 39px;
-  height: 39px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 1px solid var(--line);
-  font-family: Georgia, serif;
-  font-style: italic;
+  font-family: inherit;
+  font-style: normal;
   font-size: 23px;
   position: relative;
   background: var(--soft);
@@ -206,7 +174,10 @@ fieldset {
 }
 .home-hero {
   background: var(--hero);
-  border-radius: 5px 5px 64px 5px;
+  border-radius: 30px;
+  border: 1px solid #ffffff0c;
+  background:
+    radial-gradient(ellipse at 95% 95%, #353252, transparent 65%), var(--hero);
   overflow: hidden;
   position: relative;
   min-height: 385px;
@@ -232,15 +203,16 @@ fieldset {
   background: var(--accent);
 }
 .hero-copy h1 {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-weight: 400;
+  font-family: inherit;
+  font-weight: 700;
   font-size: 48px;
-  letter-spacing: -2.3px;
+  letter-spacing: -2.5px;
   line-height: 1.06;
   margin: 17px 0 16px;
 }
 .hero-copy h1 em {
-  font-weight: 400;
+  font-style: normal;
+  font-weight: 700;
   color: var(--accent);
 }
 .hero-copy > p:last-child {
@@ -292,8 +264,8 @@ fieldset {
   margin: 0 6px;
 }
 .round-button {
-  width: 43px;
-  height: 43px;
+  width: 44px;
+  height: 44px;
   border: 1px solid var(--line);
   border-radius: 50%;
   display: grid;
@@ -310,11 +282,11 @@ fieldset {
   margin-bottom: 18px;
 }
 .section-heading h2 {
-  font-family: Georgia, serif;
-  font-size: 23px;
+  font-family: inherit;
+  font-size: 22px;
   line-height: 1.25;
   letter-spacing: -0.6px;
-  font-weight: 400;
+  font-weight: 650;
 }
 .section-heading .eyebrow {
   font-size: 8px;
@@ -336,7 +308,7 @@ fieldset {
 .first-piece-card {
   padding: 28px 15px 24px;
   text-align: center;
-  border: 1px dashed var(--line);
+  border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--surface);
 }
@@ -366,7 +338,7 @@ fieldset {
   place-items: center;
 }
 .first-piece-card h3 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-weight: 400;
   font-size: 22px;
   letter-spacing: -0.5px;
@@ -378,16 +350,17 @@ fieldset {
   margin: 11px 0 21px;
 }
 .button {
+  font-feature-settings: 'ss01';
   display: inline-flex;
   gap: 9px;
   justify-content: center;
   align-items: center;
-  min-height: 49px;
+  min-height: 50px;
   border-radius: 13px;
   padding: 13px 19px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.4;
-  font-weight: 550;
+  font-weight: 600;
   transition:
     transform 0.15s,
     background 0.15s;
@@ -433,25 +406,27 @@ fieldset {
   align-items: center;
 }
 .editorial-note p {
-  font-family: Georgia, serif;
-  font-style: italic;
+  font-family: inherit;
+  font-style: normal;
   font-size: 12px;
 }
 .bottom-nav {
   position: fixed;
   z-index: 10;
-  bottom: 0;
+  bottom: calc(10px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  width: 100%;
-  max-width: 900px;
+  width: calc(100% - 28px);
+  max-width: 600px;
   display: flex;
   justify-content: space-around;
-  border-top: 1px solid var(--line);
+  border: 1px solid #ffffff14;
+  border-radius: 30px;
+  box-shadow: 0 12px 40px #0008;
   background: color-mix(in srgb, var(--background) 92%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  padding: 9px 18px calc(11px + env(safe-area-inset-bottom));
+  padding: 9px 8px 7px;
 }
 .bottom-nav > button {
   position: relative;
@@ -475,6 +450,7 @@ fieldset {
   place-items: center;
 }
 .nav-dot {
+  display: none;
   width: 3px;
   height: 3px;
   border-radius: 50%;
@@ -486,11 +462,11 @@ fieldset {
   margin: 32px 0 25px;
 }
 .page-heading h1 {
-  font-family: Georgia, serif;
-  font-size: 33px;
+  font-family: inherit;
+  font-size: 34px;
   line-height: 1.15;
-  letter-spacing: -1.5px;
-  font-weight: 400;
+  letter-spacing: -1.2px;
+  font-weight: 700;
   margin-top: 9px;
 }
 .page-heading > p:last-child {
@@ -523,8 +499,8 @@ fieldset {
 .primary-add {
   color: var(--accent-ink);
   background: var(--accent);
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   margin-top: 5px;
 }
 .search-row {
@@ -589,7 +565,7 @@ fieldset {
 }
 .chip {
   flex-shrink: 0;
-  min-height: 43px;
+  min-height: 44px;
   border: 1px solid var(--line);
   border-radius: 24px;
   padding: 9px 16px;
@@ -639,7 +615,7 @@ fieldset {
   text-align: left;
 }
 .garment-picture {
-  border-radius: 14px;
+  border-radius: 22px;
   background: var(--soft);
   aspect-ratio: 3/4;
   overflow: hidden;
@@ -652,7 +628,7 @@ fieldset {
   object-fit: contain;
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: var(--soft);
 }
 .garment-picture.large {
   aspect-ratio: 1;
@@ -701,8 +677,8 @@ fieldset {
   position: absolute;
   top: 4px;
   right: 4px;
-  background: #fffefae8;
-  color: #535c50;
+  background: #16171cdb;
+  color: #f5f5f7;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -714,7 +690,7 @@ fieldset {
   color: var(--rose);
 }
 .favorite-button.is-favorite {
-  color: #a45f60;
+  color: var(--rose);
 }
 .closet-empty {
   text-align: center;
@@ -722,7 +698,7 @@ fieldset {
   padding: 0 8px;
 }
 .closet-empty h2 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 26px;
   font-weight: 400;
   letter-spacing: -0.7px;
@@ -736,8 +712,8 @@ fieldset {
 }
 .collection-footnote {
   text-align: center;
-  font-family: Georgia, serif;
-  font-style: italic;
+  font-family: inherit;
+  font-style: normal;
   font-size: 12px;
   color: var(--muted);
   margin: 35px 0 15px;
@@ -769,8 +745,8 @@ fieldset {
   margin-top: 4px;
 }
 .add-banner-icon {
-  width: 39px;
-  height: 39px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--soft);
   display: grid;
@@ -880,30 +856,6 @@ fieldset {
   font-size: 12px;
   padding: 7px 0;
 }
-.theme-picker {
-  display: flex;
-  background: var(--soft);
-  padding: 5px;
-  border-radius: 14px;
-  gap: 4px;
-  margin-top: 17px;
-}
-.theme-picker > button {
-  flex: 1;
-  min-width: 0;
-  min-height: 48px;
-  display: flex;
-  gap: 7px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  font-size: 11px;
-}
-.theme-picker > button.selected {
-  background: var(--surface);
-  color: var(--accent);
-  box-shadow: 0 2px 8px #00000008;
-}
 .storage-details {
   margin-top: 15px;
   padding: 15px;
@@ -943,8 +895,8 @@ fieldset {
 }
 .app-signature {
   text-align: center;
-  font-family: Georgia, serif;
-  font-style: italic;
+  font-family: inherit;
+  font-style: normal;
   font-size: 13px;
   color: var(--muted);
   line-height: 2;
@@ -968,13 +920,13 @@ fieldset {
   width: 100%;
   max-height: 94dvh;
   margin: auto auto 0;
-  border-radius: 24px 24px 0 0;
+  border-radius: 30px 30px 0 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   box-shadow: var(--shadow);
 }
 .sheet::backdrop {
-  background: #111b1760;
+  background: #0009;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 }
@@ -999,10 +951,10 @@ fieldset {
   margin-bottom: 22px;
 }
 .sheet-header h2 {
-  font-family: Georgia, serif;
-  font-size: 29px;
+  font-family: inherit;
+  font-size: 28px;
   letter-spacing: -1px;
-  font-weight: 400;
+  font-weight: 650;
   line-height: 1.2;
   overflow-wrap: anywhere;
 }
@@ -1011,8 +963,8 @@ fieldset {
   margin-bottom: 7px;
 }
 .sheet-header .icon-button {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
 }
 .editor-fields {
   display: flex;
@@ -1023,7 +975,7 @@ fieldset {
   position: relative;
   width: 100%;
   background: var(--soft);
-  border: 1px dashed var(--line);
+  border: 1px solid var(--line);
   border-radius: 16px;
   height: 185px;
   overflow: hidden;
@@ -1036,7 +988,7 @@ fieldset {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background: #fff;
+  background: var(--soft);
 }
 .photo-picker-empty {
   height: 100%;
@@ -1076,6 +1028,7 @@ fieldset {
   margin-top: -10px;
 }
 .photo-actions > .button {
+  font-feature-settings: 'ss01';
   flex: 1;
   padding: 12px 8px;
   font-size: 11px;
@@ -1174,7 +1127,7 @@ fieldset {
   overflow: hidden;
   border-radius: 9px;
   cursor: crosshair;
-  background: #fff;
+  background: var(--soft);
 }
 .color-sample-photo canvas {
   display: block;
@@ -1321,7 +1274,7 @@ fieldset {
 }
 .detail-title h3 {
   font-size: 20px;
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-weight: 400;
   margin-top: 6px;
   overflow-wrap: anywhere;
@@ -1368,6 +1321,7 @@ fieldset {
   margin-top: 23px;
 }
 .detail-actions > .button {
+  font-feature-settings: 'ss01';
   flex: 1;
 }
 .delete-button {
@@ -1422,6 +1376,7 @@ fieldset {
   margin-top: 6px;
 }
 .import-content > .button {
+  font-feature-settings: 'ss01';
   margin-top: 15px;
 }
 .install-content {
@@ -1513,7 +1468,7 @@ fieldset {
   margin: auto;
 }
 .fatal-error h1 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 33px;
   font-weight: 400;
   margin: 20px 0;
@@ -1579,8 +1534,8 @@ fieldset {
   color: var(--muted);
 }
 .outfit-start-note {
-  font-family: Georgia, serif;
-  font-style: italic;
+  font-family: inherit;
+  font-style: normal;
   color: var(--muted);
   font-size: 14px;
   line-height: 1.8;
@@ -1636,8 +1591,8 @@ fieldset {
   font-size: 10px;
 }
 .outfit-piece .photo-placeholder > svg {
-  width: 43px;
-  height: 43px;
+  width: 44px;
+  height: 44px;
 }
 .outfit-reasons {
   border-top: 1px solid var(--line);
@@ -1667,6 +1622,7 @@ fieldset {
   padding-top: 6px;
 }
 .outfit-card-actions > .button {
+  font-feature-settings: 'ss01';
   flex: 1;
 }
 .outfit-card-actions > .icon-button {
@@ -1682,7 +1638,7 @@ fieldset {
   text-align: center;
   margin: 29px 0;
   padding: 25px 13px;
-  border: 1px dashed var(--line);
+  border: 1px solid var(--line);
   border-radius: 18px;
   color: var(--accent);
 }
@@ -1690,7 +1646,7 @@ fieldset {
   margin: 0 auto 17px;
 }
 .outfit-empty h2 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 25px;
   font-weight: 400;
   letter-spacing: -0.6px;
@@ -1716,7 +1672,7 @@ fieldset {
   min-width: 0;
 }
 .saved-outfit-heading h2 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 23px;
   font-weight: 400;
   overflow-wrap: anywhere;
@@ -1753,6 +1709,7 @@ fieldset {
   margin-top: 25px;
 }
 .preference-form > .button {
+  font-feature-settings: 'ss01';
   margin-top: 25px;
 }
 .reset-feedback {
@@ -1863,7 +1820,7 @@ fieldset {
   margin-top: 5px;
 }
 .weather-temperature {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 28px;
   margin-top: 19px;
 }
@@ -1910,7 +1867,7 @@ fieldset {
   margin: 8px 0 17px;
 }
 .calendar-month-heading h2 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 25px;
   font-weight: 400;
   text-transform: capitalize;
@@ -1986,7 +1943,7 @@ fieldset {
   margin: 17px 0;
 }
 .calendar-outfit-heading h3 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 25px;
   font-weight: 400;
   overflow-wrap: anywhere;
@@ -2010,6 +1967,7 @@ fieldset {
   flex-wrap: wrap;
 }
 .calendar-entry-actions > .button {
+  font-feature-settings: 'ss01';
   flex: 1;
 }
 .calendar-note {
@@ -2036,7 +1994,7 @@ fieldset {
   color: var(--accent);
 }
 .calendar-empty h3 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 25px;
   font-weight: 400;
 }
@@ -2059,7 +2017,7 @@ fieldset {
   margin: 26px 0;
 }
 .wear-summary h3 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 24px;
   font-weight: 400;
 }
@@ -2209,9 +2167,6 @@ fieldset {
     padding-left: 18px;
     padding-right: 18px;
   }
-  .theme-picker > button {
-    gap: 4px;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -2222,4 +2177,77 @@ fieldset {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Photo-first import and grouped connection settings. */
+.photo-assistant {
+  padding: 20px;
+  border: 1px solid #b9b1ff38;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #28233b, var(--surface));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.assistant-heading {
+  display: flex;
+  gap: 12px;
+  color: var(--accent);
+}
+.assistant-heading h3 {
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 650;
+  letter-spacing: -0.25px;
+}
+.assistant-heading p,
+.photo-assistant > .muted {
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.ai-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.ai-connection {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.ai-connection > .muted {
+  font-size: 13px;
+}
+.ai-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.ai-consent input {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  margin-top: 5px;
+}
+.ai-consent {
+  min-height: 44px;
+}
+.ai-ready {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--accent);
+}
+.ai-cutout-review {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 12px;
 }

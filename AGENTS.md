@@ -8,8 +8,8 @@
 
 ## Datenschutz und Kosten
 
-- Keine bezahlten APIs, Abonnements oder Zahlungsdaten. Keine externen Foto-/KI-Dienste ohne ausdrückliche Zustimmung.
-- Fotos, Kleidung, Outfits und Präferenzen lokal in IndexedDB speichern. Kein Tracking, keine externen Fonts, keine geheimen Schlüssel im Frontend.
+- Keine bezahlten APIs, Abonnements oder Zahlungsdaten. Externe Foto-KI ist seit 15.10.2026 ausdrücklich gewünscht, weiterhin komplett kostenlos. Nur nach aktivierter Foto-Freigabe an den persönlich verbundenen Server senden.
+- Fotos, Kleidung, Outfits und Präferenzen lokal in IndexedDB speichern. Kein Tracking, keine externen Fonts, keine Anbieter-/Administrationsschlüssel im Frontend. Der persönliche Server-Verbindungscode bleibt nur in lokalen Geräteeinstellungen, nie im Backup.
 - Standort erst nach ausdrücklicher Freigabe verwenden; manuellen Ort als Alternative anbieten.
 - Keine simulierten KI-Ergebnisse oder funktionslosen Aktionen. Regeln und Grenzen verständlich benennen.
 - Lokale KI nur nach bewusster Aktion starten; Modelle/Laufzeit selbst hosten, Lizenzen und Prüfsummen erhalten. Keine großen Modelldateien automatisch beim App-Start laden.
@@ -22,7 +22,7 @@
 - Jede neu gespeicherte Datenart in Export/Import einbeziehen. Alte Sicherungen weiterhin lesbar halten. Fehlerhafte Sicherungen dürfen vorhandene Daten nicht verändern.
 - Bei Freistellung das gespeicherte Originalfoto separat erhalten; Vorschau bewusst übernehmen, abbrechen und zum Original zurückkehren können. Beide Fotovarianten validieren, sichern und auf die Kapazität anrechnen. Worker nach Abschluss/Abbruch beenden.
 - Outfits ausschliesslich aus tatsächlich vorhandenen, eindeutig referenzierten Kleidungsstücken erzeugen. Fehlende Kategorien und nur geschätzte Farbharmonie offen benennen.
-- iPhone-Safe-Areas, mindestens 44 Pixel grosse wichtige Touch-Ziele, Tastaturbedienung, echte Beschriftungen, Dunkelmodus und reduzierte Bewegung berücksichtigen.
+- iPhone-Safe-Areas, mindestens 44 Pixel grosse wichtige Touch-Ziele, Tastaturbedienung, echte Beschriftungen, ausschliesslich Dunkelmodus und reduzierte Bewegung berücksichtigen.
 
 ## Prüfung und Abschluss
 
