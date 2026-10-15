@@ -8,6 +8,12 @@ export interface OutfitOptions {
   style: Style | 'Alle'
   includeAccessory: boolean
 }
+export const DEFAULT_OUTFIT_OPTIONS: OutfitOptions = {
+  occasion: 'Alltag',
+  season: 'Alle',
+  style: 'Alle',
+  includeAccessory: false,
+}
 export interface SavedOutfit {
   id: string
   name: string
@@ -30,6 +36,8 @@ export interface Preferences {
   styles: Style[]
   colors: string[]
   updatedAt: string
+  outfitOptions?: OutfitOptions
+  useWeather?: boolean
 }
 export const DEFAULT_PREFERENCES: Preferences = {
   id: 'personal',

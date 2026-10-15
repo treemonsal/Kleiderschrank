@@ -26,13 +26,10 @@ import { OutfitView } from './OutfitView'
 import { CATEGORIES, filterGarments, type Garment } from './model'
 import { Editor } from './Editor'
 import { BackupView } from './BackupView'
-import {
-  ErrorMessage,
-  GarmentCard,
-  GarmentPicture,
-  Sheet,
-  WardrobeArt,
-} from './ui'
+import { DailyOutfit } from './DailyOutfit'
+import { useSavedWeatherRefresh } from './useWeather'
+import { useSwipeNavigation } from './useSwipeNavigation'
+import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
 
 type View = 'home' | 'wardrobe' | 'outfits' | 'settings'
 
@@ -42,12 +39,16 @@ function Home({
   onWardrobe,
   onOpen,
   onFavorite,
+  onOutfits,
+  notify,
 }: {
   items: Garment[]
   onAdd: () => void
   onWardrobe: () => void
   onOpen: (id: string) => void
   onFavorite: (item: Garment) => void
+  onOutfits: () => void
+  notify: (message: string) => void
 }) {
   const favorites = items.filter((i) => i.favorite)
   const featured = (
@@ -55,42 +56,14 @@ function Home({
       ? favorites
       : [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
   ).slice(0, 4)
-  const date = new Intl.DateTimeFormat('de-CH', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  }).format(new Date())
   return (
     <div className="view home-view">
-      <div className="home-greeting">
-        <span>{date}</span>
-        <span className="private-badge">
-          <LockKeyhole size={12} />
-          Nur für dich
-        </span>
-      </div>
-      <section className="home-hero">
-        <div className="hero-copy">
-          <p className="eyebrow">
-            <span className="tiny-line" />
-            WENIGER SUCHEN. MEHR DU.
-          </p>
-          <h1>
-            Dein Stil.
-            <br />
-            <em>Dein Moment.</em>
-          </h1>
-          <p>
-            Ein neuer Blick auf das,
-            <br />
-            was du schon liebst.
-          </p>
-        </div>
-        <div className="hero-illustration">
-          <WardrobeArt />
-          <span className="art-caption">A little wardrobe, a lot of you.</span>
-        </div>
-      </section>
+      <DailyOutfit
+        items={items}
+        onOpen={onOpen}
+        onOutfits={onOutfits}
+        notify={notify}
+      />
       <section className="wardrobe-summary">
         <div>
           <p className="eyebrow">DEINE KLEINE KOLLEKTION</p>
@@ -284,7 +257,13 @@ function Wardrobe({
       {showSort && (
         <label className="field sort-field">
           Sortierung
-          <select value={sort} onChange={(e) => setSort(e.target.value)}>
+          <select
+            value={sort}
+            onChange={(e) => {
+              setSort(e.target.value)
+              setShowSort(false)
+            }}
+          >
             <option value="newest">Zuletzt hinzugefügt</option>
             <option value="oldest">Zuerst hinzugefügt</option>
             <option value="name">Name A–Z</option>
@@ -500,6 +479,7 @@ export default function App() {
   const [toast, setToast] = useState('')
   const [offline, setOffline] = useState(!navigator.onLine)
   const [updateError, setUpdateError] = useState('')
+  useSavedWeatherRefresh(!offline)
   const {
     needRefresh: [needRefresh],
     updateServiceWorker,
@@ -512,7 +492,7 @@ export default function App() {
   const notify = useCallback((message: string) => setToast(message), [])
   useEffect(() => {
     if (!toast) return
-    const timer = window.setTimeout(() => setToast(''), 6500)
+    const timer = window.setTimeout(() => setToast(''), 4500)
     return () => clearTimeout(timer)
   }, [toast])
   useEffect(() => {
@@ -537,6 +517,7 @@ export default function App() {
     setView(next)
     window.scrollTo({ top: 0, behavior: 'instant' })
   }
+  const swipe = useSwipeNavigation(view, navigate)
   async function favorite(item: Garment) {
     try {
       await toggleFavorite(item)
@@ -590,7 +571,7 @@ export default function App() {
           </button>
         </div>
       )}
-      <main id="main-content" key={view}>
+      <main id="main-content" key={view} {...swipe}>
         {items === null || items === undefined ? (
           <div className="loading-state" role="status">
             <LoaderCircle className="spin" />
@@ -603,6 +584,8 @@ export default function App() {
             onWardrobe={() => navigate('wardrobe')}
             onOpen={setSelectedId}
             onFavorite={(item) => void favorite(item)}
+            onOutfits={() => navigate('outfits')}
+            notify={notify}
           />
         ) : view === 'wardrobe' ? (
           <Wardrobe

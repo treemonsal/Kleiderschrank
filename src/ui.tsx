@@ -16,65 +16,6 @@ export function usePhotoUrl(photo?: Blob): string | undefined {
   return url
 }
 
-export function WardrobeArt() {
-  return (
-    <svg
-      className="wardrobe-art"
-      viewBox="0 0 340 290"
-      fill="none"
-      aria-hidden="true"
-    >
-      <ellipse
-        cx="172"
-        cy="258"
-        rx="134"
-        ry="13"
-        fill="currentColor"
-        opacity=".06"
-      />
-      <path
-        d="M55 253V58a18 18 0 0 1 18-18h197a18 18 0 0 1 18 18v195M45 253h28m202 0h28M57 65h229"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        opacity=".45"
-      />
-      <path
-        d="M113 70v12m0 0L82 102h63l-32-20m108-12v12m0 0l-32 20h64l-32-20"
-        stroke="currentColor"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        opacity=".65"
-      />
-      <path
-        d="M99 96l-24 14-20 39 24 13 12-18-3 76h62l-3-76 12 18 24-13-20-39-25-14c-5 14-34 14-39 0Z"
-        fill="#e5e5ea"
-        stroke="#8e8e93"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M100 98c3 20 33 20 37 0m-19 18v104"
-        stroke="#8e8e93"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M201 98l-17 9 9 122h55l9-122-18-9-18 10-20-10Z"
-        fill="#636366"
-        stroke="#aeaeb2"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M222 110v119m-35-120 16 36 19-35 18 35 14-36M202 178h13m14 0h13"
-        stroke="#e5e5ea"
-        strokeWidth="1.3"
-        opacity=".8"
-      />
-      <path d="m265 157 4-8 4 8 8 4-8 4-4 8-4-8-8-4 8-4Z" fill="#64a8ff" />
-      <circle cx="66" cy="197" r="3" fill="#64a8ff" />
-    </svg>
-  )
-}
-
 export function GarmentPicture({
   item,
   large = false,

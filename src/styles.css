@@ -164,81 +164,6 @@ fieldset {
   font-size: 11px;
   margin: 25px 0 23px;
 }
-.home-greeting > span:first-child {
-  text-transform: capitalize;
-}
-.private-badge {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 10px;
-}
-.home-hero {
-  background: var(--hero);
-  border-radius: 30px;
-  border: 1px solid #ffffff0c;
-  background: var(--hero);
-  overflow: hidden;
-  position: relative;
-  min-height: 385px;
-  padding: 30px 25px 0;
-}
-.hero-copy {
-  position: relative;
-  z-index: 1;
-  pointer-events: none;
-}
-.hero-copy .eyebrow {
-  font-size: 8px;
-  letter-spacing: 1.5px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  color: var(--accent);
-}
-.tiny-line {
-  display: inline-block;
-  width: 16px;
-  height: 1px;
-  background: var(--action);
-}
-.hero-copy h1 {
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 48px;
-  letter-spacing: -2.5px;
-  line-height: 1.06;
-  margin: 17px 0 16px;
-}
-.hero-copy h1 em {
-  font-style: normal;
-  font-weight: 700;
-  color: var(--ink);
-}
-.hero-copy > p:last-child {
-  font-size: 12px;
-  line-height: 1.65;
-  color: var(--muted);
-}
-.hero-illustration {
-  width: 220px;
-  position: absolute;
-  bottom: 8px;
-  right: 0;
-  color: var(--accent);
-}
-.wardrobe-art {
-  width: 100%;
-  height: auto;
-}
-.art-caption {
-  display: block;
-  text-align: center;
-  font-size: 7px;
-  letter-spacing: 1px;
-  margin-top: -5px;
-  color: var(--muted);
-}
 .wardrobe-summary {
   display: flex;
   justify-content: space-between;
@@ -1481,8 +1406,9 @@ fieldset {
 }
 .toast {
   pointer-events: auto;
-  background: var(--ink);
-  color: var(--background);
+  background: var(--soft);
+  color: var(--ink);
+  border: 1px solid var(--line);
   box-shadow: var(--shadow);
   padding: 13px 14px;
   border-radius: 14px;
@@ -2133,24 +2059,6 @@ fieldset {
   .home-greeting {
     margin-top: 30px;
   }
-  .home-hero {
-    min-height: 360px;
-    padding: 40px;
-  }
-  .hero-copy h1 {
-    font-size: 65px;
-  }
-  .hero-illustration {
-    width: 340px;
-    right: 15px;
-    bottom: 20px;
-  }
-  .hero-copy > p:last-child {
-    font-size: 14px;
-  }
-  .hero-copy .eyebrow {
-    font-size: 9px;
-  }
   .garment-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 26px 19px;
@@ -2197,12 +2105,6 @@ fieldset {
   }
   .edition {
     display: none;
-  }
-  .hero-copy h1 {
-    font-size: 43px;
-  }
-  .hero-illustration {
-    width: 195px;
   }
   .heading-row h1 {
     font-size: 27px;
@@ -2300,4 +2202,103 @@ fieldset {
   flex-direction: column;
   gap: 14px;
   font-size: 12px;
+}
+
+/* The everyday home screen prioritizes the forecast and today's own clothes. */
+.home-day-summary {
+  margin-bottom: 20px;
+}
+.home-weather {
+  text-align: left;
+  min-height: 60px;
+  width: 100%;
+  padding: 4px 0;
+}
+.home-date {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 9px;
+}
+.home-weather-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 14px;
+}
+.home-weather-line svg {
+  color: var(--accent);
+}
+.home-weather-line small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 3px;
+}
+.daily-look {
+  padding: 24px 20px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 28px;
+}
+.daily-look h1 {
+  font-size: clamp(27px, 7.5vw, 36px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -1.2px;
+  margin: 10px 0;
+  overflow-wrap: anywhere;
+}
+.daily-look header > .muted {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.daily-look .outfit-pieces {
+  margin-top: 20px;
+}
+.daily-look .outfit-reasons {
+  margin: 18px 0;
+}
+.daily-look .generator-disclosure {
+  margin-top: 12px;
+}
+.daily-look-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+.daily-look-actions .button {
+  min-height: 44px;
+  font-size: 12px;
+}
+.daily-look-empty {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.daily-look-empty .text-button {
+  margin-top: 12px;
+}
+.weather-close-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+}
+.ai-provider-info > summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding: 12px 0;
+  color: var(--accent);
+  font-size: 12px;
+}
+.ai-provider-info p {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 12px 0;
 }

@@ -9,6 +9,7 @@ import {
 } from './constraints'
 import {
   DEFAULT_PREFERENCES,
+  DEFAULT_OUTFIT_OPTIONS,
   isCompleteOutfit,
   outfitKey,
   type OutfitFeedback,
@@ -166,13 +167,48 @@ export async function savePreferences(
   colors: string[],
   database = db,
 ): Promise<void> {
-  await database.preferences.put({
-    ...DEFAULT_PREFERENCES,
-    styles: [...styles],
-    colors: [...colors],
-    updatedAt: new Date().toISOString(),
+  await updatePreferences(
+    { styles: [...styles], colors: [...colors] },
+    database,
+  )
+}
+export async function updatePreferences(
+  patch: Partial<Pick<Preferences, 'styles' | 'colors' | 'useWeather'>>,
+  database = db,
+): Promise<void> {
+  await database.transaction('rw', database.preferences, async () => {
+    const current =
+      (await database.preferences.get('personal')) ?? DEFAULT_PREFERENCES
+    await database.preferences.put({
+      ...current,
+      ...patch,
+      updatedAt: new Date(
+        Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
+      ).toISOString(),
+    })
   })
 }
+export async function saveOutfitOptions(
+  patch: Partial<OutfitOptions>,
+  database = db,
+): Promise<void> {
+  await database.transaction('rw', database.preferences, async () => {
+    const current =
+      (await database.preferences.get('personal')) ?? DEFAULT_PREFERENCES
+    await database.preferences.put({
+      ...current,
+      outfitOptions: {
+        ...DEFAULT_OUTFIT_OPTIONS,
+        ...current.outfitOptions,
+        ...patch,
+      },
+      updatedAt: new Date(
+        Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
+      ).toISOString(),
+    })
+  })
+}
+
 export const db = new WardrobeDatabase()
 export async function saveGarment(
   draft: GarmentDraft,

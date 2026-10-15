@@ -85,3 +85,13 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 - Bilderkennung und Freistellung benennen ihre Fehler separat: bestätigtes Limit, volle Warteschlange, nicht verfügbar, Zugriff verweigert, Verbindung oder unbrauchbare Antwort. Unbekannte Fehler bleiben ausdrücklich unbekannt; keine pauschale Limitbehauptung.
 - Anbieterhinweise in HTTP- und Gradio-Fehlern einschliesslich Qwens `[ERROR]`-Text werden sicher ausgewertet. Wartezeit nur bei expliziter Anbieterangabe; sensible Rohdaten werden nicht angezeigt. Keine automatischen Wiederholungen und keine zusätzlichen Übertragungen oder Kosten.
 - Original und brauchbare Teilergebnisse bleiben erhalten. Datenschema und Sicherung bleiben Version 4.
+
+## Version 0.7 – direkter Alltagseinstieg
+
+- Startseite mit lokalem Tagesdatum und gespeicherter Tagesvorhersage (Min/Max, Wetterlage und Ort; keine behauptete Live-Temperatur).
+- Tageslook automatisch aus bestehendem Bestand und Regeln anhand erfasster Merkmale, Vorlieben, Rückmeldungen und Auswahl. Ein vollständiger heutiger Kalenderlook hat Vorrang; sonst stabile Auswahl pro lokalem Gerätetag. Keine neue Fotoübertragung für Outfits, keine erfundenen Stücke.
+- Ortswahl lädt und speichert die Vorhersage samt Aktivierung der Wetterverwendung und bestätigt erst danach; Auswahl schliesst automatisch und besitzt explizites Schliessen. Fehler erhalten die vorige Vorhersage. Gerätestandort ausschliesslich auf Knopfdruck; späte Antworten nach Schliessen werden verworfen.
+- Gespeicherter Ort darf nach diesem Nutzerauftrag bei veralteter/fehlender Tagesvorhersage online aktualisiert werden. Keine Dauerversuche; veraltetes Wetter sichtbar markieren und nicht für Looks verwenden. Ausschalten bleibt gespeichert, Vergessen wird nicht von einer alten Antwort rückgängig gemacht.
+- Anlass, Saison, Stil, Accessoire-Wahl und Wetterverwendung in bestehenden persönlichen Vorlieben atomar speichern und sichern. Optionale Zusatzfelder in Sicherung 4, alte Sicherungen unverändert lesbar; Kleidungs-/Fotodaten bleiben erhalten.
+- Aktivierte Foto-KI kompakt mit aufklappbaren Hinweisen/Freigabe und Abschalten; kein weiterer Aktivieren-Knopf. Ausreichende Hinweise bleiben vor der ersten Aktivierung sichtbar.
+- Horizontale Wischgesten zwischen Hauptseiten; Formulare, Dialoge, Scrollleisten und Bildschirmränder ausnehmen. Navigationsleiste bleibt zugänglich. Dunkle Bestätigungen und automatisches Schliessen der Sortierauswahl nach Auswahl.

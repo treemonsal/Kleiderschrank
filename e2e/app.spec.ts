@@ -227,7 +227,7 @@ for (const width of [375, 390, 430]) {
     await page.goto('/')
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
     await expect(
-      page.getByRole('heading', { name: 'Dein Stil. Dein Moment.' }),
+      page.getByRole('heading', { name: 'Dein Look für heute.' }),
     ).toBeVisible()
     expect(
       await page.evaluate(

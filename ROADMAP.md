@@ -154,3 +154,14 @@ Am 15. Oktober 2026 nach manueller Pages-Einrichtung durch den Nutzer veröffent
 - [x] Anbieterfehler aus HTTP, Gradio-SSE und Qwens vollständiger `[ERROR]`-Antwort unterscheiden; eventuelle Wartezeit nur vom Anbieter übernehmen.
 - [x] Apple-inspirierte neutrale Dunkelpalette, blaue Akzente, Glasnavigation mit beweglicher Auswahlfläche und zugänglichen Alternativen.
 - [x] Regressionen für Limit, Ausfall, unbekannten Fehler, Netzwerk, Teilresultate und mobile Navigation ergänzen.
+
+## Version 0.7 – Tageslook und weniger Bedienung
+
+- [x] Statischen Startseitenblock durch automatischen Tageslook mit Kalender-Vorrang ersetzen.
+- [x] Wetter mit Ort/Tagesspanne auf der Startseite; vorhandenen Ort bei Bedarf automatisch online aktualisieren.
+- [x] Ortsauswahl direkt speichern, kurz bestätigen und schliessen; explizites Schliessen, Fehler und späte Antworten berücksichtigen.
+- [x] Anlass, Saison, Stil, Accessoires und Wetterverwendung dauerhaft speichern, Vorliebenänderungen getrennt zusammenführen und mit Backup erhalten.
+- [x] Aktivierte Foto-KI kompakt, Hinweise aufklappbar, Aktivieren-Knopf entfernen.
+- [x] Wischgesten für Hauptnavigation einschliesslich Schutz von Eingaben, Dialogen und Scrollen.
+- [x] Regel-/Bestands-/Sicherungstests und neue mobile Abläufe inklusive nativer Chromium-Touch-Ereignisse.
+- [ ] Neue Abläufe auf echtem iPhone/Safari im Alltag prüfen; Cloud-Emulation ersetzt das nicht.

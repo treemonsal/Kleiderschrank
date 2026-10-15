@@ -13,6 +13,7 @@ import {
   DEFAULT_PREFERENCES,
   OCCASIONS,
   outfitKey,
+  type OutfitOptions,
   type OutfitFeedback,
   type Preferences,
   type SavedOutfit,
@@ -123,6 +124,21 @@ function photo(value: unknown): Blob | undefined {
   ))
     throw invalid()
   return new Blob([bytes], { type: match[1] })
+}
+function boolean(value: unknown): boolean {
+  if (typeof value !== 'boolean') throw invalid()
+  return value
+}
+function parseOutfitOptions(value: unknown): OutfitOptions {
+  if (!value || typeof value !== 'object' || Array.isArray(value))
+    throw invalid()
+  const item = value as Record<string, unknown>
+  return {
+    occasion: choice(item.occasion, OCCASIONS),
+    season: choice(item.season, ['Alle', ...SEASONS]),
+    style: choice(item.style, ['Alle', ...STYLES]),
+    includeAccessory: boolean(item.includeAccessory),
+  }
 }
 export function parseBackup(json: string): Garment[] {
   return parseFullBackup(json).garments
@@ -245,6 +261,12 @@ export function parseFullBackup(json: string): BackupData {
         COLORS.map((c) => c.name),
       ),
       updatedAt: timestamp(item.updatedAt),
+      ...(item.outfitOptions === undefined
+        ? {}
+        : { outfitOptions: parseOutfitOptions(item.outfitOptions) }),
+      ...(item.useWeather === undefined
+        ? {}
+        : { useWeather: boolean(item.useWeather) }),
     }
   }
   const calendar: CalendarEntry[] = []

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
   Bookmark,
@@ -18,6 +18,7 @@ import {
   db,
   saveOutfit,
   savePreferences,
+  saveOutfitOptions,
   setOutfitFeedback,
   storageError,
   updateOutfit,
@@ -25,6 +26,7 @@ import {
 import { generateOutfits, missingOutfitMessage } from './generator'
 import {
   DEFAULT_PREFERENCES,
+  DEFAULT_OUTFIT_OPTIONS,
   isCompleteOutfit,
   OCCASIONS,
   outfitKey,
@@ -32,12 +34,14 @@ import {
   type Preferences,
   type SavedOutfit,
 } from './outfit-model'
-import { ErrorMessage, GarmentPicture, Sheet } from './ui'
+import { ErrorMessage, Sheet } from './ui'
 import { CalendarView } from './CalendarView'
 import { WeatherPanel } from './WeatherPanel'
 import { wornCounts } from './calendar'
 import { deleteOutfit } from './calendar-db'
-import type { WeatherDay } from './weather'
+import { weatherFresh, type WeatherDay } from './weather'
+import { useClock, weatherForToday } from './useWeather'
+import { OutfitPieces } from './OutfitPieces'
 
 function PreferenceEditor({
   current,
@@ -238,36 +242,6 @@ function SavedEditor({
   )
 }
 
-function OutfitPieces({
-  ids,
-  items,
-  onOpen,
-}: {
-  ids: string[]
-  items: Garment[]
-  onOpen: (id: string) => void
-}) {
-  const pieces = ids.flatMap((id) => {
-    const item = items.find((item) => item.id === id)
-    return item ? [item] : []
-  })
-  return (
-    <div className="outfit-pieces">
-      {pieces.map((item) => (
-        <button
-          className="outfit-piece"
-          key={item.id}
-          aria-label={`${item.name} öffnen`}
-          onClick={() => onOpen(item.id)}
-        >
-          <GarmentPicture item={item} />
-          <span>{item.name}</span>
-        </button>
-      ))}
-    </div>
-  )
-}
-
 export function OutfitView({
   items,
   onOpen,
@@ -287,12 +261,14 @@ export function OutfitView({
         db.preferences,
         db.feedback,
         db.calendar,
+        db.weather,
         async () => ({
           outfits: await db.outfits.orderBy('updatedAt').reverse().toArray(),
           feedback: await db.feedback.toArray(),
           preferences:
             (await db.preferences.get('personal')) ?? DEFAULT_PREFERENCES,
           calendar: await db.calendar.toArray(),
+          weather: await db.weather.get('local'),
         }),
       ),
     [],
@@ -300,12 +276,25 @@ export function OutfitView({
   )
   const [tab, setTab] = useState<'discover' | 'saved' | 'calendar'>('discover')
   const [weatherDay, setWeatherDay] = useState<WeatherDay>()
-  const [options, setOptions] = useState<OutfitOptions>({
-    occasion: 'Alltag',
-    season: 'Alle',
-    style: 'Alle',
-    includeAccessory: false,
-  })
+  const [options, setOptions] = useState(DEFAULT_OUTFIT_OPTIONS)
+  const pendingOptions = useRef<Partial<OutfitOptions>>({})
+  useEffect(() => {
+    if (state)
+      setOptions({
+        ...(state.preferences.outfitOptions ?? DEFAULT_OUTFIT_OPTIONS),
+        ...pendingOptions.current,
+      })
+  }, [state?.preferences.outfitOptions])
+  const now = useClock()
+  const todayWeather = weatherForToday(state?.weather, now)
+  const weatherContext =
+    state?.preferences.useWeather !== false &&
+    state?.weather &&
+    weatherFresh(state.weather.report, now)
+      ? (state.weather.report.days.find(
+          (item) => item.day === weatherDay?.day,
+        ) ?? todayWeather)
+      : undefined
   const [seed, setSeed] = useState(0)
   const [requested, setRequested] = useState(false)
   const [preferencesOpen, setPreferencesOpen] = useState(false)
@@ -323,11 +312,11 @@ export function OutfitView({
             state.preferences,
             state.feedback,
             seed,
-            weatherDay,
+            weatherContext,
             wornCounts(state.calendar, state.outfits),
           )
         : [],
-    [items, options, requested, state, seed, weatherDay],
+    [items, options, requested, state, seed, weatherContext],
   )
   const rejectedCount =
     state?.feedback.filter((item) => item.verdict === 'rejected').length ?? 0
@@ -346,7 +335,19 @@ export function OutfitView({
     key: K,
     value: OutfitOptions[K],
   ) {
+    pendingOptions.current = { ...pendingOptions.current, [key]: value }
     setOptions((previous) => ({ ...previous, [key]: value }))
+    void action(async () => {
+      try {
+        await saveOutfitOptions({ [key]: value })
+      } catch (error) {
+        setOptions((previous) => ({ ...previous, [key]: options[key] }))
+        throw error
+      } finally {
+        if (pendingOptions.current[key] === value)
+          delete pendingOptions.current[key]
+      }
+    })
     setRequested(false)
     setError('')
   }
@@ -398,7 +399,7 @@ export function OutfitView({
         <>
           {tab === 'discover' ? (
             <>
-              <WeatherPanel onContext={setWeatherDay} />
+              <WeatherPanel onContext={setWeatherDay} notify={notify} />
               <section
                 className="outfit-options"
                 aria-label="Dein Anlass und Stil"
@@ -486,7 +487,7 @@ export function OutfitView({
                 <div className="outfit-empty" role="status">
                   <ShirtNotice />
                   <h2>Noch kein kompletter Look.</h2>
-                  <p>{missingOutfitMessage(items, options, weatherDay)}</p>
+                  <p>{missingOutfitMessage(items, options, weatherContext)}</p>
                   <button className="button secondary" onClick={onAdd}>
                     <Plus size={17} />
                     Kleiderschrank ergänzen

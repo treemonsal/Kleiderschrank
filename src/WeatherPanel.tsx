@@ -1,7 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { CloudSun, LocateFixed, RefreshCw, Search, Trash2 } from 'lucide-react'
-import { db } from './db'
+import {
+  CloudSun,
+  LocateFixed,
+  RefreshCw,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-react'
+import { db, updatePreferences } from './db'
 import { localDay } from './calendar'
 import {
   loadWeather,
@@ -12,52 +19,65 @@ import {
   type WeatherDay,
   type WeatherLocation,
 } from './weather'
+import { useClock } from './useWeather'
 import { ErrorMessage } from './ui'
 
 export function WeatherPanel({
   onContext,
+  notify,
+  initialOpen = false,
+  onClose,
 }: {
-  onContext: (day: WeatherDay | undefined) => void
+  onContext?: (day: WeatherDay | undefined) => void
+  notify: (message: string) => void
+  initialOpen?: boolean
+  onClose?: () => void
 }) {
-  const cache = useLiveQuery(() => db.weather.get('local'))
+  const state = useLiveQuery(() =>
+    db.transaction('r', db.weather, db.preferences, async () => ({
+      cache: await db.weather.get('local'),
+      enabled: (await db.preferences.get('personal'))?.useWeather !== false,
+    })),
+  )
+  const cache = state?.cache
+  const [enabledChoice, setEnabledChoice] = useState<boolean>()
+  useEffect(() => setEnabledChoice(state?.enabled), [state?.enabled])
+  const enabled = enabledChoice ?? state?.enabled ?? true
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<WeatherLocation[]>([])
   const [place, setPlace] = useState<WeatherLocation | null>(null)
   const [searched, setSearched] = useState(false)
-  const [enabled, setEnabled] = useState(false)
+  const [open, setOpen] = useState(initialOpen)
   const [day, setDay] = useState('')
-  const [now, setNow] = useState(Date.now())
+  const now = useClock()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const controller = useRef<AbortController | null>(null)
   const mounted = useRef(false)
   useEffect(() => {
     mounted.current = true
-    const timer = window.setInterval(() => setNow(Date.now()), 60000)
     return () => {
       mounted.current = false
       controller.current?.abort()
-      window.clearInterval(timer)
-      onContext(undefined)
     }
-  }, [onContext])
+  }, [])
   const selected = place ?? cache?.location
-  const today = cache
-    ? new Intl.DateTimeFormat('sv-SE', {
-        timeZone: cache.report.timezone,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }).format(new Date(now))
-    : localDay()
+  const today = localDay(new Date(now))
   const availableDays =
     cache?.report.days.filter((item) => item.day >= today) ?? []
   const selectedDay =
-    availableDays.find((item) => item.day === day) ?? availableDays[0]
-  const fresh = cache && weatherFresh(cache.report, now) && !!selectedDay
+    availableDays.find((item) => item.day === day) ??
+    availableDays.find((item) => item.day === today)
+  const fresh = !!cache && weatherFresh(cache.report, now) && !!selectedDay
   useEffect(() => {
-    onContext(enabled && fresh ? selectedDay : undefined)
+    onContext?.(enabled && fresh ? selectedDay : undefined)
   }, [enabled, fresh, selectedDay, onContext])
+  function close() {
+    controller.current?.abort()
+    setBusy(false)
+    setOpen(false)
+    onClose?.()
+  }
   async function run(task: (signal: AbortSignal) => Promise<void>) {
     controller.current?.abort()
     const current = new AbortController()
@@ -77,19 +97,72 @@ export function WeatherPanel({
       if (mounted.current && !current.signal.aborted) setBusy(false)
     }
   }
+  async function saveLocation(
+    location: WeatherLocation,
+    signal: AbortSignal,
+    activate: boolean,
+  ) {
+    const report = await loadWeather(location, signal)
+    if (signal.aborted) return
+    await db.transaction('rw', db.weather, db.preferences, async () => {
+      if (signal.aborted) return
+      await db.weather.put(report)
+      if (activate) await updatePreferences({ useWeather: true })
+    })
+    if (signal.aborted || !mounted.current) return
+    setPlace(null)
+    setDay('')
+    setOpen(false)
+    setResults([])
+    setSearched(false)
+    notify(`Wetter für ${location.name} gespeichert.`)
+    onClose?.()
+  }
+  function choose(location: WeatherLocation) {
+    setPlace(location)
+    void run((signal) => saveLocation(location, signal, true))
+  }
   return (
-    <details className="weather-panel">
+    <details
+      className="weather-panel"
+      open={open}
+      onToggle={(event) => {
+        const expanded = event.currentTarget.open
+        if (!expanded && open) {
+          controller.current?.abort()
+          setBusy(false)
+        }
+        setOpen(expanded)
+      }}
+    >
       <summary>
         <CloudSun size={21} strokeWidth={1.5} />
         <span>
-          Wetter für deinen Look <small>Optional · Open-Meteo</small>
+          Wetter für deinen Look{' '}
+          <small>
+            {cache
+              ? `${cache.location.name} · ${fresh && selectedDay ? `${Math.round(selectedDay.min)}–${Math.round(selectedDay.max)} °C` : 'gespeicherte Vorhersage'}`
+              : 'Ort auswählen · Open-Meteo'}
+          </small>
         </span>
       </summary>
       <div className="weather-content">
+        <div className="weather-close-row">
+          <span>Ort und Wetter</span>
+          <button
+            className="icon-button soft"
+            aria-label="Wetterauswahl schliessen"
+            onClick={close}
+          >
+            <X size={19} />
+          </button>
+        </div>
         <p className="weather-privacy">
-          Nur nach deinem Klick: Die Ortssuche sendet den Ortsnamen an
-          Open-Meteo, die Wetterabfrage gerundete Koordinaten (ungefähr 1 km).
-          Keine Fotos oder Kleidungsdaten. Kein Konto, kein Schlüssel.
+          Die Ortssuche sendet den Ortsnamen an Open-Meteo. Mit der Ortsauswahl
+          laden und speichern wir die Vorhersage und verwenden sie für deine
+          Looks. Der gespeicherte Ort wird beim Öffnen bei Bedarf aktualisiert;
+          nur gerundete Koordinaten (ungefähr 1 km), keine Fotos. Der
+          Gerätestandort wird nur mit „Standort verwenden“ abgefragt.
         </p>
         <form
           className="weather-search"
@@ -133,18 +206,13 @@ export function WeatherPanel({
             Kein Ort gefunden. Versuche einen anderen Ortsnamen.
           </p>
         )}
-        {results.length > 0 && (
+        {!!results.length && (
           <div className="location-results">
             {results.map((result, index) => (
               <button
                 key={`${result.latitude}:${result.longitude}:${index}`}
                 disabled={busy}
-                onClick={() => {
-                  setPlace(result)
-                  setEnabled(false)
-                  setResults([])
-                  setSearched(false)
-                }}
+                onClick={() => choose(result)}
               >
                 {result.name}
               </button>
@@ -154,39 +222,39 @@ export function WeatherPanel({
         <button
           className="text-button"
           disabled={busy}
-          onClick={() => {
-            setError('')
-            if (!navigator.geolocation) {
-              setError(
-                'Dieser Browser bietet keinen Standortzugriff. Du kannst den Ort manuell suchen.',
-              )
-              return
-            }
-            setBusy(true)
-            navigator.geolocation.getCurrentPosition(
-              (position) => {
-                if (!mounted.current) return
-                setPlace(
-                  roundedLocation(
-                    'Mein Standort',
-                    position.coords.latitude,
-                    position.coords.longitude,
-                  ),
+          onClick={() =>
+            void run(async (signal) => {
+              if (!navigator.geolocation)
+                throw new Error(
+                  'Dieser Browser bietet keinen Standortzugriff. Du kannst den Ort manuell suchen.',
                 )
-                setEnabled(false)
-                setBusy(false)
-              },
-              () => {
-                if (mounted.current) {
-                  setBusy(false)
-                  setError(
-                    'Keine Standortfreigabe oder kein Standort verfügbar. Du kannst den Ort manuell suchen.',
-                  )
-                }
-              },
-              { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 },
-            )
-          }}
+              const position = await new Promise<GeolocationPosition>(
+                (resolve, reject) =>
+                  navigator.geolocation.getCurrentPosition(
+                    resolve,
+                    () =>
+                      reject(
+                        new Error(
+                          'Keine Standortfreigabe oder kein Standort verfügbar. Du kannst den Ort manuell suchen.',
+                        ),
+                      ),
+                    {
+                      enableHighAccuracy: false,
+                      timeout: 10000,
+                      maximumAge: 0,
+                    },
+                  ),
+              )
+              if (signal.aborted) return
+              const location = roundedLocation(
+                'Mein Standort',
+                position.coords.latitude,
+                position.coords.longitude,
+              )
+              setPlace(location)
+              await saveLocation(location, signal, true)
+            })
+          }
         >
           <LocateFixed size={17} />
           Standort verwenden
@@ -194,20 +262,14 @@ export function WeatherPanel({
         {selected && (
           <div className="chosen-location">
             <p>
-              Ausgewählt: <strong>{selected.name}</strong>
+              {place ? 'Noch nicht gespeichert:' : 'Gespeichert:'}{' '}
+              <strong>{selected.name}</strong>
             </p>
             <button
               className="button secondary full"
               disabled={busy}
               onClick={() =>
-                void run(async (signal) => {
-                  const report = await loadWeather(selected, signal)
-                  if (!signal.aborted) {
-                    await db.weather.put(report)
-                    setNow(Date.now())
-                    setDay('')
-                  }
-                })
+                void run((signal) => saveLocation(selected, signal, !!place))
               }
             >
               <RefreshCw size={16} />
@@ -264,9 +326,25 @@ export function WeatherPanel({
             <label className="accessory-option">
               <input
                 type="checkbox"
-                disabled={!fresh}
-                checked={enabled && !!fresh}
-                onChange={(event) => setEnabled(event.target.checked)}
+                disabled={busy}
+                checked={enabled}
+                onChange={(event) => {
+                  const value = event.target.checked
+                  setEnabledChoice(value)
+                  void run(async () => {
+                    try {
+                      await updatePreferences({ useWeather: value })
+                    } catch (error) {
+                      setEnabledChoice(enabled)
+                      throw error
+                    }
+                    notify(
+                      value
+                        ? 'Wetter wird für deine Looks berücksichtigt.'
+                        : 'Wetter für Looks ausgeschaltet.',
+                    )
+                  })
+                }}
               />
               Wetter für Vorschläge verwenden
             </label>
@@ -275,12 +353,23 @@ export function WeatherPanel({
               disabled={busy}
               onClick={() =>
                 void run(async () => {
-                  await db.weather.delete('local')
+                  await db.transaction(
+                    'rw',
+                    db.weather,
+                    db.preferences,
+                    async () => {
+                      await db.weather.delete('local')
+                      await updatePreferences({ useWeather: false })
+                    },
+                  )
                   setPlace(null)
-                  setEnabled(false)
                   setQuery('')
                   setResults([])
                   setSearched(false)
+                  setDay('')
+                  setOpen(false)
+                  notify('Ort und Wetter entfernt.')
+                  onClose?.()
                 })
               }
             >
@@ -299,8 +388,7 @@ export function WeatherPanel({
           <a href="https://www.geonames.org/" target="_blank" rel="noreferrer">
             GeoNames
           </a>
-          . Kostenlos für private, nicht kommerzielle Nutzung. Ein gespeicherter
-          Ort löst keine automatischen Abfragen aus.
+          . Kostenlos für private, nicht kommerzielle Nutzung.
         </p>
       </div>
     </details>

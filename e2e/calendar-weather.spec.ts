@@ -95,7 +95,16 @@ async function manualWeather(page: Page) {
   await page
     .getByRole('button', { name: 'Zürich, Zürich, Schweiz', exact: true })
     .click()
-  await page.getByRole('button', { name: 'Wetter laden', exact: true }).click()
+  await expect(
+    page.getByText('Wetter für Zürich, Zürich, Schweiz gespeichert.', {
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect(page.locator('.weather-panel')).not.toHaveAttribute('open', '')
+  await page
+    .getByText('Wetter für deinen Look', { exact: false })
+    .first()
+    .click()
   await expect(
     page.getByText('Regenwahrscheinlichkeit: 80 %', { exact: true }),
   ).toBeVisible()
@@ -221,7 +230,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
   ).toBeVisible()
 })
 
-test('Wetter sendet ohne Aktion nichts, beeinflusst Looks erst nach Aktivierung und erhält Cache bei Fehler', async ({
+test('Wetter sendet ohne Ortswahl nichts, merkt sich die Verwendung und erhält Cache bei Fehler', async ({
   page,
 }, testInfo) => {
   await page.clock.install({ time: fixedTime })
@@ -239,7 +248,8 @@ test('Wetter sendet ohne Aktion nichts, beeinflusst Looks erst nach Aktivierung 
     name: 'Wetter für Vorschläge verwenden',
     exact: true,
   })
-  await expect(toggle).not.toBeChecked()
+  await expect(toggle).toBeChecked()
+  await toggle.uncheck()
   await page
     .getByRole('button', { name: 'Outfits zusammenstellen', exact: true })
     .click()
@@ -267,8 +277,8 @@ test('Wetter sendet ohne Aktion nichts, beeinflusst Looks erst nach Aktivierung 
     page.getByText('Regenwahrscheinlichkeit: 80 %', { exact: true }),
   ).toBeVisible()
   await page.clock.fastForward(7 * 3600000)
-  await expect(toggle).toBeDisabled()
-  await expect(toggle).not.toBeChecked()
+  await expect(toggle).toBeChecked()
+  await expect(toggle).toBeEnabled()
   await expect(
     page.getByText('Gespeicherte Vorhersage veraltet', { exact: false }),
   ).toBeVisible()
@@ -306,14 +316,14 @@ test('Wetterort bleibt offline verfügbar und kann ohne Netz vollständig verges
       name: 'Wetter für Vorschläge verwenden',
       exact: true,
     }),
-  ).not.toBeChecked()
+  ).toBeChecked()
   expect(calls).toHaveLength(2)
   await page
     .getByRole('button', { name: 'Ort und Wetter vergessen', exact: true })
     .click()
   await expect(
-    page.getByText('Regenwahrscheinlichkeit: 80 %', { exact: true }),
-  ).toHaveCount(0)
+    page.getByText('Ort und Wetter entfernt.', { exact: true }),
+  ).toBeVisible()
   await page.reload()
   await page.getByRole('button', { name: 'Outfits', exact: true }).click()
   await page
@@ -393,7 +403,7 @@ test('Kalender verwendet den lokalen iPhone-Tag statt des UTC-Datums', async ({
   ).toBeVisible()
 })
 
-test('Freigegebener Standort wird gerundet und erst nach Wetter laden an den Dienst gesendet', async ({
+test('Freigegebener Standort lädt gerundetes Wetter, bestätigt Speichern und schliesst die Auswahl', async ({
   page,
   context,
 }) => {
@@ -411,14 +421,10 @@ test('Freigegebener Standort wird gerundet und erst nach Wetter laden an den Die
   await page
     .getByRole('button', { name: 'Standort verwenden', exact: true })
     .click()
-  await expect(page.getByText('Ausgewählt:', { exact: false })).toContainText(
-    'Mein Standort',
-  )
-  expect(calls).toEqual([])
-  await page.getByRole('button', { name: 'Wetter laden', exact: true }).click()
   await expect(
-    page.getByText('Regenwahrscheinlichkeit: 80 %', { exact: true }),
+    page.getByText('Wetter für Mein Standort gespeichert.', { exact: true }),
   ).toBeVisible()
+  await expect(page.locator('.weather-panel')).not.toHaveAttribute('open', '')
   expect(calls).toHaveLength(1)
   expect(new URL(calls[0]).searchParams.get('latitude')).toBe('47.38')
   expect(new URL(calls[0]).searchParams.get('longitude')).toBe('8.54')

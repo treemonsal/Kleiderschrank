@@ -123,6 +123,23 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
   expect(calls).toHaveLength(before)
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
   await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await expect(
+    page.getByRole('button', { name: 'Kostenlose KI aktivieren', exact: true }),
+  ).toHaveCount(0)
+  await expect(
+    page.getByText('Anbieter, Datenschutz und Freigabe', { exact: true }),
+  ).toBeVisible()
+  await page.reload()
+  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await expect(
+    page.getByRole('button', { name: 'Kostenlose KI aktivieren', exact: true }),
+  ).toHaveCount(0)
+  await expect(
+    page.getByText('Die öffentlichen Dienste können', { exact: false }),
+  ).not.toBeVisible()
+  await page
+    .getByText('Anbieter, Datenschutz und Freigabe', { exact: true })
+    .click()
   await page
     .getByRole('checkbox', { name: /Ich erlaube, neue Kleidungsfotos/ })
     .uncheck()

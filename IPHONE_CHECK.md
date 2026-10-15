@@ -14,3 +14,10 @@ Noch nicht ausgeführt. Die Cloud besitzt kein echtes iPhone; Chromium-Emulation
 10. Nach vollständigem ersten Laden Flugmodus einschalten und App neu starten. Kleidung, Fotos, Outfits und Kalender müssen verfügbar sein. Für KI zuvor einmal Modelldateien laden; dann offline erneut starten. Noch nicht geladene KI-Dateien müssen einen verständlichen Fehler zeigen. Wetter kann nur den letzten gespeicherten Stand anzeigen.
 
 Bei Problemen Modell/iOS, betroffene Aktion und Fehlermeldung notieren. Keine privaten Fotos zur Fehlerbeschreibung hochladen, solange du das nicht ausdrücklich möchtest. Regelmäßig sichern; iOS kann Website-Speicher entfernen. Dieser manuelle Test ist eine Freigabehilfe, keine Garantie gegen späteren Speicherdruck.
+
+## Neu in 0.7
+
+- Nach Update den Tageslook direkt prüfen, ein Stück öffnen und den Look speichern. Bei einem heutigen Kalenderlook erscheint dieser zuerst. Bestand und Fotos bleiben erhalten.
+- Wetterzeile antippen, Ort auswählen: Vorhersage und Bestätigung erscheinen, Auswahl schliesst. Erneut öffnen und mit X schliessen; Gerätefreigabe nur nach „Standort verwenden“.
+- Accessoire-Häkchen und Anlass/Saison/Stil ändern, App ganz schliessen und erneut öffnen: Auswahl bleibt. Wetterverwendung ebenfalls prüfen. Aktive Foto-KI zeigt keinen Aktivieren-Knopf und Hinweise nur aufgeklappt.
+- Horizontal auf einer freien Inhaltsfläche durch Hauptseiten wischen. Vertikal scrollen und Farb-/Kategorie-Leisten bedienen: kein Seitenwechsel. Dialoge und Bildschirmränder bleiben ausgenommen.

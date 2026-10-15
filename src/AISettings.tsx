@@ -25,146 +25,165 @@ export function AISettings() {
   const [error, setError] = useState('')
   const controller = useRef<AbortController | null>(null)
   useEffect(() => () => controller.current?.abort(), [])
+  const communityActive = connection?.mode === 'community' && connection.enabled
+  const Information = communityActive ? 'details' : 'div'
   return (
     <section className="settings-section ai-settings">
       <div className="section-heading">
         <h2>Online-Foto-KI</h2>
         <Sparkles size={20} />
       </div>
-      <p className="muted section-intro">
-        Ein Foto, alle Angaben. Die KI erkennt Name, Kategorie und Farbe,
-        schätzt Stil und Saison und stellt dein Stück frei. Marken bleiben leer,
-        wenn das Logo nicht lesbar ist.
-      </p>
+      {!communityActive && (
+        <p className="muted section-intro">
+          Ein Foto, alle Angaben. Die KI erkennt Name, Kategorie und Farbe,
+          schätzt Stil und Saison und stellt dein Stück frei. Marken bleiben
+          leer, wenn das Logo nicht lesbar ist.
+        </p>
+      )}
       <div className="settings-card ai-connection community-settings">
         <h3>
           {connection?.mode === 'community'
             ? 'Kostenlose Community-KI ist aktiv'
             : 'Kostenlose Community-KI'}
         </h3>
-        <p className="muted">
-          Qwen3-VL erkennt die Angaben. BiRefNet stellt dein Stück frei. Kein
-          Konto, Token oder Abo nötig. Die öffentlichen Dienste können
-          ausgelastet sein und Nutzungslimits haben.
-        </p>
-        <p className="muted">
-          Dein ausgewähltes Foto wird an{' '}
-          <a
-            href="https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Qwen3-VL-Outpost
-          </a>{' '}
-          und die{' '}
-          <a
-            href="https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo"
-            target="_blank"
-            rel="noreferrer"
-          >
-            BiRefNet-Demo
-          </a>{' '}
-          auf Hugging Face gesendet. Die Freistellung nutzt temporäre Dateien
-          beim Anbieter. Wir können deren Speicher- oder Löschdauer nicht
-          garantieren. Bitte keine Fotos mit privaten Hintergründen oder
-          Personen verwenden.
-        </p>
-        <label className="ai-consent">
-          <input
-            type="checkbox"
-            checked={communityConsent}
-            onChange={(e) => {
-              setCommunityConsent(e.target.checked)
-              if (!e.target.checked) {
-                controller.current?.abort()
-                controller.current = null
-                setBusy(false)
-                if (connection?.mode === 'community') {
-                  saveAIConnection(null)
-                  setConnection(null)
+        {communityActive && (
+          <p className="muted">
+            Neue Fotos werden automatisch erkannt und freigestellt. Deine
+            Freigabe ist auf diesem Gerät gespeichert.
+          </p>
+        )}
+        <Information className="ai-provider-info">
+          {communityActive && (
+            <summary>Anbieter, Datenschutz und Freigabe</summary>
+          )}
+          <p className="muted">
+            Qwen3-VL erkennt die Angaben. BiRefNet stellt dein Stück frei. Kein
+            Konto, Token oder Abo nötig. Die öffentlichen Dienste können
+            ausgelastet sein und Nutzungslimits haben.
+          </p>
+          <p className="muted">
+            Dein ausgewähltes Foto wird an{' '}
+            <a
+              href="https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Qwen3-VL-Outpost
+            </a>{' '}
+            und die{' '}
+            <a
+              href="https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo"
+              target="_blank"
+              rel="noreferrer"
+            >
+              BiRefNet-Demo
+            </a>{' '}
+            auf Hugging Face gesendet. Die Freistellung nutzt temporäre Dateien
+            beim Anbieter. Wir können deren Speicher- oder Löschdauer nicht
+            garantieren. Bitte keine Fotos mit privaten Hintergründen oder
+            Personen verwenden.
+          </p>
+          <label className="ai-consent">
+            <input
+              type="checkbox"
+              checked={communityConsent}
+              onChange={(e) => {
+                setCommunityConsent(e.target.checked)
+                if (!e.target.checked) {
+                  controller.current?.abort()
+                  controller.current = null
+                  setBusy(false)
+                  if (connection?.mode === 'community') {
+                    saveAIConnection(null)
+                    setConnection(null)
+                  }
+                  setMessage(
+                    'Community-Freigabe zurückgezogen. Neue Fotos werden nicht an diese Dienste gesendet.',
+                  )
                 }
+              }}
+            />
+            <span>
+              Ich erlaube, neue Kleidungsfotos automatisch an diese beiden
+              Community-Dienste zu senden. Meine gespeicherte Sammlung wird
+              nicht hochgeladen.
+            </span>
+          </label>
+        </Information>
+        {!communityActive && (
+          <button
+            className="button primary full"
+            disabled={!communityConsent || busy}
+            onClick={async () => {
+              controller.current?.abort()
+              const next = new AbortController()
+              controller.current = next
+              const timer = setTimeout(() => next.abort('timeout'), 60000)
+              setBusy(true)
+              setError('')
+              setMessage('')
+              const value: AIConnection = {
+                mode: 'community',
+                url: 'https://prithivmlmods-qwen3-vl-outpost.hf.space',
+                code: '',
+                enabled: true,
+              }
+              try {
+                await checkAIConnection(value, next.signal)
+                if (next.signal.aborted) return
+                saveAIConnection(value)
+                setConnection(value)
+                setEnabled(false)
                 setMessage(
-                  'Community-Freigabe zurückgezogen. Neue Fotos werden nicht an diese Dienste gesendet.',
+                  'Kostenlose KI aktiviert. Neue Fotos werden automatisch erkannt und freigestellt.',
                 )
+              } catch (e) {
+                if (!next.signal.aborted)
+                  setError(
+                    e instanceof Error
+                      ? e.message
+                      : 'Die Community-KI ist gerade nicht erreichbar.',
+                  )
+                else if (next.signal.reason === 'timeout')
+                  setError(
+                    'Die Community-Dienste antworten gerade zu langsam. Bitte später erneut versuchen.',
+                  )
+              } finally {
+                clearTimeout(timer)
+                if (controller.current === next) {
+                  controller.current = null
+                  setBusy(false)
+                }
               }
             }}
-          />
-          <span>
-            Ich erlaube, neue Kleidungsfotos automatisch an diese beiden
-            Community-Dienste zu senden. Meine gespeicherte Sammlung wird nicht
-            hochgeladen.
-          </span>
-        </label>
-        <button
-          className="button primary full"
-          disabled={!communityConsent || busy}
-          onClick={async () => {
-            controller.current?.abort()
-            const next = new AbortController()
-            controller.current = next
-            const timer = setTimeout(() => next.abort('timeout'), 60000)
-            setBusy(true)
-            setError('')
-            setMessage('')
-            const value: AIConnection = {
-              mode: 'community',
-              url: 'https://prithivmlmods-qwen3-vl-outpost.hf.space',
-              code: '',
-              enabled: true,
-            }
-            try {
-              await checkAIConnection(value, next.signal)
-              if (next.signal.aborted) return
-              saveAIConnection(value)
-              setConnection(value)
+          >
+            {busy ? (
+              <LoaderCircle size={18} className="spin" />
+            ) : (
+              <Sparkles size={18} />
+            )}
+            Kostenlose KI aktivieren
+          </button>
+        )}
+        {communityActive && (
+          <button
+            className="button secondary full"
+            onClick={() => {
+              controller.current?.abort()
+              controller.current = null
+              setBusy(false)
+              saveAIConnection(null)
+              setConnection(null)
+              setCommunityConsent(false)
               setEnabled(false)
               setMessage(
-                'Kostenlose KI aktiviert. Neue Fotos werden automatisch erkannt und freigestellt.',
+                'Online-KI ausgeschaltet. Es werden keine neuen Fotos gesendet.',
               )
-            } catch (e) {
-              if (!next.signal.aborted)
-                setError(
-                  e instanceof Error
-                    ? e.message
-                    : 'Die Community-KI ist gerade nicht erreichbar.',
-                )
-              else if (next.signal.reason === 'timeout')
-                setError(
-                  'Die Community-Dienste antworten gerade zu langsam. Bitte später erneut versuchen.',
-                )
-            } finally {
-              clearTimeout(timer)
-              if (controller.current === next) {
-                controller.current = null
-                setBusy(false)
-              }
-            }
-          }}
-        >
-          {busy ? (
-            <LoaderCircle size={18} className="spin" />
-          ) : (
-            <Sparkles size={18} />
-          )}
-          Kostenlose KI aktivieren
-        </button>
-        <button
-          className="button secondary full"
-          onClick={() => {
-            controller.current?.abort()
-            controller.current = null
-            setBusy(false)
-            saveAIConnection(null)
-            setConnection(null)
-            setCommunityConsent(false)
-            setEnabled(false)
-            setMessage(
-              'Online-KI ausgeschaltet. Es werden keine neuen Fotos gesendet.',
-            )
-          }}
-        >
-          Community-KI ausschalten
-        </button>
+            }}
+          >
+            Community-KI ausschalten
+          </button>
+        )}
       </div>
       <details className="background-assist own-ai-server">
         <summary>Eigenen Server verbinden</summary>
