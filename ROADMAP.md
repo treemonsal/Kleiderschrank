@@ -235,5 +235,7 @@ Version 0.11.1: 140 Datentests, 75 Chromium-Browserfälle, Produktionsbuild und 
 - [x] Seiteninhalt direkt animieren und Menüleiste durchgehend sichtbar halten
 - [x] Visuellen Regressionstest gegen die fehlerhafte alte Version bestätigen
 - [x] Vollständigen Browser-/Daten-/Build-/Formatlauf abschliessen
-- [ ] Version 0.11.2 veröffentlichen und öffentliche Auslieferung prüfen
+- [x] Version 0.11.2 veröffentlichen und öffentliche Auslieferung prüfen
 - [ ] Wechselgefühl und feste Glasleiste auf echtem iPhone/Safari prüfen
+
+Version 0.11.2: 140 Datentests, 76 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38864384462](https://github.com/treemonsal/Kleiderschrank/actions/runs/38864384462) für App-Commit `e02bd5694ae020ba7b3a26b9d66a03a0120b1185` erfolgreich. Öffentliche App-Version und korrigierte Animations-CSS über HTTPS geprüft; bestehende Funktionen, Installationspfad und neue Platin-Icons erhalten.
