@@ -554,6 +554,7 @@ export function OutfitView({
                           {saved ? 'Gespeichert' : 'Speichern'}
                         </button>
                         <button
+                          data-motion="pop"
                           className={`icon-button ${liked ? 'liked' : ''}`}
                           aria-label={`Vorschlag ${index + 1}: Gefällt mir`}
                           aria-pressed={liked}
@@ -712,6 +713,7 @@ export function OutfitView({
                         </span>
                       </button>
                       <button
+                        data-motion="heart"
                         className={`icon-button ${outfit.favorite ? 'is-favorite' : ''}`}
                         aria-label={`${outfit.name}: Outfit-Favorit`}
                         aria-pressed={outfit.favorite}

@@ -2599,3 +2599,239 @@ fieldset {
   display: grid;
   place-items: center;
 }
+
+/* Short, tactile motion. Interactive states and saved data never wait for it. */
+:root {
+  --ease-settle: cubic-bezier(0.2, 0.85, 0.25, 1);
+  --ease-spring: cubic-bezier(0.2, 1.2, 0.35, 1);
+}
+.button {
+  transition:
+    transform 240ms var(--ease-spring),
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+.button:active {
+  transition-duration: 90ms;
+  transform: scale(0.975);
+}
+.icon-button,
+.favorite-button,
+.profile-button,
+.round-button,
+.chips button,
+.swap-choice {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+.icon-button > svg,
+.favorite-button > svg,
+.profile-button > svg,
+.round-button > svg,
+.text-button > svg {
+  transition:
+    transform 220ms var(--ease-spring),
+    fill 180ms ease;
+}
+:is(
+    .icon-button,
+    .favorite-button,
+    .profile-button,
+    .round-button,
+    .text-button
+  ):not(:disabled):active
+  > svg {
+  transform: scale(0.88);
+}
+.glass-selection {
+  transition: transform 420ms var(--ease-spring);
+}
+.nav-icon {
+  transform-origin: center;
+}
+.laundry-icon {
+  transform-origin: center;
+  overflow: visible;
+}
+.laundry-icon [data-washer-drum] {
+  transform-origin: 12px 14px;
+  transform-box: view-box;
+}
+.garment-picture {
+  transition: transform 280ms var(--ease-spring);
+}
+.garment-picture img {
+  animation: photo-reveal 260ms var(--ease-settle) both;
+}
+:is(.garment-open, .outfit-piece):active .garment-picture {
+  transform: scale(0.975);
+}
+.view {
+  animation: view-arrive 300ms var(--ease-settle) both;
+}
+.outfit-piece-slot {
+  animation: piece-arrive 320ms var(--ease-settle) both;
+}
+.outfit-piece-slot:nth-child(2) {
+  animation-delay: 25ms;
+}
+.outfit-piece-slot:nth-child(3) {
+  animation-delay: 50ms;
+}
+.outfit-piece-slot:nth-child(4) {
+  animation-delay: 75ms;
+}
+.outfit-piece-slot:nth-child(5) {
+  animation-delay: 100ms;
+}
+.sheet[open] {
+  animation: sheet-settle 340ms var(--ease-spring) both;
+}
+.sheet[open]::backdrop {
+  animation: backdrop-reveal 240ms ease both;
+}
+.toast {
+  animation: toast-settle 320ms var(--ease-spring) both;
+}
+@keyframes view-arrive {
+  from {
+    opacity: 0.55;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes piece-arrive {
+  from {
+    opacity: 0.4;
+    transform: translateY(7px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes photo-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sheet-settle {
+  from {
+    opacity: 0.7;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes backdrop-reveal {
+  from {
+    background-color: #0000;
+  }
+  to {
+    background-color: #0009;
+  }
+}
+@keyframes toast-settle {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Native snapshots blend pages while the new page is already usable. */
+@supports (view-transition-name: app-content) {
+  :root {
+    view-transition-name: none;
+  }
+  #main-content {
+    view-transition-name: app-content;
+  }
+  html[data-view-motion='native'] .view {
+    animation: none;
+  }
+  ::view-transition {
+    pointer-events: none;
+  }
+  ::view-transition-group(app-content) {
+    animation-duration: 280ms;
+    animation-timing-function: var(--ease-settle);
+  }
+  ::view-transition-old(app-content) {
+    animation: content-leave 160ms ease both;
+  }
+  ::view-transition-new(app-content) {
+    animation: content-enter 280ms var(--ease-settle) both;
+  }
+}
+@keyframes content-leave {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes content-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .garment-open:hover .garment-picture {
+    transform: translateY(-2px);
+  }
+  .swap-choice:hover {
+    background: var(--soft);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .view,
+  .outfit-piece-slot,
+  .garment-picture img,
+  .sheet[open],
+  .sheet[open]::backdrop,
+  .toast {
+    animation: none !important;
+  }
+  :is(
+    .button,
+    .icon-button,
+    .favorite-button,
+    .profile-button,
+    .round-button,
+    .text-button
+  ):active,
+  :is(
+      .icon-button,
+      .favorite-button,
+      .profile-button,
+      .round-button,
+      .text-button
+    ):active
+    > svg,
+  :is(.garment-open, .outfit-piece):active .garment-picture,
+  .garment-open:hover .garment-picture {
+    transform: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

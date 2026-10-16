@@ -19,7 +19,6 @@ import {
   Trash2,
   WifiOff,
   X,
-  WashingMachine,
   Settings2,
 } from 'lucide-react'
 import {
@@ -35,6 +34,8 @@ import { Editor } from './Editor'
 import { BackupView } from './BackupView'
 import { BackupReminder } from './BackupReminder'
 import { DailyOutfit } from './DailyOutfit'
+import { LaundryIcon, useTapMotion } from './motion'
+import { useViewMotion } from './useViewMotion'
 import { localDay, shiftDay } from './calendar'
 import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
@@ -221,6 +222,7 @@ function Wardrobe({
         </label>
         <button
           className={`icon-button filter-button ${favorites ? 'selected' : ''}`}
+          data-motion="heart"
           aria-label="Nur Favoriten"
           aria-pressed={favorites}
           onClick={() => setFavorites(!favorites)}
@@ -229,11 +231,12 @@ function Wardrobe({
         </button>
         <button
           className={`icon-button filter-button ${laundryOnly ? 'selected' : ''}`}
+          data-motion="laundry"
           aria-label="Nur Wäsche"
           aria-pressed={laundryOnly}
           onClick={() => setLaundryOnly(!laundryOnly)}
         >
-          <WashingMachine size={20} />
+          <LaundryIcon size={20} />
         </button>
       </div>
       <div
@@ -374,6 +377,7 @@ function Detail({
             <h3>{item.brand || 'Ein Stück von dir'}</h3>
           </div>
           <button
+            data-motion="heart"
             className={`icon-button soft ${item.favorite ? 'is-favorite' : ''}`}
             aria-label={
               item.favorite ? 'Favorit entfernen' : 'Als Favorit markieren'
@@ -415,6 +419,7 @@ function Detail({
         </dl>
         <button
           className="button secondary full laundry-toggle"
+          data-motion="laundry"
           disabled={busy}
           aria-pressed={!!item.inLaundry}
           onClick={async () => {
@@ -429,7 +434,7 @@ function Detail({
             }
           }}
         >
-          <WashingMachine size={17} />
+          <LaundryIcon size={17} />
           {item.inLaundry ? 'Als sauber markieren' : 'In die Wäsche legen'}
         </button>
         <p className="micro-copy" role="status">
@@ -522,6 +527,8 @@ export default function App() {
   )
   const items = wardrobe?.items
   const [view, setView] = useState<View>('home')
+  const tapMotion = useTapMotion()
+  const viewMotion = useViewMotion()
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [toast, setToast] = useState('')
@@ -561,9 +568,15 @@ export default function App() {
       window.removeEventListener('offline', offline)
     }
   }, [])
-  function navigate(next: View) {
-    setView(next)
-    window.scrollTo({ top: 0, behavior: 'instant' })
+  function navigate(next: View, after?: () => void) {
+    viewMotion(
+      () => {
+        setView(next)
+        window.scrollTo({ top: 0, behavior: 'instant' })
+      },
+      next !== view,
+      after,
+    )
   }
   async function favorite(item: Garment) {
     try {
@@ -574,7 +587,7 @@ export default function App() {
   }
   const selected = items?.find((i) => i.id === selectedId)
   return (
-    <div className="app-shell">
+    <div className="app-shell" onClickCapture={tapMotion}>
       <a className="skip-link" href="#main-content">
         Zum Inhalt
       </a>
@@ -659,8 +672,7 @@ export default function App() {
             onFavorite={(item) => void favorite(item)}
             onOutfits={() => navigate('outfits')}
             onBackup={() => {
-              navigate('settings')
-              requestAnimationFrame(() => {
+              navigate('settings', () => {
                 const section = document.getElementById('backup-section')
                 section?.scrollIntoView({ block: 'start' })
                 section?.focus({ preventScroll: true })
@@ -704,6 +716,7 @@ export default function App() {
         ).map(({ key, label, Icon }) => (
           <button
             key={key}
+            data-motion="nav"
             className={view === key ? 'active' : ''}
             aria-current={view === key ? 'page' : undefined}
             onClick={() => navigate(key)}

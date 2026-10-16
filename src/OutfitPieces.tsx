@@ -35,6 +35,7 @@ export function OutfitPieces({
           {onSwap && (
             <button
               className="piece-swap"
+              data-motion="turn"
               aria-label={`${item.name} austauschen`}
               onClick={() => onSwap(item.id)}
             >

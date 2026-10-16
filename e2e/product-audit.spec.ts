@@ -39,6 +39,12 @@ async function importItems(page: Page, alternative = true) {
     .getByRole('button', { name: 'Sicherung importieren', exact: true })
     .click()
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
+  await expect(
+    page
+      .getByRole('region', { name: 'Dein Tageslook' })
+      .locator('.outfit-piece')
+      .first(),
+  ).toBeVisible()
 }
 async function exportData(page: Page) {
   await page.getByRole('button', { name: 'Mehr', exact: true }).click()

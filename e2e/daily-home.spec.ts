@@ -42,6 +42,12 @@ async function importData(page: Page, extra: Record<string, unknown> = {}) {
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
+  await expect(
+    page
+      .getByRole('region', { name: 'Dein Tageslook' })
+      .locator('.outfit-piece')
+      .first(),
+  ).toBeVisible()
 }
 async function forecast(page: Page, fail: () => boolean = () => false) {
   const calls: string[] = []
@@ -794,6 +800,7 @@ test('Sicherungserinnerung lässt sich pausieren und dauerhaft ausschalten; unve
     exact: true,
   })
   await expect(setting).toBeVisible()
+  await expect(setting).toBeInViewport()
   await setting.uncheck()
   await expect(setting).toBeEnabled()
   await page.reload()

@@ -1,4 +1,15 @@
-# Aktuelle Prüfung – Version 0.10.0
+# Aktuelle Prüfung – Version 0.11.0
+
+- Nutzerauftrag: flüssigere, spielerische UI-Bewegung mit einer reagierenden Waschmaschine als Beispiel. Keine neue Abhängigkeit, Dienstfreigabe, Datenmigration oder Fotoübertragung.
+- Kurze Trommeldrehung mit leicht wippendem Gehäuse, Herz-Puls, Bewertungs-/Tausch-Feedback und federnde Glasnavigation. Web Animations sind von Ereignis-/Speicherlogik getrennt, ersetzen laufendes Feedback beim erneuten Tippen und räumen aktive Animationen bei Abschluss/Abbruch auf. Dekorative Bewegung bestätigt keinen Daten-Schreiberfolg.
+- Seitenüberblendung nutzt optional die native View-Transition-API; CSS-Einblendung als Fallback. Sequenzprüfung verhindert verspätete Wechsel nach schnellen Eingaben, auch bei Zurücktippen auf den noch sichtbaren aktiven Tab. Snapshots fangen keine weiteren Tipp-Ereignisse ab. Scroll-/Fokus-Aktionen der Sicherungserinnerung laufen nach dem tatsächlichen Seiten-Commit; der bestehende Browserfall prüft jetzt auch Sichtbarkeit im Viewport.
+- Fenster öffnen mit kurzem Einfedern; Fotos, Outfitteile und Toasts blenden weich ein. Keine verzögerte Unmount-/Speicher-/Abbruchlogik für Dialoge. Touch-Ziele, Schutz ungespeicherter Entwürfe und Tageswischen bleiben erhalten.
+- Reduzierte Bewegung wird für CSS und JavaScript berücksichtigt; laufendes Tipp-Feedback und Seitenüberblendungen werden bei Änderung der Systemeinstellung gestoppt. Fehlende Animations-APIs und Fehler der optionalen Effekte lassen die eigentlichen Aktionen weiterlaufen.
+- 140 Datentests, Produktionsbuild und Formatprüfung bestanden. 29 zunächst betroffene Browserfälle bestanden: echte animierte Trommel mit fortgeschrittener Rotationsmatrix, erneute Auslösung, Herz, dynamische reduzierte Bewegung, schnelle Navigation, bedienbarer neuer Inhalt, Fallback ohne APIs, unveränderte Tages-/Datenabläufe und Tastaturfokus. **Abschliessend alle 75 Chromium-Browserfälle bestanden**, einschliesslich bestehender Fotos, Sicherungen, Offline- und Tagesabläufe. Ein bestehender Tauschtest las die Teile zunächst vor dem abgeschlossenen nativen Seitenwechsel; die Import-Testhelfer warten jetzt auf den tatsächlich sichtbaren Look. Darstellung bei 375/390/430 Pixeln weiterhin ohne horizontalen Überlauf. Veröffentlichung wird nach Erfolg ergänzt. Live-Browseransichten für Wäschetrommel und Fenster visuell geprüft; echter iPhone-/Safari-Nachweis steht aus.
+
+## Vorherige Prüfung – Version 0.10.0
+
+# Prüfung – Version 0.10.0
 
 - Nutzerauftrag: als Kritiker alle wichtigen Produktbereiche bewerten und daraus abgeleitete Änderungen tatsächlich umsetzen. Ausführliches Urteil in AUDIT.md: vorher 6,5/10, nach Korrekturen 7,5/10, mit ausdrücklichen Grenzen von Foto-KI, persönlicher Stiltrefferquote und Geräteprüfung.
 - Kontrollierter Produktions-Browserlauf bei 390 × 844 Pixeln reproduzierte die versteckten Hauptaktionen: erster Import y≈1030, Tragebestätigung y≈1034. Erster Import liegt jetzt in der Tageskarte, doppelte leere Einstiegsfläche entfernt; Tragebestätigung und Tagesalternative vor den Bildern. Nachher im gleichen Vergleich: erster Import y≈491 und Tragebestätigung y≈517. Betroffene Tests prüfen bei 375/390/430 Pixeln vollständige Sichtbarkeit oberhalb von y=744 und mindestens 44 Pixel Zielhöhe.

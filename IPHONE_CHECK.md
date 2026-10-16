@@ -48,3 +48,11 @@ Diese neuen Abläufe wurden in Chromium automatisiert; echter Safari-/iPhone-Nac
 - Wetter-Icon und Angabe „Wetter berücksichtigt“/„Ohne Wetter“ mit der gewählten Einstellung vergleichen. Jacken, Accessoires und gemeinsame Stile mit eigenen Kleidungsfotos auf praktische Plausibilität prüfen; Material/Passform bleiben ungeprüft.
 - Tastatur: erster Tab erreicht „Zum Inhalt“, Enter fokussiert den Hauptinhalt. Dialog schliessen/Escape gibt Fokus an Auslöser zurück. Zusätzlich VoiceOver und grössere iOS-Schrift auf einem echten Gerät erproben.
 - Bei einem realen Speicherfehler Website-Daten erhalten und eine vorhandene Sicherung aufbewahren. Die neue Fehleransicht ist automatisiert mit blockiertem IndexedDB geprüft; keine Daten zum Test auf dem eigenen Gerät löschen.
+
+## Ergänzungen 0.11.0
+
+- Waschmaschinen-Filter und Wäsche-Taste in Details antippen: kurze Trommeldrehung mit leichtem Wippen; Filter/Status bleiben sofort bedienbar. Mehrfach tippen, ohne überlagerte oder dauerhaft weiterlaufende Drehungen.
+- Favoriten setzen/entfernen, Outfit bewerten, Stück tauschen und die Hauptseiten wechseln. Dezente Rückmeldung und weichere Fensteröffnung prüfen; keine Verschiebung der Touch-Ziele oder ungewollte Aktionen.
+- Schnell mehrere Tabs wählen und sofort wieder Heute antippen: die letzte Auswahl bleibt bestehen. Während der Seitenüberblendung weiter bedienen; Sicherungserinnerung muss weiterhin zur passenden Stelle in Mehr führen.
+- In iOS „Bewegung reduzieren“ aktivieren, auch während eines laufenden Effekts: Rotation/Puls/Federn stoppen beziehungsweise bleiben aus. Alle Filter, Datenaktionen, Tagesgesten, Dialoge und Tastaturbedienung funktionieren weiterhin.
+- Fotos, Daten und Historie vor/nach Update vergleichen. Effekte auf einem älteren iPhone auf Ruckeln und auf Safari-Unterstützung prüfen; der Cloud-Nachweis ist nur Chromium.

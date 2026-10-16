@@ -68,6 +68,7 @@ export function GarmentCard({
         </div>
       </button>
       <button
+        data-motion="heart"
         className={`favorite-button ${item.favorite ? 'is-favorite' : ''}`}
         onClick={onFavorite}
         aria-label={`${item.name}: ${item.favorite ? 'Favorit entfernen' : 'Als Favorit markieren'}`}

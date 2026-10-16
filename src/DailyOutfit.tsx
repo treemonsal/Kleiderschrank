@@ -385,6 +385,7 @@ export function DailyOutfit({
                 {isToday && !entry && complete && (
                   <button
                     className="text-button"
+                    data-motion="turn"
                     disabled={busy}
                     onClick={async () => {
                       setBusy(true)
@@ -455,6 +456,7 @@ export function DailyOutfit({
               {isToday && !worn && complete && (
                 <button
                   className="text-button daily-like"
+                  data-motion="pop"
                   aria-label="Tageslook: Gefällt mir"
                   aria-pressed={state.feedback.some(
                     (item) =>

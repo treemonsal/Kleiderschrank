@@ -206,3 +206,13 @@ Version 0.9.0: 129 Datentests, 63 Chromium-Browserfälle, Produktionsbuild und F
 - [ ] Echte iPhone-/Safari-/VoiceOver-Erprobung und längerfristige persönliche Empfehlungsqualität beurteilen
 
 Version 0.10.0: 140 Datentests, 70 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38859835037](https://github.com/treemonsal/Kleiderschrank/actions/runs/38859835037) erfolgreich; öffentliche Version und neue Funktionen über HTTPS geprüft.
+
+## Version 0.11 – Bewegung und direkte Rückmeldung
+
+- [x] Wiederholbare Wäschetrommel, Herz-Puls, Bewertungs-/Tausch-Feedback
+- [x] Federnde Glasnavigation und optionale native Seitenüberblendungen
+- [x] Weichere Fenster-, Foto-, Outfit- und Toast-Einblendungen
+- [x] Letzte Auswahl bei schnellen Tabwechseln, funktionaler Fallback ohne Animations-APIs
+- [x] Laufende Effekte bei reduzierter Bewegung stoppen und neue Bewegungen unterdrücken
+- [ ] Vollständige Regression, visuelle Gegenprüfung und Veröffentlichung 0.11.0 dokumentieren
+- [ ] Bewegungsgefühl und Leistung auf echtem iPhone/Safari erproben

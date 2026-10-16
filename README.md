@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.10.0 verbessert den Einstieg und die täglichen Empfehlungen: erster Fotoimport und Tragebestätigung direkt sichtbar, **Anderer Look**, zurücknehmbare positive Bewertungen sowie eine gemeinsame Bewertung von Jacke, Accessoire und Basis. Bekannte Farben, gemeinsame Stilangaben und positiv bewertete Stückpaare beeinflussen die Auswahl. Speicherfehler erhalten eine verständliche Ansicht. Die ausführliche Produktkritik mit Bewertung und verbleibenden Grenzen steht in [AUDIT.md](AUDIT.md).
+Version 0.11.0 ergänzt flüssige Seitenüberblendungen und kurze, spielerische Reaktionen: drehende Wäschetrommel, Herz-Puls, federnde Glasnavigation und weichere Fenster-/Foto-/Outfit-Einblendungen. Alle Aktionen bleiben bedienbar, „Bewegung reduzieren“ schaltet die dekorativen Effekte ab. Empfehlungen, Fotos und gespeicherte Angaben bleiben erhalten. Die Produktkritik aus 0.10 steht in [AUDIT.md](AUDIT.md).
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.10.0 am 16. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
@@ -46,6 +46,12 @@ Auf der Startseite **nach rechts wischen → Vortag**, **nach links wischen → 
 **Farbringe um die Tageszahl** zeigen die erfassten Farbfamilien bestätigter Looks bis heute, sowohl in der Wochenleiste als auch im Monatskalender unter Outfits. Pläne haben einen neutralen gestrichelten Kreis. Ohne Farbangaben bleibt die Markierung neutral. Die Farben stehen auch in der zugänglichen Tagesbeschriftung. Die Ringsegmente zeigen Farbfamilien, keine gemessenen Stoffflächen oder exakten Fotofarben.
 
 Bei neuen Tragebestätigungen werden die Farben mitgesichert und bleiben bei späterer Änderung eines Kleidungsstücks erhalten. Wird ein Eintrag wieder auf „geplant“ gesetzt und neu bestätigt oder ein anderes Outfit ausgewählt, werden dessen Farben neu übernommen. Frühere Einträge ohne Farbsicherung verwenden die aktuellen Merkmale der referenzierten Stücke; einen früheren Farbstand können wir nicht rekonstruieren. Namen und Fotos bleiben mit den vorhandenen Kleidungsstücken verknüpft. Die bisherige abhängige Löschung beim Entfernen von Kleidung/Outfits gilt weiterhin.
+
+## Animationen und Bewegung
+
+Die Waschmaschinen-Tasten lassen kurz die Trommel drehen und das Gehäuse wippen. Favoriten reagieren mit einem kleinen Herz-Puls; erneutes Tippen startet einen neuen kurzen Effekt. Die Glasnavigation federt zur gewählten Seite, unterstützte Browser blenden den Seiteninhalt weich über. Ohne diese Browserfunktion bleibt eine kurze Einblendung. Fenster öffnen sanfter, Fotos blenden ein und die Teile eines Looks erscheinen leicht versetzt. Keine Endlosschleifen, zusätzliche Bibliothek oder Modelldatei.
+
+Die Rückmeldung läuft unabhängig vom Speichern oder Filtern. Zustände ändern sich erst nach dem jeweiligen tatsächlichen Vorgang; eine Animation behauptet keinen erfolgreichen Speichervorgang. Bei **Bewegung reduzieren** im Betriebssystem stoppen laufende Tipp-Effekte, und neue Dreh-/Feder-/Seitenanimationen bleiben aus. Tageswischen und Tastaturbedienung funktionieren weiter.
 
 ## Direkte Tagesaktionen
 

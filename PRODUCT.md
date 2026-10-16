@@ -124,3 +124,10 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 - Zurücknehmbare positive Bewertung auf Home und unter Outfits. Vorhandene Datentypen und Sicherungsformat 4 werden wiederverwendet, keine neue Migration oder Abhängigkeit.
 - Sichtbarer Empfehlungskontext, zur Vorhersage passendes Symbol, deutsche Kopfzeile und echtes Einstellungen-Symbol. Lesbare Fehleransicht bei unzugänglichem lokalen Speicher, kein Löschen oder Neuladen eines offenen Entwurfs. Tastatur-Sprunglink und Dialogfokus geprüft.
 - Keine neuen Dienste, Kosten oder automatischen Fotoübertragungen. Foto-KI-Limits, Passformkenntnis, automatische Synchronisierung und echter iPhone-/Safari-Nachweis bleiben ausdrückliche Grenzen.
+
+## Version 0.11 – flüssigere und spielerische Bewegung
+
+- Wäschetrommel dreht kurz mit leicht wippendem Gehäuse; Herz-Puls, kleine Reaktion auf Bewertungen und Tausch-Symbole sowie federnde Glasnavigation. Erneutes Tippen ersetzt den vorherigen Effekt; keine dekorative Endlosschleife.
+- Native View Transitions als optionale Seitenüberblendung, ansonsten CSS-Einblendung. Die letzte Navigation gewinnt auch bei schnellen Wechseln oder sofortigem Zurücktippen. Inhalte bleiben bedienbar; nachfolgendes Scrollen/Fokussieren auf Sicherungen erfolgt erst nach dem tatsächlichen Seitenwechsel.
+- Sanftere Fensteröffnung, Foto-Einblendung, leicht versetztes Erscheinen von Outfit-Teilen und kompakte Toast-Bewegung. Transform/Opacity statt zusätzlicher Layout-Schreibschleifen, keine neue Abhängigkeit.
+- Systemweite reduzierte Bewegung stoppt laufende Tipp-Effekte und verhindert neue dekorative Bewegungen. Fehlende Animations-APIs blockieren keine Aktion. Keine Änderungen an Empfehlungen, Datenmodell, Sicherungsformat oder Fotoübertragung.
