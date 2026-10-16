@@ -9,6 +9,8 @@
 - Produktionsbuild, **129 Vitest-Tests, alle 63 Chromium-Browserfälle und Formatprüfung bestanden**. Der abschliessende Gesamtlauf verwendete einen unveränderten Build; ein zuvor versehentlich während des Laufs gestarteter Neubuild hatte den Service-Worker-Cache dieses Testlaufs gestört. Der finale Lauf bestand einschliesslich Offline- und Foto-Fällen. Neue Browserfälle prüfen Teiletausch/Neustart/Fotoexport, Wäsche/Editor/Filter, Erinnerung/Pause/Abschaltung/Export, Fingerfolge/Rückkehr/manuelle Unterbrechung sowie reduzierte Bewegung. Zwei anfängliche Testfehler betrafen einen abweichenden Beschriftungsnamen und fehlende Rücknavigation nach Seitenneuladen; Bedienungsschritte korrigiert, beide neuen Abläufe danach bestanden.
 - Screenshots bei 375/390/430 Pixeln visuell geprüft, ohne horizontalen Überlauf; neue Tauschliste, Wäsche-Filter und Sicherungshinweis ebenfalls geprüft. Native Chromium-Touch-Gesten sind kein echter Safari-/iPhone-Nachweis. Kein privates Testfoto und keine zusätzliche Anfrage an einen Foto-KI-Anbieter.
 
+Veröffentlichung 0.9.0: [Pages-Lauf 38857466291](https://github.com/treemonsal/Kleiderschrank/actions/runs/38857466291) für App-Commit `3fe5c12133bc3ad07e590a20df7ef82a1ef42b7f` erfolgreich. Öffentliche HTML-/JS-/CSS-Auslieferung anschliessend mit aktiver HTTPS-Prüfung bestätigt: Version, Teiletausch, Wäsche-Status/-Filter, Tagesauswahl, Erinnerung/Exportstand und neue Gesten-/UI-Klassen vorhanden. Platin-/Graphit-Palette, bisheriger Installationspfad, PNG-Icons, Service Worker und bestehendes Foto-KI-Modul ebenfalls erreichbar. Keine private Fotoübertragung oder deaktivierte TLS-Prüfung.
+
 ## Vorherige Prüfung – Version 0.8.1
 
 # Prüfung – Version 0.8.1

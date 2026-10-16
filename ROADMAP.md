@@ -187,5 +187,8 @@ Am 15. Oktober 2026 nach manueller Pages-Einrichtung durch den Nutzer veröffent
 - [x] Tageskarte folgt dem Finger mit Rückkehr-/Weitergleiten und reduzierter Bewegung
 - [x] Sicherungserinnerung nach einer Woche bei neuen Daten, Pause und Abschaltung
 - [x] Neue Angaben im kompatiblen Sicherungsformat exportieren, validieren und importieren
-- [ ] Gesamtprüfung und Veröffentlichung der Version 0.9.0 abschliessen
+- [x] Gesamtprüfung und Veröffentlichung der Version 0.9.0 abschliessen
+
+Version 0.9.0: 129 Datentests, 63 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38857466291](https://github.com/treemonsal/Kleiderschrank/actions/runs/38857466291) veröffentlichte App-Commit `3fe5c12133bc3ad07e590a20df7ef82a1ef42b7f` erfolgreich; öffentliche Version und neue Funktionen über HTTPS geprüft.
+
 - [ ] Bedienung auf echtem iPhone/Safari nach den neuen Prüfhinweisen erproben
