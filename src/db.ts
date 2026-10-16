@@ -47,6 +47,7 @@ export async function deleteGarment(id: string, database = db): Promise<void> {
     database.outfits,
     database.feedback,
     database.calendar,
+    database.preferences,
     async () => {
       const ids = await database.outfits
         .where('garmentIds')
@@ -57,6 +58,15 @@ export async function deleteGarment(id: string, database = db): Promise<void> {
       await database.outfits.where('garmentIds').equals(id).delete()
       await database.feedback.where('garmentIds').equals(id).delete()
       await database.garments.delete(id)
+      const preferences = await database.preferences.get('personal')
+      if (preferences?.dailySelection?.garmentIds.includes(id))
+        await database.preferences.put({
+          ...preferences,
+          dailySelection: undefined,
+          updatedAt: new Date(
+            Math.max(Date.now(), Date.parse(preferences.updatedAt) + 1),
+          ).toISOString(),
+        })
     },
   )
 }
@@ -173,7 +183,9 @@ export async function savePreferences(
   )
 }
 export async function updatePreferences(
-  patch: Partial<Pick<Preferences, 'styles' | 'colors' | 'useWeather'>>,
+  patch: Partial<
+    Pick<Preferences, 'styles' | 'colors' | 'useWeather' | 'backupReminder'>
+  >,
   database = db,
 ): Promise<void> {
   await database.transaction('rw', database.preferences, async () => {
@@ -197,6 +209,7 @@ export async function saveOutfitOptions(
       (await database.preferences.get('personal')) ?? DEFAULT_PREFERENCES
     await database.preferences.put({
       ...current,
+      dailySelection: undefined,
       outfitOptions: {
         ...DEFAULT_OUTFIT_OPTIONS,
         ...current.outfitOptions,
@@ -215,7 +228,9 @@ export async function saveGarment(
   existing?: Garment,
   database = db,
 ): Promise<string> {
-  const now = new Date().toISOString()
+  const now = new Date(
+    Math.max(Date.now(), Date.parse(existing?.updatedAt ?? '') + 1 || 0),
+  ).toISOString()
   const garment: Garment = {
     ...draft,
     name: draft.name.trim(),
@@ -227,23 +242,39 @@ export async function saveGarment(
   }
   if (!garment.name || garment.name.length > 100)
     throw new Error('Bitte gib einen Namen mit höchstens 100 Zeichen ein.')
-  await database.transaction('rw', database.garments, async () => {
-    const current = await database.garments.get(garment.id)
-    if (existing && !current)
-      throw new UserFacingError(
-        'Dieses Stück wurde inzwischen gelöscht. Deine Eingaben bleiben hier sichtbar; schliesse den Dialog und lege es bei Bedarf neu an.',
+  await database.transaction(
+    'rw',
+    [database.garments, database.preferences],
+    async () => {
+      const current = await database.garments.get(garment.id)
+      if (existing && !current)
+        throw new UserFacingError(
+          'Dieses Stück wurde inzwischen gelöscht. Deine Eingaben bleiben hier sichtbar; schliesse den Dialog und lege es bei Bedarf neu an.',
+        )
+      if (existing && current?.updatedAt !== existing.updatedAt)
+        throw new UserFacingError(
+          'Dieses Stück wurde inzwischen in einer anderen Ansicht geändert. Kopiere deine Eingaben und öffne es erneut, damit keine neueren Angaben verloren gehen.',
+        )
+      const items = await database.garments.toArray()
+      assertWardrobeCapacity([
+        ...items.filter((item) => item.id !== garment.id),
+        garment,
+      ])
+      await database.garments.put(garment)
+      const preferences = await database.preferences.get('personal')
+      if (
+        garment.inLaundry &&
+        preferences?.dailySelection?.garmentIds.includes(garment.id)
       )
-    if (existing && current?.updatedAt !== existing.updatedAt)
-      throw new UserFacingError(
-        'Dieses Stück wurde inzwischen in einer anderen Ansicht geändert. Kopiere deine Eingaben und öffne es erneut, damit keine neueren Angaben verloren gehen.',
-      )
-    const items = await database.garments.toArray()
-    assertWardrobeCapacity([
-      ...items.filter((item) => item.id !== garment.id),
-      garment,
-    ])
-    await database.garments.put(garment)
-  })
+        await database.preferences.put({
+          ...preferences,
+          dailySelection: undefined,
+          updatedAt: new Date(
+            Math.max(Date.now(), Date.parse(preferences.updatedAt) + 1),
+          ).toISOString(),
+        })
+    },
+  )
   return garment.id
 }
 export async function toggleFavorite(
@@ -265,4 +296,36 @@ export function storageError(error: unknown): string {
     return 'Der Gerätespeicher ist voll. Sichere deine Daten und schaffe Platz, bevor du es erneut versuchst.'
   }
   return 'Die Daten konnten nicht lokal gespeichert werden. Bitte versuche es erneut. Prüfe, ob dein Browser lokale Speicherung erlaubt.'
+}
+
+export async function setLaundry(
+  id: string,
+  inLaundry: boolean,
+  database = db,
+): Promise<void> {
+  await database.transaction(
+    'rw',
+    database.garments,
+    database.preferences,
+    async () => {
+      const current = await database.garments.get(id)
+      if (!current)
+        throw new UserFacingError('Dieses Stück ist nicht mehr vorhanden.')
+      await database.garments.update(id, {
+        inLaundry,
+        updatedAt: new Date(
+          Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
+        ).toISOString(),
+      })
+      const preferences = await database.preferences.get('personal')
+      if (inLaundry && preferences?.dailySelection?.garmentIds.includes(id))
+        await database.preferences.put({
+          ...preferences,
+          dailySelection: undefined,
+          updatedAt: new Date(
+            Math.max(Date.now(), Date.parse(preferences.updatedAt) + 1),
+          ).toISOString(),
+        })
+    },
+  )
 }

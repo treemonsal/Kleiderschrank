@@ -31,6 +31,20 @@ export interface OutfitFeedback {
   verdict: 'liked' | 'rejected'
   updatedAt: string
 }
+export interface DailySelection {
+  day: string
+  garmentIds: string[]
+  options: OutfitOptions
+  updatedAt: string
+}
+export interface BackupReminderState {
+  updatedAt?: string
+  firstSeenAt: string
+  lastExportedAt?: string
+  lastExportedRevision?: string
+  snoozedUntil?: string
+  disabled?: boolean
+}
 export interface Preferences {
   id: 'personal'
   styles: Style[]
@@ -38,6 +52,8 @@ export interface Preferences {
   updatedAt: string
   outfitOptions?: OutfitOptions
   useWeather?: boolean
+  dailySelection?: DailySelection
+  backupReminder?: BackupReminderState
 }
 export const DEFAULT_PREFERENCES: Preferences = {
   id: 'personal',

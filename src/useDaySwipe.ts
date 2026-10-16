@@ -1,15 +1,63 @@
-import { useRef, type TouchEvent } from 'react'
-export function useDaySwipe(move: (offset: number) => void) {
+import {
+  useLayoutEffect,
+  useRef,
+  type TouchEvent,
+  type MouseEvent,
+} from 'react'
+import { shiftDay } from './calendar'
+
+export function useDaySwipe(move: (offset: number) => void, day: string) {
+  const root = useRef<HTMLDivElement>(null)
   const start = useRef<{
     x: number
     y: number
     time: number
     id: number
+    dragged: boolean
   } | null>(null)
-  function blocked(target: EventTarget | null, root: HTMLElement) {
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const frame = useRef<number | undefined>(undefined)
+  const arriving = useRef(0)
+  const moving = useRef(false)
+  const suppressClick = useRef(0)
+  const callback = useRef(move)
+  callback.current = move
+  const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches
+  const card = () => root.current?.querySelector<HTMLElement>('.day-slide')
+  function reset(animate = true) {
+    const node = card()
+    if (node) {
+      node.style.transition =
+        animate && !reduced() ? 'transform 180ms ease-out' : ''
+      node.style.transform = ''
+    }
+  }
+  // Manual navigation cancels an unfinished swipe. A completed swipe brings the new day in.
+  useLayoutEffect(() => {
+    clearTimeout(timer.current)
+    if (frame.current !== undefined) cancelAnimationFrame(frame.current)
+    start.current = null
+    moving.current = false
+    const direction = arriving.current
+    arriving.current = 0
+    const node = card()
+    if (node && direction && !reduced()) {
+      node.style.transition = 'none'
+      node.style.transform = `translateX(${direction * 40}px)`
+      // Commit the starting position before animating the incoming content.
+      node.getBoundingClientRect()
+      frame.current = requestAnimationFrame(() => reset())
+    } else reset(false)
+    return () => {
+      clearTimeout(timer.current)
+      if (frame.current !== undefined) cancelAnimationFrame(frame.current)
+    }
+  }, [day])
+
+  function blocked(target: EventTarget | null, element: HTMLElement) {
     if (
       document.querySelector('dialog[open]') ||
-      root.querySelector('[data-day-busy="true"]') ||
+      element.querySelector('[data-day-busy="true"]') ||
       document.activeElement?.matches(
         'input,textarea,select,[contenteditable="true"]',
       ) ||
@@ -22,7 +70,7 @@ export function useDaySwipe(move: (offset: number) => void) {
     )
     if (control && !control.matches('.outfit-piece, .home-week-strip > button'))
       return true
-    while (node && node !== root) {
+    while (node && node !== element) {
       if (
         node.scrollWidth > node.clientWidth + 2 &&
         /auto|scroll/.test(getComputedStyle(node).overflowX)
@@ -33,7 +81,21 @@ export function useDaySwipe(move: (offset: number) => void) {
     return false
   }
   return {
+    ref: root,
+    onClickCapture(event: MouseEvent<HTMLElement>) {
+      if (
+        performance.now() < suppressClick.current &&
+        (event.target as Element).closest(
+          '.outfit-piece, .home-week-strip > button',
+        )
+      ) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+    },
     onTouchStart(event: TouchEvent<HTMLElement>) {
+      if (moving.current) return
+      reset(false)
       start.current = null
       if (
         event.touches.length !== 1 ||
@@ -41,49 +103,95 @@ export function useDaySwipe(move: (offset: number) => void) {
       )
         return
       const touch = event.touches[0]
-      // Leave the screen edges to the browser's own back/forward gestures.
+      // Leave screen edges to the browser's back/forward gestures.
       if (touch.clientX < 24 || touch.clientX > innerWidth - 24) return
       start.current = {
         x: touch.clientX,
         y: touch.clientY,
         time: Date.now(),
         id: touch.identifier,
+        dragged: false,
       }
     },
     onTouchMove(event: TouchEvent<HTMLElement>) {
-      if (event.touches.length !== 1) {
+      const first = start.current
+      if (!first) return
+      if (
+        event.touches.length !== 1 ||
+        blocked(event.target, event.currentTarget)
+      ) {
         start.current = null
+        reset()
         return
       }
       const touch = event.touches[0],
-        first = start.current
-      if (
-        first &&
-        Math.abs(touch.clientY - first.y) > 30 &&
-        Math.abs(touch.clientY - first.y) > Math.abs(touch.clientX - first.x)
-      )
+        dx = touch.clientX - first.x,
+        dy = touch.clientY - first.y
+      if (Math.abs(dy) > 30 && Math.abs(dy) > Math.abs(dx)) {
         start.current = null
+        reset()
+        return
+      }
+      if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.8) {
+        first.dragged = true
+        const node = card()
+        if (node && !reduced()) {
+          node.style.transition = 'none'
+          node.style.transform = `translateX(${Math.max(-innerWidth * 0.7, Math.min(innerWidth * 0.7, dx))}px)`
+        }
+      }
     },
     onTouchCancel() {
+      if (start.current?.dragged)
+        suppressClick.current = performance.now() + 400
       start.current = null
+      reset()
     },
     onTouchEnd(event: TouchEvent<HTMLElement>) {
       const first = start.current
       start.current = null
-      if (!first || blocked(event.target, event.currentTarget)) return
+      if (!first) return
+      if (first.dragged) suppressClick.current = performance.now() + 400
       const touch = Array.from(event.changedTouches).find(
         (touch) => touch.identifier === first.id,
       )
-      if (!touch) return
+      if (!touch || blocked(event.target, event.currentTarget)) {
+        reset()
+        return
+      }
       const dx = touch.clientX - first.x,
         dy = touch.clientY - first.y
+      const offset = dx < 0 ? 1 : -1
       if (
         Math.abs(dx) < 80 ||
         Math.abs(dx) < Math.abs(dy) * 1.8 ||
-        Date.now() - first.time > 800
-      )
+        Date.now() - first.time > 800 ||
+        !shiftDay(day, offset)
+      ) {
+        reset()
         return
-      move(dx < 0 ? 1 : -1)
+      }
+      if (reduced()) {
+        reset(false)
+        callback.current(offset)
+        return
+      }
+      const node = card()
+      if (node) {
+        node.style.transition = 'transform 120ms ease-in'
+        node.style.transform = `translateX(${-offset * innerWidth}px)`
+      }
+      moving.current = true
+      timer.current = setTimeout(() => {
+        // Recheck before a delayed change, e.g. when a dialog opened meanwhile.
+        if (root.current && !blocked(root.current, root.current)) {
+          arriving.current = offset
+          callback.current(offset)
+        } else {
+          moving.current = false
+          reset()
+        }
+      }, 125)
     },
   }
 }

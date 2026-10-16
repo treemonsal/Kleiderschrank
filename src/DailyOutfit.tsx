@@ -25,6 +25,8 @@ import { recordWornOutfit } from './calendar-db'
 import { weatherFresh, weatherLabel } from './weather'
 import { useClock } from './useWeather'
 import { WeatherPanel } from './WeatherPanel'
+import { OutfitSwap } from './OutfitSwap'
+import { recentWear } from './wear-history'
 import { OutfitPieces } from './OutfitPieces'
 import { ErrorMessage, Sheet } from './ui'
 
@@ -119,6 +121,7 @@ export function DailyOutfit({
   const [weatherOpen, setWeatherOpen] = useState(false)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [swapping, setSwapping] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   useEffect(() => setError(''), [day])
@@ -285,155 +288,192 @@ export function DailyOutfit({
           </button>
         )}
       </div>
-      <section
-        className="daily-look"
-        aria-label="Dein Tageslook"
-        data-day={day}
-        data-day-busy={busy ? 'true' : undefined}
-      >
-        <header>
-          <p className="eyebrow">{badge}</p>
-          <h1>
-            {recorded?.name ??
-              (isToday
-                ? 'Dein Look für heute.'
-                : past
-                  ? 'Was du getragen hast.'
-                  : 'Dein nächster Look.')}
-          </h1>
-          <p className="muted">
-            {entry
-              ? worn
-                ? 'Dein bestätigter Look für diesen Tag.'
-                : past
-                  ? 'Dieser Look war geplant. Ob du ihn getragen hast, ist noch nicht bestätigt.'
-                  : 'Deine Auswahl aus dem Kalender.'
-              : isToday
-                ? 'Automatisch aus deinen Stücken, Vorlieben und der Saison kombiniert.'
-                : past
-                  ? 'Hier erscheinen deine bestätigten Tragetage.'
-                  : 'Hier erscheinen deine eingeplanten Looks.'}
-          </p>
-        </header>
-        {!state ? (
-          <p role="status">Dein Tageslook wird geladen …</p>
-        ) : look?.garmentIds.length ? (
-          <>
-            <OutfitPieces ids={look.garmentIds} items={items} onOpen={onOpen} />
-            {!complete && (
-              <p className="muted">
-                Die Angaben dieses Looks haben sich geändert oder ein Stück
-                fehlt. Prüfe den Eintrag im Kalender.
-              </p>
-            )}
-            {entry?.note && <p className="calendar-note">{entry.note}</p>}
-            {!!look.reasons.length && (
-              <details className="outfit-reasons">
-                <summary>Warum diese Kombination?</summary>
-                <ul>
-                  {look.reasons.map((reason) => (
-                    <li key={reason}>{reason}</li>
-                  ))}
-                </ul>
-                <p className="generator-disclosure">
-                  Lokale Kombinationsregeln mit deinen erfassten
-                  Kleidungsmerkmalen. Passform, Wärme und Dresscode bitte selbst
-                  prüfen.
+      <div className="day-slide-viewport">
+        <section
+          className="daily-look day-slide"
+          aria-label="Dein Tageslook"
+          data-day={day}
+          data-day-busy={busy ? 'true' : undefined}
+        >
+          <header>
+            <p className="eyebrow">{badge}</p>
+            <h1>
+              {recorded?.name ??
+                (isToday
+                  ? 'Dein Look für heute.'
+                  : past
+                    ? 'Was du getragen hast.'
+                    : 'Dein nächster Look.')}
+            </h1>
+            <p className="muted">
+              {entry
+                ? worn
+                  ? 'Dein bestätigter Look für diesen Tag.'
+                  : past
+                    ? 'Dieser Look war geplant. Ob du ihn getragen hast, ist noch nicht bestätigt.'
+                    : 'Deine Auswahl aus dem Kalender.'
+                : isToday
+                  ? 'Automatisch aus deinen Stücken, Vorlieben und der Saison kombiniert.'
+                  : past
+                    ? 'Hier erscheinen deine bestätigten Tragetage.'
+                    : 'Hier erscheinen deine eingeplanten Looks.'}
+            </p>
+          </header>
+          {!state ? (
+            <p role="status">Dein Tageslook wird geladen …</p>
+          ) : look?.garmentIds.length ? (
+            <>
+              <OutfitPieces
+                ids={look.garmentIds}
+                items={items}
+                onOpen={onOpen}
+                onSwap={isToday && !worn ? setSwapping : undefined}
+              />
+              {isToday &&
+                !worn &&
+                look.garmentIds.some(
+                  (id) => items.find((item) => item.id === id)?.inLaundry,
+                ) && (
+                  <p className="muted">
+                    Ein Teil liegt in der Wäsche. Tausche es aus oder markiere
+                    es nach dem Waschen als sauber.
+                  </p>
+                )}
+              {!complete && (
+                <p className="muted">
+                  Die Angaben dieses Looks haben sich geändert oder ein Stück
+                  fehlt. Prüfe den Eintrag im Kalender.
                 </p>
-              </details>
-            )}
-            <div className="daily-look-actions">
-              {day <= today && (
-                <button
-                  className={`button ${worn ? 'secondary' : 'primary'}`}
-                  disabled={busy || worn || !complete}
-                  onClick={async () => {
-                    setBusy(true)
-                    setError('')
-                    try {
-                      await recordWornOutfit(
-                        look.garmentIds,
-                        look.options,
-                        day,
-                        entry?.updatedAt ?? null,
-                      )
-                      notify('Als getragen im Kalender vermerkt.')
-                    } catch (error) {
-                      setError(storageError(error))
-                    } finally {
-                      setBusy(false)
-                    }
-                  }}
-                >
-                  <Check size={16} />
-                  {worn
-                    ? 'Getragen'
-                    : isToday
-                      ? 'Heute getragen'
-                      : 'Als getragen bestätigen'}
-                </button>
               )}
-              {!entry && (
-                <button
-                  className="button secondary"
-                  disabled={saved || busy || !complete}
-                  onClick={async () => {
-                    setBusy(true)
-                    setError('')
-                    try {
-                      await saveOutfit(look.garmentIds, look.options)
-                      notify('Dein Tageslook ist gespeichert.')
-                    } catch (error) {
-                      setError(storageError(error))
-                    } finally {
-                      setBusy(false)
-                    }
-                  }}
-                >
-                  {saved ? <Check size={16} /> : <Bookmark size={16} />}{' '}
-                  {saved ? 'Gespeichert' : 'Look speichern'}
-                </button>
+              {entry?.note && <p className="calendar-note">{entry.note}</p>}
+              {!!look.reasons.length && (
+                <details className="outfit-reasons">
+                  <summary>Warum diese Kombination?</summary>
+                  <ul>
+                    {look.reasons.map((reason) => (
+                      <li key={reason}>{reason}</li>
+                    ))}
+                  </ul>
+                  <p className="generator-disclosure">
+                    Lokale Kombinationsregeln mit deinen erfassten
+                    Kleidungsmerkmalen. Passform, Wärme und Dresscode bitte
+                    selbst prüfen.
+                  </p>
+                </details>
               )}
+              <div className="daily-look-actions">
+                {day <= today && (
+                  <button
+                    className={`button ${worn ? 'secondary' : 'primary'}`}
+                    disabled={busy || worn || !complete}
+                    onClick={async () => {
+                      setBusy(true)
+                      setError('')
+                      try {
+                        await recordWornOutfit(
+                          look.garmentIds,
+                          look.options,
+                          day,
+                          entry?.updatedAt ?? null,
+                        )
+                        notify('Als getragen im Kalender vermerkt.')
+                      } catch (error) {
+                        setError(storageError(error))
+                      } finally {
+                        setBusy(false)
+                      }
+                    }}
+                  >
+                    <Check size={16} />
+                    {worn
+                      ? 'Getragen'
+                      : isToday
+                        ? 'Heute getragen'
+                        : 'Als getragen bestätigen'}
+                  </button>
+                )}
+                {!entry && (
+                  <button
+                    className="button secondary"
+                    disabled={saved || busy || !complete}
+                    onClick={async () => {
+                      setBusy(true)
+                      setError('')
+                      try {
+                        await saveOutfit(look.garmentIds, look.options)
+                        notify('Dein Tageslook ist gespeichert.')
+                      } catch (error) {
+                        setError(storageError(error))
+                      } finally {
+                        setBusy(false)
+                      }
+                    }}
+                  >
+                    {saved ? <Check size={16} /> : <Bookmark size={16} />}{' '}
+                    {saved ? 'Gespeichert' : 'Look speichern'}
+                  </button>
+                )}
+                <button
+                  className="text-button"
+                  disabled={busy}
+                  onClick={() => (entry ? setEditing(true) : onOutfits())}
+                >
+                  {entry ? 'Tag bearbeiten' : 'Looks anpassen'}{' '}
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="daily-look-empty">
+              <p>
+                {entry
+                  ? 'Der verknüpfte Look ist nicht mehr verfügbar.'
+                  : isToday
+                    ? automatic?.missing
+                    : past
+                      ? 'Für diesen Tag ist kein Look vermerkt.'
+                      : 'Für diesen Tag ist noch kein Look eingeplant.'}
+              </p>
               <button
                 className="text-button"
-                disabled={busy}
-                onClick={() => (entry ? setEditing(true) : onOutfits())}
+                onClick={() =>
+                  !isToday && state.outfits.length
+                    ? setEditing(true)
+                    : onOutfits()
+                }
               >
-                {entry ? 'Tag bearbeiten' : 'Looks anpassen'}{' '}
+                {!isToday && state.outfits.length
+                  ? past
+                    ? 'Getragenen Look eintragen'
+                    : 'Look einplanen'
+                  : 'Auswahl anpassen'}{' '}
                 <ArrowRight size={16} />
               </button>
             </div>
-          </>
-        ) : (
-          <div className="daily-look-empty">
-            <p>
-              {entry
-                ? 'Der verknüpfte Look ist nicht mehr verfügbar.'
-                : isToday
-                  ? automatic?.missing
-                  : past
-                    ? 'Für diesen Tag ist kein Look vermerkt.'
-                    : 'Für diesen Tag ist noch kein Look eingeplant.'}
-            </p>
-            <button
-              className="text-button"
-              onClick={() =>
-                !isToday && state.outfits.length
-                  ? setEditing(true)
-                  : onOutfits()
-              }
-            >
-              {!isToday && state.outfits.length
-                ? past
-                  ? 'Getragenen Look eintragen'
-                  : 'Look einplanen'
-                : 'Auswahl anpassen'}{' '}
-              <ArrowRight size={16} />
-            </button>
-          </div>
-        )}
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-      </section>
+          )}
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+        </section>
+      </div>
+      {swapping && state && look && isToday && !worn && (
+        <OutfitSwap
+          items={items}
+          ids={look.garmentIds}
+          targetId={swapping}
+          day={day}
+          options={look.options}
+          preferences={state.preferences}
+          feedback={state.feedback}
+          weather={
+            state.preferences.useWeather !== false && fresh
+              ? forecast
+              : undefined
+          }
+          history={recentWear(state.calendar, state.outfits, day)}
+          expectedEntry={entry?.updatedAt ?? null}
+          onClose={() => setSwapping(null)}
+          notify={notify}
+        />
+      )}
       {weatherOpen && (
         <Sheet title="Ort und Wetter" onClose={() => setWeatherOpen(false)}>
           <WeatherPanel

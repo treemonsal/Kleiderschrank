@@ -344,6 +344,14 @@ export function Editor({
               ))}
             </div>
           </div>
+          <label className="accessory-option">
+            <input
+              type="checkbox"
+              checked={!!draft.inLaundry}
+              onChange={(event) => update('inLaundry', event.target.checked)}
+            />
+            In der Wäsche · aus neuen Vorschlägen ausblenden
+          </label>
           <label className="field">
             Notizen
             <textarea

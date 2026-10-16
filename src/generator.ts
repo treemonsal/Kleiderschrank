@@ -1,4 +1,9 @@
 import type { Garment } from './model'
+import {
+  recentPiecePenalty,
+  recentCombinationPenalty,
+  type RecentWear,
+} from './wear-history'
 import type { WeatherDay } from './weather'
 import {
   outfitKey,
@@ -23,6 +28,7 @@ export function eligibleGarments(
   // Unknown seasons stay eligible; conflicting explicitly entered seasons do not.
   return items.filter(
     (item) =>
+      !item.inLaundry &&
       (options.season === 'Alle' ||
         !item.seasons.length ||
         item.seasons.includes(options.season)) &&
@@ -53,7 +59,9 @@ export function missingOutfitMessage(
   const has = (category: string) =>
     eligible.some((item) => item.category === category)
   if (!has('Schuhe'))
-    return 'Für diese Auswahl fehlen passende Schuhe. Ergänze ein Paar oder ändere Saison und Anlass.'
+    return items.some((item) => item.category === 'Schuhe' && item.inLaundry)
+      ? 'Passende Schuhe sind in der Wäsche oder fehlen in dieser Auswahl. Markiere ein sauberes Paar als verfügbar oder passe deine Auswahl an.'
+      : 'Für diese Auswahl fehlen passende Schuhe. Ergänze ein Paar oder ändere Saison und Anlass.'
   if (!has('Kleider') && !(has('Oberteile') && has('Hosen')))
     return 'Für diese Auswahl brauchst du ein Kleid oder ein Oberteil mit Hose. Ergänze Stücke oder passe deine Auswahl an.'
   return 'In der aktuellen Auswahl gibt es keinen neuen Vorschlag. Du kannst neu kombinieren, Ablehnungen zurücksetzen oder deine Auswahl ändern.'
@@ -67,6 +75,7 @@ export function generateOutfits(
   seed = 0,
   weather?: WeatherDay,
   wearCounts: Map<string, number> = new Map(),
+  history?: RecentWear,
 ): OutfitCandidate[] {
   const eligible = eligibleGarments(items, options, weather)
   const rejected = new Set(
@@ -99,7 +108,8 @@ export function generateOutfits(
         ? 3
         : 0) +
       (likedItems.get(item.id) || 0) +
-      Math.min(1, (wearCounts.get(item.id) ?? 0) * 0.2)
+      Math.min(1, (wearCounts.get(item.id) ?? 0) * 0.2) -
+      recentPiecePenalty(item.id, history)
     )
   }
   // Bounded search: at most 18³ + 18² base combinations, even for 1000 items.
@@ -154,7 +164,7 @@ export function generateOutfits(
       selected.length
     score += accents.length <= 1 ? 3 : accents.length === 2 ? 1 : -2
     if (liked.has(key)) score += 4
-    score += noise(key, seed) * 3
+    score += noise(key, seed) * 3 - recentCombinationPenalty(key, history)
     const reasons = [
       base[0].category === 'Kleider'
         ? 'Kleid und Schuhe bilden die Basis.'
@@ -196,6 +206,12 @@ export function generateOutfits(
       reasons.push('Diese Kombination hat dir bereits gefallen.')
     if (selected.some((item) => (wearCounts.get(item.id) ?? 0) > 0))
       reasons.push('Bereits bestätigte Tragetage wurden leicht gewichtet.')
+    if (history && (history.pieces.size || history.combinations.size))
+      reasons.push(
+        history.combinations.has(key)
+          ? 'Dieser Look wurde kürzlich getragen. Bei wenig Auswahl kann er erneut erscheinen.'
+          : 'Kürzlich getragene Kombinationen und Stücke erhalten weniger Gewicht.',
+      )
     if (weather) {
       reasons.push(
         `Vorhersage für ${weather.day}: ${Math.round(weather.min)} bis ${Math.round(weather.max)} °C. Saisonangaben helfen bei der groben Auswahl; Material und Wärme bleiben ungeprüft.`,

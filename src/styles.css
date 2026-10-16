@@ -2413,3 +2413,131 @@ fieldset {
 .day-number.has-worn {
   box-shadow: 0 0 0 1px #ffffff26;
 }
+
+/* Local wardrobe availability and single-piece editing. */
+.outfit-piece-slot {
+  min-width: 0;
+}
+.outfit-piece {
+  width: 100%;
+}
+.piece-swap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 5px 0;
+}
+.piece-swap:hover {
+  color: var(--ink);
+}
+.laundry-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 10px;
+}
+.swap-intro {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.swap-choices {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+}
+.swap-choice {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  padding: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  min-width: 0;
+}
+.swap-choice .garment-picture {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 10px;
+}
+.swap-choice > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.swap-choice strong,
+.swap-choice small {
+  display: block;
+}
+.swap-choice strong {
+  font-size: 14px;
+}
+.swap-choice small {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 5px;
+}
+.backup-reminder {
+  display: flex;
+  gap: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 18px;
+  margin: 20px 0;
+}
+.backup-reminder > svg {
+  flex-shrink: 0;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.backup-reminder h2 {
+  font-size: 15px;
+  margin: 0 0 8px;
+  letter-spacing: -0.3px;
+}
+.backup-reminder p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+.backup-reminder-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 14px;
+  margin-top: 7px;
+}
+.backup-reminder-actions .text-button {
+  font-size: 12px;
+}
+.backup-reminder-setting {
+  margin-top: 18px;
+}
+.day-slide-viewport {
+  overflow: clip;
+  padding: 2px;
+  margin: -2px;
+}
+.home-view {
+  touch-action: pan-y pinch-zoom;
+}
+@media (prefers-reduced-motion: reduce) {
+  .day-slide {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+.garment-caption .laundry-badge {
+  margin-left: 6px;
+}

@@ -1,4 +1,5 @@
 import { CATEGORIES, COLORS, SEASONS, STYLES, type Garment } from './model'
+import { backupRevision } from './backup-reminder'
 import { blobToDataURL } from './photos'
 import { db, type WardrobeDatabase } from './db'
 import { isDay, MAX_CALENDAR_ENTRIES, type CalendarEntry } from './calendar'
@@ -32,8 +33,8 @@ const invalid = () =>
   new Error(
     'Die Datei ist keine gültige MyStyle-Sicherung (Version 1, 2, 3 oder 4). Es wurde nichts verändert.',
   )
-export async function createDatabaseBackup(database = db): Promise<string> {
-  const data = await database.transaction('r', database.tables, async () => ({
+export async function readBackupData(database = db): Promise<BackupData> {
+  return database.transaction('r', database.tables, async () => ({
     garments: await database.garments.toArray(),
     outfits: await database.outfits.toArray(),
     feedback: await database.feedback.toArray(),
@@ -41,7 +42,38 @@ export async function createDatabaseBackup(database = db): Promise<string> {
     calendar: await database.calendar.toArray(),
     weather: (await database.weather.get('local')) ?? null,
   }))
+}
+export async function createDatabaseBackup(database = db): Promise<string> {
+  const data = await readBackupData(database)
   return createBackup(data.garments, data)
+}
+export async function createDatabaseBackupExport(database = db) {
+  const data = await readBackupData(database)
+  const revision = backupRevision(data),
+    exportedAt = new Date(
+      Math.max(
+        Date.now(),
+        Date.parse(data.preferences?.backupReminder?.updatedAt ?? '') + 1 || 0,
+      ),
+    ).toISOString()
+  const preferences = data.preferences ?? { ...DEFAULT_PREFERENCES }
+  return {
+    revision,
+    exportedAt,
+    json: await createBackup(data.garments, {
+      ...data,
+      preferences: {
+        ...preferences,
+        backupReminder: {
+          firstSeenAt: exportedAt,
+          ...preferences.backupReminder,
+          updatedAt: exportedAt,
+          lastExportedAt: exportedAt,
+          lastExportedRevision: revision,
+        },
+      },
+    }),
+  }
 }
 export async function createBackup(
   items: Garment[],
@@ -140,6 +172,51 @@ function parseOutfitOptions(value: unknown): OutfitOptions {
     includeAccessory: boolean(item.includeAccessory),
   }
 }
+function object(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value))
+    throw invalid()
+  return value as Record<string, unknown>
+}
+function parseDailySelection(
+  value: unknown,
+  references: (value: unknown) => string[],
+) {
+  const item = object(value)
+  if (!isDay(item.day)) throw invalid()
+  return {
+    day: item.day,
+    garmentIds: references(item.garmentIds),
+    options: parseOutfitOptions(item.options),
+    updatedAt: timestamp(item.updatedAt),
+  }
+}
+function parseReminder(value: unknown) {
+  const item = object(value)
+  if (
+    item.lastExportedRevision !== undefined &&
+    (typeof item.lastExportedRevision !== 'string' ||
+      !/^[a-f0-9]{16}$/.test(item.lastExportedRevision))
+  )
+    throw invalid()
+  return {
+    firstSeenAt: timestamp(item.firstSeenAt),
+    ...(item.updatedAt === undefined
+      ? {}
+      : { updatedAt: timestamp(item.updatedAt) }),
+    ...(item.lastExportedAt === undefined
+      ? {}
+      : { lastExportedAt: timestamp(item.lastExportedAt) }),
+    ...(item.lastExportedRevision === undefined
+      ? {}
+      : { lastExportedRevision: item.lastExportedRevision as string }),
+    ...(item.snoozedUntil === undefined
+      ? {}
+      : { snoozedUntil: timestamp(item.snoozedUntil) }),
+    ...(item.disabled === undefined
+      ? {}
+      : { disabled: boolean(item.disabled) }),
+  }
+}
 function parseWornColors(value: unknown, status: unknown): string[] {
   // Historical colors are independent of later edits/imports of the referenced outfit.
   if (
@@ -195,6 +272,9 @@ export function parseFullBackup(json: string): BackupData {
         styles: choices(item.styles, STYLES),
         notes: text(item.notes, 2000),
         favorite: item.favorite,
+        ...(item.inLaundry === undefined
+          ? {}
+          : { inLaundry: boolean(item.inLaundry) }),
         createdAt: timestamp(item.createdAt),
         updatedAt: timestamp(item.updatedAt),
         photo: original,
@@ -280,6 +360,17 @@ export function parseFullBackup(json: string): BackupData {
       ...(item.useWeather === undefined
         ? {}
         : { useWeather: boolean(item.useWeather) }),
+      ...(item.dailySelection === undefined
+        ? {}
+        : {
+            dailySelection: parseDailySelection(
+              item.dailySelection,
+              references,
+            ),
+          }),
+      ...(item.backupReminder === undefined
+        ? {}
+        : { backupReminder: parseReminder(item.backupReminder) }),
     }
   }
   const calendar: CalendarEntry[] = []
@@ -378,10 +469,28 @@ export async function importFullBackup(
     const extra = (await database.feedback.count()) - 1000
     if (extra > 0)
       await database.feedback.orderBy('updatedAt').limit(extra).delete()
-    const current =
-      (await database.preferences.get('personal')) ?? DEFAULT_PREFERENCES
-    if (data.preferences && data.preferences.updatedAt > current.updatedAt)
-      await database.preferences.put(data.preferences)
+    const current = await database.preferences.get('personal')
+    if (data.preferences) {
+      const incoming = data.preferences
+      const base =
+        !current || incoming.updatedAt > current.updatedAt ? incoming : current
+      const currentReminder = current?.backupReminder,
+        incomingReminder = incoming.backupReminder
+      // Reminder bookkeeping has its own clock: it must not overwrite newer style settings,
+      // and an imported style change must not undo a newer export or reminder choice.
+      const reminder = !currentReminder
+        ? incomingReminder
+        : !incomingReminder
+          ? currentReminder
+          : (incomingReminder.updatedAt ?? incomingReminder.firstSeenAt) >
+              (currentReminder.updatedAt ?? currentReminder.firstSeenAt)
+            ? incomingReminder
+            : currentReminder
+      if (base !== current || reminder !== currentReminder)
+        await database.preferences.put(
+          reminder ? { ...base, backupReminder: reminder } : base,
+        )
+    }
     for (const item of data.calendar ?? []) {
       if (!(await database.outfits.get(item.outfitId))) throw invalid()
       const existing = await database.calendar.get(item.id)

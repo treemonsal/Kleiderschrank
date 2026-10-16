@@ -20,12 +20,20 @@ import {
   Trash2,
   WifiOff,
   X,
+  WashingMachine,
 } from 'lucide-react'
-import { db, deleteGarment, storageError, toggleFavorite } from './db'
+import {
+  db,
+  deleteGarment,
+  storageError,
+  toggleFavorite,
+  setLaundry,
+} from './db'
 import { OutfitView } from './OutfitView'
 import { CATEGORIES, filterGarments, type Garment } from './model'
 import { Editor } from './Editor'
 import { BackupView } from './BackupView'
+import { BackupReminder } from './BackupReminder'
 import { DailyOutfit } from './DailyOutfit'
 import { localDay, shiftDay } from './calendar'
 import { useClock, useSavedWeatherRefresh } from './useWeather'
@@ -41,6 +49,7 @@ function Home({
   onOpen,
   onFavorite,
   onOutfits,
+  onBackup,
   notify,
 }: {
   items: Garment[]
@@ -49,6 +58,7 @@ function Home({
   onOpen: (id: string) => void
   onFavorite: (item: Garment) => void
   onOutfits: () => void
+  onBackup: () => void
   notify: (message: string) => void
 }) {
   const today = localDay(new Date(useClock()))
@@ -58,7 +68,7 @@ function Home({
   const swipe = useDaySwipe((offset) => {
     const next = shiftDay(day, offset)
     if (next) selectDay(next)
-  })
+  }, day)
   const favorites = items.filter((i) => i.favorite)
   const featured = (
     favorites.length
@@ -75,6 +85,7 @@ function Home({
         onOutfits={onOutfits}
         notify={notify}
       />
+      <BackupReminder onBackup={onBackup} />
       <section className="wardrobe-summary">
         <div>
           <p className="eyebrow">DEINE KLEINE KOLLEKTION</p>
@@ -178,17 +189,19 @@ function Wardrobe({
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('Alle')
   const [favorites, setFavorites] = useState(false)
+  const [laundryOnly, setLaundryOnly] = useState(false)
   const [sort, setSort] = useState('newest')
   const [showSort, setShowSort] = useState(false)
-  const filtered = filterGarments(items, query, category, favorites).sort(
-    (a, b) =>
+  const filtered = filterGarments(items, query, category, favorites)
+    .filter((item) => !laundryOnly || item.inLaundry)
+    .sort((a, b) =>
       sort === 'name'
         ? a.name.localeCompare(b.name, 'de')
         : sort === 'oldest'
           ? a.createdAt.localeCompare(b.createdAt)
           : b.createdAt.localeCompare(a.createdAt),
-  )
-  const hasFilters = !!query || category !== 'Alle' || favorites
+    )
+  const hasFilters = !!query || category !== 'Alle' || favorites || laundryOnly
   return (
     <div className="view wardrobe-view">
       <header className="page-heading">
@@ -232,6 +245,14 @@ function Wardrobe({
           onClick={() => setFavorites(!favorites)}
         >
           <Heart size={20} fill={favorites ? 'currentColor' : 'none'} />
+        </button>
+        <button
+          className={`icon-button filter-button ${laundryOnly ? 'selected' : ''}`}
+          aria-label="Nur Wäsche"
+          aria-pressed={laundryOnly}
+          onClick={() => setLaundryOnly(!laundryOnly)}
+        >
+          <WashingMachine size={20} />
         </button>
       </div>
       <div
@@ -317,6 +338,7 @@ function Wardrobe({
                     setQuery('')
                     setCategory('Alle')
                     setFavorites(false)
+                    setLaundryOnly(false)
                   }
                 : onAdd
             }
@@ -410,6 +432,30 @@ function Detail({
             <dd>{item.styles.join(', ') || 'Nicht angegeben'}</dd>
           </div>
         </dl>
+        <button
+          className="button secondary full laundry-toggle"
+          disabled={busy}
+          aria-pressed={!!item.inLaundry}
+          onClick={async () => {
+            setBusy(true)
+            setError('')
+            try {
+              await setLaundry(item.id, !item.inLaundry)
+            } catch (error) {
+              setError(storageError(error))
+            } finally {
+              setBusy(false)
+            }
+          }}
+        >
+          <WashingMachine size={17} />
+          {item.inLaundry ? 'Als sauber markieren' : 'In die Wäsche legen'}
+        </button>
+        <p className="micro-copy" role="status">
+          {item.inLaundry
+            ? 'In der Wäsche: für neue automatische Vorschläge ausgeblendet.'
+            : 'Für neue Vorschläge verfügbar.'}
+        </p>
         {item.notes && (
           <div className="detail-notes">
             <h4>Deine Notizen</h4>
@@ -595,6 +641,14 @@ export default function App() {
             onOpen={setSelectedId}
             onFavorite={(item) => void favorite(item)}
             onOutfits={() => navigate('outfits')}
+            onBackup={() => {
+              navigate('settings')
+              requestAnimationFrame(() => {
+                const section = document.getElementById('backup-section')
+                section?.scrollIntoView({ block: 'start' })
+                section?.focus({ preventScroll: true })
+              })
+            }}
             notify={notify}
           />
         ) : view === 'wardrobe' ? (

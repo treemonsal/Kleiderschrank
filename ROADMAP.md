@@ -177,3 +177,15 @@ Am 15. Oktober 2026 nach manueller Pages-Einrichtung durch den Nutzer veröffent
 - [x] Farbringe aus bestätigten Looks in beiden Kalenderansichten, neue Farbstände sichern und alte Einträge kompatibel lesen.
 - [x] Tages-/Status-/Farb-/Backup-Regressionen sowie native mobile Chromium-Gesten und Layouts bei 375/390/430 Pixeln prüfen.
 - [ ] Neue Tagesnavigation und Farbringe auf echtem iPhone/Safari prüfen.
+
+## Version 0.9 – weniger Handgriffe im Alltag
+
+- [x] Einzelnes Kleidungsstück im heutigen Look tauschen und Auswahl dauerhaft merken
+- [x] Heutige Kalenderpläne atomar anpassen, historische Tage und gemeinsame Looks erhalten
+- [x] Kürzlich getragene Stücke und Kombinationen bei der Auswahl geringer gewichten
+- [x] Wäsche-Status mit Filter, Editor und Ausschluss aus automatischen Vorschlägen
+- [x] Tageskarte folgt dem Finger mit Rückkehr-/Weitergleiten und reduzierter Bewegung
+- [x] Sicherungserinnerung nach einer Woche bei neuen Daten, Pause und Abschaltung
+- [x] Neue Angaben im kompatiblen Sicherungsformat exportieren, validieren und importieren
+- [ ] Gesamtprüfung und Veröffentlichung der Version 0.9.0 abschliessen
+- [ ] Bedienung auf echtem iPhone/Safari nach den neuen Prüfhinweisen erproben

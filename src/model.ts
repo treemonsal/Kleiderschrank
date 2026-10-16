@@ -42,6 +42,7 @@ export interface Garment {
   styles: Style[]
   notes: string
   favorite: boolean
+  inLaundry?: boolean
   photo?: Blob
   cutout?: Blob
   createdAt: string

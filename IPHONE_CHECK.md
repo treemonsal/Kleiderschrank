@@ -29,3 +29,13 @@ Bei Problemen Modell/iOS, betroffene Aktion und Fehlermeldung notieren. Keine pr
 - Monatskalender über das Kalendersymbol am Datum öffnen und einen Tag auswählen: Kalender schliesst und zeigt den ausgewählten Eintrag. Mit „Zu heute“ zurückkehren. Dieselben Farbringe unter Outfits → Kalender prüfen.
 - Notiz eines bestätigten Tags ändern und Farben erhalten; bei einem neuen Outfit/erneuter Tragebestätigung werden Farben neu übernommen. Eine Sicherung exportieren und bewusst wiederherstellen.
 - Vertikales Scrollen, Eingaben, Dialoge und iPhone-Bildschirmrandgesten dürfen keine Tageswechsel auslösen. Die Tabs weiterhin über die untere Navigation wechseln.
+
+## Ergänzungen 0.9.0
+
+- Im Tageslook ein Stück über „Austauschen“ ersetzen: nur dieses Stück ändert sich. App schliessen und neu öffnen, Auswahl prüfen. Dasselbe mit einem heutigen Kalenderplan versuchen; frühere Tage und andere Verwendungen des ursprünglichen Looks bleiben erhalten. Bei bestätigtem Tragetag gibt es keinen Teiletausch.
+- Stück in Details und im Editor als Wäsche markieren, unter „Nur Wäsche“ finden und nach Neustart prüfen. Neue Vorschläge und Tauschlisten schliessen es aus. Als sauber markieren; vorhandene Originalfotos und Freistellungen müssen erhalten bleiben.
+- Mehrere bestätigte Tragetage mit genügend Alternativen erfassen und abwechslungsreiche Vorschläge prüfen. Bei wenig Kleidung sind Wiederholungen weiterhin möglich.
+- Tageskarte langsam horizontal ziehen: folgt dem Finger, kehrt bei kurzer Geste zurück, wechselt bei ausreichender Geste genau einen Tag. Vertikales Scrollen, Tippen auf Fotos, Dialoge und Randgesten weiter prüfen. Mit iOS „Bewegung reduzieren“ ohne Verschieben navigieren. Während eines ausstehenden Wechsels manuell einen Tag wählen und späten Doppelwechsel ausschliessen.
+- Nach einer Woche mit neuen Daten erscheint ein Hinweis, kein Dialog. „In einer Woche“, „Sicherung öffnen“, Abschalten und Neustart prüfen. Export in Dateien speichern und wiederherstellen: Wäsche, angepasster Tageslook und Erinnerungseinstellungen bleiben erhalten. Export ist keine Bestätigung eines abgeschlossenen iOS-Dateispeicherns.
+
+Diese neuen Abläufe wurden in Chromium automatisiert; echter Safari-/iPhone-Nachweis steht aus.

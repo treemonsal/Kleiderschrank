@@ -37,7 +37,8 @@ import {
 import { ErrorMessage, Sheet } from './ui'
 import { CalendarView } from './CalendarView'
 import { WeatherPanel } from './WeatherPanel'
-import { wornCounts } from './calendar'
+import { recentWear } from './wear-history'
+import { localDay, wornCounts } from './calendar'
 import { deleteOutfit } from './calendar-db'
 import { weatherFresh, type WeatherDay } from './weather'
 import { useClock, weatherForToday } from './useWeather'
@@ -295,6 +296,7 @@ export function OutfitView({
           (item) => item.day === weatherDay?.day,
         ) ?? todayWeather)
       : undefined
+  const historyDay = weatherContext?.day ?? localDay(new Date(now))
   const [seed, setSeed] = useState(0)
   const [requested, setRequested] = useState(false)
   const [preferencesOpen, setPreferencesOpen] = useState(false)
@@ -314,9 +316,10 @@ export function OutfitView({
             seed,
             weatherContext,
             wornCounts(state.calendar, state.outfits),
+            recentWear(state.calendar, state.outfits, historyDay),
           )
         : [],
-    [items, options, requested, state, seed, weatherContext],
+    [items, options, requested, state, seed, weatherContext, historyDay],
   )
   const rejectedCount =
     state?.feedback.filter((item) => item.verdict === 'rejected').length ?? 0

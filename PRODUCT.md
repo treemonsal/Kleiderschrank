@@ -106,3 +106,12 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 - Farbringe um Tageszahlen für bestätigte Tragetage in Wochen- und Monatskalender, neutrale gestrichelte Pläne und zugängliche Farbnamen. Bekannte Farbfamilien deduplizieren; fehlende Farben nicht erfinden und Bunt als mehrfarbige Familie zeigen.
 - Neue Tragebestätigungen speichern `wornColors` optional im bestehenden Kalendereintrag. Sicherung 4 validiert/erhält dieses Feld; bestehende Sicherungen bleiben lesbar. Notizänderungen erhalten den Farbstand, neues Outfit/erneute Bestätigung erfasst neu. Alte Einträge verwenden vorhandene aktuelle Merkmale; Fotos/Namen bleiben referenziert und abhängige Löschungen unverändert.
 - Monat/Jahr/Schaltjahr/Sommerzeit und Datumsgrenzen 1900–2200 berücksichtigen. Tageswechsel fragt weder Bild-KI noch Standort ab und zeigt für die Vergangenheit keine heutige Vorhersage als historisches Wetter.
+
+## Version 0.9 – Kleidung im Alltag
+
+- Einzelne Teile im heutigen, noch nicht getragenen Look austauschen; passende verfügbare Alternativen derselben Kategorie, restliche IDs erhalten. Automatische Tagesauswahl lokal merken; heutige Kalenderpläne atomar umhängen, gemeinsame gespeicherte Looks und frühere Tragetage erhalten. Konflikte und Schreibfehler überschreiben keinen neueren Stand.
+- Bestätigte Tragetage der letzten sieben Tage verringern das Gewicht kürzlich getragener Stücke und Kombinationen. Kleine Bestände dürfen weiter vollständige wiederholte Looks liefern. Keine zusätzliche Fotoanalyse oder kostenpflichtige API.
+- Optionaler Wäsche-Status an Kleidung, Bearbeitung und eigener Filter. Neue automatische Vorschläge und Tauschlisten schliessen solche Stücke aus; Originale, Freistellungen, gespeicherte Looks und bestätigte Historie bleiben bestehen. Sauber-Markierung gibt Stücke wieder frei.
+- Tageskarte folgt der horizontalen Geste und rastet ein. Abbruch, kurze/vertikale Gesten, Bildschirmränder, Eingaben, Dialoge, parallele Tageswahl und reduzierte Bewegung sind berücksichtigt. Kein Wechsel der Hauptseiten.
+- Freiwillige Sicherungserinnerung frühestens nach einer Woche und nur bei unexportierten Inhaltsänderungen, pausierbar/abschaltbar. Routine-Wetterrefresh und Erinnerungsverwaltung erzeugen keinen Hinweis. Exportstatus behauptet keine physische Speicherung der Datei. Keine automatische Übertragung.
+- Additive optionale Felder in bestehenden Tabellen und Sicherungsformat 4; keine neue Datenbankstruktur, alte Sicherungen weiterhin lesbar. Alle neuen gespeicherten Angaben werden validiert und mitgesichert.

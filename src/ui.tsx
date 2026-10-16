@@ -57,6 +57,9 @@ export function GarmentCard({
         <GarmentPicture item={item} />
         <div className="garment-caption">
           <span className="item-category">{item.category}</span>
+          {item.inLaundry && (
+            <span className="laundry-badge">In der Wäsche</span>
+          )}
           <h3>{item.name}</h3>
           <p>
             {[item.brand, item.color].filter(Boolean).join(' · ') ||

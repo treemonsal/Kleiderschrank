@@ -611,3 +611,276 @@ test('Vergangene Pläne und zukünftige Looks bleiben klar von bestätigter Hist
   await expect(look.getByText('EINGEPLANT', { exact: true })).toBeVisible()
   await expect(look.getByRole('button', { name: /getragen/i })).toHaveCount(0)
 })
+
+test('Ein Teil tauschen bleibt nach Neustart erhalten, der Rest bleibt gleich und alles kommt in die Sicherung', async ({
+  page,
+}, info) => {
+  await page.clock.install({ time: new Date(now) })
+  const external: string[] = []
+  page.on('request', (request) => {
+    if (request.url().startsWith('https://')) external.push(request.url())
+  })
+  await page.goto('/')
+  const photo = `data:image/png;base64,${(await readFile('public/icon-192.png')).toString('base64')}`
+  const extraTop = { ...garments[0], id: 'other-top', name: 'Pullover' }
+  await importData(page, {
+    garments: [...garments, { ...extraTop, photo, cutout: photo }],
+  })
+  const look = page.getByRole('region', { name: 'Dein Tageslook' })
+  const before = await look
+    .locator('.outfit-piece > span:first-of-type')
+    .allTextContents()
+  const oldTop = before[0],
+    newTop = oldTop === 'Hemd' ? 'Pullover' : 'Hemd'
+  await look
+    .getByRole('button', { name: `${oldTop} austauschen`, exact: true })
+    .click()
+  const dialog = page.getByRole('dialog')
+  await expect(
+    dialog.getByRole('button', { name: `${newTop} übernehmen`, exact: true }),
+  ).toBeVisible()
+  await page.screenshot({
+    path: info.outputPath('piece-swap-390.png'),
+    fullPage: true,
+  })
+  await dialog
+    .getByRole('button', { name: `${newTop} übernehmen`, exact: true })
+    .click()
+  await expect(dialog).not.toBeVisible()
+  await expect(
+    look.getByRole('button', { name: `${newTop} öffnen`, exact: true }),
+  ).toBeVisible()
+  expect(
+    await look.locator('.outfit-piece > span:first-of-type').allTextContents(),
+  ).toEqual([newTop, ...before.slice(1)])
+  await page.reload()
+  await expect(
+    look.getByRole('button', { name: `${newTop} öffnen`, exact: true }),
+  ).toBeVisible()
+  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
+  const data = JSON.parse(
+    await readFile((await (await download).path())!, 'utf8'),
+  )
+  expect(data.preferences.dailySelection.garmentIds).toContain(
+    newTop === 'Hemd' ? 'daily-0' : 'other-top',
+  )
+  expect(
+    data.garments.find((item: { id: string }) => item.id === 'other-top').photo,
+  ).toBe(photo)
+  expect(
+    data.garments.find((item: { id: string }) => item.id === 'other-top')
+      .cutout,
+  ).toBe(photo)
+  expect(external).toEqual([])
+  expect(data.preferences.backupReminder.lastExportedRevision).toMatch(
+    /^[a-f0-9]{16}$/,
+  )
+  await page.getByRole('button', { name: 'Heute', exact: true }).click()
+  await look
+    .getByRole('button', { name: 'Heute getragen', exact: true })
+    .click()
+  await expect(look.locator('.piece-swap')).toHaveCount(0)
+})
+
+test('Wäsche-Status übersteht Neustart und Bearbeitung, filtert Vorschläge und lässt sich wieder aufheben', async ({
+  page,
+}, info) => {
+  await page.clock.install({ time: new Date(now) })
+  await page.setViewportSize({ width: 375, height: 844 })
+  await page.goto('/')
+  await importData(page)
+  await page
+    .getByRole('region', { name: 'Dein Tageslook' })
+    .getByRole('button', { name: 'Hemd öffnen', exact: true })
+    .click()
+  await page
+    .getByRole('button', { name: 'In die Wäsche legen', exact: true })
+    .click()
+  await expect(
+    page.getByRole('button', { name: 'Als sauber markieren', exact: true }),
+  ).toHaveAttribute('aria-pressed', 'true')
+  await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
+  await expect(
+    page
+      .getByRole('region', { name: 'Dein Tageslook' })
+      .getByRole('button', { name: 'Hemd öffnen', exact: true }),
+  ).toHaveCount(0)
+  await page.reload()
+  await page
+    .getByRole('button', { name: 'Kleiderschrank', exact: true })
+    .click()
+  await page.getByRole('button', { name: 'Nur Wäsche', exact: true }).click()
+  await expect(page.locator('.garment-card')).toHaveCount(1)
+  await expect(page.locator('.garment-card')).toContainText('Hemd')
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true)
+  await page.screenshot({
+    path: info.outputPath('laundry-375.png'),
+    fullPage: true,
+  })
+  await page.getByRole('button', { name: 'Hemd öffnen', exact: true }).click()
+  await page.getByRole('button', { name: 'Bearbeiten', exact: true }).click()
+  await expect(
+    page.getByRole('checkbox', {
+      name: 'In der Wäsche · aus neuen Vorschlägen ausblenden',
+      exact: true,
+    }),
+  ).toBeChecked()
+  await page
+    .getByRole('button', { name: 'Änderungen speichern', exact: true })
+    .click()
+  await expect(page.getByRole('dialog')).not.toBeVisible()
+  await page.getByRole('button', { name: 'Hemd öffnen', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Als sauber markieren', exact: true })
+    .click()
+  await expect(
+    page.getByRole('button', { name: 'In die Wäsche legen', exact: true }),
+  ).toHaveAttribute('aria-pressed', 'false')
+  await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
+  await expect(page.locator('.garment-card')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Heute', exact: true }).click()
+  await expect(
+    page
+      .getByRole('region', { name: 'Dein Tageslook' })
+      .getByRole('button', { name: 'Hemd öffnen', exact: true }),
+  ).toBeVisible()
+})
+
+test('Sicherungserinnerung lässt sich pausieren und dauerhaft ausschalten; unveränderter Export bleibt ruhig', async ({
+  page,
+}, info) => {
+  await page.clock.install({ time: new Date(now) })
+  await page.goto('/')
+  await importData(page, {
+    preferences: {
+      id: 'personal',
+      styles: [],
+      colors: [],
+      updatedAt: stamp,
+      backupReminder: { firstSeenAt: stamp },
+    },
+  })
+  const reminder = page.getByRole('complementary', {
+    name: 'Sicherungserinnerung',
+  })
+  await expect(reminder).toBeVisible()
+  await page.screenshot({
+    path: info.outputPath('backup-reminder-390.png'),
+    fullPage: true,
+  })
+  await reminder
+    .getByRole('button', { name: 'In einer Woche', exact: true })
+    .click()
+  await expect(reminder).toHaveCount(0)
+  await page.reload()
+  await expect(reminder).toHaveCount(0)
+  await page.clock.fastForward(7 * 86400000 + 1000)
+  await expect(reminder).toBeVisible()
+  await reminder
+    .getByRole('button', { name: 'Sicherung öffnen', exact: true })
+    .click()
+  const setting = page.getByRole('checkbox', {
+    name: 'An Sicherungen erinnern',
+    exact: true,
+  })
+  await expect(setting).toBeVisible()
+  await setting.uncheck()
+  await expect(setting).toBeEnabled()
+  await page.reload()
+  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await expect(setting).not.toBeChecked()
+  await setting.check()
+  await expect(setting).toBeChecked()
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
+  await download
+  await page.getByRole('button', { name: 'Heute', exact: true }).click()
+  await page.clock.fastForward(8 * 86400000)
+  await expect(reminder).toHaveCount(0)
+})
+
+test('Tageskarte folgt dem Finger, federt bei kurzer Geste zurück und manuelle Auswahl stoppt einen ausstehenden Wechsel', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const look = page.getByRole('region', { name: 'Dein Tageslook' })
+  const before = await look.getAttribute('data-day')
+  async function touch(type: string, x: number) {
+    await page.locator('.daily-look header').evaluate(
+      (node, { type, x }) => {
+        const t = new Touch({
+          identifier: 3,
+          target: node,
+          clientX: x,
+          clientY: 330,
+        })
+        node.dispatchEvent(
+          new TouchEvent(type, {
+            bubbles: true,
+            touches: type === 'touchend' || type === 'touchcancel' ? [] : [t],
+            changedTouches: [t],
+          }),
+        )
+      },
+      { type, x },
+    )
+  }
+  await touch('touchstart', 190)
+  await touch('touchmove', 230)
+  expect(
+    await look.evaluate((node) => getComputedStyle(node).transform),
+  ).toContain('40')
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true)
+  await touch('touchend', 230)
+  await expect(look).toHaveAttribute('data-day', before!)
+  await expect
+    .poll(() => look.evaluate((node) => getComputedStyle(node).transform))
+    .toBe('none')
+  await touch('touchstart', 190)
+  await touch('touchmove', 300)
+  // End the gesture and navigate manually within the same event loop, before the settling timer.
+  await page.locator('.daily-look header').evaluate((node) => {
+    const t = new Touch({
+      identifier: 3,
+      target: node,
+      clientX: 300,
+      clientY: 330,
+    })
+    node.dispatchEvent(
+      new TouchEvent('touchend', { bubbles: true, changedTouches: [t] }),
+    )
+    document
+      .querySelector<HTMLButtonElement>('[aria-label="Nächster Tag"]')!
+      .click()
+  })
+  const next = await look.getAttribute('data-day')
+  expect(next).not.toBe(before)
+  await expect
+    .poll(() => look.evaluate((node) => getComputedStyle(node).transform))
+    .toBe('none')
+  await expect(look).toHaveAttribute('data-day', next!)
+})
+
+test('Reduzierte Bewegung wechselt Tage ohne Verschieben der Karte', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.clock.install({ time: new Date(now) })
+  await page.goto('/')
+  await swipe(page.locator('.daily-look header'), 120)
+  const look = page.getByRole('region', { name: 'Dein Tageslook' })
+  await expect(look).toHaveAttribute('data-day', '2026-10-14')
+  expect(await look.evaluate((node) => getComputedStyle(node).transform)).toBe(
+    'none',
+  )
+})

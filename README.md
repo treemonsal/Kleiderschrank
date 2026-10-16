@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.8.1 ändert Wischen zur Tagesnavigation auf der Startseite: rechts zum Vortag, links zum nächsten Tag. Wochenleiste und Monatskalender zeigen Farbringe für bestätigte Tragetage. Mit **Heute getragen** wird der Tageslook samt Farben im Kalender vermerkt; vergangene Tage bleiben ohne Eintrag leer. Die Oberfläche nutzt jetzt Platin/Silber auf Schwarz und Graphit, mit dunkler Schrift auf hellen Buttons. Die Farbringe behalten die Kleidungsfarben. Wetteranzeige, dauerhafte Optionen, kompakte Foto-KI und Glasnavigation bleiben erhalten. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
+Version 0.9.0 ergänzt einzelne austauschbare Teile im heutigen Look, weniger kürzlich wiederholte Kombinationen, einen Wäsche-Status, Tageskarten, die der Wischbewegung folgen, und gelegentliche Sicherungserinnerungen bei neuen Daten. Platin/Silber auf Schwarz und Graphit, Farbringe, Wetter und Glasnavigation bleiben erhalten. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — am 15. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
@@ -46,6 +46,22 @@ Auf der Startseite **nach rechts wischen → Vortag**, **nach links wischen → 
 **Farbringe um die Tageszahl** zeigen die erfassten Farbfamilien bestätigter Looks bis heute, sowohl in der Wochenleiste als auch im Monatskalender unter Outfits. Pläne haben einen neutralen gestrichelten Kreis. Ohne Farbangaben bleibt die Markierung neutral. Die Farben stehen auch in der zugänglichen Tagesbeschriftung. Die Ringsegmente zeigen Farbfamilien, keine gemessenen Stoffflächen oder exakten Fotofarben.
 
 Bei neuen Tragebestätigungen werden die Farben mitgesichert und bleiben bei späterer Änderung eines Kleidungsstücks erhalten. Wird ein Eintrag wieder auf „geplant“ gesetzt und neu bestätigt oder ein anderes Outfit ausgewählt, werden dessen Farben neu übernommen. Frühere Einträge ohne Farbsicherung verwenden die aktuellen Merkmale der referenzierten Stücke; einen früheren Farbstand können wir nicht rekonstruieren. Namen und Fotos bleiben mit den vorhandenen Kleidungsstücken verknüpft. Die bisherige abhängige Löschung beim Entfernen von Kleidung/Outfits gilt weiterhin.
+
+## Teile tauschen, Wäsche und Abwechslung
+
+Unter einem Stück im heutigen, noch nicht getragenen Tageslook **Austauschen** antippen. Die Auswahl zeigt verfügbare Alternativen derselben Kategorie passend zu Saison, Anlass und gegebenenfalls Wetter. Alle anderen Stücke bleiben erhalten. Die neue Tagesauswahl bleibt nach Neustart bestehen und wird mitgesichert. Bei einem heutigen Kalenderplan wird nur dieser Tag umgehängt; frühere Einträge und der ursprüngliche gespeicherte Look bleiben erhalten. Bestätigte Tragetage werden hier nicht verändert. Eine geänderte Outfit-Auswahl, ein entferntes Stück oder ein Stück in der Wäsche kann die automatische Tagesauswahl zurücksetzen.
+
+In den Kleidungsdetails **In die Wäsche legen** wählen oder im Editor das Wäsche-Häkchen setzen. Das Stück bleibt mit Fotos erhalten, wird jedoch aus neuen automatischen Vorschlägen und Tauschalternativen ausgeschlossen. Im Kleiderschrank zeigt die Waschmaschinen-Taste **Nur Wäsche**. Nach dem Waschen **Als sauber markieren** wählen. Bestehende gespeicherte Looks und Tragetage bleiben unverändert; ein heutiger Plan mit einem solchen Stück zeigt einen Hinweis.
+
+Bestätigte Tragetage der letzten Woche verringern das Gewicht kürzlich verwendeter Stücke und besonders derselben Kombination. Das sorgt bei genügend Auswahl für mehr Abwechslung. Die Auswahl bleibt regelbasiert; ein kleiner Bestand kann Wiederholungen nötig machen. Pläne und zukünftige Einträge zählen hierfür nicht als getragen.
+
+Die Tageskarte folgt horizontal dem Finger und gleitet beim Loslassen weiter oder zurück. Bei aktivierter reduzierter Bewegung wechselt nur der Tag, ohne Verschiebung. Die unteren Hauptseiten bleiben über die Navigationsleiste erreichbar.
+
+## Sicherungserinnerung
+
+Frühestens nach einer Woche erscheint auf der Startseite ein kleiner Hinweis, wenn es noch ungesicherte Änderungen gibt. **Sicherung öffnen** führt zu „Mehr“, **In einer Woche** pausiert. Unter „Mehr“ lassen sich Erinnerungen dauerhaft ausschalten. Ein unveränderter exportierter Bestand und reine Vorhersage-Aktualisierungen lösen keinen neuen Hinweis aus. Wäsche, Tagesauswahl und Erinnerungseinstellungen sind im bisherigen Sicherungsformat 4 enthalten; alte Sicherungen bleiben lesbar.
+
+Ein Export bedeutet, dass eine Datei erstellt wurde. Bitte selbst in „Dateien“ speichern; die App kann den tatsächlichen Abschluss des iPhone-Downloads nicht bestätigen. Es gibt weiterhin keinen automatischen Cloud-Abgleich oder Foto-Upload für Sicherungen.
 
 ## Farbe aus einem Foto wählen
 

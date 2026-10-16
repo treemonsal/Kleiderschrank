@@ -11,7 +11,7 @@ import {
   Smartphone,
 } from 'lucide-react'
 import {
-  createDatabaseBackup,
+  createDatabaseBackupExport,
   importFullBackup,
   MAX_BACKUP_BYTES,
   parseFullBackup,
@@ -22,6 +22,8 @@ import type { Garment } from './model'
 import { storageError } from './db'
 import { ErrorMessage, Sheet } from './ui'
 import { AI_CACHE } from './background-model'
+import { BackupReminderSettings } from './BackupReminder'
+import { updateBackupReminder } from './backup-reminder'
 import { AISettings } from './AISettings'
 import { version } from '../package.json'
 
@@ -67,7 +69,8 @@ export function BackupView({
     setBusy(true)
     setError('')
     try {
-      const json = await createDatabaseBackup()
+      const exported = await createDatabaseBackupExport()
+      const json = exported.json
       if (download.current) URL.revokeObjectURL(download.current.url)
       const next = {
         url: URL.createObjectURL(
@@ -83,6 +86,14 @@ export function BackupView({
       document.body.append(anchor)
       anchor.click()
       anchor.remove()
+      await updateBackupReminder({
+        lastExportedAt: exported.exportedAt,
+        lastExportedRevision: exported.revision,
+      }).catch(() =>
+        setError(
+          'Die Datei ist bereit. Die Erinnerung konnte nicht aktualisiert werden.',
+        ),
+      )
       notify(
         'Sicherung erstellt. Bitte speichere die Datei an einem sicheren Ort.',
       )
@@ -150,7 +161,7 @@ export function BackupView({
           </p>
         )}
       </section>
-      <section className="settings-section">
+      <section className="settings-section" id="backup-section" tabIndex={-1}>
         <div className="section-heading">
           <h2>Deine Datensicherung</h2>
           <Database size={18} />
@@ -192,6 +203,7 @@ export function BackupView({
             <ChevronRight size={18} />
           </button>
         </div>
+        <BackupReminderSettings />
         <input
           ref={input}
           type="file"
