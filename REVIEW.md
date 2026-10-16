@@ -1,3 +1,13 @@
+# Aktuelle Prüfung – Version 0.11.1
+
+- Nutzerauftrag: anderes Design für das Bild beim Speichern der Website auf dem Homescreen. Ein einzelnes fertig erzeugtes Platin-/Graphit-Motiv ersetzt das bisherige flache Bügel-/Punkt-Symbol. Original und Exportnachweis liegen unter `design/app-icon`; reproduzierbare Grössen über `scripts/export_app_icons.py` (optionales Design-Werkzeug mit Pillow, keine neue App-Abhängigkeit).
+- Deckende RGB-PNGs mit tatsächlichen 180/192/512 Pixeln geprüft, Exporte und kompatible alte Adressen bytegleich. Das Android-Motiv erhält zusätzlichen Innenabstand; alle hellen Motivpixel liegen maximal 174,93 Pixel vom Mittelpunkt entfernt, innerhalb des sicheren Radius von 204,8 Pixeln. Keine vorgerundeten Aussenecken. Visuelle Prüfung bei 180, 60 und 48 Pixeln sowie runder Android-Maske.
+- HTML und PWA-Manifest verwenden neue Dateinamen. Bestehender Startpfad, Scope, App-Name und lokale Daten bleiben erhalten. Alle neuen Icon-Dateien und das Manifest wurden in einem echten lokalen Produktions-Chromium nach Service-Worker-Übernahme erfolgreich mit deaktiviertem Netzwerk abgerufen.
+- Keine Daten-/Schema-/Sicherungsänderung, neue App-Abhängigkeit, Dienstfreigabe oder Übertragung privater Fotos. Keine automatische Neuinstallation, Speicherlöschung oder Umgehung des iOS-Icon-Caches. Anleitung schützt vorhandene lokale Sammlungen; echtes iPhone/Safari und die Aktualisierung eines bereits gespeicherten Icons bleiben manuell zu prüfen.
+- Produktionsbuild, Formatprüfung, alle 140 Datentests und alle 75 Chromium-Browserfälle bestanden. Veröffentlichung noch in Arbeit.
+
+## Vorherige Prüfung – Version 0.11.0
+
 # Aktuelle Prüfung – Version 0.11.0
 
 - Nutzerauftrag: flüssigere, spielerische UI-Bewegung mit einer reagierenden Waschmaschine als Beispiel. Keine neue Abhängigkeit, Dienstfreigabe, Datenmigration oder Fotoübertragung.

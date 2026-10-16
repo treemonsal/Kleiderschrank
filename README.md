@@ -2,9 +2,9 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.11.0 ergänzt flüssige Seitenüberblendungen und kurze, spielerische Reaktionen: drehende Wäschetrommel, Herz-Puls, federnde Glasnavigation und weichere Fenster-/Foto-/Outfit-Einblendungen. Alle Aktionen bleiben bedienbar, „Bewegung reduzieren“ schaltet die dekorativen Effekte ab. Empfehlungen, Fotos und gespeicherte Angaben bleiben erhalten. Die Produktkritik aus 0.10 steht in [AUDIT.md](AUDIT.md).
+Version 0.11.1 bringt ein neues Homescreen-Icon: ein plastischer Platin-Kleiderbügel auf Graphit. Passende iPhone-, Android- und Browser-Icons sind enthalten; Sammlung, Fotos und Einstellungen bleiben erhalten. Die flüssigen Animationen aus 0.11 bleiben bestehen. Die Produktkritik steht in [AUDIT.md](AUDIT.md).
 
-**Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.11.0 am 16. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
+**Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.11.0 veröffentlicht; Icon-Update 0.11.1 in Prüfung. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
 ## Lokal starten
 
@@ -192,3 +192,9 @@ Funktionsumfang und weitere Phasen: [PRODUCT.md](PRODUCT.md), [ROADMAP.md](ROADM
 ## Historie: Update 0.6
 
 Die neue dunkle Oberfläche ist unter derselben App-Adresse veröffentlicht. Öffne MyStyle online und tippe bei „Eine neue Version ist bereit“ auf **Jetzt aktualisieren**. Deine lokale Sammlung bleibt erhalten. Neue Icons können auf bereits angelegten iPhone-Verknüpfungen vom Betriebssystem zwischengespeichert sein. Diese Server-Voraussetzung galt für die frühere Version 0.6. Ab 0.6.1 kann stattdessen die kostenlose Community-KI direkt in der App freigegeben werden.
+
+## Neues Homescreen-Icon in 0.11.1
+
+Die neuen Installationsdateien zeigen den silbernen Bügel auf Graphit. Öffne die App online und übernimm das angebotene Update. Neue Homescreen-Verknüpfungen laden das neue iPhone-Icon. iOS kann das Icon vorhandener Installationen länger behalten. Lösche dafür weder die App noch Safari-Websitedaten: Deine Sammlung liegt lokal. Vor einer bewussten Neuinstallation immer unter **Mehr** eine vollständige Sicherung exportieren und die Datei aufbewahren.
+
+Original, Exportgrössen und reproduzierbare Aufbereitung stehen unter [design/app-icon](design/app-icon/README.md).

@@ -56,3 +56,8 @@ Diese neuen Abläufe wurden in Chromium automatisiert; echter Safari-/iPhone-Nac
 - Schnell mehrere Tabs wählen und sofort wieder Heute antippen: die letzte Auswahl bleibt bestehen. Während der Seitenüberblendung weiter bedienen; Sicherungserinnerung muss weiterhin zur passenden Stelle in Mehr führen.
 - In iOS „Bewegung reduzieren“ aktivieren, auch während eines laufenden Effekts: Rotation/Puls/Federn stoppen beziehungsweise bleiben aus. Alle Filter, Datenaktionen, Tagesgesten, Dialoge und Tastaturbedienung funktionieren weiterhin.
 - Fotos, Daten und Historie vor/nach Update vergleichen. Effekte auf einem älteren iPhone auf Ruckeln und auf Safari-Unterstützung prüfen; der Cloud-Nachweis ist nur Chromium.
+
+## Neu in 0.11.1
+
+- Bei einer neuen Installation zeigt die Safari-Vorschau und danach das Homescreen-Icon den plastischen silbernen Bügel auf Graphit. Keine weissen oder transparenten Ränder; Beschriftung MyStyle.
+- Bei einer vorhandenen Installation Update online übernehmen und Sammlung/Fotos prüfen. iOS darf das alte Icon weiter zwischenspeichern. Für einen Icon-Test keine bestehende Installation oder Websitedaten löschen. Vor einer bewussten Neuinstallation zuerst eine vollständige Sicherungsdatei exportieren und aufbewahren.

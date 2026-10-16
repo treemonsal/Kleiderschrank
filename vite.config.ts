@@ -14,7 +14,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'prompt',
-      includeAssets: ['apple-touch-icon.png', 'icon.svg'],
+      includeAssets: ['apple-touch-icon-platinum.png', 'icon.svg'],
       manifest: {
         name: 'MyStyle – Dein Kleiderschrank',
         short_name: 'MyStyle',
@@ -26,10 +26,10 @@ export default defineConfig({
         start_url: '.',
         scope: '.',
         icons: [
-          { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'icon-platinum-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'icon-platinum-512.png', sizes: '512x512', type: 'image/png' },
           {
-            src: 'icon-maskable.png',
+            src: 'icon-platinum-maskable.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',

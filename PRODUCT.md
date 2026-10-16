@@ -131,3 +131,8 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 - Native View Transitions als optionale Seitenüberblendung, ansonsten CSS-Einblendung. Die letzte Navigation gewinnt auch bei schnellen Wechseln oder sofortigem Zurücktippen. Inhalte bleiben bedienbar; nachfolgendes Scrollen/Fokussieren auf Sicherungen erfolgt erst nach dem tatsächlichen Seitenwechsel.
 - Sanftere Fensteröffnung, Foto-Einblendung, leicht versetztes Erscheinen von Outfit-Teilen und kompakte Toast-Bewegung. Transform/Opacity statt zusätzlicher Layout-Schreibschleifen, keine neue Abhängigkeit.
 - Systemweite reduzierte Bewegung stoppt laufende Tipp-Effekte und verhindert neue dekorative Bewegungen. Fehlende Animations-APIs blockieren keine Aktion. Keine Änderungen an Empfehlungen, Datenmodell, Sicherungsformat oder Fotoübertragung.
+
+## Version 0.11.1 – neues Homescreen-Icon
+
+- Plastischer Platin-Kleiderbügel auf Graphit für iPhone, PWA-Installation und Browser-Tab. Deckende Exporte in 180/192/512 Pixeln; Android-Maskierung erhält zusätzlichen sicheren Innenabstand.
+- Neue Icon-Adressen für Neuinstallationen, bestehender App-Startpfad und lokale Sammlung bleiben erhalten. Bereits installierte iPhone-Icons können durch iOS weiterhin zwischengespeichert sein.

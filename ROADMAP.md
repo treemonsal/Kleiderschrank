@@ -218,3 +218,11 @@ Version 0.10.0: 140 Datentests, 70 Chromium-Browserfälle, Produktionsbuild und 
 - [ ] Bewegungsgefühl und Leistung auf echtem iPhone/Safari erproben
 
 Version 0.11.0: 140 Datentests, 75 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38862535685](https://github.com/treemonsal/Kleiderschrank/actions/runs/38862535685) erfolgreich; öffentliche Auslieferung von Version und neuen Animationen über HTTPS geprüft.
+
+## Version 0.11.1 – Homescreen-Icon
+
+- [x] Neues Platin-Motiv, Original und reproduzierbare Exporte in allen Installationsgrössen
+- [x] Neue Icon-Adressen, kompatible alte Adressen und unveränderter Installationspfad
+- [x] Export-, Offline- und vollständige Regressionsprüfung abschliessen
+- [ ] Version 0.11.1 veröffentlichen und öffentliche Icon-Dateien prüfen
+- [ ] Neues und bereits installiertes Homescreen-Icon auf echtem iPhone prüfen
