@@ -247,5 +247,7 @@ Version 0.11.2: 140 Datentests, 76 Chromium-Browserfälle, Produktionsbuild und 
 - [x] Vorhandene IDs, lokale Auswahl, Abbruch und konkurrierende Änderungen schützen
 - [x] Begründung, optionale Tipps und Übernahme/Speicherung in Home und Outfits
 - [x] Abschliessende Daten-/Browser-/Layoutprüfung: 160 Daten- und 88 Chromium-Browserfälle
-- [ ] Version 0.12.0 veröffentlichen und öffentliche Dateien prüfen
+- [x] Version 0.12.0 veröffentlichen und öffentliche Dateien prüfen
 - [ ] Online-Stylist mit eigenen Kleidungsfotos auf echtem iPhone/Safari beurteilen
+
+Version 0.12.0: 160 Daten-/Logiktests, alle 88 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. Zwei echte Qwen3-VL-8B-Anfragen mit öffentlichen Testfotos erfolgreich. [Pages-Lauf 38883487126](https://github.com/treemonsal/Kleiderschrank/actions/runs/38883487126) für App-Commit `fa256770d3dc3a5b9064de94880959c32f9dd037` veröffentlicht; neue Oberfläche, 8B-Modul, Prompt, CSS und bestehende Installations-/Icon-Dateien über HTTPS geprüft.
