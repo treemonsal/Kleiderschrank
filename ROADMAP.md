@@ -224,5 +224,7 @@ Version 0.11.0: 140 Datentests, 75 Chromium-Browserfälle, Produktionsbuild und 
 - [x] Neues Platin-Motiv, Original und reproduzierbare Exporte in allen Installationsgrössen
 - [x] Neue Icon-Adressen, kompatible alte Adressen und unveränderter Installationspfad
 - [x] Export-, Offline- und vollständige Regressionsprüfung abschliessen
-- [ ] Version 0.11.1 veröffentlichen und öffentliche Icon-Dateien prüfen
+- [x] Version 0.11.1 veröffentlichen und öffentliche Icon-Dateien prüfen
 - [ ] Neues und bereits installiertes Homescreen-Icon auf echtem iPhone prüfen
+
+Version 0.11.1: 140 Datentests, 75 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38863456501](https://github.com/treemonsal/Kleiderschrank/actions/runs/38863456501) veröffentlichte App-Commit `df87983299bd2e1f6b45d9c2be400de6b42d0c4d` erfolgreich. Alle neuen Icon-Dateien über HTTPS mit identischen SHA-256-Prüfsummen und korrekten Grössen geprüft; neue Icons zusätzlich lokal offline verfügbar.
