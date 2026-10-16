@@ -1,19 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import {
-  CalendarDays,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  Pencil,
-  Plus,
-  Trash2,
-} from 'lucide-react'
+import { CalendarDays, Check, Pencil, Plus, Trash2 } from 'lucide-react'
 import {
   dayLabel,
   isDay,
   localDay,
-  monthDays,
   wornCounts,
   type CalendarEntry,
 } from './calendar'
@@ -22,26 +13,29 @@ import { deleteCalendarEntry, saveCalendarEntry } from './calendar-db'
 import type { Garment } from './model'
 import type { SavedOutfit } from './outfit-model'
 import { ErrorMessage, GarmentPicture, Sheet } from './ui'
+import { DayCalendar } from './DayCalendar'
 import { weatherFresh, weatherLabel } from './weather'
 
-function PlanEditor({
+export function PlanEditor({
   day,
   existing,
   outfits,
   onClose,
   notify,
+  defaultStatus = 'planned',
 }: {
   day: string
   existing?: CalendarEntry
   outfits: SavedOutfit[]
   onClose: () => void
   notify: (message: string) => void
+  defaultStatus?: CalendarEntry['status']
 }) {
   const [outfitId, setOutfitId] = useState(
     existing?.outfitId ?? outfits[0]?.id ?? '',
   )
   const [status, setStatus] = useState<CalendarEntry['status']>(
-    existing?.status ?? 'planned',
+    existing?.status ?? defaultStatus,
   )
   const [note, setNote] = useState(existing?.note ?? '')
   const [error, setError] = useState('')
@@ -143,7 +137,6 @@ export function CalendarView({
     return () => window.clearInterval(timer)
   }, [])
   const [day, setDay] = useState(localDay)
-  const [month, setMonth] = useState(() => localDay().slice(0, 7))
   const [editing, setEditing] = useState<{
     day: string
     entry?: CalendarEntry
@@ -179,73 +172,19 @@ export function CalendarView({
       : undefined
   function select(next: string) {
     setDay(next)
-    setMonth(next.slice(0, 7))
     setConfirm(false)
     setError('')
   }
-  function moveMonth(offset: number) {
-    const next = new Date(`${month}-01T12:00:00`)
-    next.setMonth(next.getMonth() + offset)
-    if (next.getFullYear() < 1900 || next.getFullYear() > 2200) return
-    setMonth(localDay(next).slice(0, 7))
-  }
   return (
     <section className="calendar-view" aria-label="Outfit-Kalender">
-      <div className="calendar-month-heading">
-        <button
-          className="icon-button"
-          aria-label="Vorheriger Monat"
-          onClick={() => moveMonth(-1)}
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <h2>
-          {new Date(`${month}-01T12:00:00`).toLocaleDateString('de-CH', {
-            month: 'long',
-            year: 'numeric',
-          })}
-        </h2>
-        <button
-          className="icon-button"
-          aria-label="Nächster Monat"
-          onClick={() => moveMonth(1)}
-        >
-          <ChevronRight size={20} />
-        </button>
-      </div>
-      <div className="calendar-weekdays" aria-hidden="true">
-        {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((label) => (
-          <span key={label}>{label}</span>
-        ))}
-      </div>
-      <div className="calendar-grid">
-        {monthDays(month).map((value, index) =>
-          value ? (
-            <button
-              key={value}
-              className={day === value ? 'selected' : ''}
-              aria-label={dayLabel(value)}
-              aria-pressed={day === value}
-              aria-current={value === today ? 'date' : undefined}
-              onClick={() => select(value)}
-            >
-              <span>{Number(value.slice(-2))}</span>
-              {data.entries.some((entry) => entry.day === value) && (
-                <i
-                  className={
-                    data.entries.find((entry) => entry.day === value)
-                      ?.status === 'worn'
-                      ? 'worn-dot'
-                      : ''
-                  }
-                />
-              )}
-            </button>
-          ) : (
-            <span key={`empty-${index}`} />
-          ),
-        )}
-      </div>
+      <DayCalendar
+        day={day}
+        today={today}
+        entries={data.entries}
+        outfits={data.outfits}
+        items={items}
+        onSelect={select}
+      />
       <div className="calendar-day-picker">
         <label className="field">
           Tag auswählen

@@ -27,8 +27,9 @@ import { CATEGORIES, filterGarments, type Garment } from './model'
 import { Editor } from './Editor'
 import { BackupView } from './BackupView'
 import { DailyOutfit } from './DailyOutfit'
-import { useSavedWeatherRefresh } from './useWeather'
-import { useSwipeNavigation } from './useSwipeNavigation'
+import { localDay, shiftDay } from './calendar'
+import { useClock, useSavedWeatherRefresh } from './useWeather'
+import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
 
 type View = 'home' | 'wardrobe' | 'outfits' | 'settings'
@@ -50,6 +51,14 @@ function Home({
   onOutfits: () => void
   notify: (message: string) => void
 }) {
+  const today = localDay(new Date(useClock()))
+  const [chosenDay, setChosenDay] = useState<string | null>(null)
+  const day = chosenDay ?? today
+  const selectDay = (next: string) => setChosenDay(next === today ? null : next)
+  const swipe = useDaySwipe((offset) => {
+    const next = shiftDay(day, offset)
+    if (next) selectDay(next)
+  })
   const favorites = items.filter((i) => i.favorite)
   const featured = (
     favorites.length
@@ -57,8 +66,10 @@ function Home({
       : [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
   ).slice(0, 4)
   return (
-    <div className="view home-view">
+    <div className="view home-view" {...swipe}>
       <DailyOutfit
+        day={day}
+        onSelectDay={selectDay}
         items={items}
         onOpen={onOpen}
         onOutfits={onOutfits}
@@ -517,7 +528,6 @@ export default function App() {
     setView(next)
     window.scrollTo({ top: 0, behavior: 'instant' })
   }
-  const swipe = useSwipeNavigation(view, navigate)
   async function favorite(item: Garment) {
     try {
       await toggleFavorite(item)
@@ -571,7 +581,7 @@ export default function App() {
           </button>
         </div>
       )}
-      <main id="main-content" key={view} {...swipe}>
+      <main id="main-content" key={view}>
         {items === null || items === undefined ? (
           <div className="loading-state" role="status">
             <LoaderCircle className="spin" />

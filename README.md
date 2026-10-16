@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.7.0 zeigt Wetter und einen automatisch gewählten Tageslook direkt auf der Startseite. Outfit-Optionen und Wetterverwendung bleiben gespeichert. Die aktive Foto-KI ist kompakt, Wetterauswahl bestätigt und schliesst nach dem Speichern, und Wischen wechselt Hauptseiten. Die kostenlose Community-Foto-KI aus 0.6.1 und die Glasnavigation aus 0.6.2 bleiben erhalten. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
+Version 0.8.0 ändert Wischen zur Tagesnavigation auf der Startseite: rechts zum Vortag, links zum nächsten Tag. Wochenleiste und Monatskalender zeigen Farbringe für bestätigte Tragetage. Mit **Heute getragen** wird der Tageslook samt Farben im Kalender vermerkt; vergangene Tage bleiben ohne Eintrag leer. Die Oberfläche nutzt jetzt Platin/Silber auf Schwarz und Graphit, mit dunkler Schrift auf hellen Buttons. Die Farbringe behalten die Kleidungsfarben. Wetteranzeige, dauerhafte Optionen, kompakte Foto-KI und Glasnavigation bleiben erhalten. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — am 15. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
@@ -39,7 +39,13 @@ Die bereitgestellte **HTTPS-Adresse in Safari** öffnen. Teilen → „Zum Home-
 
 Links oben stehen Datum und Tagesvorhersage mit Temperaturspanne, Wetterlage und gespeichertem Ort. Das ist keine gemessene Live-Temperatur. Antippen öffnet die Wetterauswahl mit Schliessen-Taste. Ohne gespeicherten Ort erscheint „Ort auswählen“.
 
-Zwischen **Heute → Kleiderschrank → Outfits → Mehr** nach links oder rechts wischen. Klare horizontale Gesten auf freien Inhaltsflächen wechseln die Seite; vertikales Scrollen, Formulare, offene Dialoge, horizontale Auswahlleisten und Bildschirmränder bleiben ausgenommen. Die Navigationsleiste funktioniert weiterhin.
+Auf der Startseite **nach rechts wischen → Vortag**, **nach links wischen → nächster Tag**. Die Hauptseiten werden dabei nicht mehr gewechselt; dafür bleibt die Navigationsleiste. Pfeiltasten am Datum und die Wochenleiste bieten dieselbe Tagesauswahl ohne Geste. Auf „Heute“/das Datum neben dem Kalendersymbol tippen, um den Monatskalender zu öffnen. Eine Datumswahl schliesst ihn automatisch, „Zu heute“ kehrt zum aktuellen Gerätetag zurück. Eingaben, offene Dialoge, vertikales Scrollen und Bildschirmränder lösen keinen Tageswechsel aus.
+
+**Heute getragen** speichert den Vorschlag bei Bedarf als Outfit und vermerkt ihn atomar als getragen. „Look speichern“ allein ist weiterhin nur ein gespeichertes Outfit, keine Tragebestätigung. Vergangene Tage zeigen ausschliesslich hinterlegte Looks mit ihrem tatsächlichen Status; ein alter Plan wird nicht nachträglich als getragen ausgegeben, und leere Tage erhalten keinen erfundenen Vorschlag. Zukünftige Tage zeigen vorhandene Pläne. Leere vergangene Tage lassen sich über „Getragenen Look eintragen“ ergänzen, zukünftige über „Look einplanen“; „Tag bearbeiten“ erlaubt Korrekturen.
+
+**Farbringe um die Tageszahl** zeigen die erfassten Farbfamilien bestätigter Looks bis heute, sowohl in der Wochenleiste als auch im Monatskalender unter Outfits. Pläne haben einen neutralen gestrichelten Kreis. Ohne Farbangaben bleibt die Markierung neutral. Die Farben stehen auch in der zugänglichen Tagesbeschriftung. Die Ringsegmente zeigen Farbfamilien, keine gemessenen Stoffflächen oder exakten Fotofarben.
+
+Bei neuen Tragebestätigungen werden die Farben mitgesichert und bleiben bei späterer Änderung eines Kleidungsstücks erhalten. Wird ein Eintrag wieder auf „geplant“ gesetzt und neu bestätigt oder ein anderes Outfit ausgewählt, werden dessen Farben neu übernommen. Frühere Einträge ohne Farbsicherung verwenden die aktuellen Merkmale der referenzierten Stücke; einen früheren Farbstand können wir nicht rekonstruieren. Namen und Fotos bleiben mit den vorhandenen Kleidungsstücken verknüpft. Die bisherige abhängige Löschung beim Entfernen von Kleidung/Outfits gilt weiterhin.
 
 ## Farbe aus einem Foto wählen
 

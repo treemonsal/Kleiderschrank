@@ -165,3 +165,15 @@ Am 15. Oktober 2026 nach manueller Pages-Einrichtung durch den Nutzer veröffent
 - [x] Wischgesten für Hauptnavigation einschliesslich Schutz von Eingaben, Dialogen und Scrollen.
 - [x] Regel-/Bestands-/Sicherungstests und neue mobile Abläufe inklusive nativer Chromium-Touch-Ereignisse.
 - [ ] Neue Abläufe auf echtem iPhone/Safari im Alltag prüfen; Cloud-Emulation ersetzt das nicht.
+
+## Version 0.8 – Navigation durch Tage
+
+- [x] Zusätzlichen Farbwunsch einbeziehen: Platin/Silber statt farbigem UI-Akzent, mit neuen Icons und klaren Kontrasten.
+
+- [x] Wischen zwischen Haupttabs entfernen, auf der Startseite Tage zurück/vor wechseln.
+- [x] Wochenleiste, Monatsauswahl mit automatischem Schliessen und Rückkehr zu heute.
+- [x] Bestätigte Historie, unbestätigte Pläne, Zukunft und leere Tage korrekt unterscheiden.
+- [x] „Heute getragen“ einschliesslich atomarem Outfit-/Kalenderspeichern und Schutz vor konkurrierenden Änderungen.
+- [x] Farbringe aus bestätigten Looks in beiden Kalenderansichten, neue Farbstände sichern und alte Einträge kompatibel lesen.
+- [x] Tages-/Status-/Farb-/Backup-Regressionen sowie native mobile Chromium-Gesten und Layouts bei 375/390/430 Pixeln prüfen.
+- [ ] Neue Tagesnavigation und Farbringe auf echtem iPhone/Safari prüfen.

@@ -5,6 +5,7 @@ export interface CalendarEntry {
   day: string
   outfitId: string
   status: 'planned' | 'worn'
+  wornColors?: string[]
   note: string
   createdAt: string
   updatedAt: string
@@ -60,4 +61,19 @@ export function wornCounts(
       counts.set(id, (counts.get(id) ?? 0) + 1)
   }
   return counts
+}
+
+export function shiftDay(day: string, offset: number): string | null {
+  if (!isDay(day) || !Number.isInteger(offset)) return null
+  const date = new Date(`${day}T12:00:00`)
+  date.setDate(date.getDate() + offset)
+  const next = localDay(date)
+  return isDay(next) ? next : null
+}
+export function weekDays(day: string): (string | null)[] {
+  const weekday = new Date(`${day}T12:00:00`).getDay()
+  const mondayOffset = -((weekday + 6) % 7)
+  return Array.from({ length: 7 }, (_, index) =>
+    shiftDay(day, mondayOffset + index),
+  )
 }

@@ -95,3 +95,14 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 - Anlass, Saison, Stil, Accessoire-Wahl und Wetterverwendung in bestehenden persönlichen Vorlieben atomar speichern und sichern. Optionale Zusatzfelder in Sicherung 4, alte Sicherungen unverändert lesbar; Kleidungs-/Fotodaten bleiben erhalten.
 - Aktivierte Foto-KI kompakt mit aufklappbaren Hinweisen/Freigabe und Abschalten; kein weiterer Aktivieren-Knopf. Ausreichende Hinweise bleiben vor der ersten Aktivierung sichtbar.
 - Horizontale Wischgesten zwischen Hauptseiten; Formulare, Dialoge, Scrollleisten und Bildschirmränder ausnehmen. Navigationsleiste bleibt zugänglich. Dunkle Bestätigungen und automatisches Schliessen der Sortierauswahl nach Auswahl.
+
+## Version 0.8 – Tageshistorie und Farbringe
+
+- Neuer Farbwunsch: neutrale Platin-/Silberakzente mit Graphit/Schwarz, helle Buttons mit dunkler Schrift und passende Icons. Keine Änderung der Kleidungsfarben; Fehler-/Favoritenfarben behalten ihre Bedeutung.
+
+- Horizontale Wischgesten auf der Startseite ändern den gewählten lokalen Tag, rechts zurück/links vor. Kein Wischwechsel der Haupttabs. Wochenleiste, Tagespfeile, „Zu heute“ und Monatsauswahl bieten zugängliche Alternativen.
+- Automatischer Vorschlag nur für heute ohne Eintrag. Vergangenheit zeigt vorhandene Einträge mit bestätigtem/geplantem Status oder einen leeren Zustand; keine rekonstruierte oder erfundene Tragehistorie. Zukunft zeigt vorhandene Pläne.
+- „Heute getragen“ speichert Outfit und Kalendereintrag atomar, schützt vor konkurrierenden Änderungen, lässt keine zukünftige Bestätigung zu und beeinflusst die vorhandene Tragehäufigkeit. Einfaches Outfit-Speichern bestätigt keinen Tragetag.
+- Farbringe um Tageszahlen für bestätigte Tragetage in Wochen- und Monatskalender, neutrale gestrichelte Pläne und zugängliche Farbnamen. Bekannte Farbfamilien deduplizieren; fehlende Farben nicht erfinden und Bunt als mehrfarbige Familie zeigen.
+- Neue Tragebestätigungen speichern `wornColors` optional im bestehenden Kalendereintrag. Sicherung 4 validiert/erhält dieses Feld; bestehende Sicherungen bleiben lesbar. Notizänderungen erhalten den Farbstand, neues Outfit/erneute Bestätigung erfasst neu. Alte Einträge verwenden vorhandene aktuelle Merkmale; Fotos/Namen bleiben referenziert und abhängige Löschungen unverändert.
+- Monat/Jahr/Schaltjahr/Sommerzeit und Datumsgrenzen 1900–2200 berücksichtigen. Tageswechsel fragt weder Bild-KI noch Standort ab und zeigt für die Vergangenheit keine heutige Vorhersage als historisches Wetter.

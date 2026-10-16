@@ -1,7 +1,5 @@
 import { useRef, type TouchEvent } from 'react'
-const pages = ['home', 'wardrobe', 'outfits', 'settings'] as const
-type Page = (typeof pages)[number]
-export function useSwipeNavigation(page: Page, navigate: (page: Page) => void) {
+export function useDaySwipe(move: (offset: number) => void) {
   const start = useRef<{
     x: number
     y: number
@@ -11,6 +9,7 @@ export function useSwipeNavigation(page: Page, navigate: (page: Page) => void) {
   function blocked(target: EventTarget | null, root: HTMLElement) {
     if (
       document.querySelector('dialog[open]') ||
+      root.querySelector('[data-day-busy="true"]') ||
       document.activeElement?.matches(
         'input,textarea,select,[contenteditable="true"]',
       ) ||
@@ -18,11 +17,10 @@ export function useSwipeNavigation(page: Page, navigate: (page: Page) => void) {
     )
       return true
     let node = target instanceof Element ? target : null
-    if (
-      node?.closest(
-        'button,input,textarea,select,a,summary,label,[role="slider"],[contenteditable="true"],[data-no-swipe]',
-      )
+    const control = node?.closest(
+      'button,input,textarea,select,a,summary,label,[role="slider"],[contenteditable="true"],[data-no-swipe]',
     )
+    if (control && !control.matches('.outfit-piece, .home-week-strip > button'))
       return true
     while (node && node !== root) {
       if (
@@ -85,8 +83,7 @@ export function useSwipeNavigation(page: Page, navigate: (page: Page) => void) {
         Date.now() - first.time > 800
       )
         return
-      const next = pages[pages.indexOf(page) + (dx < 0 ? 1 : -1)]
-      if (next) navigate(next)
+      move(dx < 0 ? 1 : -1)
     },
   }
 }

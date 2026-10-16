@@ -1,4 +1,4 @@
-import { db } from './db'
+import { db, saveOutfit } from './db'
 import {
   isDay,
   localDay,
@@ -6,7 +6,7 @@ import {
   type CalendarEntry,
 } from './calendar'
 import { UserFacingError } from './constraints'
-import { isCompleteOutfit } from './outfit-model'
+import { isCompleteOutfit, type OutfitOptions } from './outfit-model'
 import type { Garment } from './model'
 
 export async function saveCalendarEntry(
@@ -57,8 +57,17 @@ export async function saveCalendarEntry(
       const now = new Date(
         Math.max(Date.now(), Date.parse(current?.updatedAt ?? '') + 1 || 0),
       ).toISOString()
+      const wornColors =
+        draft.status === 'worn'
+          ? current?.status === 'worn' && current.outfitId === draft.outfitId
+            ? current.wornColors
+            : pieces.map((item) => item!.color)
+          : undefined
       await database.calendar.put({
-        ...draft,
+        day: draft.day,
+        outfitId: draft.outfitId,
+        status: draft.status,
+        ...(wornColors ? { wornColors } : {}),
         id: draft.day,
         note: draft.note.trim(),
         createdAt: current?.createdAt ?? now,
@@ -91,4 +100,28 @@ export async function deleteCalendarEntry(
       )
     await database.calendar.delete(day)
   })
+}
+
+export async function recordWornOutfit(
+  ids: string[],
+  options: OutfitOptions,
+  day: string,
+  expectedUpdatedAt: string | null = null,
+  database = db,
+): Promise<void> {
+  await database.transaction(
+    'rw',
+    database.garments,
+    database.outfits,
+    database.calendar,
+    async () => {
+      const outfitId = await saveOutfit(ids, options, database)
+      const current = await database.calendar.get(day)
+      await saveCalendarEntry(
+        { day, outfitId, status: 'worn', note: current?.note ?? '' },
+        expectedUpdatedAt,
+        database,
+      )
+    },
+  )
 }

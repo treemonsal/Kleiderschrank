@@ -140,6 +140,17 @@ function parseOutfitOptions(value: unknown): OutfitOptions {
     includeAccessory: boolean(item.includeAccessory),
   }
 }
+function parseWornColors(
+  value: unknown,
+  status: unknown,
+  count: number,
+): string[] {
+  if (status !== 'worn' || !Array.isArray(value) || value.length !== count)
+    throw invalid()
+  return value.map((color) =>
+    choice(color, [...COLORS.map((item) => item.name), '']),
+  )
+}
 export function parseBackup(json: string): Garment[] {
   return parseFullBackup(json).garments
 }
@@ -293,6 +304,16 @@ export function parseFullBackup(json: string): BackupData {
         day: item.day,
         outfitId: identifier(item.outfitId),
         status: choice(item.status, ['planned', 'worn']),
+        ...(item.wornColors === undefined
+          ? {}
+          : {
+              wornColors: parseWornColors(
+                item.wornColors,
+                item.status,
+                outfits.find((outfit) => outfit.id === item.outfitId)!
+                  .garmentIds.length,
+              ),
+            }),
         note: text(item.note, 200),
         createdAt: timestamp(item.createdAt),
         updatedAt: timestamp(item.updatedAt),

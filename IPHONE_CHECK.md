@@ -21,3 +21,11 @@ Bei Problemen Modell/iOS, betroffene Aktion und Fehlermeldung notieren. Keine pr
 - Wetterzeile antippen, Ort auswählen: Vorhersage und Bestätigung erscheinen, Auswahl schliesst. Erneut öffnen und mit X schliessen; Gerätefreigabe nur nach „Standort verwenden“.
 - Accessoire-Häkchen und Anlass/Saison/Stil ändern, App ganz schliessen und erneut öffnen: Auswahl bleibt. Wetterverwendung ebenfalls prüfen. Aktive Foto-KI zeigt keinen Aktivieren-Knopf und Hinweise nur aufgeklappt.
 - Horizontal auf einer freien Inhaltsfläche durch Hauptseiten wischen. Vertikal scrollen und Farb-/Kategorie-Leisten bedienen: kein Seitenwechsel. Dialoge und Bildschirmränder bleiben ausgenommen.
+
+## Neu in 0.8 – ersetzt den Seitenwechsel per Wischen
+
+- Auf der Startseite nach rechts zum Vortag und nach links vorwärts wischen. Der Tab bleibt „Heute“. Auch eine Geste über einem Outfitfoto prüfen; ein Tap soll weiterhin das Stück öffnen.
+- „Heute getragen“ antippen: Bestätigung, Kalenderstatus und Farbring erscheinen. App neu öffnen und denselben Tag prüfen. Ein leeres Datum bleibt leer; geplante Tage sind nicht automatisch getragen.
+- Monatskalender über das Kalendersymbol am Datum öffnen und einen Tag auswählen: Kalender schliesst und zeigt den ausgewählten Eintrag. Mit „Zu heute“ zurückkehren. Dieselben Farbringe unter Outfits → Kalender prüfen.
+- Notiz eines bestätigten Tags ändern und Farben erhalten; bei einem neuen Outfit/erneuter Tragebestätigung werden Farben neu übernommen. Eine Sicherung exportieren und bewusst wiederherstellen.
+- Vertikales Scrollen, Eingaben, Dialoge und iPhone-Bildschirmrandgesten dürfen keine Tageswechsel auslösen. Die Tabs weiterhin über die untere Navigation wechseln.

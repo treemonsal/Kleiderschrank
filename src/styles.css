@@ -14,9 +14,9 @@
   --ink: #f5f5f7;
   --muted: #aeaeb2;
   --line: #38383a;
-  --accent: #64a8ff;
-  --action: #0070e0;
-  --accent-ink: #ffffff;
+  --accent: #e5e5ea;
+  --action: #e5e5ea;
+  --accent-ink: #111113;
   --hero: #1c1c1e;
   --rose: #ff375f;
   --danger: #ff453a;
@@ -405,7 +405,7 @@ fieldset {
   font-weight: 600;
 }
 .bottom-nav > button.active .nav-icon {
-  color: #64a8ff;
+  color: var(--accent);
 }
 .bottom-nav > button:focus-visible {
   outline-offset: -3px;
@@ -1879,16 +1879,6 @@ fieldset {
   background: var(--action);
   color: var(--accent-ink);
 }
-.calendar-grid i {
-  display: block;
-  width: 5px;
-  height: 5px;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-}
-.calendar-grid i.worn-dot {
-  background: currentColor;
-}
 .calendar-day-picker {
   display: flex;
   align-items: flex-end;
@@ -2301,4 +2291,125 @@ fieldset {
   font-size: 12px;
   line-height: 1.8;
   margin: 12px 0;
+}
+
+/* Day history shares the same palette rings on home and in the month calendar. */
+.home-timeline {
+  margin-top: 14px;
+}
+.day-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.day-calendar-trigger {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.day-calendar-trigger svg {
+  color: var(--accent);
+}
+.home-week-strip {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  margin-top: 12px;
+}
+.home-week-strip > button {
+  min-width: 0;
+  min-height: 70px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.home-week-strip small {
+  color: var(--muted);
+  font-size: 10px;
+}
+.home-week-strip .selected {
+  background: var(--soft);
+}
+.home-week-strip [aria-current='date'] small {
+  color: var(--accent);
+}
+.return-today {
+  margin-top: 10px;
+}
+.day-number {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  border-radius: 50%;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+.day-number > span:last-child {
+  position: relative;
+  z-index: 1;
+}
+.day-color-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed var(--muted);
+  pointer-events: none;
+}
+.has-worn .day-color-ring {
+  border: 2px dotted var(--muted);
+}
+.day-color-ring.has-colors {
+  border: 0;
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 3px),
+    #000 0
+  );
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+}
+.calendar-grid > button.selected {
+  background: var(--soft);
+  color: var(--ink);
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+.calendar-grid > button[aria-current='date'] {
+  border: 0;
+}
+.calendar-grid > button[aria-current='date'] .day-number > span:last-child {
+  color: var(--accent);
+}
+.calendar-ring-legend {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+  margin-top: 12px;
+}
+.home-calendar-picker {
+  padding-top: 8px;
+}
+.home-calendar-picker > .field {
+  margin-top: 22px;
+}
+.home-history-date {
+  padding: 4px 0;
+  min-height: 60px;
+  font-size: 14px;
+}
+.daily-look-actions {
+  justify-content: flex-start;
+}
+
+.day-number.has-worn {
+  box-shadow: 0 0 0 1px #ffffff26;
 }
