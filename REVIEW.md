@@ -11,6 +11,8 @@
 - Produktionsbuild, **109 Vitest-Tests, alle 58 Chromium-Browserfälle und Formatprüfung bestanden**. Neue Fälle: Monats-/Jahres-/Schaltjahr-/Sommerzeit-Grenzen, vollständige Tagesnavigation, keine rückwirkenden Vorschläge, Kalender-/Tragestatus, Farbsnapshots samt Backup und atomare Fehler-Rücknahme. Native Chromium-Gesten über Inhalt und echte decodierte Test-PNGs geprüft, ohne ungewollten Detaildialog. Ein anfänglich überlagerter Foto-Test wurde anhand der tatsächlichen Touch-Ziele diagnostiziert; native Gestenfälle laufen mit eigenständigen Seiten und freier Foto-Zielfläche.
 - Screenshots bei 375/390/430 Pixeln geprüft, keine horizontalen Überläufe. Vorhandene Foto-/Sicherungs-/Offline-/echte lokale Inferenz-/Outfit-/Wetterfälle weiterhin bestanden. Keine zusätzlichen echten Foto-KI-Anfragen oder privaten Uploads für diese Änderung. Echter iPhone-/Safari-Test weiterhin nicht ausgeführt; Prüfhinweise in IPHONE_CHECK.md ergänzt.
 
+Veröffentlichung 0.8.1: [GitHub-Pages-Lauf 38851944154](https://github.com/treemonsal/Kleiderschrank/actions/runs/38851944154) für App-Commit `9d7930e3515d083f9fe8dbbcbc685915e032f655` erfolgreich. Öffentliche HTML-/JS-/CSS-Auslieferung anschliessend mit aktiver HTTPS-Prüfung bestätigt: Version 0.8.1, Tagessteuerung, leere Historie, Tragebestätigung, Farb-Snapshots sowie Platin-Akzent/Buttons und dunkle Buttonschrift vorhanden. Neue Iconfarbe, gültige PNG-Icons, schwarzes Manifest mit bestehendem Installationspfad, Service Worker und Foto-KI-Modul erreichbar. Keine privaten Fotoanfragen, keine TLS-Abschaltung.
+
 ## Vorherige Prüfung – Version 0.7.0
 
 # Aktuelle Prüfung – Version 0.7.0, 15. Oktober 2026
