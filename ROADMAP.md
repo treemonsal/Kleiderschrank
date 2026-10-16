@@ -258,5 +258,7 @@ Version 0.12.0: 160 Daten-/Logiktests, alle 88 Chromium-Browserfälle, Produktio
 - [x] Wiederholte Wäsche-/Sauberwechsel mit echten decodierten Fotos und identischem Export prüfen
 - [x] Anzeige im Kleiderschrank, Neustart und Aufräumen aller Bildadressen prüfen
 - [x] Vollständige Regression: Build, Format, 160 Daten- und 90 Chromium-Browserfälle
-- [ ] Version 0.12.1 veröffentlichen und öffentliche Dateien prüfen
+- [x] Version 0.12.1 veröffentlichen und öffentliche Dateien prüfen
 - [ ] Wäschewechsel auf echtem iPhone/Safari kontrollieren
+
+Version 0.12.1: 160 Datentests, alle 90 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38885598950](https://github.com/treemonsal/Kleiderschrank/actions/runs/38885598950) für App-Commit `4bca1baa30c813a31a2730e4b306ff68dadcaa59` erfolgreich; öffentliche Version und neue Bildadressen-Verwaltung über HTTPS bestätigt. Original und Freistellung im geprüften Wäscheablauf bytegleich erhalten, bestehende Online-KI-/Installationsdateien weiter erreichbar.
