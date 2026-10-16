@@ -1,3 +1,13 @@
+# Aktuelle Prüfung – Version 0.12.1
+
+- Nutzerbefund nach Präzisierung: Im Kleiderschrank ersetzt ein blaues Fragezeichen das Foto nach Wäsche-Markierung. Speicherfunktion geprüft: `setLaundry` ändert nur Status/Versionszeit und gegebenenfalls die Tagesauswahl, keine Foto-Blobs. Ein eigener Datenverlust wurde nicht behauptet oder durch Löschen von Browserdaten behandelt.
+- Reproduzierter Anzeigefehler: Die bisherige Effekt-Bereinigung von `usePhotoUrl` widerrief bei neuen IndexedDB-Blob-Objekten die alte Adresse, während verbundene Bildelemente sie noch als Quelle verwendeten. Ein instrumentierter Produktions-Browsertest erkannte dies bei wiederholten Statuswechseln vor der Korrektur. Der konkrete blaue Safari-Platzhalter wurde nicht auf einem echten iPhone reproduziert.
+- Bildadressen werden nun pro Hook verwaltet. Aktuell angezeigte und gerade vorbereitete Adressen bleiben gültig. Erst nach dem DOM-Commit einer anderen Quelle werden alte Adressen freigegeben. Quellenwechsel ohne Foto und zusammengefasste Änderungen werden berücksichtigt; Unmount räumt verbleibende Ressourcen auf. Keine URL-Erzeugung während React-Rendern und keine zeitgesteuerte Verzögerung.
+- Neue Browserregression: drei Wäsche-/Sauberzyklen im geöffneten Kleidungsstück, keine Freigabe verbundener Bildquellen, tatsächlich decodiertes Bild mit erwarteter Grösse und anschliessend keine verbliebenen Bildadressen nach Verlassen der Ansicht. Export von Original-JPEG und Freistellungs-PNG bleibt bytegleich. Zweiter Ablauf prüft Fotoanzeige im Kleiderschrank nach Wäschefilter, Saubermarkierung und Neuladen.
+- Beide neuen Browserfälle, alle 160 Datentests, Produktionsbuild und Formatprüfung bestanden. Der erste Gesamtlauf bestand 89 von 90 Browserfällen; ein bestehender Touch-Zieltest erhielt wegen animierter Positionswerte 43,999969 statt 44 Pixel. Die Höhenmessung rundet jetzt ausschliesslich unterhalb eines Tausendstels CSS-Pixel, die Mindestanforderung 44 Pixel bleibt erhalten. Abschliessend alle 90 Chromium-Browserfälle bestanden, einschliesslich aller bestehenden Foto-, Offline-, Sicherungs-, Kalender-, KI- und Bewegungsabläufe. Keine Änderung der Wäsche-Fachlogik, Fotospeicherung, Sicherungen, Datenbankversion, Anbieterfreigabe oder Kosten. Veröffentlichung noch in Arbeit; echtes iPhone/Safari bleibt manuell zu prüfen.
+
+## Vorherige Prüfung – Version 0.12.0
+
 # Aktuelle Prüfung – Version 0.12.0
 
 - Nutzerauftrag: externe Datenverarbeitung für bessere Funktionen ausdrücklich erlauben und sinnvolle Verbesserungen umsetzen. Bestehende Kostenlos-Vorgabe und getrennte Nutzerbestände bleiben erhalten. Online-Stylist ergänzt die bisher ausschliesslich regelbasierten Outfit-Vorschläge. Keine neue App-Abhängigkeit, kein Konto, keine zusätzliche Cloud-Datenbank.

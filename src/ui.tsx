@@ -4,16 +4,33 @@ import type { Garment } from './model'
 
 export function usePhotoUrl(photo?: Blob): string | undefined {
   const [url, setUrl] = useState<string>()
+  const resources = useRef(new Set<string>())
+  const pending = useRef<string | undefined>(undefined)
   useEffect(() => {
-    if (!photo) {
-      setUrl(undefined)
-      return
-    }
-    const next = URL.createObjectURL(photo)
+    const next = photo ? URL.createObjectURL(photo) : undefined
+    if (next) resources.current.add(next)
+    pending.current = next
     setUrl(next)
-    return () => URL.revokeObjectURL(next)
   }, [photo])
-  return url
+  useEffect(() => {
+    // IndexedDB returns new Blob objects even for status-only updates. Revoke
+    // the old URL only after React has committed the replacement image source.
+    for (const resource of resources.current) {
+      if (resource !== url && resource !== pending.current) {
+        URL.revokeObjectURL(resource)
+        resources.current.delete(resource)
+      }
+    }
+  }, [url, photo])
+  useEffect(() => {
+    const owned = resources.current
+    return () => {
+      for (const resource of owned) URL.revokeObjectURL(resource)
+      owned.clear()
+      pending.current = undefined
+    }
+  }, [])
+  return photo ? url : undefined
 }
 
 export function GarmentPicture({

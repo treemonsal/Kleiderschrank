@@ -71,3 +71,7 @@ Diese neuen Abläufe wurden in Chromium automatisiert; echter Safari-/iPhone-Nac
 - Community-KI aktivieren; heutigen noch nicht geplanten Look online vergleichen. Optional „ruhiger fürs Büro“ eingeben. Fotoübersicht, kleine Schrift, Tipps, Fehleranzeige und Speichertaste im Hochformat prüfen. Keine Übertragung vor Start; vorhandene Foto-Freistellungen und Originale bleiben erhalten.
 - Empfehlung für heute übernehmen und App neu öffnen: Auswahl bleibt. Unter Outfits Empfehlung speichern und im Kalender verwenden. Vorher geplante/bestätigte Tage dürfen nicht überschrieben werden.
 - Laufende Beratung abbrechen, anderen Look wählen oder Seite wechseln. Eine späte Antwort darf keine aktuelle Auswahl ersetzen. Bei Nutzungslimit bleiben die normalen Vorschläge verfügbar. Fotos ohne sichtbaren Stoff/Passform liefern keine verlässlichen Aussagen über Wärme oder Sitz am Körper.
+
+## Neu in 0.12.1
+
+- Kleidungsstück mit Foto/Freistellung im Kleiderschrank öffnen. Mehrfach in die Wäsche legen und als sauber markieren: kein blaues Fragezeichen, Foto bleibt im Detail und im Raster sichtbar. Waschmaschinen-Filter, Schliessen und erneutes Öffnen der App ebenfalls prüfen. Original/Freistellung und Export bleiben vorhanden. Vorhandene Website-Daten dafür nicht löschen.

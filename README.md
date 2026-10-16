@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.12.0 ergänzt einen echten Online-Stylisten: Qwen3-VL-8B vergleicht Fotos vorhandener Looks mit Anlass, Stilwunsch, Vorlieben und optional Wetter. Die Empfehlung lässt sich für heute übernehmen oder als Outfit speichern. Die reine Regelauswahl, das Platin-Icon und die durchgehend sichtbare Glasnavigation bleiben erhalten.
+Version 0.12.1 korrigiert die Fotoanzeige beim Wäsche-Statuswechsel: Bildadressen bleiben gültig, bis die sichtbare Quelle ersetzt wurde. Originale und Freistellungen bleiben erhalten. Der Online-Stylist aus 0.12 und die durchgehend sichtbare Glasnavigation bleiben bestehen.
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.12.0 am 16. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
@@ -208,3 +208,7 @@ Original, Exportgrössen und reproduzierbare Aufbereitung stehen unter [design/a
 5. Abbrechen, Seiten-/Tageswechsel, veränderte Auswahl oder zurückgezogene Freigabe verhindern die Übernahme verspäteter Antworten. Vor einer Tagesübernahme werden Bestand, Wäsche, Ablehnung und konkurrierende Änderungen nochmals atomar geprüft.
 
 Das ist eine echte Online-Bild-KI zusätzlich zur lokalen Regelauswahl. Die Bilderkennung einzelner neuer Stücke verwendet weiterhin das sparsamere 4B-Modell, die neue Outfit-Beratung das ebenfalls öffentlich angebotene 8B-Modell. Der Dienst bleibt kostenlos, mit möglichen Nutzungslimits, Wartezeiten und Änderungen durch den Betreiber. Keine automatischen Wiederholungen oder kostenpflichtigen Ausweichdienste. Wenn er ausfällt, bleiben vorhandene Looks und alle lokalen Funktionen erhalten. Stilurteile sind subjektiv; Wärme, Wasserdichtigkeit, Dresscodes und tatsächliche Passform sind damit nicht nachgewiesen.
+
+## Korrektur der Wäsche-Fotoanzeige in 0.12.1
+
+Beim Statuswechsel werden Fotos nicht gelöscht. Die bisherige Anzeige konnte jedoch eine noch verwendete temporäre Bildadresse zu früh freigeben. Die neue Verwaltung gibt sie erst nach dem tatsächlichen Austausch der Bildquelle frei und räumt beim Schliessen auf. Öffne die App online und übernimm das angebotene Update; gespeicherte Bilder werden neu geladen. Keine Website-Daten löschen. Wäsche bleibt unter **Kleiderschrank → Waschmaschinen-Symbol** erreichbar; ein Stück öffnen und **Als sauber markieren**, um es wieder für Vorschläge zu verwenden.

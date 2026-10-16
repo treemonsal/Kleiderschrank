@@ -67,7 +67,9 @@ for (const width of [375, 390, 430])
     await expect(add).toHaveCount(1)
     const box = (await add.boundingBox())!
     expect(box.y + box.height).toBeLessThan(744)
-    expect(box.height).toBeGreaterThanOrEqual(44)
+    // Animated translations can produce 43.999969px for a 44px target.
+    // Ignore sub-thousandth-pixel arithmetic noise, retaining the size check.
+    expect(Number(box.height.toFixed(3))).toBeGreaterThanOrEqual(44)
     await page.screenshot({
       path: info.outputPath(`empty-after-${width}.png`),
       fullPage: true,
@@ -83,7 +85,7 @@ for (const width of [375, 390, 430])
     await expect(worn).toBeVisible()
     const action = (await worn.boundingBox())!
     expect(action.y + action.height).toBeLessThan(744)
-    expect(action.height).toBeGreaterThanOrEqual(44)
+    expect(Number(action.height.toFixed(3))).toBeGreaterThanOrEqual(44)
     await expect(page.locator('.daily-context')).toContainText('Ohne Wetter')
     expect(
       await page.evaluate(

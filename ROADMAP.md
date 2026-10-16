@@ -251,3 +251,12 @@ Version 0.11.2: 140 Datentests, 76 Chromium-Browserfälle, Produktionsbuild und 
 - [ ] Online-Stylist mit eigenen Kleidungsfotos auf echtem iPhone/Safari beurteilen
 
 Version 0.12.0: 160 Daten-/Logiktests, alle 88 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. Zwei echte Qwen3-VL-8B-Anfragen mit öffentlichen Testfotos erfolgreich. [Pages-Lauf 38883487126](https://github.com/treemonsal/Kleiderschrank/actions/runs/38883487126) für App-Commit `fa256770d3dc3a5b9064de94880959c32f9dd037` veröffentlicht; neue Oberfläche, 8B-Modul, Prompt, CSS und bestehende Installations-/Icon-Dateien über HTTPS geprüft.
+
+## Version 0.12.1 – Foto beim Wäschewechsel
+
+- [x] Zu frühes Freigeben noch angezeigter Bildadressen reproduzieren und korrigieren
+- [x] Wiederholte Wäsche-/Sauberwechsel mit echten decodierten Fotos und identischem Export prüfen
+- [x] Anzeige im Kleiderschrank, Neustart und Aufräumen aller Bildadressen prüfen
+- [x] Vollständige Regression: Build, Format, 160 Daten- und 90 Chromium-Browserfälle
+- [ ] Version 0.12.1 veröffentlichen und öffentliche Dateien prüfen
+- [ ] Wäschewechsel auf echtem iPhone/Safari kontrollieren

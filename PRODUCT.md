@@ -148,3 +148,8 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 - Qwen3-VL-8B vergleicht bis zu vier vollständige, verfügbare Looks anhand einer beschrifteten Fotoübersicht, Anlass, Stil-/Farbvorlieben, optionalem Wunsch und frischem Wetter. Keine beliebigen neuen Stücke oder ungeprüften Referenzen übernehmen.
 - Start auf ausdrückliche Aktion bei aktivierter Community-KI. Benannte Übertragung, Abbruch, Zeitgrenze, klare Dienstfehler und lokaler Fallback. Ohne Fotos wird die Beratung als angabenbasiert kenntlich gemacht.
 - Kurze Begründung und aufklappbare Tipps, Empfehlung für heute oder als Outfit speichern. Tagesübernahme schützt inzwischen geänderte Bestände, Vorlieben, Wäsche und Ablehnungen. Bestätigte/geplante Tage werden nicht überschrieben. Bestehendes Sicherungsformat bleibt kompatibel.
+
+## Version 0.12.1 – stabile Fotoanzeige bei Statuswechseln
+
+- Alte Bildadressen bei neu gelesenen IndexedDB-Blobs erst freigeben, nachdem die sichtbare Bildquelle ersetzt wurde. Noch angezeigte und neu vorbereitete Quellen bleiben gültig; ungenutzte Quellen und beim Schliessen verbliebene Adressen werden freigegeben.
+- Wäsche-/Sauberwechsel verändern keine Foto- oder Freistellungsdaten. Wiederholte Wechsel, Anzeige im Kleiderschrank, Neustart und bytegleicher Export beider Varianten werden im Browser geprüft. Keine Schema-, Sicherungsformat- oder Dienständerung.
