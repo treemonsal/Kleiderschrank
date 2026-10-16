@@ -2668,6 +2668,7 @@ fieldset {
 :is(.garment-open, .outfit-piece):active .garment-picture {
   transform: scale(0.975);
 }
+/* Keep page motion in the normal stacking order beneath the fixed glass bar. */
 .view {
   animation: view-arrive 300ms var(--ease-settle) both;
 }
@@ -2752,46 +2753,6 @@ fieldset {
   }
 }
 
-/* Native snapshots blend pages while the new page is already usable. */
-@supports (view-transition-name: app-content) {
-  :root {
-    view-transition-name: none;
-  }
-  #main-content {
-    view-transition-name: app-content;
-  }
-  html[data-view-motion='native'] .view {
-    animation: none;
-  }
-  ::view-transition {
-    pointer-events: none;
-  }
-  ::view-transition-group(app-content) {
-    animation-duration: 280ms;
-    animation-timing-function: var(--ease-settle);
-  }
-  ::view-transition-old(app-content) {
-    animation: content-leave 160ms ease both;
-  }
-  ::view-transition-new(app-content) {
-    animation: content-enter 280ms var(--ease-settle) both;
-  }
-}
-@keyframes content-leave {
-  to {
-    opacity: 0;
-  }
-}
-@keyframes content-enter {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
 @media (hover: hover) and (pointer: fine) {
   .garment-open:hover .garment-picture {
     transform: translateY(-2px);
@@ -2828,10 +2789,5 @@ fieldset {
   :is(.garment-open, .outfit-piece):active .garment-picture,
   .garment-open:hover .garment-picture {
     transform: none !important;
-  }
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none !important;
   }
 }

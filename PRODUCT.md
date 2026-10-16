@@ -136,3 +136,8 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 
 - Plastischer Platin-Kleiderbügel auf Graphit für iPhone, PWA-Installation und Browser-Tab. Deckende Exporte in 180/192/512 Pixeln; Android-Maskierung erhält zusätzlichen sicheren Innenabstand.
 - Neue Icon-Adressen für Neuinstallationen, bestehender App-Startpfad und lokale Sammlung bleiben erhalten. Bereits installierte iPhone-Icons können durch iOS weiterhin zwischengespeichert sein.
+
+## Version 0.11.2 – durchgehend sichtbare Navigation
+
+- Tabwechsel animieren den neuen Seiteninhalt innerhalb der normalen Ebenenfolge; die feste Glasnavigation bleibt davor sichtbar und bedienbar. Keine Browser-Snapshot-Ebene über der Menüleiste.
+- Seiteninhalt und aktive Auswahl wechseln im selben Render-Schritt; Scrollen und nachfolgende Fokusaktionen beziehen sich auf den neuen Inhalt. Schnelles Zurücktippen, reduzierte Bewegung, Tageswischen und lokale Daten bleiben erhalten.

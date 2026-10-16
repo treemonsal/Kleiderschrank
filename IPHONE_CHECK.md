@@ -61,3 +61,7 @@ Diese neuen Abläufe wurden in Chromium automatisiert; echter Safari-/iPhone-Nac
 
 - Bei einer neuen Installation zeigt die Safari-Vorschau und danach das Homescreen-Icon den plastischen silbernen Bügel auf Graphit. Keine weissen oder transparenten Ränder; Beschriftung MyStyle.
 - Bei einer vorhandenen Installation Update online übernehmen und Sammlung/Fotos prüfen. iOS darf das alte Icon weiter zwischenspeichern. Für einen Icon-Test keine bestehende Installation oder Websitedaten löschen. Vor einer bewussten Neuinstallation zuerst eine vollständige Sicherungsdatei exportieren und aufbewahren.
+
+## Neu in 0.11.2
+
+- Mehrfach zwischen Heute, Kleiderschrank, Outfits und Mehr wechseln, auch bei langem Inhalt und nach Scrollen. Die Glasleiste bleibt ohne Verschwinden sichtbar; aktive Auswahl und neuer Inhalt reagieren gemeinsam. Schnell zurücktippen und danach Sicherungserinnerung/Fokusziel sowie „Bewegung reduzieren“ prüfen.

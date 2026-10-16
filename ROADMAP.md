@@ -228,3 +228,12 @@ Version 0.11.0: 140 Datentests, 75 Chromium-Browserfälle, Produktionsbuild und 
 - [ ] Neues und bereits installiertes Homescreen-Icon auf echtem iPhone prüfen
 
 Version 0.11.1: 140 Datentests, 75 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38863456501](https://github.com/treemonsal/Kleiderschrank/actions/runs/38863456501) veröffentlichte App-Commit `df87983299bd2e1f6b45d9c2be400de6b42d0c4d` erfolgreich. Alle neuen Icon-Dateien über HTTPS mit identischen SHA-256-Prüfsummen und korrekten Grössen geprüft; neue Icons zusätzlich lokal offline verfügbar.
+
+## Version 0.11.2 – Seitenwechsel ohne verspätete Menüleiste
+
+- [x] Verdeckung der festen Navigation durch native Seiten-Snapshots reproduzieren
+- [x] Seiteninhalt direkt animieren und Menüleiste durchgehend sichtbar halten
+- [x] Visuellen Regressionstest gegen die fehlerhafte alte Version bestätigen
+- [x] Vollständigen Browser-/Daten-/Build-/Formatlauf abschliessen
+- [ ] Version 0.11.2 veröffentlichen und öffentliche Auslieferung prüfen
+- [ ] Wechselgefühl und feste Glasleiste auf echtem iPhone/Safari prüfen

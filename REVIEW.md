@@ -1,3 +1,12 @@
+# Aktuelle Prüfung – Version 0.11.2
+
+- Nutzerbefund: beim Tabwechsel erscheint zuerst die Seite, danach die untere Menüleiste. Ursache reproduziert: native View-Transition-Snapshots liegen über dem normalen Dokument und verdecken auch die feste Navigation mit z-index 10, wenn der Seiteninhalt deren Bereich überdeckt.
+- Browserweite Snapshot-Überblendung und dazugehörige Hook-/CSS-Regeln entfernt. Neuer Inhalt und aktiver Tab werden synchron gerendert; die vorhandene kurze CSS-Einblendung bewegt ausschliesslich den Seiteninhalt unterhalb der Menüleiste. Scroll-/Fokus-Aktionen laufen nach dem Rendern. Kein zusätzlicher Zeitgeber, verzögerter Navigationszustand oder Eingabe-Blocker.
+- Neuer visueller Regressionstest prüft tatsächlich gerenderte Pixel der Menüleiste während angehaltener Seitenanimation mit absichtlich überlappendem, langem Inhalt. Ein einfarbiges Testmaterial macht die Sichtbarkeit unabhängig von Glasunschärfe und Schriften messbar. Vor der Korrektur erschien dort Seitenfarbe statt Menüfarbe; nach der Korrektur bleibt die Menüfarbe bei Wechseln zu Kleiderschrank, Outfits und Heute sichtbar. Bestehende Bewegungs-, schnelle Navigations-, Fallback- und Reduktionsfälle bestehen ebenfalls.
+- Keine Daten-, Sicherungs-, Schema-, Icon- oder Dienständerung. Keine neue Abhängigkeit oder Übertragung privater Fotos. Produktionsbuild, Formatprüfung, alle 140 Datentests und alle 76 Chromium-Browserfälle bestanden. Normale Glasnavigation bei angehaltener Seitenanimation nach 90 ms auch visuell geprüft. Veröffentlichung noch in Arbeit; echtes iPhone/Safari weiterhin offen.
+
+## Vorherige Prüfung – Version 0.11.1
+
 # Aktuelle Prüfung – Version 0.11.1
 
 - Nutzerauftrag: anderes Design für das Bild beim Speichern der Website auf dem Homescreen. Ein einzelnes fertig erzeugtes Platin-/Graphit-Motiv ersetzt das bisherige flache Bügel-/Punkt-Symbol. Original und Exportnachweis liegen unter `design/app-icon`; reproduzierbare Grössen über `scripts/export_app_icons.py` (optionales Design-Werkzeug mit Pillow, keine neue App-Abhängigkeit).

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import {
@@ -35,7 +36,6 @@ import { BackupView } from './BackupView'
 import { BackupReminder } from './BackupReminder'
 import { DailyOutfit } from './DailyOutfit'
 import { LaundryIcon, useTapMotion } from './motion'
-import { useViewMotion } from './useViewMotion'
 import { localDay, shiftDay } from './calendar'
 import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
@@ -528,7 +528,6 @@ export default function App() {
   const items = wardrobe?.items
   const [view, setView] = useState<View>('home')
   const tapMotion = useTapMotion()
-  const viewMotion = useViewMotion()
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [toast, setToast] = useState('')
@@ -569,14 +568,11 @@ export default function App() {
     }
   }, [])
   function navigate(next: View, after?: () => void) {
-    viewMotion(
-      () => {
-        setView(next)
-        window.scrollTo({ top: 0, behavior: 'instant' })
-      },
-      next !== view,
-      after,
-    )
+    // Animate the mounted page in CSS, keeping the fixed navigation in front.
+    // Commit before scroll/focus actions so they target the selected page.
+    flushSync(() => setView(next))
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    after?.()
   }
   async function favorite(item: Garment) {
     try {

@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.11.1 bringt ein neues Homescreen-Icon: ein plastischer Platin-Kleiderbügel auf Graphit. Passende iPhone-, Android- und Browser-Icons sind enthalten; Sammlung, Fotos und Einstellungen bleiben erhalten. Die flüssigen Animationen aus 0.11 bleiben bestehen. Die Produktkritik steht in [AUDIT.md](AUDIT.md).
+Version 0.11.2 hält die Glasnavigation beim Seitenwechsel durchgehend sichtbar. Der Seiteninhalt blendet weich ein, während Auswahl und Menü sofort reagieren. Das neue Platin-Homescreen-Icon aus 0.11.1 und die spielerischen Animationen bleiben erhalten. Die Produktkritik steht in [AUDIT.md](AUDIT.md).
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.11.1 am 16. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 

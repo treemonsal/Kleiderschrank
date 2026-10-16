@@ -1,5 +1,76 @@
 import { test, expect } from '@playwright/test'
 
+test('Menüleiste bleibt auch während der Seitenanimation vor dem Inhalt sichtbar', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await expect(
+    page.getByRole('region', { name: 'Dein Tageslook' }),
+  ).toBeVisible()
+  // A solid test material makes snapshot occlusion measurable without depending
+  // on glass blur, garment colours or platform font rendering.
+  await page.addStyleTag({
+    content: `
+      .bottom-nav { background: rgb(8, 200, 80) !important; }
+      .bottom-nav::before { display: none !important; }
+      #main-content, .view { background: #000; min-height: 100vh; }
+      .view { animation-play-state: paused !important; }
+    `,
+  })
+  await page.evaluate(() => {
+    const state = window as typeof window & { navigationReady?: Promise<void> }
+    if (!document.startViewTransition) return
+    const original = document.startViewTransition.bind(document)
+    document.startViewTransition = (update) => {
+      const transition = original(update)
+      // Freeze any native snapshots while checking the actual painted pixels.
+      state.navigationReady = transition.ready.then(() => {
+        document.getAnimations().forEach((animation) => animation.pause())
+      })
+      return transition
+    }
+  })
+  const nav = page.getByRole('navigation', { name: 'Hauptnavigation' })
+  for (const label of ['Kleiderschrank', 'Outfits', 'Heute']) {
+    await nav.getByRole('button', { name: label, exact: true }).click()
+    await expect(
+      nav.getByRole('button', { name: label, exact: true }),
+    ).toHaveAttribute('aria-current', 'page')
+    await page.evaluate(async () => {
+      const state = window as typeof window & {
+        navigationReady?: Promise<void>
+      }
+      await state.navigationReady
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => resolve()),
+      )
+    })
+    const box = (await nav.boundingBox())!
+    const pixel = await page.screenshot({
+      clip: {
+        x: Math.round(box.x + box.width * 0.82),
+        y: Math.round(box.y + 8),
+        width: 1,
+        height: 1,
+      },
+      scale: 'css',
+    })
+    const colour = await page.evaluate(async (data) => {
+      const image = new Image()
+      image.src = `data:image/png;base64,${data}`
+      await image.decode()
+      const canvas = document.createElement('canvas')
+      canvas.width = canvas.height = 1
+      const context = canvas.getContext('2d')!
+      context.drawImage(image, 0, 0)
+      return [...context.getImageData(0, 0, 1, 1).data]
+    }, pixel.toString('base64'))
+    expect(colour, `Visible navigation during switch to ${label}`).toEqual([
+      8, 200, 80, 255,
+    ])
+  }
+})
+
 test('Wäschetrommel dreht und startet bei erneutem Tippen neu, während der Filter sofort reagiert', async ({
   page,
 }) => {
@@ -90,7 +161,7 @@ test('Schnelle Tabwechsel behalten die letzte Auswahl, auch beim sofortigen Zur�
   await expect(
     nav.getByRole('button', { name: 'Heute', exact: true }),
   ).toHaveAttribute('aria-current', 'page')
-  // Let any superseded snapshot callback run before checking the final state.
+  // Check the visible content after rendering as well as the active tab.
   await page.evaluate(
     () =>
       new Promise<void>((resolve) =>
