@@ -4,7 +4,7 @@ Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vit
 
 Version 0.11.0 ergänzt flüssige Seitenüberblendungen und kurze, spielerische Reaktionen: drehende Wäschetrommel, Herz-Puls, federnde Glasnavigation und weichere Fenster-/Foto-/Outfit-Einblendungen. Alle Aktionen bleiben bedienbar, „Bewegung reduzieren“ schaltet die dekorativen Effekte ab. Empfehlungen, Fotos und gespeicherte Angaben bleiben erhalten. Die Produktkritik aus 0.10 steht in [AUDIT.md](AUDIT.md).
 
-**Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.10.0 am 16. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
+**Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.11.0 am 16. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
 ## Lokal starten
 
@@ -185,7 +185,7 @@ Der fertige manuell auslösbare Workflow liegt in `.github/workflows/pages.yml`.
 
 Der Workflow startet nicht automatisch, verwendet Standard-Runner und überspringt private Repositories, um keine privaten kostenpflichtigen Minuten oder einen Tarifwechsel auszulösen. Die Sichtbarkeit wird nicht geändert. Ohne passenden kostenlosen Pages-Zugang kann der Root-Build als statische Website auf einem anderen kostenlosen HTTPS-Host bereitgestellt werden; keine kostenpflichtige Option aktivieren. Für eine eigene Root-Adresse genügt `npm run build`.
 
-Das Repository wurde vom Nutzer öffentlich gestellt und Pages aktiviert. Anschließend wurde der [Workflow-Lauf 38783006210](https://github.com/treemonsal/Kleiderschrank/actions/runs/38783006210) erfolgreich gestartet: Installation, Formatprüfung, Datentests, Build, Upload und Deployment bestanden. Dieser erste Lauf veröffentlichte Commit `ca4af46a32520603fd42eb1a12a49a0cfdbbdf4f`. Aktuell ist Version 0.10.0 aus Commit `b5749b703057da76052fd70c4907020020fa701c` durch [Lauf 38859835037](https://github.com/treemonsal/Kleiderschrank/actions/runs/38859835037) erfolgreich veröffentlicht und über HTTPS geprüft. Normale Code-Pushes veröffentlichen nicht automatisch; nach späteren App-Änderungen den Workflow erneut starten. Der echte Gerätetest bleibt offen und ist in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
+Das Repository wurde vom Nutzer öffentlich gestellt und Pages aktiviert. Anschließend wurde der [Workflow-Lauf 38783006210](https://github.com/treemonsal/Kleiderschrank/actions/runs/38783006210) erfolgreich gestartet: Installation, Formatprüfung, Datentests, Build, Upload und Deployment bestanden. Dieser erste Lauf veröffentlichte Commit `ca4af46a32520603fd42eb1a12a49a0cfdbbdf4f`. Aktuell ist Version 0.11.0 aus Commit `f5eb048634c46f0364190be61dfc09cf73d117d3` durch [Lauf 38862535685](https://github.com/treemonsal/Kleiderschrank/actions/runs/38862535685) erfolgreich veröffentlicht und über HTTPS geprüft. Normale Code-Pushes veröffentlichen nicht automatisch; nach späteren App-Änderungen den Workflow erneut starten. Der echte Gerätetest bleibt offen und ist in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
 
 Funktionsumfang und weitere Phasen: [PRODUCT.md](PRODUCT.md), [ROADMAP.md](ROADMAP.md).
 

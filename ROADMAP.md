@@ -214,5 +214,7 @@ Version 0.10.0: 140 Datentests, 70 Chromium-Browserfälle, Produktionsbuild und 
 - [x] Weichere Fenster-, Foto-, Outfit- und Toast-Einblendungen
 - [x] Letzte Auswahl bei schnellen Tabwechseln, funktionaler Fallback ohne Animations-APIs
 - [x] Laufende Effekte bei reduzierter Bewegung stoppen und neue Bewegungen unterdrücken
-- [ ] Vollständige Regression, visuelle Gegenprüfung und Veröffentlichung 0.11.0 dokumentieren
+- [x] Vollständige Regression, visuelle Gegenprüfung und Veröffentlichung 0.11.0 dokumentieren
 - [ ] Bewegungsgefühl und Leistung auf echtem iPhone/Safari erproben
+
+Version 0.11.0: 140 Datentests, 75 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38862535685](https://github.com/treemonsal/Kleiderschrank/actions/runs/38862535685) erfolgreich; öffentliche Auslieferung von Version und neuen Animationen über HTTPS geprüft.
