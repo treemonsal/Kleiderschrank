@@ -55,7 +55,7 @@ Ein sichtbarer Sprunglink bei Tastaturfokus führt direkt zum Hauptinhalt. Ein B
 
 ## Prüfung und Veröffentlichung
 
-**140 Datentests, alle 70 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden.** Visuelle Gegenprüfung bei 375/390/430 Pixeln mit demselben Build; kein horizontaler Überlauf. Der finale Lauf umfasst bestehende Foto-/Offline-/Sicherungs-/Kalenderfälle und die neuen Tagesaktionen, Bewertungen, blockierten Speicher und Tastaturfokus. Veröffentlichung wird nach erfolgreicher Auslieferung ergänzt. Der Grossbestandsfall mit 1000 Stücken, Jacken und Accessoires ist durch einen begrenzten Laufzeittest abgesichert; das ist kein Leistungsnachweis auf einem echten iPhone.
+**140 Datentests, alle 70 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden.** Visuelle Gegenprüfung bei 375/390/430 Pixeln mit demselben Build; kein horizontaler Überlauf. Der finale Lauf umfasst bestehende Foto-/Offline-/Sicherungs-/Kalenderfälle und die neuen Tagesaktionen, Bewertungen, blockierten Speicher und Tastaturfokus. Version 0.10.0 ist unter https://treemonsal.github.io/Kleiderschrank/ veröffentlicht: [Pages-Lauf 38859835037](https://github.com/treemonsal/Kleiderschrank/actions/runs/38859835037) für App-Commit `b5749b703057da76052fd70c4907020020fa701c` erfolgreich. Neue Tagesaktionen, Bewertung, Speicherfehleransicht, Kontext und UI-Klassen anschliessend in der öffentlichen HTTPS-Auslieferung nachgewiesen; bestehender Installationspfad, Icons, Service Worker und Foto-KI-Modul weiterhin erreichbar. Der Grossbestandsfall mit 1000 Stücken, Jacken und Accessoires ist durch einen begrenzten Laufzeittest abgesichert; das ist kein Leistungsnachweis auf einem echten iPhone.
 
 ## Grenzen des Urteils
 

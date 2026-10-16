@@ -202,5 +202,7 @@ Version 0.9.0: 129 Datentests, 63 Chromium-Browserfälle, Produktionsbuild und F
 - [x] Jacke und Accessoire gemeinsam bewerten, Stilkohärenz und positive Stückpaare berücksichtigen
 - [x] Positive Bewertungen zurücknehmbar machen und auf Home anbieten
 - [x] Speicherfehler lesbar machen, Tastatur-Sprunglink, klare Sprache und Wetterdarstellung
-- [ ] Abschliessende Gesamtprüfung und Veröffentlichung 0.10.0 dokumentieren
+- [x] Abschliessende Gesamtprüfung und Veröffentlichung 0.10.0 dokumentieren
 - [ ] Echte iPhone-/Safari-/VoiceOver-Erprobung und längerfristige persönliche Empfehlungsqualität beurteilen
+
+Version 0.10.0: 140 Datentests, 70 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38859835037](https://github.com/treemonsal/Kleiderschrank/actions/runs/38859835037) erfolgreich; öffentliche Version und neue Funktionen über HTTPS geprüft.
