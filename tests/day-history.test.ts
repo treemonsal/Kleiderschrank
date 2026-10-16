@@ -176,3 +176,38 @@ it('ein gescheiterter oder konkurrierender Trageeintrag hinterlässt kein neu ge
     await db.delete()
   }
 })
+it('zusammengeführte ältere Tragefarben bleiben sicherbar, wenn derselbe gespeicherte Look inzwischen andere Stücke enthält', async () => {
+  const db = new WardrobeDatabase(`merged-history-${crypto.randomUUID()}`)
+  try {
+    await db.garments.bulkPut(pieces)
+    await recordWornOutfit(
+      pieces.map((item) => item.id),
+      DEFAULT_OUTFIT_OPTIONS,
+      '2020-01-02',
+      null,
+      db,
+    )
+    const data = parseFullBackup(await createDatabaseBackup(db))
+    await importFullBackup(
+      {
+        ...data,
+        calendar: [],
+        outfits: data.outfits.map((outfit) => ({
+          ...outfit,
+          garmentIds: outfit.garmentIds.slice(0, 2),
+          updatedAt: '2199-01-01T00:00:00.000Z',
+        })),
+      },
+      'merge',
+      db,
+    )
+    const roundtrip = parseFullBackup(await createDatabaseBackup(db))
+    expect(roundtrip.calendar?.[0].wornColors).toEqual([
+      'Blau',
+      'Weiss',
+      'Schwarz',
+    ])
+  } finally {
+    await db.delete()
+  }
+})

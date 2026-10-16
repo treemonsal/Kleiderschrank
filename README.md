@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.8.0 ändert Wischen zur Tagesnavigation auf der Startseite: rechts zum Vortag, links zum nächsten Tag. Wochenleiste und Monatskalender zeigen Farbringe für bestätigte Tragetage. Mit **Heute getragen** wird der Tageslook samt Farben im Kalender vermerkt; vergangene Tage bleiben ohne Eintrag leer. Die Oberfläche nutzt jetzt Platin/Silber auf Schwarz und Graphit, mit dunkler Schrift auf hellen Buttons. Die Farbringe behalten die Kleidungsfarben. Wetteranzeige, dauerhafte Optionen, kompakte Foto-KI und Glasnavigation bleiben erhalten. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
+Version 0.8.1 ändert Wischen zur Tagesnavigation auf der Startseite: rechts zum Vortag, links zum nächsten Tag. Wochenleiste und Monatskalender zeigen Farbringe für bestätigte Tragetage. Mit **Heute getragen** wird der Tageslook samt Farben im Kalender vermerkt; vergangene Tage bleiben ohne Eintrag leer. Die Oberfläche nutzt jetzt Platin/Silber auf Schwarz und Graphit, mit dunkler Schrift auf hellen Buttons. Die Farbringe behalten die Kleidungsfarben. Wetteranzeige, dauerhafte Optionen, kompakte Foto-KI und Glasnavigation bleiben erhalten. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — am 15. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 

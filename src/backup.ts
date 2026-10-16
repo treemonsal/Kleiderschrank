@@ -140,12 +140,14 @@ function parseOutfitOptions(value: unknown): OutfitOptions {
     includeAccessory: boolean(item.includeAccessory),
   }
 }
-function parseWornColors(
-  value: unknown,
-  status: unknown,
-  count: number,
-): string[] {
-  if (status !== 'worn' || !Array.isArray(value) || value.length !== count)
+function parseWornColors(value: unknown, status: unknown): string[] {
+  // Historical colors are independent of later edits/imports of the referenced outfit.
+  if (
+    status !== 'worn' ||
+    !Array.isArray(value) ||
+    value.length < 2 ||
+    value.length > 6
+  )
     throw invalid()
   return value.map((color) =>
     choice(color, [...COLORS.map((item) => item.name), '']),
@@ -307,12 +309,7 @@ export function parseFullBackup(json: string): BackupData {
         ...(item.wornColors === undefined
           ? {}
           : {
-              wornColors: parseWornColors(
-                item.wornColors,
-                item.status,
-                outfits.find((outfit) => outfit.id === item.outfitId)!
-                  .garmentIds.length,
-              ),
+              wornColors: parseWornColors(item.wornColors, item.status),
             }),
         note: text(item.note, 200),
         createdAt: timestamp(item.createdAt),
