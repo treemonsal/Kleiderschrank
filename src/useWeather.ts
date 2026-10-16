@@ -25,10 +25,12 @@ export function weatherForToday(cache: WeatherState | undefined, now: number) {
 // One refresh per saved forecast/day while online. No geolocation and no retry loop.
 export function useSavedWeatherRefresh(online: boolean) {
   const snapshot = useLiveQuery(() =>
-    db.transaction('r', db.weather, db.preferences, async () => ({
-      cache: await db.weather.get('local'),
-      enabled: (await db.preferences.get('personal'))?.useWeather !== false,
-    })),
+    db
+      .transaction('r', db.weather, db.preferences, async () => ({
+        cache: await db.weather.get('local'),
+        enabled: (await db.preferences.get('personal'))?.useWeather !== false,
+      }))
+      .catch(() => undefined),
   )
   const now = useClock()
   const attempted = useRef(new Set<string>())

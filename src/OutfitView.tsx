@@ -20,6 +20,7 @@ import {
   savePreferences,
   saveOutfitOptions,
   setOutfitFeedback,
+  toggleOutfitLike,
   storageError,
   updateOutfit,
 } from './db'
@@ -500,7 +501,8 @@ export function OutfitView({
               {!requested && (
                 <p className="outfit-start-note">
                   Für einen Look brauchst du Schuhe und entweder ein Kleid oder
-                  ein Oberteil mit Hose. Deine Fotos verlassen das Gerät nicht.
+                  ein Oberteil mit Hose. Für diese Outfit-Auswahl werden keine
+                  Fotos übertragen.
                 </p>
               )}
               <div className="outfit-results">
@@ -558,11 +560,14 @@ export function OutfitView({
                           disabled={busy}
                           onClick={() =>
                             void action(async () => {
-                              await setOutfitFeedback(
+                              const liked = await toggleOutfitLike(
                                 candidate.garmentIds,
-                                'liked',
                               )
-                              notify('Dein Geschmack wurde berücksichtigt.')
+                              notify(
+                                liked
+                                  ? 'Dein Geschmack wurde berücksichtigt.'
+                                  : 'Positive Bewertung zurückgenommen.',
+                              )
                             })
                           }
                         >

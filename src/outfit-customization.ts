@@ -1,4 +1,5 @@
 import { db } from './db'
+import { createCompatibilityScorer } from './outfit-compatibility'
 import { localDay } from './calendar'
 import { eligibleGarments } from './generator'
 import {
@@ -27,6 +28,10 @@ export function replacementChoices(
 ) {
   const target = items.find((item) => item.id === targetId)
   if (!target) return []
+  const compatibility = createCompatibilityScorer(feedback)
+  const remaining = items.filter(
+    (item) => ids.includes(item.id) && item.id !== targetId,
+  )
   const rejected = new Set(
     feedback
       .filter((item) => item.verdict === 'rejected')
@@ -43,6 +48,7 @@ export function replacementChoices(
     )
     .sort((a, b) => {
       const score = (item: Garment) =>
+        compatibility([...remaining, item]).score +
         (item.favorite ? 2 : 0) +
         (preferences.colors.includes(item.color) ? 2 : 0) +
         (options.style !== 'Alle' && item.styles.includes(options.style)

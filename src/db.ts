@@ -145,6 +145,26 @@ export async function setOutfitFeedback(
     },
   )
 }
+export async function toggleOutfitLike(
+  ids: string[],
+  database = db,
+): Promise<boolean> {
+  return database.transaction(
+    'rw',
+    database.garments,
+    database.feedback,
+    async () => {
+      const key = outfitKey(ids),
+        current = await database.feedback.get(key)
+      if (current?.verdict === 'liked') {
+        await database.feedback.delete(key)
+        return false
+      }
+      await setOutfitFeedback(ids, 'liked', database)
+      return true
+    },
+  )
+}
 export async function updateOutfit(
   id: string,
   patch: { name: string; expectedUpdatedAt: string } | { favorite: boolean },

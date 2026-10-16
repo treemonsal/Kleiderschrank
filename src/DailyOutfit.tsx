@@ -4,13 +4,15 @@ import {
   Bookmark,
   Check,
   ArrowRight,
-  CloudSun,
+  RefreshCw,
+  ThumbsUp,
+  Plus,
   ChevronLeft,
   ChevronRight,
   CalendarDays,
 } from 'lucide-react'
 import type { Garment } from './model'
-import { db, saveOutfit, storageError } from './db'
+import { db, saveOutfit, toggleOutfitLike, storageError } from './db'
 import {
   DEFAULT_PREFERENCES,
   isCompleteOutfit,
@@ -26,6 +28,8 @@ import { weatherFresh, weatherLabel } from './weather'
 import { useClock } from './useWeather'
 import { WeatherPanel } from './WeatherPanel'
 import { OutfitSwap } from './OutfitSwap'
+import { anotherDailyLook } from './daily-choice'
+import { WeatherSymbol } from './WeatherSymbol'
 import { recentWear } from './wear-history'
 import { OutfitPieces } from './OutfitPieces'
 import { ErrorMessage, Sheet } from './ui'
@@ -36,6 +40,7 @@ export function DailyOutfit({
   onSelectDay,
   onOpen,
   onOutfits,
+  onAdd,
   notify,
 }: {
   items: Garment[]
@@ -43,6 +48,7 @@ export function DailyOutfit({
   onSelectDay: (day: string) => void
   onOpen: (id: string) => void
   onOutfits: () => void
+  onAdd: () => void
   notify: (message: string) => void
 }) {
   const state = useLiveQuery(() =>
@@ -156,7 +162,9 @@ export function DailyOutfit({
         ? 'GEPLANT · NICHT BESTÄTIGT'
         : 'EINGEPLANT'
     : isToday
-      ? 'FÜR DICH ZUSAMMENGESTELLT'
+      ? items.length
+        ? 'FÜR DICH ZUSAMMENGESTELLT'
+        : 'DEIN ERSTER SCHRITT'
       : past
         ? 'DEIN RÜCKBLICK'
         : 'DEINE PLANUNG'
@@ -266,7 +274,7 @@ export function DailyOutfit({
           >
             <span className="home-date">{date}</span>
             <span className="home-weather-line">
-              <CloudSun size={20} />
+              <WeatherSymbol code={forecast?.code} size={20} />
               {state?.weather ? (
                 <span>
                   {forecast
@@ -313,7 +321,9 @@ export function DailyOutfit({
                     ? 'Dieser Look war geplant. Ob du ihn getragen hast, ist noch nicht bestätigt.'
                     : 'Deine Auswahl aus dem Kalender.'
                 : isToday
-                  ? 'Automatisch aus deinen Stücken, Vorlieben und der Saison kombiniert.'
+                  ? items.length
+                    ? 'Aus deinen verfügbaren Stücken und Vorlieben kombiniert.'
+                    : 'Für deinen ersten Look brauchst du Schuhe und ein Oberteil mit Hose oder ein Kleid.'
                   : past
                     ? 'Hier erscheinen deine bestätigten Tragetage.'
                     : 'Hier erscheinen deine eingeplanten Looks.'}
@@ -323,6 +333,87 @@ export function DailyOutfit({
             <p role="status">Dein Tageslook wird geladen …</p>
           ) : look?.garmentIds.length ? (
             <>
+              <p className="daily-context">
+                {[
+                  look.options.occasion,
+                  look.options.season !== 'Alle' ? look.options.season : '',
+                  !entry && state.preferences.useWeather !== false && fresh
+                    ? 'Wetter berücksichtigt'
+                    : !entry &&
+                        state.preferences.useWeather !== false &&
+                        state.weather &&
+                        !fresh
+                      ? 'Wetter veraltet · nicht verwendet'
+                      : !entry
+                        ? 'Ohne Wetter'
+                        : '',
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </p>
+              <div className="daily-quick-actions">
+                {day <= today && (
+                  <button
+                    className={`button ${worn ? 'secondary' : 'primary'}`}
+                    disabled={busy || worn || !complete}
+                    onClick={async () => {
+                      setBusy(true)
+                      setError('')
+                      try {
+                        await recordWornOutfit(
+                          look.garmentIds,
+                          look.options,
+                          day,
+                          entry?.updatedAt ?? null,
+                        )
+                        notify('Als getragen im Kalender vermerkt.')
+                      } catch (error) {
+                        setError(storageError(error))
+                      } finally {
+                        setBusy(false)
+                      }
+                    }}
+                  >
+                    <Check size={16} />
+                    {worn
+                      ? 'Getragen'
+                      : isToday
+                        ? 'Heute getragen'
+                        : 'Als getragen bestätigen'}
+                  </button>
+                )}
+                {isToday && !entry && complete && (
+                  <button
+                    className="text-button"
+                    disabled={busy}
+                    onClick={async () => {
+                      setBusy(true)
+                      setError('')
+                      try {
+                        const changed = await anotherDailyLook({
+                          day,
+                          expectedIds: look.garmentIds,
+                          expectedSelection:
+                            state.preferences.dailySelection?.day === day
+                              ? state.preferences.dailySelection.updatedAt
+                              : null,
+                        })
+                        notify(
+                          changed
+                            ? 'Ein anderer Look ist für heute ausgewählt.'
+                            : 'Für diese Auswahl gibt es gerade keinen anderen vollständigen Look. Ergänze Stücke oder passe die Auswahl an.',
+                        )
+                      } catch (error) {
+                        setError(storageError(error))
+                      } finally {
+                        setBusy(false)
+                      }
+                    }}
+                  >
+                    <RefreshCw size={16} /> Anderer Look
+                  </button>
+                )}
+              </div>
               <OutfitPieces
                 ids={look.garmentIds}
                 items={items}
@@ -361,37 +452,44 @@ export function DailyOutfit({
                   </p>
                 </details>
               )}
+              {isToday && !worn && complete && (
+                <button
+                  className="text-button daily-like"
+                  aria-label="Tageslook: Gefällt mir"
+                  aria-pressed={state.feedback.some(
+                    (item) =>
+                      item.id === outfitKey(look.garmentIds) &&
+                      item.verdict === 'liked',
+                  )}
+                  disabled={busy}
+                  onClick={async () => {
+                    setBusy(true)
+                    setError('')
+                    try {
+                      const liked = await toggleOutfitLike(look.garmentIds)
+                      notify(
+                        liked
+                          ? 'Gefällt dir: Diese Kombination und ihre Stückpaare werden stärker berücksichtigt.'
+                          : 'Positive Bewertung zurückgenommen.',
+                      )
+                    } catch (error) {
+                      setError(storageError(error))
+                    } finally {
+                      setBusy(false)
+                    }
+                  }}
+                >
+                  <ThumbsUp size={16} />{' '}
+                  {state.feedback.some(
+                    (item) =>
+                      item.id === outfitKey(look.garmentIds) &&
+                      item.verdict === 'liked',
+                  )
+                    ? 'Gefällt dir'
+                    : 'Gefällt mir'}
+                </button>
+              )}
               <div className="daily-look-actions">
-                {day <= today && (
-                  <button
-                    className={`button ${worn ? 'secondary' : 'primary'}`}
-                    disabled={busy || worn || !complete}
-                    onClick={async () => {
-                      setBusy(true)
-                      setError('')
-                      try {
-                        await recordWornOutfit(
-                          look.garmentIds,
-                          look.options,
-                          day,
-                          entry?.updatedAt ?? null,
-                        )
-                        notify('Als getragen im Kalender vermerkt.')
-                      } catch (error) {
-                        setError(storageError(error))
-                      } finally {
-                        setBusy(false)
-                      }
-                    }}
-                  >
-                    <Check size={16} />
-                    {worn
-                      ? 'Getragen'
-                      : isToday
-                        ? 'Heute getragen'
-                        : 'Als getragen bestätigen'}
-                  </button>
-                )}
                 {!entry && (
                   <button
                     className="button secondary"
@@ -425,11 +523,21 @@ export function DailyOutfit({
             </>
           ) : (
             <div className="daily-look-empty">
+              {isToday && !entry && (
+                <button className="button primary daily-add" onClick={onAdd}>
+                  <Plus size={18} />
+                  {items.length
+                    ? 'Stück hinzufügen'
+                    : 'Erstes Stück hinzufügen'}
+                </button>
+              )}
               <p>
                 {entry
                   ? 'Der verknüpfte Look ist nicht mehr verfügbar.'
                   : isToday
-                    ? automatic?.missing
+                    ? items.length
+                      ? automatic?.missing
+                      : 'Starte mit einem Foto. Die Online-Foto-KI kann die Angaben nach deiner Freigabe vorbereiten.'
                     : past
                       ? 'Für diesen Tag ist kein Look vermerkt.'
                       : 'Für diesen Tag ist noch kein Look eingeplant.'}

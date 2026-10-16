@@ -134,16 +134,7 @@ fieldset {
   position: relative;
   background: var(--soft);
 }
-.profile-dot {
-  width: 7px;
-  height: 7px;
-  background: var(--action);
-  border: 2px solid var(--background);
-  border-radius: 50%;
-  position: absolute;
-  right: 0;
-  bottom: 1px;
-}
+
 .view {
   padding: 0 26px;
   animation: arrive 0.22s ease-out;
@@ -2540,4 +2531,71 @@ fieldset {
 
 .garment-caption .laundry-badge {
   margin-left: 6px;
+}
+
+.daily-context {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+  margin: -8px 0 14px;
+}
+.daily-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 16px;
+}
+.daily-quick-actions .button {
+  min-height: 44px;
+  font-size: 12px;
+}
+.daily-quick-actions .text-button {
+  font-size: 12px;
+}
+.daily-add {
+  margin: 8px 0 16px;
+}
+.daily-like {
+  margin: 0 0 12px;
+}
+.daily-look-empty .daily-add {
+  display: flex;
+}
+.storage-failure {
+  margin: 40px 0;
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--surface);
+}
+.storage-failure h1 {
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
+}
+.storage-failure p {
+  margin: 18px 0;
+  line-height: 1.7;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 18px;
+  z-index: 100;
+  transform: translateY(-150%);
+  padding: 12px 18px;
+  min-height: 44px;
+  border-radius: 12px;
+  color: var(--accent-ink);
+  background: var(--accent);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+.profile-button {
+  display: grid;
+  place-items: center;
 }

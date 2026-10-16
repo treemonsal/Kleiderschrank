@@ -192,3 +192,15 @@ Am 15. Oktober 2026 nach manueller Pages-Einrichtung durch den Nutzer veröffent
 Version 0.9.0: 129 Datentests, 63 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38857466291](https://github.com/treemonsal/Kleiderschrank/actions/runs/38857466291) veröffentlichte App-Commit `3fe5c12133bc3ad07e590a20df7ef82a1ef42b7f` erfolgreich; öffentliche Version und neue Funktionen über HTTPS geprüft.
 
 - [ ] Bedienung auf echtem iPhone/Safari nach den neuen Prüfhinweisen erproben
+
+## Version 0.10 – kritische Produktprüfung
+
+- [x] Bedienung und Empfehlungen mit Codeprüfung, eigenem Testbestand und mobilen Ansichten prüfen
+- [x] Redaktionelle Bewertung aller wichtigen Bereiche und Grenzen in AUDIT.md festhalten
+- [x] Ersten Fotoimport und Tragebestätigung in den ersten Bildschirm verlegen
+- [x] Direkte gespeicherte Tagesalternative, ohne übersprungene Looks abzulehnen
+- [x] Jacke und Accessoire gemeinsam bewerten, Stilkohärenz und positive Stückpaare berücksichtigen
+- [x] Positive Bewertungen zurücknehmbar machen und auf Home anbieten
+- [x] Speicherfehler lesbar machen, Tastatur-Sprunglink, klare Sprache und Wetterdarstellung
+- [ ] Abschliessende Gesamtprüfung und Veröffentlichung 0.10.0 dokumentieren
+- [ ] Echte iPhone-/Safari-/VoiceOver-Erprobung und längerfristige persönliche Empfehlungsqualität beurteilen

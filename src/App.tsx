@@ -9,7 +9,6 @@ import {
   House,
   LoaderCircle,
   Layers2,
-  LockKeyhole,
   MoreHorizontal,
   Pencil,
   Plus,
@@ -21,6 +20,7 @@ import {
   WifiOff,
   X,
   WashingMachine,
+  Settings2,
 } from 'lucide-react'
 import {
   db,
@@ -83,6 +83,7 @@ function Home({
         items={items}
         onOpen={onOpen}
         onOutfits={onOutfits}
+        onAdd={onAdd}
         notify={notify}
       />
       <BackupReminder onBackup={onBackup} />
@@ -104,25 +105,25 @@ function Home({
           <ArrowUpRight size={22} strokeWidth={1.5} />
         </button>
       </section>
-      <section className="home-collection">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">GANZ DEIN GESCHMACK</p>
-            <h2>
-              {favorites.length
-                ? 'Deine Lieblingsstücke'
-                : items.length
-                  ? 'Frisch im Kleiderschrank'
-                  : 'Hier beginnt dein Stil'}
-            </h2>
+      {items.length > 0 && (
+        <section className="home-collection">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">GANZ DEIN GESCHMACK</p>
+              <h2>
+                {favorites.length
+                  ? 'Deine Lieblingsstücke'
+                  : items.length
+                    ? 'Frisch im Kleiderschrank'
+                    : 'Hier beginnt dein Stil'}
+              </h2>
+            </div>
+            {items.length > 0 && (
+              <button className="text-button" onClick={onWardrobe}>
+                Alle <ArrowRight size={16} />
+              </button>
+            )}
           </div>
-          {items.length > 0 && (
-            <button className="text-button" onClick={onWardrobe}>
-              Alle <ArrowRight size={16} />
-            </button>
-          )}
-        </div>
-        {featured.length ? (
           <div className="garment-grid">
             {featured.map((item) => (
               <GarmentCard
@@ -133,28 +134,8 @@ function Home({
               />
             ))}
           </div>
-        ) : (
-          <div className="first-piece-card">
-            <div className="empty-icon">
-              <Shirt size={32} strokeWidth={1.2} />
-              <span>01</span>
-            </div>
-            <h3>Dein erstes Lieblingsstück.</h3>
-            <p>
-              Ein Foto — und dein
-              <br />
-              Kleiderschrank bekommt ein neues Zuhause.
-            </p>
-            <button className="button primary" onClick={onAdd}>
-              <Plus size={18} />
-              Erstes Stück hinzufügen
-            </button>
-            <span className="micro-copy">
-              <LockKeyhole size={12} /> Dein Kleiderschrank bleibt bei dir.
-            </span>
-          </div>
-        )}
-      </section>
+        </section>
+      )}
       {items.length > 0 && (
         <button className="add-banner" onClick={onAdd}>
           <span className="add-banner-icon">
@@ -525,11 +506,21 @@ function Detail({
 }
 
 export default function App() {
-  const items = useLiveQuery(
-    () => db.garments.orderBy('updatedAt').reverse().toArray(),
+  const wardrobe = useLiveQuery(
+    async () => {
+      try {
+        return {
+          items: await db.garments.orderBy('updatedAt').reverse().toArray(),
+          failed: false,
+        }
+      } catch {
+        return { items: null, failed: true }
+      }
+    },
     [],
     null,
   )
+  const items = wardrobe?.items
   const [view, setView] = useState<View>('home')
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -584,6 +575,9 @@ export default function App() {
   const selected = items?.find((i) => i.id === selectedId)
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">
+        Zum Inhalt
+      </a>
       <header className="app-header">
         <button
           className="wordmark"
@@ -594,13 +588,13 @@ export default function App() {
           <span className="wordmark-dot">.</span>
         </button>
         <div className="header-right">
-          <span className="edition">YOUR EVERYDAY EDIT</span>
+          <span className="edition">DEIN TÄGLICHER STIL</span>
           <button
             className="profile-button"
             aria-label="Einstellungen öffnen"
             onClick={() => navigate('settings')}
           >
-            m<span className="profile-dot" />
+            <Settings2 size={21} strokeWidth={1.6} />
           </button>
         </div>
       </header>
@@ -627,8 +621,31 @@ export default function App() {
           </button>
         </div>
       )}
-      <main id="main-content" key={view}>
-        {items === null || items === undefined ? (
+      <main id="main-content" key={view} tabIndex={-1}>
+        {wardrobe?.failed ? (
+          <section
+            className="storage-failure"
+            aria-label="Speicher nicht erreichbar"
+          >
+            <h1>Dein Kleiderschrank lässt sich gerade nicht öffnen.</h1>
+            <p role="alert">
+              Der lokale Gerätespeicher ist nicht erreichbar. Prüfe, ob dein
+              Browser Website-Speicherung erlaubt, und versuche es erneut. Die
+              App hat nichts gelöscht.
+            </p>
+            <button
+              className="button primary"
+              disabled={!!editor}
+              onClick={() => location.reload()}
+            >
+              Erneut laden
+            </button>
+            <p className="micro-copy">
+              Lösche keine Website-Daten. Eine vorhandene Sicherung kannst du
+              wiederherstellen, sobald der Speicher erreichbar ist.
+            </p>
+          </section>
+        ) : items === null || items === undefined ? (
           <div className="loading-state" role="status">
             <LoaderCircle className="spin" />
             <p>Dein Kleiderschrank wird geöffnet …</p>

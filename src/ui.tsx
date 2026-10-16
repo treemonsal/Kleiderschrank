@@ -94,12 +94,18 @@ export function Sheet({
   const id = useId()
   useEffect(() => {
     const dialog = ref.current!
+    const opener =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
     dialog.showModal()
     const old = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       dialog.close()
       document.body.style.overflow = old
+      if (opener?.isConnected && !document.querySelector('dialog[open]'))
+        opener.focus({ preventScroll: true })
     }
   }, [])
   return (

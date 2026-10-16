@@ -1,4 +1,5 @@
 import type { Garment } from './model'
+import { createCompatibilityScorer } from './outfit-compatibility'
 import {
   recentPiecePenalty,
   recentCombinationPenalty,
@@ -76,8 +77,10 @@ export function generateOutfits(
   weather?: WeatherDay,
   wearCounts: Map<string, number> = new Map(),
   history?: RecentWear,
+  excluded: ReadonlySet<string> = new Set(),
 ): OutfitCandidate[] {
   const eligible = eligibleGarments(items, options, weather)
+  const compatibility = createCompatibilityScorer(feedback)
   const rejected = new Set(
     feedback
       .filter((entry) => entry.verdict === 'rejected')
@@ -112,7 +115,7 @@ export function generateOutfits(
       recentPiecePenalty(item.id, history)
     )
   }
-  // Bounded search: at most 18³ + 18² base combinations, even for 1000 items.
+  // Bounded search: at most 18³ + 18² bases, each with up to 4 layers × 3 accessories.
   // Seeded variation rotates equally suitable pieces into the search window.
   function group(category: string): Garment[] {
     return eligible
@@ -120,8 +123,8 @@ export function generateOutfits(
       .sort(
         (a, b) =>
           suitability(b) +
-            noise(b.id, seed) * 4 -
-            (suitability(a) + noise(a.id, seed) * 4) ||
+            noise(b.id, seed) * 0.75 -
+            (suitability(a) + noise(a.id, seed) * 0.75) ||
           a.id.localeCompare(b.id),
       )
       .slice(0, 18)
@@ -134,37 +137,48 @@ export function generateOutfits(
     accessories = group('Accessoires')
   const candidates: OutfitCandidate[] = []
   function add(base: Garment[]): void {
-    const selected = [...base]
-    if (
-      (weather
-        ? weather.min < 15
-        : options.season === 'Herbst' || options.season === 'Winter') &&
-      jackets.length
-    ) {
-      selected.push(
-        jackets[
-          Math.floor(
-            noise(outfitKey(base.map((item) => item.id)), seed) *
-              jackets.length,
-          )
-        ],
-      )
-    }
-    if (options.includeAccessory && accessories.length)
-      selected.push(accessories[0])
-    const ids = selected.map((item) => item.id),
-      key = outfitKey(ids)
-    if (rejected.has(key)) return
+    const needsLayer = weather
+      ? weather.min < 15
+      : options.season === 'Herbst' || options.season === 'Winter'
+    // Evaluate accessories and layers together with the base. Keep the best complete
+    // version per base, so an unsuitable/random layer cannot hide a better alternative.
+    const layers: (Garment | undefined)[] =
+      needsLayer && jackets.length ? jackets.slice(0, 4) : [undefined]
+    const extras: (Garment | undefined)[] =
+      options.includeAccessory && accessories.length
+        ? accessories.slice(0, 3)
+        : [undefined]
+    let winner: { selected: Garment[]; key: string; score: number } | undefined
+    for (const layer of layers)
+      for (const extra of extras) {
+        const selected = [
+          ...base,
+          ...(layer ? [layer] : []),
+          ...(extra ? [extra] : []),
+        ]
+        const key = outfitKey(selected.map((item) => item.id))
+        if (rejected.has(key) || excluded.has(key)) continue
+        let score =
+          selected.reduce((sum, item) => sum + suitability(item), 0) /
+          selected.length
+        score += compatibility(selected).score
+        if (liked.has(key)) score += 4
+        score +=
+          noise(key, seed) * 0.35 - recentCombinationPenalty(key, history)
+        if (
+          !winner ||
+          score > winner.score ||
+          (score === winner.score && key < winner.key)
+        )
+          winner = { selected, key, score }
+      }
+    if (!winner) return
+    const { selected, key, score } = winner
+    const ids = selected.map((item) => item.id)
     const colors = [
       ...new Set(selected.map((item) => item.color).filter(Boolean)),
     ]
     const accents = colors.filter((color) => !neutral.has(color))
-    let score =
-      selected.reduce((sum, item) => sum + suitability(item), 0) /
-      selected.length
-    score += accents.length <= 1 ? 3 : accents.length === 2 ? 1 : -2
-    if (liked.has(key)) score += 4
-    score += noise(key, seed) * 3 - recentCombinationPenalty(key, history)
     const reasons = [
       base[0].category === 'Kleider'
         ? 'Kleid und Schuhe bilden die Basis.'
@@ -202,6 +216,12 @@ export function generateOutfits(
       )
     )
       reasons.push('Deine Favoriten oder Stilvorlieben wurden berücksichtigt.')
+    if (compatibility(selected).sharedStyle)
+      reasons.push('Gemeinsame erfasste Stilrichtungen verbinden die Stücke.')
+    if (compatibility(selected).familiar)
+      reasons.push(
+        'Einige dieser Stücke hast du bereits zusammen positiv bewertet.',
+      )
     if (liked.has(key))
       reasons.push('Diese Kombination hat dir bereits gefallen.')
     if (selected.some((item) => (wearCounts.get(item.id) ?? 0) > 0))

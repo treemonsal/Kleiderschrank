@@ -48,7 +48,7 @@ test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Suchen, Favorisieren un
   })
   await page.goto('/')
   await expect(
-    page.getByText('Dein erstes Lieblingsstück.', { exact: true }),
+    page.getByRole('button', { name: 'Erstes Stück hinzufügen', exact: true }),
   ).toBeVisible()
   await addGarment(page, 'Leinenhemd', true)
   await page.reload()
@@ -96,7 +96,7 @@ test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Suchen, Favorisieren un
   await expect(page.getByRole('dialog')).not.toBeVisible()
   await page.reload()
   await expect(
-    page.getByText('Dein erstes Lieblingsstück.', { exact: true }),
+    page.getByRole('button', { name: 'Erstes Stück hinzufügen', exact: true }),
   ).toBeVisible()
   expect(errors).toEqual([])
   expect(external).toEqual([])
@@ -211,7 +211,7 @@ test('Ungespeicherte Eingaben gehen beim Schliessen nicht unbemerkt verloren', a
   await page.getByRole('button', { name: 'Verwerfen', exact: true }).click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   await expect(
-    page.getByText('Dein erstes Lieblingsstück.', { exact: true }),
+    page.getByRole('button', { name: 'Erstes Stück hinzufügen', exact: true }),
   ).toBeVisible()
 })
 

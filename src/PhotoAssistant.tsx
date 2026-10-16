@@ -95,7 +95,7 @@ export function PhotoAssistant({
       <div className="assistant-heading">
         <Sparkles size={21} />
         <div>
-          <h3>Ein Foto. Den Rest übernimmt die KI.</h3>
+          <h3>Dein Foto automatisch vorbereiten.</h3>
           <p>
             {connection?.enabled
               ? 'Erkennen, ausfüllen und freistellen.'

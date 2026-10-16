@@ -78,9 +78,7 @@ export function chooseDailyOutfit(
         planned: false,
         customized: true,
         options: selection.options,
-        reasons: [
-          'Einzelne Stücke von dir ausgetauscht. Der restliche Look bleibt erhalten.',
-        ],
+        reasons: ['Deine persönliche Auswahl für heute bleibt gespeichert.'],
         missing: undefined,
       }
   }

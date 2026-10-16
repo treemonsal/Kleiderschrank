@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.9.0 ergänzt einzelne austauschbare Teile im heutigen Look, weniger kürzlich wiederholte Kombinationen, einen Wäsche-Status, Tageskarten, die der Wischbewegung folgen, und gelegentliche Sicherungserinnerungen bei neuen Daten. Platin/Silber auf Schwarz und Graphit, Farbringe, Wetter und Glasnavigation bleiben erhalten. Prüfungen und Grenzen stehen in [REVIEW.md](REVIEW.md).
+Version 0.10.0 verbessert den Einstieg und die täglichen Empfehlungen: erster Fotoimport und Tragebestätigung direkt sichtbar, **Anderer Look**, zurücknehmbare positive Bewertungen sowie eine gemeinsame Bewertung von Jacke, Accessoire und Basis. Bekannte Farben, gemeinsame Stilangaben und positiv bewertete Stückpaare beeinflussen die Auswahl. Speicherfehler erhalten eine verständliche Ansicht. Die ausführliche Produktkritik mit Bewertung und verbleibenden Grenzen steht in [AUDIT.md](AUDIT.md).
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.9.0 am 16. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
@@ -46,6 +46,14 @@ Auf der Startseite **nach rechts wischen → Vortag**, **nach links wischen → 
 **Farbringe um die Tageszahl** zeigen die erfassten Farbfamilien bestätigter Looks bis heute, sowohl in der Wochenleiste als auch im Monatskalender unter Outfits. Pläne haben einen neutralen gestrichelten Kreis. Ohne Farbangaben bleibt die Markierung neutral. Die Farben stehen auch in der zugänglichen Tagesbeschriftung. Die Ringsegmente zeigen Farbfamilien, keine gemessenen Stoffflächen oder exakten Fotofarben.
 
 Bei neuen Tragebestätigungen werden die Farben mitgesichert und bleiben bei späterer Änderung eines Kleidungsstücks erhalten. Wird ein Eintrag wieder auf „geplant“ gesetzt und neu bestätigt oder ein anderes Outfit ausgewählt, werden dessen Farben neu übernommen. Frühere Einträge ohne Farbsicherung verwenden die aktuellen Merkmale der referenzierten Stücke; einen früheren Farbstand können wir nicht rekonstruieren. Namen und Fotos bleiben mit den vorhandenen Kleidungsstücken verknüpft. Die bisherige abhängige Löschung beim Entfernen von Kleidung/Outfits gilt weiterhin.
+
+## Direkte Tagesaktionen
+
+**Heute getragen** steht direkt über den Kleidungsbildern. **Anderer Look** wählt für einen heutigen, noch nicht geplanten/bestätigten Tag eine andere vollständige Kombination und merkt sie über Neustarts hinweg. Der bisherige Look wird dadurch nicht negativ bewertet. Ist keine Alternative vorhanden, bleibt er erhalten. Unter **Gefällt mir** kannst du den Look positiv bewerten und die Bewertung durch erneutes Tippen zurücknehmen. Die Bewertung wirkt auf die Kombination und in kleinerem Umfang auf wiederkehrende Stückpaare. Sie ist keine Aussage darüber, ob du den Look tatsächlich getragen hast.
+
+Anlass, Saison und Wetterverwendung stehen direkt an der Tageskarte. Jacken und Accessoires werden zusammen mit der Basis verglichen; gemeinsame erfasste Stile und bekannte Farben helfen bei der Gewichtung. Fehlende Angaben bleiben erkennbar. Empfehlungen basieren weiterhin auf lokalen Regeln und kennen weder deine genaue Passform noch Materialeigenschaften.
+
+Bei leerem Bestand führt **Erstes Stück hinzufügen** sofort zum Foto-/Kleidungseditor. Ein Speicherproblem erscheint mit einer lesbaren Fehleransicht; Website-Daten dafür nicht löschen. Tastaturnutzer erreichen mit dem ersten Tab den Link **Zum Inhalt**.
 
 ## Teile tauschen, Wäsche und Abwechslung
 

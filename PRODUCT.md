@@ -115,3 +115,12 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 - Tageskarte folgt der horizontalen Geste und rastet ein. Abbruch, kurze/vertikale Gesten, Bildschirmränder, Eingaben, Dialoge, parallele Tageswahl und reduzierte Bewegung sind berücksichtigt. Kein Wechsel der Hauptseiten.
 - Freiwillige Sicherungserinnerung frühestens nach einer Woche und nur bei unexportierten Inhaltsänderungen, pausierbar/abschaltbar. Routine-Wetterrefresh und Erinnerungsverwaltung erzeugen keinen Hinweis. Exportstatus behauptet keine physische Speicherung der Datei. Keine automatische Übertragung.
 - Additive optionale Felder in bestehenden Tabellen und Sicherungsformat 4; keine neue Datenbankstruktur, alte Sicherungen weiterhin lesbar. Alle neuen gespeicherten Angaben werden validiert und mitgesichert.
+
+## Version 0.10 – Produktkritik und Korrekturen
+
+- Kritische Bewertung in AUDIT.md über Bedienung, Empfehlungen, Foto-KI, Gestaltung, Zuverlässigkeit, Datenschutz, Sicherung, Zugänglichkeit, Leistung und Kosten. Redaktionelles Gesamturteil nach Korrekturen 7,5/10; keine Nutzerstudie oder behauptete modische Trefferquote.
+- Erster Fotoimport und Tragebestätigung ohne Scrollen erreichbar; doppelte leere Einstiegsfläche entfernt. Tagesalternative bleibt gespeichert und ist keine Ablehnung. Bestehende Pläne/Historie bleiben geschützt.
+- Gemeinsame Bewertung von Basis, bis zu vier Jacken und drei Accessoires; weniger Zufall, gemeinsame bekannte Stile und positiv bewertete Stückpaare. Unbekannte Farben erhalten keinen neutralen Harmoniebonus. Bestehende Saison-/Anlass-/Wetter-/Wäsche-/Ablehnungsregeln bleiben erhalten.
+- Zurücknehmbare positive Bewertung auf Home und unter Outfits. Vorhandene Datentypen und Sicherungsformat 4 werden wiederverwendet, keine neue Migration oder Abhängigkeit.
+- Sichtbarer Empfehlungskontext, zur Vorhersage passendes Symbol, deutsche Kopfzeile und echtes Einstellungen-Symbol. Lesbare Fehleransicht bei unzugänglichem lokalen Speicher, kein Löschen oder Neuladen eines offenen Entwurfs. Tastatur-Sprunglink und Dialogfokus geprüft.
+- Keine neuen Dienste, Kosten oder automatischen Fotoübertragungen. Foto-KI-Limits, Passformkenntnis, automatische Synchronisierung und echter iPhone-/Safari-Nachweis bleiben ausdrückliche Grenzen.

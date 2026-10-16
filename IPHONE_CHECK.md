@@ -39,3 +39,12 @@ Bei Problemen Modell/iOS, betroffene Aktion und Fehlermeldung notieren. Keine pr
 - Nach einer Woche mit neuen Daten erscheint ein Hinweis, kein Dialog. „In einer Woche“, „Sicherung öffnen“, Abschalten und Neustart prüfen. Export in Dateien speichern und wiederherstellen: Wäsche, angepasster Tageslook und Erinnerungseinstellungen bleiben erhalten. Export ist keine Bestätigung eines abgeschlossenen iOS-Dateispeicherns.
 
 Diese neuen Abläufe wurden in Chromium automatisiert; echter Safari-/iPhone-Nachweis steht aus.
+
+## Ergänzungen 0.10.0
+
+- Leerer Bestand: erster Fotoimport ohne Scrollen erreichbar. Bestehender Bestand: „Heute getragen“ direkt über den Bildern, ohne Verwechslung mit „Look speichern“.
+- „Anderer Look“ ändert die Kombination, hält die Auswahl nach Neustart und verändert keine frühere Historie. Ohne Alternative bleibt der Look erhalten. Ein übersprungener Look gilt nicht als abgelehnt.
+- „Gefällt mir“ auf Home und unter Outfits setzen, erneut tippen und Rücknahme prüfen. Erst die separate Tragebestätigung führt zum Kalender.
+- Wetter-Icon und Angabe „Wetter berücksichtigt“/„Ohne Wetter“ mit der gewählten Einstellung vergleichen. Jacken, Accessoires und gemeinsame Stile mit eigenen Kleidungsfotos auf praktische Plausibilität prüfen; Material/Passform bleiben ungeprüft.
+- Tastatur: erster Tab erreicht „Zum Inhalt“, Enter fokussiert den Hauptinhalt. Dialog schliessen/Escape gibt Fokus an Auslöser zurück. Zusätzlich VoiceOver und grössere iOS-Schrift auf einem echten Gerät erproben.
+- Bei einem realen Speicherfehler Website-Daten erhalten und eine vorhandene Sicherung aufbewahren. Die neue Fehleransicht ist automatisiert mit blockiertem IndexedDB geprüft; keine Daten zum Test auf dem eigenen Gerät löschen.

@@ -234,6 +234,10 @@ test('Wetterauswahl auf der Startseite speichert und schliesst, Einstellung blei
   expect(calls).toEqual([])
   await pickWeather(page)
   await expect(page.locator('.home-weather')).toContainText('5–9 °C · Regen')
+  await expect(page.locator('.home-weather .lucide-cloud-rain')).toBeVisible()
+  await expect(page.locator('.daily-context')).toContainText(
+    'Wetter berücksichtigt',
+  )
   await page.screenshot({
     path: info.outputPath('daily-weather-390.png'),
     fullPage: true,
