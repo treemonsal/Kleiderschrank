@@ -25,6 +25,7 @@ import {
   updateOutfit,
 } from './db'
 import { generateOutfits, missingOutfitMessage } from './generator'
+import { OnlineStylist } from './OnlineStylist'
 import {
   DEFAULT_PREFERENCES,
   DEFAULT_OUTFIT_OPTIONS,
@@ -504,6 +505,23 @@ export function OutfitView({
                   ein Oberteil mit Hose. Für diese Outfit-Auswahl werden keine
                   Fotos übertragen.
                 </p>
+              )}
+              {!!candidates.length && (
+                <OnlineStylist
+                  input={{
+                    items,
+                    candidates,
+                    options,
+                    preferences: state.preferences,
+                    weather: weatherContext,
+                  }}
+                  onOpen={onOpen}
+                  applyLabel="Empfohlenen Look speichern"
+                  onApply={async (candidate) => {
+                    await saveOutfit(candidate.garmentIds, options)
+                    notify('Die KI-Empfehlung ist als Outfit gespeichert.')
+                  }}
+                />
               )}
               <div className="outfit-results">
                 {candidates.map((candidate, index) => {

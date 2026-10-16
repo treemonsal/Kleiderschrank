@@ -103,7 +103,7 @@ export function providerError(
   return new AIProviderError(fallback, retryAt, status)
 }
 export function describeAIProblem(
-  service: 'Bilderkennung' | 'Freistellung',
+  service: 'Bilderkennung' | 'Freistellung' | 'Outfit-Beratung',
   error: unknown,
 ): string {
   const problem =

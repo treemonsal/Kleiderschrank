@@ -19,7 +19,7 @@ import {
   outfitKey,
 } from './outfit-model'
 import { chooseDailyOutfit } from './daily-outfit'
-import { isDay, localDay, shiftDay, weekDays } from './calendar'
+import { isDay, localDay, shiftDay, weekDays, wornCounts } from './calendar'
 import { dayColors } from './calendar-colors'
 import { DayCalendar, DayNumber, calendarDayDescription } from './DayCalendar'
 import { PlanEditor } from './CalendarView'
@@ -29,6 +29,9 @@ import { useClock } from './useWeather'
 import { WeatherPanel } from './WeatherPanel'
 import { OutfitSwap } from './OutfitSwap'
 import { anotherDailyLook } from './daily-choice'
+import { applyStylistLook } from './daily-choice'
+import { OnlineStylist } from './OnlineStylist'
+import { generateOutfits } from './generator'
 import { WeatherSymbol } from './WeatherSymbol'
 import { recentWear } from './wear-history'
 import { OutfitPieces } from './OutfitPieces'
@@ -124,6 +127,28 @@ export function DailyOutfit({
       ),
     ) &&
     look.garmentIds.every((id) => items.some((item) => item.id === id))
+  const stylistCandidates = useMemo(() => {
+    if (!automatic || !state || !isToday || entry) return []
+    const alternatives = generateOutfits(
+      items,
+      automatic.options,
+      state.preferences,
+      state.feedback,
+      Number(day.replaceAll('-', '')),
+      state.preferences.useWeather !== false && fresh ? forecast : undefined,
+      wornCounts(state.calendar, state.outfits, day),
+      recentWear(state.calendar, state.outfits, day),
+    )
+    return [
+      {
+        key: outfitKey(automatic.garmentIds),
+        garmentIds: automatic.garmentIds,
+        reasons: automatic.reasons,
+        score: 0,
+      },
+      ...alternatives,
+    ]
+  }, [automatic, state, items, day, isToday, entry, fresh, forecast])
   const [weatherOpen, setWeatherOpen] = useState(false)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [editing, setEditing] = useState(false)
@@ -522,6 +547,40 @@ export function DailyOutfit({
                   <ArrowRight size={16} />
                 </button>
               </div>
+              {isToday && !entry && complete && (
+                <OnlineStylist
+                  input={{
+                    items,
+                    candidates: stylistCandidates,
+                    options: look.options,
+                    preferences: state.preferences,
+                    weather:
+                      state.preferences.useWeather !== false && fresh
+                        ? forecast
+                        : undefined,
+                  }}
+                  onOpen={onOpen}
+                  applyLabel="Für heute übernehmen"
+                  onApply={async (candidate) => {
+                    await applyStylistLook({
+                      day,
+                      expectedIds: look.garmentIds,
+                      expectedSelection:
+                        state.preferences.dailySelection?.day === day
+                          ? state.preferences.dailySelection.updatedAt
+                          : null,
+                      expectedPreferences: state.preferences.updatedAt,
+                      garmentIds: candidate.garmentIds,
+                      versions: items.map((item) => ({
+                        id: item.id,
+                        updatedAt: item.updatedAt,
+                      })),
+                      options: look.options,
+                    })
+                    notify('Die KI-Auswahl ist für heute gespeichert.')
+                  }}
+                />
+              )}
             </>
           ) : (
             <div className="daily-look-empty">

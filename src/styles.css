@@ -2668,6 +2668,70 @@ fieldset {
 :is(.garment-open, .outfit-piece):active .garment-picture {
   transform: scale(0.975);
 }
+.online-stylist {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: linear-gradient(150deg, #ffffff05, transparent), var(--surface);
+  text-align: left;
+}
+.online-stylist h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+.online-stylist > p,
+.stylist-disclosure,
+.stylist-result {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.stylist-disclosure summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.online-stylist .field {
+  margin: 8px 0 16px;
+}
+.online-stylist input {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  font-size: 16px;
+}
+.stylist-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.stylist-actions .text-button {
+  min-height: 44px;
+}
+.stylist-result {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+.stylist-result .outfit-pieces {
+  margin: 16px 0;
+}
+.stylist-result ul {
+  padding-left: 18px;
+  margin: 12px 0;
+}
+.stylist-result .button {
+  margin-top: 16px;
+}
+
 /* Keep page motion in the normal stacking order beneath the fixed glass bar. */
 .view {
   animation: view-arrive 300ms var(--ease-settle) both;

@@ -62,6 +62,13 @@ export function AISettings() {
             ausgelastet sein und Nutzungslimits haben.
           </p>
           <p className="muted">
+            Der Online-Stylist vergleicht auf deinen Tipp gespeicherte Looks mit
+            Qwen3-VL-8B. Dafür sendet er eine Fotoübersicht der gezeigten
+            Auswahl, Kleidungsangaben, Anlass, Stilwünsche und gegebenenfalls
+            Wetterwerte an Qwen3-VL-Outpost. Er lädt nicht automatisch deine
+            gesamte Sammlung hoch.
+          </p>
+          <p className="muted">
             Dein ausgewähltes Foto wird an{' '}
             <a
               href="https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost"
@@ -105,8 +112,9 @@ export function AISettings() {
             />
             <span>
               Ich erlaube, neue Kleidungsfotos automatisch an diese beiden
-              Community-Dienste zu senden. Meine gespeicherte Sammlung wird
-              nicht hochgeladen.
+              Community-Dienste zu senden. Beim Online-Stylisten gebe ich die
+              ausgewählten gespeicherten Fotos erst durch Starten der Beratung
+              frei.
             </span>
           </label>
         </Information>

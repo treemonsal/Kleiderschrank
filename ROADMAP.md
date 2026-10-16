@@ -239,3 +239,13 @@ Version 0.11.1: 140 Datentests, 75 Chromium-Browserfälle, Produktionsbuild und 
 - [ ] Wechselgefühl und feste Glasleiste auf echtem iPhone/Safari prüfen
 
 Version 0.11.2: 140 Datentests, 76 Chromium-Browserfälle, Produktionsbuild und Formatprüfung bestanden. [Pages-Lauf 38864384462](https://github.com/treemonsal/Kleiderschrank/actions/runs/38864384462) für App-Commit `e02bd5694ae020ba7b3a26b9d66a03a0120b1185` erfolgreich. Öffentliche App-Version und korrigierte Animations-CSS über HTTPS geprüft; bestehende Funktionen, Installationspfad und neue Platin-Icons erhalten.
+
+## Version 0.12 – Online-Stylist
+
+- [x] Kostenlos verfügbares Qwen3-VL-8B und echten Foto-/Antwortvertrag prüfen
+- [x] Begrenzte Outfit-Vergleiche mit Bildern, Kontext und konkretem Wunsch integrieren
+- [x] Vorhandene IDs, lokale Auswahl, Abbruch und konkurrierende Änderungen schützen
+- [x] Begründung, optionale Tipps und Übernahme/Speicherung in Home und Outfits
+- [x] Abschliessende Daten-/Browser-/Layoutprüfung: 160 Daten- und 88 Chromium-Browserfälle
+- [ ] Version 0.12.0 veröffentlichen und öffentliche Dateien prüfen
+- [ ] Online-Stylist mit eigenen Kleidungsfotos auf echtem iPhone/Safari beurteilen

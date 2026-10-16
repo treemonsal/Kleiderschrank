@@ -141,3 +141,10 @@ Die Entwicklungsregeln stehen nach ausdrücklicher Freigabe in AGENTS.md.
 
 - Tabwechsel animieren den neuen Seiteninhalt innerhalb der normalen Ebenenfolge; die feste Glasnavigation bleibt davor sichtbar und bedienbar. Keine Browser-Snapshot-Ebene über der Menüleiste.
 - Seiteninhalt und aktive Auswahl wechseln im selben Render-Schritt; Scrollen und nachfolgende Fokusaktionen beziehen sich auf den neuen Inhalt. Schnelles Zurücktippen, reduzierte Bewegung, Tageswischen und lokale Daten bleiben erhalten.
+
+## Version 0.12 – echte Online-Outfit-Beratung
+
+- Auf Nutzerwunsch externe Verarbeitung ausgewählter gespeicherter Kleidungsfotos und Kontext erlauben. Kostenlos bleiben; die Freigabe des einzelnen Nutzers respektieren. Kein Konto, Tracking oder neuer Cloud-Speicher erforderlich.
+- Qwen3-VL-8B vergleicht bis zu vier vollständige, verfügbare Looks anhand einer beschrifteten Fotoübersicht, Anlass, Stil-/Farbvorlieben, optionalem Wunsch und frischem Wetter. Keine beliebigen neuen Stücke oder ungeprüften Referenzen übernehmen.
+- Start auf ausdrückliche Aktion bei aktivierter Community-KI. Benannte Übertragung, Abbruch, Zeitgrenze, klare Dienstfehler und lokaler Fallback. Ohne Fotos wird die Beratung als angabenbasiert kenntlich gemacht.
+- Kurze Begründung und aufklappbare Tipps, Empfehlung für heute oder als Outfit speichern. Tagesübernahme schützt inzwischen geänderte Bestände, Vorlieben, Wäsche und Ablehnungen. Bestätigte/geplante Tage werden nicht überschrieben. Bestehendes Sicherungsformat bleibt kompatibel.

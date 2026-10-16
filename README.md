@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.11.2 hält die Glasnavigation beim Seitenwechsel durchgehend sichtbar. Der Seiteninhalt blendet weich ein, während Auswahl und Menü sofort reagieren. Das neue Platin-Homescreen-Icon aus 0.11.1 und die spielerischen Animationen bleiben erhalten. Die Produktkritik steht in [AUDIT.md](AUDIT.md).
+Version 0.12.0 ergänzt einen echten Online-Stylisten: Qwen3-VL-8B vergleicht Fotos vorhandener Looks mit Anlass, Stilwunsch, Vorlieben und optional Wetter. Die Empfehlung lässt sich für heute übernehmen oder als Outfit speichern. Die reine Regelauswahl, das Platin-Icon und die durchgehend sichtbare Glasnavigation bleiben erhalten.
 
 **Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.11.2 am 16. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
@@ -81,14 +81,14 @@ Ein Export bedeutet, dass eine Datei erstellt wurde. Bitte selbst in „Dateien�
 
 Im Kleidungseditor ein Foto hinzufügen und bei **Farbe** auf **Farbe aus Foto wählen** tippen. Eine einfarbige Stelle am Stoff antippen; die Positionsregler und Pfeiltasten helfen beim genauen Auswählen. Erst **Blau übernehmen** (beziehungsweise die vorgeschlagene Farbe) ändert das Farbfeld. Danach das Stück normal speichern oder Änderungen verwerfen. Die Farbe lässt sich weiterhin manuell ändern.
 
-Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Merkmale liefert nach Freigabe die kostenlose Online-KI; Outfit-Fotobewertung ist noch nicht eingebaut.
+Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Merkmale liefert nach Freigabe die kostenlose Online-KI; Der Online-Stylist kann zusätzlich Übersichten ausgewählter Looks vergleichen; er bewertet keine Passform an deinem Körper.
 
 ## Foto automatisch erfassen
 
 1. **Mehr → Online-Foto-KI** öffnen. Die genannten Anbieter und Datenschutzhinweise lesen, Fotoübertragung erlauben und **Kostenlose KI aktivieren** antippen. Dafür brauchst du keinen Token und kein Abo.
 2. Neues Foto aufnehmen oder aus der Mediathek wählen. Qwen3-VL-Outpost erkennt Name, Kategorie, Farbe und sichtbare Marke sowie Notizen, Stil und Saison. Marke ohne lesbares Zeichen leer lassen; Stil/Saison sind Schätzungen. Alle Angaben bleiben korrigierbar. Während der Analyse selbst geänderte Felder bleiben erhalten.
 3. BiRefNet erstellt eine transparente Vorschau. **Freistellung übernehmen** oder **Original behalten** wählen, dann das Stück speichern. Das vorbereitete Originalfoto bleibt zusätzlich erhalten und wird mitgesichert.
-4. Nach Aktivierung zeigt die Einstellung nur den aktiven Status. Der Aktivieren-Knopf verschwindet; die Anbieter-/Datenschutzhinweise und Freigabe bleiben aufklappbar. **Community-KI ausschalten** oder die Foto-Freigabe abwählen verhindert neue Übertragungen. Die vorhandene Sammlung bleibt auf deinem Gerät. Das Öffnen/Bearbeiten gespeicherter Stücke lädt sie nicht automatisch hoch.
+4. Nach Aktivierung zeigt die Einstellung nur den aktiven Status. Der Aktivieren-Knopf verschwindet; die Anbieter-/Datenschutzhinweise und Freigabe bleiben aufklappbar. **Community-KI ausschalten** oder die Foto-Freigabe abwählen verhindert neue Übertragungen. Die vorhandene Sammlung bleibt auf deinem Gerät. Das Öffnen/Bearbeiten gespeicherter Stücke lädt sie nicht automatisch hoch. Der Online-Stylist sendet ausgewählte gespeicherte Fotos erst beim ausdrücklich gestarteten Vergleich.
 
 Die App nutzt die öffentlich angebotenen Gradio-APIs von [Qwen3-VL-Outpost](https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost) und der [offiziellen BiRefNet-Demo](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo). **Das sind öffentliche Community-Dienste, kein privater MyStyle-Server.** Das ausgewählte Foto wird an beide übertragen; die Freistellung nutzt temporäre Dateien auf dem Server des Anbieters. Speicher-/Löschdauer können wir nicht garantieren. Fotos mit Personen oder privaten Hintergründen vermeiden. Es gibt keine Verfügbarkeitsgarantie; Warteschlangen, Tageslimits und Abschaltungen sind möglich. Dann bleibt das Foto erhalten, ein brauchbares Teilergebnis wird nicht verworfen. Keine automatischen Ausweichanbieter, Provider-Schlüssel oder bezahlten Wiederholungen.
 
@@ -198,3 +198,13 @@ Die neue dunkle Oberfläche ist unter derselben App-Adresse veröffentlicht. Öf
 Die neuen Installationsdateien zeigen den silbernen Bügel auf Graphit. Öffne die App online und übernimm das angebotene Update. Neue Homescreen-Verknüpfungen laden das neue iPhone-Icon. iOS kann das Icon vorhandener Installationen länger behalten. Lösche dafür weder die App noch Safari-Websitedaten: Deine Sammlung liegt lokal. Vor einer bewussten Neuinstallation immer unter **Mehr** eine vollständige Sicherung exportieren und die Datei aufbewahren.
 
 Original, Exportgrössen und reproduzierbare Aufbereitung stehen unter [design/app-icon](design/app-icon/README.md).
+
+## Online-Stylist ab 0.12
+
+1. Kostenlose Community-KI unter **Mehr → Online-Foto-KI** aktivieren, falls noch nicht geschehen. Ein eigener Server-Modus unterstützt diese neue Beratung nicht; es wird kein anderer Dienst im Hintergrund verwendet.
+2. Beim heutigen, noch nicht eingeplanten Tageslook oder unter **Outfits → Entdecken** den **Online-Stylisten** öffnen. Optional einen Wunsch eingeben, zum Beispiel „ruhiger fürs Büro“. Unter Outfits zuerst die normalen Vorschläge erstellen.
+3. **Looks online vergleichen** sendet eine verkleinerte Fotoübersicht von höchstens vier vollständigen Kombinationen mit maximal 20 unterschiedlichen Stücken an denselben Qwen3-VL-Outpost. Freistellungen werden bevorzugt; Originale bleiben unverändert. Zusätzlich gehen die ausgewählten Kleidungsangaben, Anlass, Stil-/Farbvorlieben, Wunsch und gegebenenfalls Temperatur-/Regenwerte mit. Keine vollständige Sicherung, Standortkoordinaten, Zugangscodes oder fremden Kleiderschränke. Für Teile ohne Foto verwendet die KI ausschliesslich Angaben.
+4. Qwen3-VL-8B wählt einen der angebotenen Looks und liefert eine kurze Begründung, aufklappbare Stylingtipps und Grenzen der Einschätzung. **Für heute übernehmen** speichert die Wahl dauerhaft; **Empfohlenen Look speichern** legt ein normales Outfit an. Die Beratung selbst bleibt nur in der aktuellen Ansicht, die übernommene Auswahl ist im bestehenden Backup enthalten.
+5. Abbrechen, Seiten-/Tageswechsel, veränderte Auswahl oder zurückgezogene Freigabe verhindern die Übernahme verspäteter Antworten. Vor einer Tagesübernahme werden Bestand, Wäsche, Ablehnung und konkurrierende Änderungen nochmals atomar geprüft.
+
+Das ist eine echte Online-Bild-KI zusätzlich zur lokalen Regelauswahl. Die Bilderkennung einzelner neuer Stücke verwendet weiterhin das sparsamere 4B-Modell, die neue Outfit-Beratung das ebenfalls öffentlich angebotene 8B-Modell. Der Dienst bleibt kostenlos, mit möglichen Nutzungslimits, Wartezeiten und Änderungen durch den Betreiber. Keine automatischen Wiederholungen oder kostenpflichtigen Ausweichdienste. Wenn er ausfällt, bleiben vorhandene Looks und alle lokalen Funktionen erhalten. Stilurteile sind subjektiv; Wärme, Wasserdichtigkeit, Dresscodes und tatsächliche Passform sind damit nicht nachgewiesen.

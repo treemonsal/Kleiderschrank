@@ -61,6 +61,10 @@ export function saveAIConnection(value: AIConnection | null) {
     localStorage.setItem(KEY, JSON.stringify(validateConnection(value)))
   else localStorage.removeItem(KEY)
 }
+export function stylistEnabled(): boolean {
+  const connection = readAIConnection()
+  return connection?.enabled === true && connection.mode === 'community'
+}
 export function parseAttributes(value: unknown): PhotoAttributes {
   if (!value || typeof value !== 'object')
     throw new Error('Die KI hat keine prüfbaren Angaben geliefert.')

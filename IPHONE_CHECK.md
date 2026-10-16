@@ -65,3 +65,9 @@ Diese neuen Abläufe wurden in Chromium automatisiert; echter Safari-/iPhone-Nac
 ## Neu in 0.11.2
 
 - Mehrfach zwischen Heute, Kleiderschrank, Outfits und Mehr wechseln, auch bei langem Inhalt und nach Scrollen. Die Glasleiste bleibt ohne Verschwinden sichtbar; aktive Auswahl und neuer Inhalt reagieren gemeinsam. Schnell zurücktippen und danach Sicherungserinnerung/Fokusziel sowie „Bewegung reduzieren“ prüfen.
+
+## Neu in 0.12
+
+- Community-KI aktivieren; heutigen noch nicht geplanten Look online vergleichen. Optional „ruhiger fürs Büro“ eingeben. Fotoübersicht, kleine Schrift, Tipps, Fehleranzeige und Speichertaste im Hochformat prüfen. Keine Übertragung vor Start; vorhandene Foto-Freistellungen und Originale bleiben erhalten.
+- Empfehlung für heute übernehmen und App neu öffnen: Auswahl bleibt. Unter Outfits Empfehlung speichern und im Kalender verwenden. Vorher geplante/bestätigte Tage dürfen nicht überschrieben werden.
+- Laufende Beratung abbrechen, anderen Look wählen oder Seite wechseln. Eine späte Antwort darf keine aktuelle Auswahl ersetzen. Bei Nutzungslimit bleiben die normalen Vorschläge verfügbar. Fotos ohne sichtbaren Stoff/Passform liefern keine verlässlichen Aussagen über Wärme oder Sitz am Körper.

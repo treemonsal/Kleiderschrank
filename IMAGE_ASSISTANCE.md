@@ -93,3 +93,9 @@ Am Bewertungstag gelesene offizielle Projektquellen; Angaben können sich änder
 - [MDN WebGPU-Kompatibilität](https://github.com/mdn/browser-compat-data/blob/main/api/GPU.json), [Canvas-Kompatibilität](https://github.com/mdn/browser-compat-data/blob/main/api/CanvasRenderingContext2D.json)
 
 Hugging-Face-Modellkarten und eine WebKit-Seite waren bei dieser Recherche durch den Proxy nicht lesbar. Dafür werden keine ungeprüften Modellangaben übernommen.
+
+## Online-Outfit-Beratung ab 0.12
+
+Am 16.10.2026 vom Nutzer zusätzlich gewünscht: ausgewählte gespeicherte Fotos und Kontext online für bessere Outfit-Beratung verarbeiten. Derselbe öffentliche [Qwen3-VL-Outpost](https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost), `/gradio_api/call/run_router`, öffentlich im Betreiber-Quellcode gelistetes `Qwen3-VL-8B-Instruct`. Kein Anbieter-Token im Client. Community-Freigabe plus bewusster Start; kein Hintergrund-Upload der Sammlung.
+
+Beschriftete Übersicht maximal vier regelkonforme Looks mit 20 unterschiedlichen Teilen. Der Dienst wählt ausschliesslich einen vorgegebenen Look; neue IDs, beschädigte/unvollständige Antworten und zu grosse Texte werden verworfen. Originale werden nicht verändert. Wirklich gelieferter Modelltext mit drei öffentlichen Produkt-Testfotos und Nutzerwunsch geprüft, darunter korrekt begründete Auswahl eines Streifenoberteils gegenüber Logo-Shirts und benannte fehlende Fotos. Dies belegt Integration und ein Beispiel, keine allgemeine Empfehlungsgenauigkeit. Native Safari-Verbindung bleibt manuell zu prüfen; Cloud-Prüfung über TLS-geprüfte Host-Brücke.

@@ -2,13 +2,14 @@
 
 ## Produkt und Zusammenarbeit
 
-- Private deutschsprachige iPhone-PWA. Anforderungen in PRODUCT.md, Fortschritt in ROADMAP.md, Bedienung in README.md aktuell halten.
+- Deutschsprachige iPhone-PWA mit getrennten lokalen Kleiderschränken pro Gerät. Anforderungen in PRODUCT.md, Fortschritt in ROADMAP.md, Bedienung in README.md aktuell halten.
 - Normale technische Entscheidungen selbstständig treffen. Bei Kosten, erforderlichen Zugangsdaten und echten offenen Produktentscheidungen nachfragen.
 - Bestehenden Checkout benutzen; Cloud-Aufgaben sind bereits isoliert. Ohne ausdrücklichen Auftrag keine zusätzlichen Git-Worktrees anlegen.
 
 ## Datenschutz und Kosten
 
 - Keine bezahlten APIs, Abonnements oder Zahlungsdaten. Externe Foto-KI ist seit 15.10.2026 ausdrücklich gewünscht, weiterhin komplett kostenlos. Nur nach aktivierter Foto-Freigabe an die klar benannten und freigegebenen Dienste senden. Community-Dienste speichern gegebenenfalls temporäre Dateien; keine falschen Zusagen über deren Löschdauer machen.
+- Seit 16.10.2026 ist Online-Outfit-Beratung mit ausgewählten gespeicherten Kleidungsfotos, Angaben, Stilwunsch und Wetterwerten ausdrücklich gewünscht. Kostenloser Qwen3-VL-Outpost-Dienst; vorhandene Community-Freigabe plus klar benannte Startaktion. Keine automatische Freigabe für andere Nutzer und kein vollständiger Sammlungs-/Sicherungsupload.
 - Fotos, Kleidung, Outfits und Präferenzen lokal in IndexedDB speichern. Kein Tracking, keine externen Fonts, keine Anbieter-/Administrationsschlüssel im Frontend. Der persönliche Server-Verbindungscode bleibt nur in lokalen Geräteeinstellungen, nie im Backup.
 - Standort erst nach ausdrücklicher Freigabe verwenden; manuellen Ort als Alternative anbieten.
 - Keine simulierten KI-Ergebnisse oder funktionslosen Aktionen. Regeln und Grenzen verständlich benennen.
