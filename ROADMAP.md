@@ -8,7 +8,7 @@
 - [x] Startseite, Kollektion, Outfits, Editor, Einstellungen und Chat gemeinsam gestalten
 - [x] Freiwilligen Stilcheck hinter dem Tageslook anordnen
 - [x] Mobile/Browser-/Offline-Abläufe, Kontraste und gezielte Design-Rückkehr geprüft; 198 Logik-/Datentests und alle 109 Chromium-Browserfälle bestanden
-- [ ] Version veröffentlichen und öffentliche Dateien bestätigen
+- [x] Version 0.15.0 veröffentlicht: Pages-Lauf 39297516637 erfolgreich; öffentliche Version, neue Papierpalette, Manifest/Service Worker und JS-/CSS-Bytegleichheit bestätigt
 
 ## Version 0.14.0 – im Gespräch mit MyStyle
 

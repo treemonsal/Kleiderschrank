@@ -36,7 +36,7 @@ Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vit
 
 Version 0.12.1 korrigiert die Fotoanzeige beim Wäsche-Statuswechsel: Bildadressen bleiben gültig, bis die sichtbare Quelle ersetzt wurde. Originale und Freistellungen bleiben erhalten. Der Online-Stylist aus 0.12 bleibt verfügbar. Ab 0.15 ersetzt die Textnavigation die frühere Glasleiste.
 
-**Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Stand 0.14.0 am 19. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft; 0.15.0 wird nach Abschluss der Prüfungen veröffentlicht. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
+**Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.15.0 am 19. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
 ## Lokal starten
 
