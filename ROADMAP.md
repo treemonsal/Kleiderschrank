@@ -9,7 +9,7 @@
 - [x] Sicherungsformat 6, alte Formate 1–5, Reset-/Merge- und Zwei-Fenster-Schutz
 - [x] 218 Logik-/Datentests und gezielte Chat-/Stilgespräch-Browserabläufe bestanden
 - [x] Vollständiger Browserlauf: alle 119 Fälle bestanden; Darstellung und Offline-Fortsetzen im Projektpfad geprüft
-- [ ] Veröffentlichen und öffentliche Dateien bestätigen
+- [x] Version 0.16.0 veröffentlicht: Pages-Lauf 39320217059 erfolgreich; öffentliche Version, Gespräch/Punkt, JS-/CSS-Bytegleichheit, Manifest und Service Worker bestätigt
 
 ## Version 0.15.0 – neues Garderobenjournal
 
