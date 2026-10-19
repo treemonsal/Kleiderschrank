@@ -1,5 +1,15 @@
 # MyStyle
 
+## Version 0.13.0 – Stilprofil und lernende Gewichtung
+
+- Nicht blockierender, dauerhaft überspringbarer Stilcheck mit drei freiwilligen Schritten. Bestehende Vorlieben vorfüllen, Entwürfe abbrechbar, Profil unter Mehr jederzeit bearbeiten.
+- Lieblingsstile/-farben, seltener gewünschte Farben, Farbigkeit, üblicher Anlass und Abwechslung beeinflussen tatsächliche Vorschlags- und Tauschteilgewichte. Keine verbotenen Stücke aus weichen Vorlieben ableiten; Verfügbarkeit, Vollständigkeit und Kontext erhalten.
+- Einheitliche Daumen an Tages-, Rückblick-, vorgeschlagenen und gespeicherten Looks; optionale, gezielte Ablehnungsgründe. Rückmeldungen kontextbezogen anwenden, alte globale Rückmeldungen weiter beachten. Anlass-Ablehnung nicht als Geschmacksurteil lernen; alternatives Kombinieren ohne Ablehnung.
+- Positive Hinweise auf neue passende Stücke übertragen; negative Stil-/Farbhinweise nur aus ausdrücklich gewähltem Grund. Begrenzter Einfluss, keine Körper-/Material-/Persönlichkeitsannahmen, kein vorgetäuschtes Modelltraining.
+- Aktuelle Bewertung pro Kombination statt Mehrfachzählung; Bewertungen einzeln zurücknehmen oder insgesamt mit Bestätigung zurücksetzen. Profil und Sammlungsdaten erhalten, konkurrierende Profil-/Undo-Änderungen erkennen.
+- Neue optionale Felder in vorhandenen Präferenz-/Feedbackobjekten, keine destruktive Datenbankmigration. Sicherungsformat 4 erweitert validieren und vollständig wiederherstellen; alte Sicherungen unverändert lesen.
+- Stilprofil und kompakte gelernte Hinweise beim ausdrücklich gestarteten Online-Vergleich berücksichtigen; bestehende Freigabe, Grenzen und kostenlose Dienste erhalten. Kein automatischer Cloud-Upload.
+
 Privater Fashion-Begleiter für das eigene iPhone. Eine installierbare, deutschsprachige PWA, die Kleidung lokal verwaltet. Kein App Store, keine Abonnements, keine bezahlten APIs, kein Konto für den lokalen Kleiderschrank. Optionale externe Bild-KI ist ausdrücklich gewünscht, bleibt kostenlos und nutzt nach Freigabe klar benannte öffentliche Community-Dienste. Ein eigener Server ist optional, aber kein kostenloses HF-Docker-Hosting. Eigene Gestaltung, inspiriert von klaren iPhone-Oberflächen und moderner Fashion-Ästhetik.
 
 ## Erste Version

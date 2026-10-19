@@ -1,5 +1,128 @@
 @import 'tailwindcss';
 
+.style-profile-card {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--surface);
+}
+.style-profile-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 19px;
+  margin-bottom: 12px;
+}
+.style-profile-card p,
+.style-check-summary p {
+  line-height: 1.6;
+}
+.style-invitation {
+  margin: 0 0 18px;
+  padding: 14px 16px;
+}
+.style-invitation h2 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+.style-invitation p {
+  font-size: 13px;
+}
+.style-invitation .style-check-actions {
+  margin: 10px 0 0;
+}
+.style-check-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0 10px;
+  align-items: center;
+}
+.style-check-actions .button {
+  flex: 1;
+}
+.style-progress {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0 18px;
+}
+.style-progress span {
+  height: 3px;
+  border-radius: 3px;
+  background: var(--line);
+  flex: 1;
+}
+.style-progress span.active {
+  background: var(--accent);
+}
+.style-check .style-step {
+  display: block;
+  margin: 24px 0;
+}
+.style-step legend {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.style-step .field,
+.style-step .color-options {
+  margin-top: 16px;
+}
+.style-step .chips {
+  margin-top: 18px;
+}
+.style-check-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--soft);
+  border-radius: 16px;
+  font-size: 13px;
+}
+.outfit-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+.outfit-card-actions .outfit-rating {
+  margin: 0;
+}
+.outfit-card-actions .outfit-rating .muted {
+  display: none;
+}
+.feedback-reasons {
+  display: grid;
+  gap: 12px;
+  margin: 22px 0;
+}
+.feedback-reasons .button {
+  white-space: normal;
+  text-align: left;
+  justify-content: flex-start;
+  line-height: 1.5;
+}
+.feedback-history article {
+  display: flex;
+  gap: 12px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.feedback-history article > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.feedback-history article p {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.feedback-history .text-button {
+  display: flex;
+  margin-top: 4px;
+}
+
 /* All artwork, type and icons are served locally. No remote font requests. */
 :root {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;

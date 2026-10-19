@@ -121,11 +121,12 @@ export function OnlineStylist({
         <summary>Was wird gesendet?</summary>
         <p>
           Erst beim Start gehen bis zu {photoCount} gespeicherte Kleidungsfotos
-          als Übersicht, ihre Angaben, Anlass, Stilvorlieben, dein Wunsch und
-          gegebenenfalls die Wettervorhersage an Qwen3-VL-Outpost auf Hugging
-          Face. Keine Standortkoordinaten oder vollständige Sicherung. Der
-          Community-Dienst kann Inhalte speichern; Löschdauer und Verfügbarkeit
-          sind nicht garantiert. Die Auswahl bleibt auf vorhandene, verfügbare
+          als Übersicht, ihre Angaben, Anlass, dein Stilprofil, aus deinen
+          Bewertungen abgeleitete Vorlieben, dein Wunsch und gegebenenfalls die
+          Wettervorhersage an Qwen3-VL-Outpost auf Hugging Face. Keine
+          Standortkoordinaten oder vollständige Sicherung. Der Community-Dienst
+          kann Inhalte speichern; Löschdauer und Verfügbarkeit sind nicht
+          garantiert. Die Auswahl bleibt auf vorhandene, verfügbare
           Kombinationen begrenzt.
         </p>
       </details>

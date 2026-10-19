@@ -9,8 +9,6 @@ import {
   RefreshCw,
   Settings2,
   Sparkles,
-  ThumbsDown,
-  ThumbsUp,
   Trash2,
 } from 'lucide-react'
 import { COLORS, SEASONS, STYLES, type Garment } from './model'
@@ -19,8 +17,6 @@ import {
   saveOutfit,
   savePreferences,
   saveOutfitOptions,
-  setOutfitFeedback,
-  toggleOutfitLike,
   storageError,
   updateOutfit,
 } from './db'
@@ -45,6 +41,7 @@ import { deleteOutfit } from './calendar-db'
 import { weatherFresh, type WeatherDay } from './weather'
 import { useClock, weatherForToday } from './useWeather'
 import { OutfitPieces } from './OutfitPieces'
+import { OutfitRating } from './OutfitRating'
 
 function PreferenceEditor({
   current,
@@ -513,6 +510,7 @@ export function OutfitView({
                     candidates,
                     options,
                     preferences: state.preferences,
+                    feedback: state.feedback,
                     weather: weatherContext,
                   }}
                   onOpen={onOpen}
@@ -527,10 +525,6 @@ export function OutfitView({
                 {candidates.map((candidate, index) => {
                   const saved = state.outfits.some(
                     (outfit) => outfitKey(outfit.garmentIds) === candidate.key,
-                  )
-                  const liked = state.feedback.some(
-                    (item) =>
-                      item.id === candidate.key && item.verdict === 'liked',
                   )
                   return (
                     <article
@@ -571,45 +565,16 @@ export function OutfitView({
                           {saved ? <Check size={16} /> : <Bookmark size={16} />}
                           {saved ? 'Gespeichert' : 'Speichern'}
                         </button>
-                        <button
-                          data-motion="pop"
-                          className={`icon-button ${liked ? 'liked' : ''}`}
-                          aria-label={`Vorschlag ${index + 1}: Gefällt mir`}
-                          aria-pressed={liked}
+                        <OutfitRating
+                          ids={candidate.garmentIds}
+                          occasion={options.occasion}
+                          label={`Vorschlag ${index + 1}`}
                           disabled={busy}
-                          onClick={() =>
-                            void action(async () => {
-                              const liked = await toggleOutfitLike(
-                                candidate.garmentIds,
-                              )
-                              notify(
-                                liked
-                                  ? 'Dein Geschmack wurde berücksichtigt.'
-                                  : 'Positive Bewertung zurückgenommen.',
-                              )
-                            })
-                          }
-                        >
-                          <ThumbsUp size={19} />
-                        </button>
-                        <button
-                          className="icon-button"
-                          aria-label={`Vorschlag ${index + 1}: Passt nicht`}
-                          disabled={busy}
-                          onClick={() =>
-                            void action(async () => {
-                              await setOutfitFeedback(
-                                candidate.garmentIds,
-                                'rejected',
-                              )
-                              notify(
-                                'Diese Kombination wird nicht mehr vorgeschlagen.',
-                              )
-                            })
-                          }
-                        >
-                          <ThumbsDown size={19} />
-                        </button>
+                          notify={notify}
+                          rating={state.feedback.find(
+                            (item) => item.id === candidate.key,
+                          )}
+                        />
                       </div>
                     </article>
                   )
@@ -758,6 +723,16 @@ export function OutfitView({
                       ids={outfit.garmentIds}
                       items={items}
                       onOpen={onOpen}
+                    />
+                    <OutfitRating
+                      ids={outfit.garmentIds}
+                      occasion={outfit.occasion}
+                      label={outfit.name}
+                      disabled={busy}
+                      notify={notify}
+                      rating={state.feedback.find(
+                        (item) => item.id === outfitKey(outfit.garmentIds),
+                      )}
                     />
                     {!isCompleteOutfit(
                       outfit.garmentIds.flatMap((id) =>

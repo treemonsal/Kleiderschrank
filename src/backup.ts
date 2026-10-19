@@ -1,5 +1,6 @@
 import { CATEGORIES, COLORS, SEASONS, STYLES, type Garment } from './model'
 import { backupRevision } from './backup-reminder'
+import { parseStyleProfile } from './personalization'
 import { blobToDataURL } from './photos'
 import { db, type WardrobeDatabase } from './db'
 import { isDay, MAX_CALENDAR_ENTRIES, type CalendarEntry } from './calendar'
@@ -333,11 +334,26 @@ export function parseFullBackup(json: string): BackupData {
       const garmentIds = references(item.garmentIds),
         id = outfitKey(garmentIds)
       if (item.id !== id || feedbackIds.has(id)) throw invalid()
+      if (item.reason !== undefined && item.verdict !== 'rejected')
+        throw invalid()
       feedbackIds.add(id)
       return {
         id,
         garmentIds,
         verdict: choice(item.verdict, ['liked', 'rejected']),
+        ...(item.reason === undefined
+          ? {}
+          : {
+              reason: choice(item.reason, [
+                'combination',
+                'colors',
+                'style',
+                'occasion',
+              ] as const),
+            }),
+        ...(item.occasion === undefined
+          ? {}
+          : { occasion: choice(item.occasion, OCCASIONS) }),
         updatedAt: timestamp(item.updatedAt),
       }
     },
@@ -354,6 +370,9 @@ export function parseFullBackup(json: string): BackupData {
         COLORS.map((c) => c.name),
       ),
       updatedAt: timestamp(item.updatedAt),
+      ...(item.styleProfile === undefined
+        ? {}
+        : { styleProfile: parseStyleProfile(item.styleProfile) }),
       ...(item.outfitOptions === undefined
         ? {}
         : { outfitOptions: parseOutfitOptions(item.outfitOptions) }),
@@ -373,6 +392,12 @@ export function parseFullBackup(json: string): BackupData {
         : { backupReminder: parseReminder(item.backupReminder) }),
     }
   }
+  if (
+    preferences?.styleProfile?.avoidColors.some((color) =>
+      preferences.colors.includes(color),
+    )
+  )
+    throw invalid()
   const calendar: CalendarEntry[] = []
   let weather: WeatherState | null = null
   if (data.version >= 3) {

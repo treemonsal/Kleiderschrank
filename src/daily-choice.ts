@@ -11,6 +11,7 @@ import {
 import { recentWear } from './wear-history'
 import { weatherFresh } from './weather'
 import { UserFacingError } from './constraints'
+import { feedbackForOccasion } from './personalization'
 
 export async function anotherDailyLook(
   input: {
@@ -159,7 +160,7 @@ export async function applyStylistLook(
               version.id === item.id && version.updatedAt === item.updatedAt,
           ),
       ) ||
-      feedback.some(
+      feedbackForOccasion(feedback, input.options.occasion).some(
         (item) =>
           item.id === outfitKey(input.garmentIds) &&
           item.verdict === 'rejected',

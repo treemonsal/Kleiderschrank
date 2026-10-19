@@ -16,6 +16,10 @@ import { weatherFresh, type WeatherDay } from './weather'
 import { UserFacingError } from './constraints'
 import { saveOutfit } from './db'
 import { saveCalendarEntry } from './calendar-db'
+import {
+  feedbackForOccasion,
+  createPersonalizationScorer,
+} from './personalization'
 export function replacementChoices(
   items: Garment[],
   ids: string[],
@@ -28,6 +32,8 @@ export function replacementChoices(
 ) {
   const target = items.find((item) => item.id === targetId)
   if (!target) return []
+  feedback = feedbackForOccasion(feedback, options.occasion)
+  const personal = createPersonalizationScorer(items, preferences, feedback)
   const compatibility = createCompatibilityScorer(feedback)
   const remaining = items.filter(
     (item) => ids.includes(item.id) && item.id !== targetId,
@@ -49,6 +55,8 @@ export function replacementChoices(
     .sort((a, b) => {
       const score = (item: Garment) =>
         compatibility([...remaining, item]).score +
+        personal.itemScore(item) +
+        personal.lookScore([...remaining, item]) +
         (item.favorite ? 2 : 0) +
         (preferences.colors.includes(item.color) ? 2 : 0) +
         (options.style !== 'Alle' && item.styles.includes(options.style)

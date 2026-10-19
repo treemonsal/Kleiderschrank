@@ -1,5 +1,17 @@
 # Entwicklungsplan
 
+## Version 0.13.0 – persönliche Empfehlungen
+
+- [x] Freiwilligen Stilcheck mit drei Schritten, dauerhaftem Überspringen und späterem Bearbeiten einbauen
+- [x] Antworten im Generator und bei Tauschteilen wirksam gewichten; Abwechslung und Farbwünsche berücksichtigen
+- [x] Einheitliche positive/negative Rückmeldung an Tages-, Rückblick-, vorgeschlagenen und gespeicherten Looks
+- [x] Farben, Stil und Anlass als unterschiedliche Ablehnungsgründe behandeln; Alternativen ohne negatives Lernen erhalten
+- [x] Begrenzte übertragbare Hinweise aus Bewertungen und Anlassbezug auch im Online-Stylisten berücksichtigen
+- [x] Einzelnes Zurücknehmen, bestätigtes Zurücksetzen und Schutz vor konkurrierenden Änderungen
+- [x] Profil und Bewertungsdetails vollständig sichern, alte Sicherungen lesen und Fehlwerte vor Import ablehnen
+- [ ] Abschliessenden Gesamt-Browserlauf, Veröffentlichung und öffentliche Auslieferung bestätigen
+- [ ] Echte iPhone-/Safari-Bedienung und Empfehlungsqualität im Alltag erproben
+
 ## Phase 1 – zuverlässiger privater Kleiderschrank
 
 - [x] Projektstruktur, Produktanforderungen und Entwicklungsplan

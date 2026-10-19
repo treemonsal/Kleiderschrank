@@ -17,6 +17,7 @@ import {
   type SavedOutfit,
 } from './outfit-model'
 import type { WeatherDay } from './weather'
+import { feedbackForOccasion } from './personalization'
 
 export function chooseDailyOutfit(
   items: Garment[],
@@ -66,7 +67,7 @@ export function chooseDailyOutfit(
     if (
       selected.length === selection.garmentIds.length &&
       isCompleteOutfit(selected) &&
-      !feedback.some(
+      !feedbackForOccasion(feedback, selection.options.occasion).some(
         (entry) =>
           entry.id === outfitKey(selection.garmentIds) &&
           entry.verdict === 'rejected',

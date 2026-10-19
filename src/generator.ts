@@ -1,4 +1,8 @@
 import type { Garment } from './model'
+import {
+  createPersonalizationScorer,
+  feedbackForOccasion,
+} from './personalization'
 import { createCompatibilityScorer } from './outfit-compatibility'
 import {
   recentPiecePenalty,
@@ -80,6 +84,13 @@ export function generateOutfits(
   excluded: ReadonlySet<string> = new Set(),
 ): OutfitCandidate[] {
   const eligible = eligibleGarments(items, options, weather)
+  feedback = feedbackForOccasion(feedback, options.occasion)
+  const personal = createPersonalizationScorer(items, preferences, feedback)
+  const profile =
+    preferences.styleProfile?.status === 'completed'
+      ? preferences.styleProfile
+      : undefined
+  const variety = profile?.variety ?? 'balanced'
   const compatibility = createCompatibilityScorer(feedback)
   const rejected = new Set(
     feedback
@@ -111,8 +122,10 @@ export function generateOutfits(
         ? 3
         : 0) +
       (likedItems.get(item.id) || 0) +
+      personal.itemScore(item) +
       Math.min(1, (wearCounts.get(item.id) ?? 0) * 0.2) -
-      recentPiecePenalty(item.id, history)
+      recentPiecePenalty(item.id, history) *
+        (variety === 'familiar' ? 0.5 : variety === 'explore' ? 1.5 : 1)
     )
   }
   // Bounded search: at most 18³ + 18² bases, each with up to 4 layers × 3 accessories.
@@ -162,9 +175,12 @@ export function generateOutfits(
           selected.reduce((sum, item) => sum + suitability(item), 0) /
           selected.length
         score += compatibility(selected).score
+        score += personal.lookScore(selected)
         if (liked.has(key)) score += 4
         score +=
-          noise(key, seed) * 0.35 - recentCombinationPenalty(key, history)
+          noise(key, seed) * (variety === 'explore' ? 0.8 : 0.35) -
+          recentCombinationPenalty(key, history) *
+            (variety === 'familiar' ? 0.5 : variety === 'explore' ? 1.5 : 1)
         if (
           !winner ||
           score > winner.score ||
@@ -184,6 +200,18 @@ export function generateOutfits(
         ? 'Kleid und Schuhe bilden die Basis.'
         : 'Oberteil, Hose und Schuhe bilden die Basis.',
     ]
+    if (profile)
+      reasons.push(
+        `Dein Stilprofil berücksichtigt ${profile.colorMood === 'neutral' ? 'ruhige Farben' : profile.colorMood === 'colorful' ? 'mehr Farbakzente' : 'eine ausgewogene Farbwahl'} und ${variety === 'familiar' ? 'vertraute Looks' : variety === 'explore' ? 'mehr Abwechslung' : 'eine Mischung aus Vertrautem und Neuem'}.`,
+      )
+    if (selected.some((item) => profile?.avoidColors.includes(item.color)))
+      reasons.push(
+        'Eine Farbe, die du seltener möchtest, ist hier enthalten. Sie wird schwächer gewichtet, bleibt bei wenig Auswahl aber möglich.',
+      )
+    if (personal.observations)
+      reasons.push(
+        'Deine Outfitbewertungen beeinflussen ähnliche erfasste Stilrichtungen und Farbkombinationen. Einzelne Bewertungen sind nur schwache Hinweise.',
+      )
     if (!selected.every((item) => item.color))
       reasons.push(
         'Farbangaben fehlen teilweise; die Harmonie bitte selbst prüfen.',
@@ -284,7 +312,9 @@ export function generateOutfits(
             ),
           )
         : 0
-      const score = candidate.score - overlap * 5
+      const score =
+        candidate.score -
+        overlap * (variety === 'familiar' ? 3 : variety === 'explore' ? 8 : 5)
       if (score > bestScore) {
         best = index
         bestScore = score

@@ -195,6 +195,13 @@ test('Fehlende Kleidung wird erklärt; Ablehnungen können zurückgesetzt werden
   await page
     .getByRole('button', { name: 'Vorschlag 1: Passt nicht', exact: true })
     .click()
+  await page
+    .getByRole('dialog')
+    .getByRole('button', {
+      name: 'Die Kombination gefällt mir nicht',
+      exact: true,
+    })
+    .click()
   await expect(
     page.getByRole('article', { name: 'Outfit-Vorschlag 1' }),
   ).toHaveCount(0)

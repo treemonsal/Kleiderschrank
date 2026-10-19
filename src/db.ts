@@ -1,4 +1,6 @@
 import Dexie, { type Table } from 'dexie'
+import { parseStyleProfile } from './personalization'
+import { COLORS, STYLES } from './model'
 import type { Garment, GarmentDraft } from './model'
 import type { CalendarEntry } from './calendar'
 import type { WeatherState } from './weather'
@@ -9,6 +11,7 @@ import {
 } from './constraints'
 import {
   DEFAULT_PREFERENCES,
+  OCCASIONS,
   DEFAULT_OUTFIT_OPTIONS,
   isCompleteOutfit,
   outfitKey,
@@ -16,6 +19,7 @@ import {
   type OutfitOptions,
   type Preferences,
   type SavedOutfit,
+  type StyleProfile,
 } from './outfit-model'
 
 export class WardrobeDatabase extends Dexie {
@@ -123,21 +127,42 @@ export async function setOutfitFeedback(
   ids: string[],
   verdict: OutfitFeedback['verdict'],
   database = db,
+  context: Pick<OutfitFeedback, 'reason' | 'occasion'> = {},
 ): Promise<void> {
   await database.transaction(
     'rw',
     database.garments,
     database.feedback,
     async () => {
-      if ((await database.garments.bulkGet(ids)).some((item) => !item))
+      if (
+        ids.length < 2 ||
+        ids.length > 6 ||
+        new Set(ids).size !== ids.length ||
+        (await database.garments.bulkGet(ids)).some((item) => !item)
+      )
         throw new UserFacingError(
           'Ein Stück wurde entfernt. Bitte erstelle neue Vorschläge.',
         )
+      if (
+        (context.occasion && !OCCASIONS.includes(context.occasion)) ||
+        (context.reason &&
+          !['combination', 'colors', 'style', 'occasion'].includes(
+            context.reason,
+          ))
+      )
+        throw new UserFacingError('Diese Bewertung ist ungültig.')
+      const previous = await database.feedback.get(outfitKey(ids))
       await database.feedback.put({
         id: outfitKey(ids),
         garmentIds: [...ids],
         verdict,
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date(
+          Math.max(Date.now(), Date.parse(previous?.updatedAt ?? '') + 1 || 0),
+        ).toISOString(),
+        ...(context.occasion ? { occasion: context.occasion } : {}),
+        ...(verdict === 'rejected' && context.reason
+          ? { reason: context.reason }
+          : {}),
       })
       const extra = (await database.feedback.count()) - 1000
       if (extra > 0)
@@ -148,6 +173,7 @@ export async function setOutfitFeedback(
 export async function toggleOutfitLike(
   ids: string[],
   database = db,
+  occasion?: OutfitFeedback['occasion'],
 ): Promise<boolean> {
   return database.transaction(
     'rw',
@@ -156,11 +182,14 @@ export async function toggleOutfitLike(
     async () => {
       const key = outfitKey(ids),
         current = await database.feedback.get(key)
-      if (current?.verdict === 'liked') {
+      if (
+        current?.verdict === 'liked' &&
+        (!occasion || !current.occasion || current.occasion === occasion)
+      ) {
         await database.feedback.delete(key)
         return false
       }
-      await setOutfitFeedback(ids, 'liked', database)
+      await setOutfitFeedback(ids, 'liked', database, { occasion })
       return true
     },
   )
@@ -197,14 +226,33 @@ export async function savePreferences(
   colors: string[],
   database = db,
 ): Promise<void> {
-  await updatePreferences(
-    { styles: [...styles], colors: [...colors] },
-    database,
-  )
+  await database.transaction('rw', database.preferences, async () => {
+    const current = await database.preferences.get('personal')
+    await updatePreferences(
+      {
+        styles: [...styles],
+        colors: [...colors],
+        ...(current?.styleProfile
+          ? {
+              styleProfile: {
+                ...current.styleProfile,
+                avoidColors: current.styleProfile.avoidColors.filter(
+                  (color) => !colors.includes(color),
+                ),
+              },
+            }
+          : {}),
+      },
+      database,
+    )
+  })
 }
 export async function updatePreferences(
   patch: Partial<
-    Pick<Preferences, 'styles' | 'colors' | 'useWeather' | 'backupReminder'>
+    Pick<
+      Preferences,
+      'styles' | 'colors' | 'useWeather' | 'backupReminder' | 'styleProfile'
+    >
   >,
   database = db,
 ): Promise<void> {
@@ -214,6 +262,9 @@ export async function updatePreferences(
     await database.preferences.put({
       ...current,
       ...patch,
+      ...('styles' in patch || 'colors' in patch || 'styleProfile' in patch
+        ? { dailySelection: undefined }
+        : {}),
       updatedAt: new Date(
         Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
       ).toISOString(),
@@ -239,6 +290,79 @@ export async function saveOutfitOptions(
         Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
       ).toISOString(),
     })
+  })
+}
+
+export function styleProfileRevision(preferences: Preferences) {
+  return JSON.stringify([
+    preferences.styles,
+    preferences.colors,
+    preferences.styleProfile ?? null,
+  ])
+}
+export async function saveStyleProfile(
+  profile: StyleProfile,
+  styles: Preferences['styles'],
+  colors: string[],
+  expectedRevision: string,
+  database = db,
+) {
+  const parsed = parseStyleProfile(profile)
+  if (
+    styles.some((style) => !STYLES.includes(style)) ||
+    colors.some((color) => !COLORS.some((c) => c.name === color)) ||
+    colors.some((color) => parsed.avoidColors.includes(color))
+  )
+    throw new UserFacingError('Bitte prüfe deine Stilrichtungen und Farben.')
+  await database.transaction('rw', database.preferences, async () => {
+    const current =
+      (await database.preferences.get('personal')) ?? DEFAULT_PREFERENCES
+    if (styleProfileRevision(current) !== expectedRevision)
+      throw new UserFacingError(
+        'Dein Stilprofil wurde inzwischen geändert. Schliesse den Stilcheck und öffne ihn erneut.',
+      )
+    const updatedAt = new Date(
+      Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
+    ).toISOString()
+    await database.preferences.put(
+      parsed.status === 'skipped'
+        ? {
+            ...current,
+            styleProfile: {
+              ...(current.styleProfile ?? parsed),
+              status: 'skipped',
+            },
+            updatedAt,
+          }
+        : {
+            ...current,
+            styles: [...new Set(styles)],
+            colors: [...new Set(colors)],
+            styleProfile: parsed,
+            dailySelection: undefined,
+            outfitOptions: {
+              ...DEFAULT_OUTFIT_OPTIONS,
+              ...current.outfitOptions,
+              occasion: parsed.usualOccasion,
+            },
+            updatedAt,
+          },
+    )
+  })
+}
+
+export async function removeOutfitFeedback(
+  id: string,
+  expectedUpdatedAt: string,
+  database = db,
+) {
+  await database.transaction('rw', database.feedback, async () => {
+    const current = await database.feedback.get(id)
+    if (current && current.updatedAt !== expectedUpdatedAt)
+      throw new UserFacingError(
+        'Diese Bewertung wurde inzwischen geändert. Prüfe die aktuelle Rückmeldung.',
+      )
+    await database.feedback.delete(id)
   })
 }
 

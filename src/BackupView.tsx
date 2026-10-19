@@ -25,6 +25,7 @@ import { AI_CACHE } from './background-model'
 import { BackupReminderSettings } from './BackupReminder'
 import { updateBackupReminder } from './backup-reminder'
 import { AISettings } from './AISettings'
+import { StyleProfileCard } from './StyleProfile'
 import { version } from '../package.json'
 
 export function BackupView({
@@ -128,6 +129,7 @@ export function BackupView({
         </div>
       </section>
       <AISettings />
+      <StyleProfileCard items={items} notify={notify} />
       <section className="settings-section">
         <div className="section-heading">
           <h2>Lokale Freistellung als Alternative</h2>

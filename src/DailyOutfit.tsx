@@ -5,14 +5,15 @@ import {
   Check,
   ArrowRight,
   RefreshCw,
-  ThumbsUp,
   Plus,
   ChevronLeft,
   ChevronRight,
   CalendarDays,
 } from 'lucide-react'
 import type { Garment } from './model'
-import { db, saveOutfit, toggleOutfitLike, storageError } from './db'
+import { db, saveOutfit, storageError } from './db'
+import { OutfitRating } from './OutfitRating'
+import { StyleProfileCard } from './StyleProfile'
 import {
   DEFAULT_PREFERENCES,
   isCompleteOutfit,
@@ -321,6 +322,7 @@ export function DailyOutfit({
           </button>
         )}
       </div>
+      {isToday && <StyleProfileCard items={items} notify={notify} invitation />}
       <div className="day-slide-viewport">
         <section
           className="daily-look day-slide"
@@ -478,43 +480,18 @@ export function DailyOutfit({
                   </p>
                 </details>
               )}
-              {isToday && !worn && complete && (
-                <button
-                  className="text-button daily-like"
-                  data-motion="pop"
-                  aria-label="Tageslook: Gefällt mir"
-                  aria-pressed={state.feedback.some(
-                    (item) =>
-                      item.id === outfitKey(look.garmentIds) &&
-                      item.verdict === 'liked',
+              {day <= today && complete && (
+                <OutfitRating
+                  key={outfitKey(look.garmentIds)}
+                  ids={look.garmentIds}
+                  occasion={look.options.occasion}
+                  label="Tageslook"
+                  rating={state.feedback.find(
+                    (item) => item.id === outfitKey(look.garmentIds),
                   )}
                   disabled={busy}
-                  onClick={async () => {
-                    setBusy(true)
-                    setError('')
-                    try {
-                      const liked = await toggleOutfitLike(look.garmentIds)
-                      notify(
-                        liked
-                          ? 'Gefällt dir: Diese Kombination und ihre Stückpaare werden stärker berücksichtigt.'
-                          : 'Positive Bewertung zurückgenommen.',
-                      )
-                    } catch (error) {
-                      setError(storageError(error))
-                    } finally {
-                      setBusy(false)
-                    }
-                  }}
-                >
-                  <ThumbsUp size={16} />{' '}
-                  {state.feedback.some(
-                    (item) =>
-                      item.id === outfitKey(look.garmentIds) &&
-                      item.verdict === 'liked',
-                  )
-                    ? 'Gefällt dir'
-                    : 'Gefällt mir'}
-                </button>
+                  notify={notify}
+                />
               )}
               <div className="daily-look-actions">
                 {!entry && (
@@ -554,6 +531,7 @@ export function DailyOutfit({
                     candidates: stylistCandidates,
                     options: look.options,
                     preferences: state.preferences,
+                    feedback: state.feedback,
                     weather:
                       state.preferences.useWeather !== false && fresh
                         ? forecast

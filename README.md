@@ -1,5 +1,17 @@
 # MyStyle
 
+## Persönlichere Vorschläge ab Version 0.13.0
+
+Auf der Startseite bietet **Stilcheck starten** drei kurze, freiwillige Schritte: Stilrichtungen, Lieblingsfarben bzw. Farben für seltenere Vorschläge sowie üblicher Anlass und gewünschte Abwechslung. **Später** oder **Stilcheck überspringen** blendet die Einladung dauerhaft aus. Unter **Mehr → Dein Stilprofil** kannst du sie nachholen oder deine Antworten ändern. Ein abgebrochener Entwurf wird nicht gespeichert. Bestehende Stilvorlieben sind vorausgewählt.
+
+An Tageslooks (auch im Rückblick), Outfitvorschlägen und gespeicherten Looks gibt es Daumen hoch und runter. Ein weiterer Daumen hoch nimmt die positive Bewertung zurück. Bei Daumen runter wählst du Kombination, Farben, Stil oder Anlass. Die App merkt sich die konkrete Ablehnung für den bewerteten Anlass; ein Farbgrund beeinflusst ähnliche Farbpaarungen, ein Stilgrund entsprechende erfasste Stilrichtungen. Ein Anlassgrund erzeugt keine allgemeine Stilabneigung. **Anderer Look** und **Neu kombinieren** sind weiterhin reine Alternativen, ohne negative Bewertung.
+
+Positive Bewertungen wirken auch auf passende neue Stücke. Der übertragene Einfluss aus Bewertungen ist begrenzt; deine ausdrücklich gewählten Vorlieben werden weiterhin berücksichtigt. „Farben seltener“ ist eine Gewichtung, kein Verbot, damit eine kleine Garderobe weiter komplette Looks liefern kann. Abwechslung beeinflusst kürzlich getragene Stücke und die Unterschiedlichkeit der Vorschläge. Wäsche-, Saison- und Wetterregeln bleiben bestehen. Ein neues Profil erneuert unbestätigte Tagesvorschläge, überschreibt aber keine Kalenderpläne oder bestätigten Tragetage.
+
+Unter **Mehr → Dein Stilprofil → Bewertungen ansehen** kannst du die 20 neuesten Rückmeldungen einzeln zurücknehmen oder nach Bestätigung alle Bewertungen zurücksetzen. Ältere rücken nach; insgesamt bleiben bis zu 1000 aktuelle Bewertungen erhalten, eine pro Kombination. Eine neue Bewertung desselben Looks ersetzt die vorherige, einschliesslich ihres Anlasses. Profil, Bewertungsgründe und Anlass sind im bestehenden Sicherungsformat 4 enthalten; ältere Sicherungen bleiben lesbar.
+
+Die Personalisierung verwendet nachvollziehbare Gewichtungen aus deinen Angaben und Rückmeldungen, kein auf dich neu trainiertes Modell. Beim bewussten Start des Online-Stylisten erhält Qwen zusätzlich das Stilprofil und eine begrenzte Zusammenfassung passender Bewertungsmuster. Keine automatische Übertragung, keine neue Dienstfreigabe, keine Gebühren. Ob dir die Vorschläge im Alltag tatsächlich besser gefallen, muss sich in der Nutzung zeigen.
+
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
 Version 0.12.1 korrigiert die Fotoanzeige beim Wäsche-Statuswechsel: Bildadressen bleiben gültig, bis die sichtbare Quelle ersetzt wurde. Originale und Freistellungen bleiben erhalten. Der Online-Stylist aus 0.12 und die durchgehend sichtbare Glasnavigation bleiben bestehen.
