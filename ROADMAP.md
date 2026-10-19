@@ -9,7 +9,8 @@
 - [x] Begrenzte übertragbare Hinweise aus Bewertungen und Anlassbezug auch im Online-Stylisten berücksichtigen
 - [x] Einzelnes Zurücknehmen, bestätigtes Zurücksetzen und Schutz vor konkurrierenden Änderungen
 - [x] Profil und Bewertungsdetails vollständig sichern, alte Sicherungen lesen und Fehlwerte vor Import ablehnen
-- [ ] Abschliessenden Gesamt-Browserlauf, Veröffentlichung und öffentliche Auslieferung bestätigen
+- [x] Gesamt-Browserlauf (96 Fälle), 177 Logiktests und funktionalen Projektpfad-Build bestätigen
+- [ ] Öffentliche Auslieferung bestätigen: Pages-Lauf 39280451922 gestartet; GitHub meldet am 19.10.2026 eine Actions-/Pages-Störung, Lauf noch in Warteschlange
 - [ ] Echte iPhone-/Safari-Bedienung und Empfehlungsqualität im Alltag erproben
 
 ## Phase 1 – zuverlässiger privater Kleiderschrank
