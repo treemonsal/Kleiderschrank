@@ -8,6 +8,7 @@ import {
   Check,
   Heart,
   LoaderCircle,
+  MessageCircle,
   Pencil,
   Plus,
   Search,
@@ -37,6 +38,7 @@ import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
 import { StylistChat } from './StylistChat'
+import { useStylistInbox } from './stylist-inbox'
 
 type View = 'home' | 'wardrobe' | 'outfits' | 'settings'
 
@@ -524,6 +526,7 @@ export default function App() {
   const items = wardrobe?.items
   const [view, setView] = useState<View>('home')
   const [chatOpen, setChatOpen] = useState(false)
+  const inbox = useStylistInbox()
   const tapMotion = useTapMotion()
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -590,12 +593,25 @@ export default function App() {
           <button
             className="profile-button stylist-link"
             aria-label="Mit deinem Stylisten sprechen"
+            aria-describedby={inbox.hasUnread ? 'stylist-notice' : undefined}
             disabled={!items || wardrobe?.failed || !!editor || !!selectedId}
             onClick={() => setChatOpen(true)}
           >
             <span>Stylist</span>
-            <ArrowUpRight size={16} strokeWidth={1.5} />
+            <span className="stylist-glyph">
+              <MessageCircle size={17} strokeWidth={1.5} />
+              {inbox.hasUnread && (
+                <span className="inbox-dot" aria-hidden="true" />
+              )}
+            </span>
           </button>
+          {inbox.hasUnread && (
+            <span id="stylist-notice" className="sr-only">
+              {inbox.newInterview
+                ? 'Neue freiwillige Stilfrage'
+                : 'Ungelesene Antwort deines Stylisten'}
+            </span>
+          )}
           <button
             className="profile-button"
             aria-label="Einstellungen öffnen"
@@ -755,6 +771,9 @@ export default function App() {
       )}
       <StylistChat
         open={chatOpen}
+        newInterview={inbox.newInterview}
+        markReplyRead={inbox.markReply}
+        markInterviewRead={inbox.markInterview}
         onClose={() => setChatOpen(false)}
         onOpen={setSelectedId}
         notify={notify}

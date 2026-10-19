@@ -346,7 +346,13 @@ export function BackupView({
               . Ausserdem: {pending.outfits.length} Outfits und{' '}
               {pending.feedback.length} Rückmeldungen sowie{' '}
               {pending.calendar?.length ?? 0} Kalendertage
-              {pending.weather ? ' und ein gespeicherter Wetterort' : ''}. Wie
+              {pending.weather ? ' und ein gespeicherter Wetterort' : ''}. Dazu:{' '}
+              {
+                Object.keys(pending.preferences?.styleInterview?.answers ?? {})
+                  .length
+              }{' '}
+              vertiefte Stilantworten und{' '}
+              {(pending.chat?.messages.length ?? 0) / 2} Gesprächsrunden. Wie
               möchtest du sie übernehmen?
             </p>
             <label
@@ -381,11 +387,11 @@ export function BackupView({
                 <strong>Vorhandenen Bestand ersetzen</strong>
                 <small>
                   Alle {items.length} vorhandenen Stücke, Outfits,
-                  Rückmeldungen, Stilvorlieben, Gesprächsverlauf,
-                  Kalendereinträge und gespeicherten Wetterdaten werden
-                  vollständig durch diese Sicherung ersetzt. Datenarten, die in
-                  älteren Sicherungen fehlen, werden dabei gelöscht. Exportiere
-                  zuerst ein Backup.
+                  Rückmeldungen, Stilvorlieben einschliesslich vertiefter
+                  Antworten, Gesprächsverlauf, Kalendereinträge und
+                  gespeicherten Wetterdaten werden vollständig durch diese
+                  Sicherung ersetzt. Datenarten, die in älteren Sicherungen
+                  fehlen, werden dabei gelöscht. Exportiere zuerst ein Backup.
                 </small>
               </span>
             </label>

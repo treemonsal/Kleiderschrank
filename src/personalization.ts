@@ -1,5 +1,6 @@
 import type { Garment } from './model'
 import { COLORS } from './model'
+import { interviewStyles } from './style-interview'
 import {
   OCCASIONS,
   type Occasion,
@@ -111,6 +112,7 @@ export function createPersonalizationScorer(
     preferences.styleProfile?.status === 'completed'
       ? preferences.styleProfile
       : undefined
+  const focusStyles = interviewStyles(preferences)
   const itemScore = (item: Garment) => {
     const learnedColor = bounded(
       (colors.get(`${item.category}:${item.color}`) ?? 0) / 2,
@@ -124,6 +126,7 @@ export function createPersonalizationScorer(
     return (
       learnedColor +
       learnedStyle +
+      (item.styles.some((style) => focusStyles.includes(style)) ? 1 : 0) +
       (profile?.avoidColors.includes(item.color) ? -4 : 0)
     )
   }

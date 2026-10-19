@@ -1,5 +1,13 @@
 # MyStyle
 
+## Version 0.16.0 – freiwillige Vertiefung im Chat
+
+- Drei kurze Stilcheck-Schritte bleiben bestehen. Nach Abschluss zeigt der Stylist-Einstieg eine freiwillige Einladung mit einem kleinen Punkt; kein erzwungener Dialog.
+- Acht geführte Fragen zu Stilfokus, Schnitten, Tagesablauf, Wärmeempfinden, Mustern, Accessoires, Abneigungen und Inspiration. Auch offline ohne Provider-Anfrage möglich. Jede Antwort wird bewusst bestätigt; Überspringen, Pause, früher Abschluss, Bearbeiten und bestätigtes Löschen möglich.
+- Stilfokus wirkt auf bekannte Stilmerkmale der lokalen Auswahl; Accessoire-Antwort verändert ausdrücklich die sichtbare Outfit-Option. Bestätigte Angaben ergänzen die bestehenden Chat-/Lookvergleich-Kontexte bei bewusster Sendung. Keine simulierte Foto-/Passformkenntnis und kein behauptetes Modelltraining.
+- Punkt für neue freiwillige Fragen oder vorhandene ungelesene Antworten; nur sichtbares Lesen in einer sichtbaren App quittiert. Gerätelokale Lesemarkierungen, keine OS-Pushfreigabe und keine automatischen KI-Anfragen.
+- Additives Präferenzfeld, Datenbank weiterhin 5. Sicherungsformat 6 mit Lesbarkeit von 1–5; unabhängige Antwort-/Löschrevision beim Zusammenführen und Konfliktschutz für zwei Fenster. Stilcheck, Kleidungsfotos und bestätigte Kalendertage erhalten.
+
 ## Version 0.15.0 – Garderobenjournal
 
 - Die bisherigen gestalterischen Vorgaben sind auf ausdrücklichen Nutzerwunsch aufgehoben. Neue eigenständige, helle Editorial-Gestaltung: Papierfarben, dunkle Schrift, lokale Serifentitel, rostrote Markierungen, kantige Bildflächen; keine violetten KI-Motive oder Sternchen-Symbole.

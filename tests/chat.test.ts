@@ -411,7 +411,7 @@ describe('Gespräch, Migration und sichere Speicheraktionen', () => {
 })
 
 describe('Sicherungen mit Gesprächsverlauf', () => {
-  it('exportiert Version 5 und stellt Verlauf und Vorschläge mit neuer lokaler Revision wieder her', async () => {
+  it('exportiert Version 6 und stellt Verlauf und Vorschläge mit neuer lokaler Revision wieder her', async () => {
     const db = await database(),
       d = await readChatData(db)
     await appendChatTurn(
@@ -424,7 +424,7 @@ describe('Sicherungen mit Gesprächsverlauf', () => {
     const json = await createDatabaseBackup(db),
       parsed = parseFullBackup(json),
       other = await database()
-    expect(JSON.parse(json).version).toBe(5)
+    expect(JSON.parse(json).version).toBe(6)
     expect(json).not.toContain('mystyle-chat-consent')
     await importFullBackup(parsed, 'replace', other)
     expect((await other.chat.get('stylist'))?.messages).toEqual(

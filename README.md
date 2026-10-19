@@ -1,5 +1,17 @@
 # MyStyle
 
+## Freiwilliges Stilgespräch – Version 0.16.0
+
+Der kurze Stilcheck mit drei Schritten bleibt der Einstieg. Danach zeigt ein kleiner rostfarbener Punkt an **Stylist** eine freiwillige Einladung an. Im Chat kannst du mit **Stilgespräch starten** acht zusätzliche Fragen zu Stilrichtung, Schnitten, Tagesablauf, Temperaturempfinden, Mustern, Accessoires, Dingen, die du ungern trägst, und Inspiration beantworten. Die Fragen sind geführt und funktionieren auch offline; dafür wird keine KI-Anfrage verbraucht.
+
+Eine Auswahl wird erst mit **Antwort speichern** übernommen. **Frage überspringen**, **Später weiter** und ein früher Abschluss sind möglich. Bestätigte Antworten und übersprungene Fragen bleiben nach einem Neustart erhalten. **Keine weiteren Fragen** blendet die Einladung dauerhaft aus; das Gespräch bleibt im Chat auf eigene Initiative erreichbar. Unter **Antworten ansehen & ändern** lassen sich auch zuvor offengelassene Fragen ergänzen. **Vertiefte Antworten löschen** entfernt diese Angaben nach Bestätigung; kurzer Stilcheck, Bewertungen und die sichtbare Outfit-Auswahl bleiben bestehen. Bereits gesendete Informationen können noch im Chatverlauf, in älteren Sicherungen oder beim Anbieter stehen.
+
+Der Punkt kennzeichnet ausserdem eine vorhandene ungelesene Stylist-Antwort. Ein Hinweis wird erst beim sichtbaren Lesen im geöffneten Chat als gelesen markiert; eine ausgeblendete App genügt nicht. Der Lesestand bleibt auf diesem Gerät gespeichert und wird zwischen dessen Fenstern geteilt. Es gibt keine Betriebssystem-Pushfreigabe, erfundenen Nachrichten oder automatischen Anbieter-Anfragen.
+
+Die gewählte Stilrichtung gewichtet vorhandene Stilmerkmale in lokalen Vorschlägen etwas stärker. Die Accessoire-Antwort stellt die entsprechende Outfit-Option ein; sie bleibt dort jederzeit änderbar. Alle bestätigten Detailantworten fliessen bei einer bewusst gesendeten Chatfrage bzw. einem gestarteten Online-Lookvergleich in den bestehenden freigegebenen Dienst ein. Passform, Stoff, Muster und tatsächliche Wärme bleiben ohne passende Angaben/Fotos unbekannt. Die Antworten ergänzen dein Profil; es wird kein eigenes Modell auf dich trainiert.
+
+Sicherungsformat **6** enthält die Detailantworten und den Fortschritt. Formate 1–5 bleiben lesbar; ältere App-Versionen können Format 6 nicht importieren. Die Datenbank bleibt Version 5, ohne Zurücksetzen vorhandener Daten. Gerätelokale Lesemarkierungen und Freigaben werden nicht exportiert. Beim Zusammenführen schützt eine eigene Änderungszeit auch gelöschte Detailantworten vor älteren Ständen. Zwei gleichzeitig geöffnete Stilgespräche überschreiben keine neuere Antwort; ein veralteter Entwurf verlangt ausdrücklich das Laden des aktuellen Stands.
+
 ## Garderobenjournal – Version 0.15.0
 
 Die Oberfläche wurde vollständig neu gestaltet: warmes Papier, dunkle Schrift, Serifentitel, rostrote Markierungen und eine ruhige Textnavigation mit Kapitelnummern. Kleiderschrank, Tageslook, Outfits, Kalender, Editor, Einstellungen und Chat verwenden dieselbe Gestaltung. Foto-Platzhalter sind eigene Kategoriezeichnungen; vorhandene Fotos bleiben erhalten. Der freiwillige Stilcheck steht jetzt unter dem Tageslook. Frühere Theme-Einstellungen verändern das neue Design nicht.

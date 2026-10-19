@@ -1,4 +1,107 @@
 /* Editorial art direction. Functional layout, gestures and motion live in styles.css. */
+.stylist-glyph {
+  display: inline-flex;
+  position: relative;
+}
+.inbox-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: -3px;
+  right: -3px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--background);
+}
+.style-interview {
+  border-left: 2px solid var(--accent);
+  padding: 4px 0 4px 16px;
+  scroll-margin-top: 115px;
+}
+.interview-start {
+  scroll-margin-top: 115px;
+}
+.style-interview > h3 {
+  font: 400 27px/1.15 var(--display-font);
+  margin: 9px 0 12px;
+  letter-spacing: -0.5px;
+}
+.style-interview > .muted {
+  font-size: 13px;
+}
+.interview-disclosure {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 12px 0;
+}
+.interview-conversation {
+  margin-top: 18px;
+}
+.interview-question {
+  background: var(--surface);
+  padding: 16px;
+  border-radius: 4px;
+  margin: 14px 0;
+}
+.interview-question h4 {
+  font: 400 24px/1.2 var(--display-font);
+  margin-bottom: 12px;
+  scroll-margin-top: 115px;
+}
+.interview-question .muted {
+  font-size: 12px;
+}
+.interview-choices {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+.interview-choices .chip {
+  white-space: normal;
+  text-align: left;
+  min-height: 48px;
+}
+.interview-question .style-check-actions .button {
+  font-size: 13px;
+  padding: 11px 14px;
+}
+@media (min-width: 375px) {
+  .interview-choices {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.interview-question .field {
+  margin-top: 16px;
+}
+.interview-answers > summary {
+  min-height: 44px;
+  padding: 12px 0;
+  cursor: pointer;
+  font-size: 12px;
+}
+.interview-answer {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.interview-answer strong {
+  display: block;
+  font-weight: 500;
+  margin-top: 6px;
+}
+.interview-answer > p {
+  color: var(--muted);
+}
+.interview-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 16px;
+}
 .app-shell {
   max-width: 900px;
   padding-bottom: calc(94px + env(safe-area-inset-bottom));

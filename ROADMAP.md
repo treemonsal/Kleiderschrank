@@ -1,5 +1,16 @@
 # Entwicklungsplan
 
+## Version 0.16.0 – freiwilliges Stilgespräch
+
+- [x] Acht zusätzliche Fragen im Chat mit bewusstem Speichern, Überspringen und Fortsetzen
+- [x] Kleiner Punkt am Stylist-Einstieg für neue Fragen und ungelesene Antworten
+- [x] Sichtbarkeit und gerätelokale Lesemarkierungen berücksichtigen
+- [x] Bestätigte Antworten in lokale Stilgewichtung sowie bestehende Online-Kontexte aufnehmen
+- [x] Sicherungsformat 6, alte Formate 1–5, Reset-/Merge- und Zwei-Fenster-Schutz
+- [x] 218 Logik-/Datentests und gezielte Chat-/Stilgespräch-Browserabläufe bestanden
+- [x] Vollständiger Browserlauf: alle 119 Fälle bestanden; Darstellung und Offline-Fortsetzen im Projektpfad geprüft
+- [ ] Veröffentlichen und öffentliche Dateien bestätigen
+
 ## Version 0.15.0 – neues Garderobenjournal
 
 - [x] Vorherigen Designstand als GitHub-Tag und Quellarchiv sichern

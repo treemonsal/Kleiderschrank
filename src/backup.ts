@@ -1,6 +1,7 @@
 import { CATEGORIES, COLORS, SEASONS, STYLES, type Garment } from './model'
 import { backupRevision } from './backup-reminder'
 import { parseStyleProfile } from './personalization'
+import { parseStyleInterview } from './style-interview'
 import {
   MAX_CHAT_MESSAGES,
   MAX_CHAT_INPUT,
@@ -38,7 +39,7 @@ export interface BackupData {
 }
 const invalid = () =>
   new Error(
-    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1 bis 5). Es wurde nichts verändert.',
+    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1 bis 6). Es wurde nichts verändert.',
   )
 export async function readBackupData(database = db): Promise<BackupData> {
   return database.transaction('r', database.tables, async () => ({
@@ -103,7 +104,7 @@ export async function createBackup(
   const json = JSON.stringify({
     ...extra,
     app: 'MyStyle',
-    version: 5,
+    version: 6,
     exportedAt: new Date().toISOString(),
     calendar: extra.calendar ?? [],
     weather: extra.weather ?? null,
@@ -254,7 +255,7 @@ export function parseFullBackup(json: string): BackupData {
   if (
     !data ||
     data.app !== 'MyStyle' ||
-    ![1, 2, 3, 4, 5].includes(data.version) ||
+    ![1, 2, 3, 4, 5, 6].includes(data.version) ||
     !Array.isArray(data.garments) ||
     data.garments.length > 1000
   )
@@ -381,6 +382,9 @@ export function parseFullBackup(json: string): BackupData {
       ...(item.styleProfile === undefined
         ? {}
         : { styleProfile: parseStyleProfile(item.styleProfile) }),
+      ...(item.styleInterview === undefined
+        ? {}
+        : { styleInterview: parseStyleInterview(item.styleInterview) }),
       ...(item.outfitOptions === undefined
         ? {}
         : { outfitOptions: parseOutfitOptions(item.outfitOptions) }),
@@ -404,6 +408,11 @@ export function parseFullBackup(json: string): BackupData {
     preferences?.styleProfile?.avoidColors.some((color) =>
       preferences.colors.includes(color),
     )
+  )
+    throw invalid()
+  if (
+    preferences?.styleInterview &&
+    preferences.styleInterview.updatedAt > preferences.updatedAt
   )
     throw invalid()
   const calendar: CalendarEntry[] = []
@@ -576,10 +585,36 @@ export async function importFullBackup(
               (currentReminder.updatedAt ?? currentReminder.firstSeenAt)
             ? incomingReminder
             : currentReminder
-      if (base !== current || reminder !== currentReminder)
-        await database.preferences.put(
-          reminder ? { ...base, backupReminder: reminder } : base,
-        )
+      // Interview answers and their deletion marker have their own clock too.
+      // A newer general preference must not resurrect an older deleted answer.
+      const localInterview = current?.styleInterview,
+        incomingInterview = incoming.styleInterview
+      const interview = !localInterview
+        ? incomingInterview
+        : !incomingInterview
+          ? localInterview
+          : incomingInterview.updatedAt > localInterview.updatedAt
+            ? incomingInterview
+            : localInterview
+      const combined = interview !== base.styleInterview
+      if (
+        base !== current ||
+        reminder !== currentReminder ||
+        interview !== localInterview
+      )
+        await database.preferences.put({
+          ...base,
+          backupReminder: reminder,
+          styleInterview: interview,
+          ...(combined
+            ? {
+                dailySelection: undefined,
+                updatedAt: new Date(
+                  Math.max(Date.now(), Date.parse(base.updatedAt) + 1),
+                ).toISOString(),
+              }
+            : {}),
+        })
     }
     for (const item of data.calendar ?? []) {
       if (!(await database.outfits.get(item.outfitId))) throw invalid()
