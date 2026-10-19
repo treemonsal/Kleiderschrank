@@ -1,6 +1,11 @@
 import { CATEGORIES, COLORS, SEASONS, STYLES, type Garment } from './model'
 import { backupRevision } from './backup-reminder'
 import { parseStyleProfile } from './personalization'
+import {
+  MAX_CHAT_MESSAGES,
+  MAX_CHAT_INPUT,
+  type ChatSession,
+} from './chat-model'
 import { blobToDataURL } from './photos'
 import { db, type WardrobeDatabase } from './db'
 import { isDay, MAX_CALENDAR_ENTRIES, type CalendarEntry } from './calendar'
@@ -29,10 +34,11 @@ export interface BackupData {
   preferences: Preferences | null
   calendar?: CalendarEntry[]
   weather?: WeatherState | null
+  chat?: ChatSession | null
 }
 const invalid = () =>
   new Error(
-    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1, 2, 3 oder 4). Es wurde nichts verändert.',
+    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1 bis 5). Es wurde nichts verändert.',
   )
 export async function readBackupData(database = db): Promise<BackupData> {
   return database.transaction('r', database.tables, async () => ({
@@ -42,6 +48,7 @@ export async function readBackupData(database = db): Promise<BackupData> {
     preferences: (await database.preferences.get('personal')) ?? null,
     calendar: await database.calendar.toArray(),
     weather: (await database.weather.get('local')) ?? null,
+    chat: (await database.chat.get('stylist')) ?? null,
   }))
 }
 export async function createDatabaseBackup(database = db): Promise<string> {
@@ -94,12 +101,13 @@ export async function createBackup(
       cutout: item.cutout ? await blobToDataURL(item.cutout) : undefined,
     })
   const json = JSON.stringify({
-    app: 'MyStyle',
-    version: 4,
-    exportedAt: new Date().toISOString(),
     ...extra,
+    app: 'MyStyle',
+    version: 5,
+    exportedAt: new Date().toISOString(),
     calendar: extra.calendar ?? [],
     weather: extra.weather ?? null,
+    chat: extra.chat ?? null,
     garments,
   })
   if (new Blob([json]).size > MAX_BACKUP_BYTES)
@@ -246,7 +254,7 @@ export function parseFullBackup(json: string): BackupData {
   if (
     !data ||
     data.app !== 'MyStyle' ||
-    ![1, 2, 3, 4].includes(data.version) ||
+    ![1, 2, 3, 4, 5].includes(data.version) ||
     !Array.isArray(data.garments) ||
     data.garments.length > 1000
   )
@@ -434,7 +442,56 @@ export function parseFullBackup(json: string): BackupData {
     }
     if (data.weather !== null) weather = parseSavedWeather(data.weather)
   }
-  return { garments, outfits, feedback, preferences, calendar, weather }
+  let chat: ChatSession | null = null
+  if (data.version >= 5 && data.chat !== null) {
+    const item = object(data.chat)
+    if (
+      item.id !== 'stylist' ||
+      !Array.isArray(item.messages) ||
+      item.messages.length > MAX_CHAT_MESSAGES ||
+      item.messages.length % 2 !== 0
+    )
+      throw invalid()
+    const messageIds = new Set<string>()
+    chat = {
+      id: 'stylist',
+      revision: identifier(item.revision),
+      updatedAt: timestamp(item.updatedAt),
+      messages: item.messages.map((raw, index) => {
+        const message = object(raw),
+          id = identifier(message.id)
+        if (
+          messageIds.has(id) ||
+          message.role !== (index % 2 ? 'assistant' : 'user')
+        )
+          throw invalid()
+        messageIds.add(id)
+        const content = text(
+          message.text,
+          message.role === 'user' ? MAX_CHAT_INPUT : 1600,
+        ).trim()
+        if (!content || (message.role === 'user' && message.look !== undefined))
+          throw invalid()
+        const look =
+          message.look === undefined ? undefined : object(message.look)
+        return {
+          id,
+          role: message.role as 'user' | 'assistant',
+          text: content,
+          createdAt: timestamp(message.createdAt),
+          ...(look
+            ? {
+                look: {
+                  garmentIds: references(look.garmentIds),
+                  options: parseOutfitOptions(look.options),
+                },
+              }
+            : {}),
+        }
+      }),
+    }
+  }
+  return { garments, outfits, feedback, preferences, calendar, weather, chat }
 }
 export async function importBackup(
   items: Garment[],
@@ -460,6 +517,14 @@ export async function importFullBackup(
       await database.preferences.clear()
       await database.calendar.clear()
       await database.weather.clear()
+      // Preserve a new local revision even for old backups without chat, so an
+      // in-flight reply cannot repopulate a conversation after replacement.
+      await database.chat.put({
+        id: 'stylist',
+        revision: crypto.randomUUID(),
+        updatedAt: new Date().toISOString(),
+        messages: [],
+      })
     }
     const existingItems = await database.garments.toArray()
     const merged = new Map(existingItems.map((item) => [item.id, item]))
@@ -527,6 +592,14 @@ export async function importFullBackup(
         'Der Import würde die Kalendergrenze von 3000 Tagen überschreiten. Es wurde nichts verändert.',
       )
     const localWeather = await database.weather.get('local')
+    const localChat = await database.chat.get('stylist')
+    if (
+      data.chat &&
+      (mode === 'replace' ||
+        !localChat ||
+        data.chat.updatedAt > localChat.updatedAt)
+    )
+      await database.chat.put({ ...data.chat, revision: crypto.randomUUID() })
     if (
       data.weather &&
       (!localWeather || data.weather.updatedAt > localWeather.updatedAt)

@@ -102,11 +102,13 @@ export function Sheet({
   eyebrow,
   children,
   onClose,
+  className = '',
 }: {
   title: string
   eyebrow?: string
   children: ReactNode
   onClose: () => void
+  className?: string
 }) {
   const ref = useRef<HTMLDialogElement>(null)
   const id = useId()
@@ -128,7 +130,7 @@ export function Sheet({
   }, [])
   return (
     <dialog
-      className="sheet"
+      className={`sheet ${className}`}
       ref={ref}
       aria-labelledby={id}
       onCancel={(e) => {

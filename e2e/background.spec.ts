@@ -106,7 +106,7 @@ test('Echtes KI-Modell erzeugt lokal eine Maske, erhält das Original und funkti
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   const backup = await exportData(page)
-  expect(backup.version).toBe(4)
+  expect(backup.version).toBe(5)
   expect(backup.garments[0].photo).toMatch(/^data:image\/jpeg;base64,/)
   expect(backup.garments[0].cutout).toMatch(/^data:image\/png;base64,/)
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({

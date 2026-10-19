@@ -21,6 +21,7 @@ import {
   WifiOff,
   X,
   Settings2,
+  MessageCircle,
 } from 'lucide-react'
 import {
   db,
@@ -40,6 +41,7 @@ import { localDay, shiftDay } from './calendar'
 import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
+import { StylistChat } from './StylistChat'
 
 type View = 'home' | 'wardrobe' | 'outfits' | 'settings'
 
@@ -527,6 +529,7 @@ export default function App() {
   )
   const items = wardrobe?.items
   const [view, setView] = useState<View>('home')
+  const [chatOpen, setChatOpen] = useState(false)
   const tapMotion = useTapMotion()
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -600,6 +603,14 @@ export default function App() {
           <span className="edition">DEIN TÄGLICHER STIL</span>
           <button
             className="profile-button"
+            aria-label="Mit deinem Stylisten sprechen"
+            disabled={!items || wardrobe?.failed || !!editor || !!selectedId}
+            onClick={() => setChatOpen(true)}
+          >
+            <MessageCircle size={21} strokeWidth={1.6} />
+          </button>
+          <button
+            className="profile-button"
             aria-label="Einstellungen öffnen"
             onClick={() => navigate('settings')}
           >
@@ -614,7 +625,7 @@ export default function App() {
         </p>
       )}
       {updateError && <ErrorMessage>{updateError}</ErrorMessage>}
-      {needRefresh && !editor && (
+      {needRefresh && !editor && !chatOpen && (
         <div className="update-banner" role="status">
           <span>Eine neue Version ist bereit.</span>
           <button
@@ -755,6 +766,12 @@ export default function App() {
           }}
         />
       )}
+      <StylistChat
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        onOpen={setSelectedId}
+        notify={notify}
+      />
       <div
         className="toast-region"
         role="status"

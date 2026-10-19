@@ -15,6 +15,8 @@
 - Keine simulierten KI-Ergebnisse oder funktionslosen Aktionen. Regeln und Grenzen verständlich benennen.
 - Lokale KI nur nach bewusster Aktion starten; Modelle/Laufzeit selbst hosten, Lizenzen und Prüfsummen erhalten. Keine großen Modelldateien automatisch beim App-Start laden.
 
+- Seit 19.10.2026 ist ein persönlicher KI-Chat ausdrücklich gewünscht: eigener gerätelokaler Opt-in, bestehender kostenloser Qwen3-VL-Outpost/8B-Dienst, pro Sendung höchstens 40 Kleidungsangaben und sechs alte Nachrichten plus Vorlieben/Wetter. Keine Kleidungsfotos, Notizen oder Koordinaten. Browser-Diktieren/Vorlesen nur nach eigener Aktion; keine Audiodateien speichern. Verlauf in additiver Datenbank-/Sicherungsversion 5 erhalten, Sicherungen 1–4 weiterhin lesen. Keine stillen Daten-/Kalendereingriffe durch Modelltext; Look-Referenzen beim bewussten Speichern erneut prüfen.
+
 ## Umsetzung
 
 - React/TypeScript, Vite, Tailwind und Dexie nutzen. Abhängigkeiten sparsam ergänzen und Lockdatei erhalten.

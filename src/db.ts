@@ -4,6 +4,7 @@ import { COLORS, STYLES } from './model'
 import type { Garment, GarmentDraft } from './model'
 import type { CalendarEntry } from './calendar'
 import type { WeatherState } from './weather'
+import type { ChatSession } from './chat-model'
 import {
   assertWardrobeCapacity,
   MAX_OUTFITS,
@@ -29,6 +30,7 @@ export class WardrobeDatabase extends Dexie {
   preferences!: Table<Preferences, string>
   calendar!: Table<CalendarEntry, string>
   weather!: Table<WeatherState, string>
+  chat!: Table<ChatSession, string>
   constructor(name = 'mystyle-private-wardrobe') {
     super(name)
     this.version(1).stores({ garments: 'id, category, updatedAt' })
@@ -42,16 +44,20 @@ export class WardrobeDatabase extends Dexie {
       weather: 'id',
     })
     this.version(4).stores({ garments: 'id, category, updatedAt' })
+    this.version(5).stores({ chat: 'id, updatedAt' })
   }
 }
 export async function deleteGarment(id: string, database = db): Promise<void> {
   await database.transaction(
     'rw',
-    database.garments,
-    database.outfits,
-    database.feedback,
-    database.calendar,
-    database.preferences,
+    [
+      database.garments,
+      database.outfits,
+      database.feedback,
+      database.calendar,
+      database.preferences,
+      database.chat,
+    ],
     async () => {
       const ids = await database.outfits
         .where('garmentIds')
@@ -62,6 +68,22 @@ export async function deleteGarment(id: string, database = db): Promise<void> {
       await database.outfits.where('garmentIds').equals(id).delete()
       await database.feedback.where('garmentIds').equals(id).delete()
       await database.garments.delete(id)
+      const chat = await database.chat.get('stylist')
+      if (
+        chat?.messages.some((message) => message.look?.garmentIds.includes(id))
+      )
+        await database.chat.put({
+          ...chat,
+          revision: crypto.randomUUID(),
+          updatedAt: new Date(
+            Math.max(Date.now(), Date.parse(chat.updatedAt) + 1),
+          ).toISOString(),
+          messages: chat.messages.map((message) =>
+            message.look?.garmentIds.includes(id)
+              ? { ...message, look: undefined }
+              : message,
+          ),
+        })
       const preferences = await database.preferences.get('personal')
       if (preferences?.dailySelection?.garmentIds.includes(id))
         await database.preferences.put({

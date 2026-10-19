@@ -35,6 +35,9 @@ export function backupRevision(data: BackupData): string {
       .sort((a, b) => a.id.localeCompare(b.id)),
     outfits: [...data.outfits].sort((a, b) => a.id.localeCompare(b.id)),
     feedback: [...data.feedback].sort((a, b) => a.id.localeCompare(b.id)),
+    chat: data.chat?.messages.length
+      ? { messages: data.chat.messages }
+      : undefined,
     preferences,
     calendar: [...(data.calendar ?? [])].sort((a, b) =>
       a.id.localeCompare(b.id),

@@ -1,5 +1,15 @@
 # MyStyle
 
+## Version 0.14.0 – persönlicher KI-Chat
+
+- Sprechblasen-Einstieg in der gemeinsamen Kopfzeile; dunkler, tastaturbedienbarer Dialog mit Folgefragen, natürlichen deutschen Antworten und bewusster Sendung.
+- Kostenloser bestehender Qwen3-VL-Outpost/8B-Dienst, eigener widerrufbarer gerätelokaler Chat-Opt-in, keine zusätzlichen Provider-/Administrationsschlüssel und keine kostenpflichtigen APIs.
+- Begrenzter Kontext: Frage, letzte sechs Nachrichten, höchstens 40 relevante Kleidungsangaben mit ausgewogener Kategorieauswahl, Stilprofil/abgeleitete Vorlieben, heutiger Look, Tragehistorie und bereits freigegebene frische Wetterwerte. Keine Kleidungsfotos, Notizen, Audioaufnahmen oder Koordinaten an Qwen.
+- Echte vollständige Look-Referenzen validieren; Verfügbarkeit und Kontext beim Speichern erneut prüfen. Änderungen erst auf eigene Aktion. Keine automatischen Löschungen, Wäsche-, Kalender- oder Profileingriffe.
+- Verlauf mit höchstens 30 vollständigen Gesprächsrunden, Neustart, Offline-Lesen, bestätigtem Löschen und erhaltenen Entwürfen nach Fehler/Abbruch. Verspätete Antworten nach Reset, Import, Kontextwechsel, Widerruf und Schliessen verwerfen. Keine automatischen Wiederholungen oder bezahlten Ausweichdienste.
+- Optionale Browser-Diktierfunktion und Vorlesen mit sichtbaren Datenfluss-Hinweisen, Mikrofon nur nach Antippen, Text vor Sendung editierbar, 30-Sekunden-Grenze und Abbruch beim Verlassen. Tippen bleibt immer nutzbar; echte iPhone-Sprachunterstützung nicht behaupten.
+- Additive Datenbankversion 5 und Sicherungsformat 5 für Gespräch/Look-Referenzen; Altbestände und Sicherungen 1–4 erhalten. Freigaben nicht exportieren, alte Sicherungen und konkurrierende Antworten dürfen gelöschte Verläufe nicht unbeabsichtigt wiederherstellen.
+
 ## Version 0.13.0 – Stilprofil und lernende Gewichtung
 
 - Nicht blockierender, dauerhaft überspringbarer Stilcheck mit drei freiwilligen Schritten. Bestehende Vorlieben vorfüllen, Entwürfe abbrechbar, Profil unter Mehr jederzeit bearbeiten.

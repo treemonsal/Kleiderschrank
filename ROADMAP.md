@@ -1,5 +1,17 @@
 # Entwicklungsplan
 
+## Version 0.14.0 – im Gespräch mit MyStyle
+
+- [x] Persönlichen kostenlosen Chat mit eigenem Einstieg und einmaliger gerätelokaler Freigabe
+- [x] Begrenzten relevanten Bestand, Stilprofil, Bewertungen, Wetter und Gesprächskontext nutzen
+- [x] Folgefragen, geprüfte Outfitkarten und ausdrückliches Speichern mit erneuter Prüfung
+- [x] Verlauf, Löschen, Offline-Lesen, additive Datenmigration und Sicherungsformat 5 mit Altkompatibilität
+- [x] Diktieren/Vorlesen nach Browser-Unterstützung, Fehler- und Abbruchverhalten mit schreibbarem Entwurf
+- [x] Erste 198 Logiktests und zwölf gezielte Chat-Browserfälle bestehen
+- [x] Gesamtlauf mit 108 Chromium-Fällen und 198 Logiktests, zwölf letzte Chat-Nachprüfungen und Projektpfad/Offline-Verlauf bestätigen
+- [ ] Öffentliche Version 0.14.0 bestätigen
+- [ ] Spracheingabe/Vorlesen und Tastaturverhalten auf echtem iPhone/Safari erproben
+
 ## Version 0.13.0 – persönliche Empfehlungen
 
 - [x] Freiwilligen Stilcheck mit drei Schritten, dauerhaftem Überspringen und späterem Bearbeiten einbauen
@@ -10,7 +22,7 @@
 - [x] Einzelnes Zurücknehmen, bestätigtes Zurücksetzen und Schutz vor konkurrierenden Änderungen
 - [x] Profil und Bewertungsdetails vollständig sichern, alte Sicherungen lesen und Fehlwerte vor Import ablehnen
 - [x] Gesamt-Browserlauf (96 Fälle), 177 Logiktests und funktionalen Projektpfad-Build bestätigen
-- [ ] Öffentliche Auslieferung bestätigen: Pages-Lauf 39280451922 gestartet; GitHub meldet am 19.10.2026 eine Actions-/Pages-Störung, Lauf noch in Warteschlange
+- [x] Version 0.13.0 inzwischen öffentlich bestätigt: Pages-Lauf 39280451922, HTTPS-App-Skript mit 0.13.0 und Stilcheck am 19.10.2026 geprüft
 - [ ] Echte iPhone-/Safari-Bedienung und Empfehlungsqualität im Alltag erproben
 
 ## Phase 1 – zuverlässiger privater Kleiderschrank

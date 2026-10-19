@@ -160,7 +160,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
   const download = await downloadPromise
   const json = await readFile((await download.path())!, 'utf8'),
     data = JSON.parse(json)
-  expect(data.version).toBe(4)
+  expect(data.version).toBe(5)
   expect(data.calendar).toHaveLength(2)
   const empty = {
     ...data,
