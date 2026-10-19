@@ -322,7 +322,6 @@ export function DailyOutfit({
           </button>
         )}
       </div>
-      {isToday && <StyleProfileCard items={items} notify={notify} invitation />}
       <div className="day-slide-viewport">
         <section
           className="daily-look day-slide"
@@ -601,6 +600,7 @@ export function DailyOutfit({
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </section>
       </div>
+      {isToday && <StyleProfileCard items={items} notify={notify} invitation />}
       {swapping && state && look && isToday && !worn && (
         <OutfitSwap
           items={items}

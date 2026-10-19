@@ -216,7 +216,7 @@ test('Ungespeicherte Eingaben gehen beim Schliessen nicht unbemerkt verloren', a
 })
 
 for (const width of [375, 390, 430]) {
-  test(`iPhone-Layout ${width}px, dauerhafter Dunkelmodus und Editor ohne horizontalen Überlauf`, async ({
+  test(`iPhone-Layout ${width}px, Editorial-Design trotz alter Theme-Vorgabe und Editor ohne horizontalen Überlauf`, async ({
     page,
   }, testInfo) => {
     await page.setViewportSize({ width, height: 844 })
@@ -225,7 +225,10 @@ for (const width of [375, 390, 430]) {
       localStorage.setItem('mystyle-theme', 'light'),
     )
     await page.goto('/')
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-theme',
+      'editorial',
+    )
     await expect(
       page.getByRole('heading', { name: 'Dein Look für heute.' }),
     ).toBeVisible()
@@ -252,7 +255,7 @@ for (const width of [375, 390, 430]) {
     ).toHaveAttribute('aria-current', 'page')
     await expect
       .poll(async () => {
-        const lens = await page.locator('.glass-selection').boundingBox()
+        const lens = await page.locator('.nav-selection').boundingBox()
         const selected = await page
           .getByRole('button', { name: 'Mehr', exact: true })
           .boundingBox()
@@ -261,19 +264,24 @@ for (const width of [375, 390, 430]) {
         )
       })
       .toBeLessThan(2)
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-theme',
+      'editorial',
+    )
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true)
     await page.screenshot({
-      path: testInfo.outputPath(`settings-dark-${width}.png`),
+      path: testInfo.outputPath(`settings-editorial-${width}.png`),
       fullPage: true,
     })
     await page.reload()
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-theme',
+      'editorial',
+    )
     await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
     expect(
@@ -282,7 +290,68 @@ for (const width of [375, 390, 430]) {
         .evaluate((el) => el.scrollWidth <= el.clientWidth),
     ).toBe(true)
     await page.screenshot({
-      path: testInfo.outputPath(`editor-dark-${width}.png`),
+      path: testInfo.outputPath(`editor-editorial-${width}.png`),
     })
   })
 }
+
+test('Gedämpfte Beschriftungen und Aktionen bleiben auf Papierflächen lesbar', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await expect(
+    page.getByRole('button', { name: 'Erstes Stück hinzufügen', exact: true }),
+  ).toBeVisible()
+  const contrast = async (selectors: string[]) => {
+    const results = await page.evaluate((selectors) => {
+      const rgb = (color: string) => (color.match(/[\d.]+/g) ?? []).map(Number)
+      const luminance = (color: number[]) => {
+        const linear = color.slice(0, 3).map((value) => {
+          const channel = value / 255
+          return channel <= 0.04045
+            ? channel / 12.92
+            : ((channel + 0.055) / 1.055) ** 2.4
+        })
+        return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+      }
+      return selectors.flatMap((selector) =>
+        [...document.querySelectorAll(selector)].map((node) => {
+          let parent: Element | null = node
+          let background = [255, 255, 255]
+          while (parent) {
+            const value = rgb(getComputedStyle(parent).backgroundColor)
+            if (value.length === 3 || value[3] === 1) {
+              background = value
+              break
+            }
+            parent = parent.parentElement
+          }
+          const a = luminance(rgb(getComputedStyle(node).color))
+          const b = luminance(background)
+          return {
+            selector,
+            ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05),
+          }
+        }),
+      )
+    }, selectors)
+    expect(results.length).toBeGreaterThanOrEqual(selectors.length)
+    for (const result of results)
+      expect(result.ratio, result.selector).toBeGreaterThanOrEqual(4.5)
+  }
+  await contrast([
+    '.daily-look header .muted',
+    '.daily-look .eyebrow',
+    '.daily-add',
+    '.home-date',
+    '.home-week-strip small',
+    '.bottom-nav button',
+    '.bottom-nav .nav-icon',
+  ])
+  await page
+    .getByRole('button', { name: 'Kleiderschrank', exact: true })
+    .click()
+  await contrast(['.category-tabs .chip', '.collection-toolbar'])
+  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await contrast(['.settings-action small'])
+})

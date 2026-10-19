@@ -1,5 +1,13 @@
 # MyStyle
 
+## Version 0.15.0 – Garderobenjournal
+
+- Die bisherigen gestalterischen Vorgaben sind auf ausdrücklichen Nutzerwunsch aufgehoben. Neue eigenständige, helle Editorial-Gestaltung: Papierfarben, dunkle Schrift, lokale Serifentitel, rostrote Markierungen, kantige Bildflächen; keine violetten KI-Motive oder Sternchen-Symbole.
+- Beschriftete Textnavigation mit Kapitelnummern und gleitender Linie; während Seitenanimationen durchgehend sichtbar. Datumsswipes und tatsächliche Kalenderfarbringe bleiben erhalten.
+- Tageslook vor dem freiwilligen Stilcheck; gemeinsame Gestaltung für Kollektion, Outfitplanung, Dialoge, Einstellungen und Chat. Kategoriezeichnungen sind nur Platzhalter für fehlende Fotos.
+- Altes Design vor Änderungen in GitHub-Tag `design-backup/platinum-0.14.0` gesichert; zusätzlich Quellarchiv und gezielter umkehrbarer Design-Patch. Keine Datenbank-/Sicherungsänderung, keine neuen Dienste oder Abhängigkeiten.
+- Safe Areas, mindestens 44px wichtige Touch-Ziele, Tastaturbedienung, lesbare Kontraste und reduzierte Bewegung bleiben verbindlich. Frühere Dunkelmodus-Anforderungen beschreiben den damaligen Versionsstand.
+
 ## Version 0.14.0 – persönlicher KI-Chat
 
 - Sprechblasen-Einstieg in der gemeinsamen Kopfzeile; dunkler, tastaturbedienbarer Dialog mit Folgefragen, natürlichen deutschen Antworten und bewusster Sendung.

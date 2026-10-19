@@ -8,7 +8,7 @@ test('Menüleiste bleibt auch während der Seitenanimation vor dem Inhalt sichtb
     page.getByRole('region', { name: 'Dein Tageslook' }),
   ).toBeVisible()
   // A solid test material makes snapshot occlusion measurable without depending
-  // on glass blur, garment colours or platform font rendering.
+  // on garment colours or platform font rendering.
   await page.addStyleTag({
     content: `
       .bottom-nav { background: rgb(8, 200, 80) !important; }

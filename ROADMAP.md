@@ -1,5 +1,15 @@
 # Entwicklungsplan
 
+## Version 0.15.0 – neues Garderobenjournal
+
+- [x] Vorherigen Designstand als GitHub-Tag und Quellarchiv sichern
+- [x] Papier-/Tintenpalette, Serifentypografie und neue Wortmarke umsetzen
+- [x] Ruhige Textnavigation, flache Reiter, neue Foto-Bühnen und Kategoriezeichnungen
+- [x] Startseite, Kollektion, Outfits, Editor, Einstellungen und Chat gemeinsam gestalten
+- [x] Freiwilligen Stilcheck hinter dem Tageslook anordnen
+- [x] Mobile/Browser-/Offline-Abläufe, Kontraste und gezielte Design-Rückkehr geprüft; 198 Logik-/Datentests und alle 109 Chromium-Browserfälle bestanden
+- [ ] Version veröffentlichen und öffentliche Dateien bestätigen
+
 ## Version 0.14.0 – im Gespräch mit MyStyle
 
 - [x] Persönlichen kostenlosen Chat mit eigenem Einstieg und einmaliger gerätelokaler Freigabe

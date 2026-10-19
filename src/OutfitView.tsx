@@ -8,7 +8,7 @@ import {
   Plus,
   RefreshCw,
   Settings2,
-  Sparkles,
+  ArrowUpRight,
   Trash2,
 } from 'lucide-react'
 import { COLORS, SEASONS, STYLES, type Garment } from './model'
@@ -356,7 +356,7 @@ export function OutfitView({
   return (
     <div className="view outfits-view">
       <header className="page-heading">
-        <p className="eyebrow">NEU KOMBINIEREN. DICH ENTDECKEN.</p>
+        <p className="eyebrow">STYLING & PLANUNG</p>
         <div className="heading-row">
           <h1>Deine nächsten Looks.</h1>
           <button
@@ -375,7 +375,7 @@ export function OutfitView({
           aria-pressed={tab === 'discover'}
           onClick={() => setTab('discover')}
         >
-          <Sparkles size={16} />
+          <ArrowUpRight size={16} />
           Entdecken
         </button>
         <button
@@ -475,7 +475,11 @@ export function OutfitView({
                     setError('')
                   }}
                 >
-                  {requested ? <RefreshCw size={17} /> : <Sparkles size={17} />}
+                  {requested ? (
+                    <RefreshCw size={17} />
+                  ) : (
+                    <ArrowUpRight size={17} />
+                  )}
                   {requested ? 'Neu kombinieren' : 'Outfits zusammenstellen'}
                 </button>
                 <p className="generator-disclosure">
@@ -776,5 +780,5 @@ export function OutfitView({
 }
 
 function ShirtNotice() {
-  return <Sparkles size={30} strokeWidth={1.2} />
+  return <ArrowUpRight size={30} strokeWidth={1.2} />
 }

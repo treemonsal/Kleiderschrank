@@ -130,9 +130,12 @@ test('Abbruch und Fotoentfernung verwerfen laufende Antworten', async ({
 }) => {
   await configure(page)
   let count = 0
+  const replies: (() => void)[] = []
   await page.route(`${url}/v1/garment`, async (route) => {
     count++
-    await new Promise((resolve) => setTimeout(resolve, 400))
+    // Keep both requests pending until the user action under test has run.
+    // A 400ms response can finish while a mobile browser scrolls to Cancel.
+    await new Promise<void>((resolve) => replies.push(resolve))
     await route.fulfill({ json: { attributes, cutout: null } }).catch(() => {})
   })
   await open(page)
@@ -140,7 +143,9 @@ test('Abbruch und Fotoentfernung verwerfen laufende Antworten', async ({
   await expect(
     page.getByRole('button', { name: 'Analyse abbrechen' }),
   ).toBeVisible()
+  await expect.poll(() => count).toBe(1)
   await page.getByRole('button', { name: 'Analyse abbrechen' }).click()
+  replies.shift()?.()
   await expect(
     page.getByRole('button', { name: 'Foto erneut analysieren' }),
   ).toBeVisible()
@@ -148,7 +153,9 @@ test('Abbruch und Fotoentfernung verwerfen laufende Antworten', async ({
   await expect(
     page.getByRole('button', { name: 'Analyse abbrechen' }),
   ).toBeVisible()
+  await expect.poll(() => count).toBe(2)
   await page.getByRole('button', { name: 'Foto entfernen' }).click()
+  replies.shift()?.()
   await expect(page.getByLabel('Name', { exact: false })).toHaveValue('')
   await expect(
     page.getByAltText('Vorschau des Kleidungsstücks'),

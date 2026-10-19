@@ -25,7 +25,7 @@
 - Jede neu gespeicherte Datenart in Export/Import einbeziehen. Alte Sicherungen weiterhin lesbar halten. Fehlerhafte Sicherungen dürfen vorhandene Daten nicht verändern.
 - Bei Freistellung das gespeicherte Originalfoto separat erhalten; Vorschau bewusst übernehmen, abbrechen und zum Original zurückkehren können. Beide Fotovarianten validieren, sichern und auf die Kapazität anrechnen. Worker nach Abschluss/Abbruch beenden.
 - Outfits ausschliesslich aus tatsächlich vorhandenen, eindeutig referenzierten Kleidungsstücken erzeugen. Fehlende Kategorien und nur geschätzte Farbharmonie offen benennen.
-- iPhone-Safe-Areas, mindestens 44 Pixel grosse wichtige Touch-Ziele, Tastaturbedienung, echte Beschriftungen, ausschliesslich Dunkelmodus und reduzierte Bewegung berücksichtigen.
+- iPhone-Safe-Areas, mindestens 44 Pixel grosse wichtige Touch-Ziele, Tastaturbedienung, echte Beschriftungen, das seit 19.10.2026 ausdrücklich neu gewünschte Editorial-Design (warme Papierflächen, dunkle Schrift, keine violetten KI-Motive) und reduzierte Bewegung berücksichtigen.
 
 ## Prüfung und Abschluss
 

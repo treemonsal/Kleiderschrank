@@ -7,21 +7,16 @@ import {
   ArrowUpRight,
   Check,
   Heart,
-  House,
   LoaderCircle,
-  Layers2,
-  MoreHorizontal,
   Pencil,
   Plus,
   Search,
   Shirt,
   SlidersHorizontal,
-  Sparkles,
   Trash2,
   WifiOff,
   X,
   Settings2,
-  MessageCircle,
 } from 'lucide-react'
 import {
   db,
@@ -92,7 +87,7 @@ function Home({
       <BackupReminder onBackup={onBackup} />
       <section className="wardrobe-summary">
         <div>
-          <p className="eyebrow">DEINE KLEINE KOLLEKTION</p>
+          <p className="eyebrow">DEINE GARDEROBE</p>
           <h2>
             {items.length} {items.length === 1 ? 'Stück' : 'Stücke'}
             <span className="summary-dot">·</span>
@@ -112,7 +107,7 @@ function Home({
         <section className="home-collection">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">GANZ DEIN GESCHMACK</p>
+              <p className="eyebrow">AUS DEINER KOLLEKTION</p>
               <h2>
                 {favorites.length
                   ? 'Deine Lieblingsstücke'
@@ -145,15 +140,14 @@ function Home({
             <Plus size={22} strokeWidth={1.5} />
           </span>
           <span>
-            <strong>Platz für ein neues Lieblingsstück.</strong>
-            <small>Ergänze deine persönliche Kollektion.</small>
+            <strong>Ein Stück ergänzen</strong>
+            <small>Foto aufnehmen oder aus der Mediathek wählen.</small>
           </span>
           <ArrowRight size={19} />
         </button>
       )}
       <div className="editorial-note">
-        <Sparkles size={16} strokeWidth={1.2} />
-        <p>Guter Stil beginnt mit dem, was du hast.</p>
+        <p>MyStyle / Dein Garderobenjournal</p>
       </div>
     </div>
   )
@@ -189,7 +183,7 @@ function Wardrobe({
   return (
     <div className="view wardrobe-view">
       <header className="page-heading">
-        <p className="eyebrow">ALLES, WAS DICH AUSMACHT</p>
+        <p className="eyebrow">DIE KOLLEKTION</p>
         <div className="heading-row">
           <h1>Dein Kleiderschrank.</h1>
           <button
@@ -202,7 +196,7 @@ function Wardrobe({
         </div>
         <p>
           {items.length
-            ? `${items.length} ${items.length === 1 ? 'Stück' : 'Stücke'}. Unendlich viele Möglichkeiten.`
+            ? `${items.length} ${items.length === 1 ? 'Stück' : 'Stücke'} in deiner Garderobe.`
             : 'Eine Kollektion, die ganz dir gehört.'}
         </p>
       </header>
@@ -553,14 +547,6 @@ export default function App() {
     return () => clearTimeout(timer)
   }, [toast])
   useEffect(() => {
-    document.documentElement.dataset.theme = 'dark'
-    try {
-      localStorage.setItem('mystyle-theme', 'dark')
-    } catch {
-      /* Styling still works when storage is blocked. */
-    }
-  }, [])
-  useEffect(() => {
     const online = () => setOffline(false)
     const offline = () => setOffline(true)
     window.addEventListener('online', online)
@@ -596,18 +582,19 @@ export default function App() {
           aria-label="MyStyle Startseite"
           onClick={() => navigate('home')}
         >
-          my<span>style</span>
-          <span className="wordmark-dot">.</span>
+          My<span>Style</span>
+          <span className="wordmark-dot">/</span>
         </button>
         <div className="header-right">
-          <span className="edition">DEIN TÄGLICHER STIL</span>
+          <span className="edition">DEIN GARDEROBENJOURNAL</span>
           <button
-            className="profile-button"
+            className="profile-button stylist-link"
             aria-label="Mit deinem Stylisten sprechen"
             disabled={!items || wardrobe?.failed || !!editor || !!selectedId}
             onClick={() => setChatOpen(true)}
           >
-            <MessageCircle size={21} strokeWidth={1.6} />
+            <span>Stylist</span>
+            <ArrowUpRight size={16} strokeWidth={1.5} />
           </button>
           <button
             className="profile-button"
@@ -707,7 +694,7 @@ export default function App() {
       </main>
       <nav className="bottom-nav" aria-label="Hauptnavigation">
         <span
-          className="glass-selection"
+          className="nav-selection"
           aria-hidden="true"
           style={{
             transform: `translateX(${{ home: 0, wardrobe: 1, outfits: 2, settings: 3 }[view] * 100}%)`,
@@ -715,12 +702,12 @@ export default function App() {
         />
         {(
           [
-            { key: 'home', label: 'Heute', Icon: House },
-            { key: 'wardrobe', label: 'Kleiderschrank', Icon: Shirt },
-            { key: 'outfits', label: 'Outfits', Icon: Layers2 },
-            { key: 'settings', label: 'Mehr', Icon: MoreHorizontal },
+            { key: 'home', label: 'Heute', number: '01' },
+            { key: 'wardrobe', label: 'Kleiderschrank', number: '02' },
+            { key: 'outfits', label: 'Outfits', number: '03' },
+            { key: 'settings', label: 'Mehr', number: '04' },
           ] as const
-        ).map(({ key, label, Icon }) => (
+        ).map(({ key, label, number }) => (
           <button
             key={key}
             data-motion="nav"
@@ -728,8 +715,8 @@ export default function App() {
             aria-current={view === key ? 'page' : undefined}
             onClick={() => navigate(key)}
           >
-            <span className="nav-icon">
-              <Icon size={23} strokeWidth={view === key ? 1.9 : 1.5} />
+            <span className="nav-icon" aria-hidden="true">
+              {number}
             </span>
             <span>{label}</span>
           </button>

@@ -431,7 +431,7 @@ test('Freigegebener Standort lädt gerundetes Wetter, bestätigt Speichern und s
 })
 
 for (const width of [375, 390, 430]) {
-  test(`Kalender und Wetter bei ${width}px ohne Überlauf, auch im Dunkelmodus`, async ({
+  test(`Kalender und Wetter bei ${width}px ohne Überlauf, im Editorial-Design`, async ({
     page,
   }, testInfo) => {
     await page.clock.install({ time: fixedTime })
@@ -458,7 +458,10 @@ for (const width of [375, 390, 430]) {
       fullPage: true,
     })
     await page.getByRole('button', { name: 'Mehr', exact: true }).click()
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-theme',
+      'editorial',
+    )
     await page.getByRole('button', { name: 'Outfits', exact: true }).click()
     await page.getByRole('button', { name: 'Kalender', exact: true }).click()
     expect(
@@ -467,7 +470,7 @@ for (const width of [375, 390, 430]) {
       ),
     ).toBe(true)
     await page.screenshot({
-      path: testInfo.outputPath(`calendar-dark-${width}.png`),
+      path: testInfo.outputPath(`calendar-editorial-${width}.png`),
       fullPage: true,
     })
   })

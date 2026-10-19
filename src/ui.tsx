@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
-import { Heart, Shirt, X } from 'lucide-react'
+import { Heart, X } from 'lucide-react'
 import type { Garment } from './model'
+import { GarmentSketch } from './GarmentSketch'
 
 export function usePhotoUrl(photo?: Blob): string | undefined {
   const [url, setUrl] = useState<string>()
@@ -47,7 +48,7 @@ export function GarmentPicture({
         <img src={url} alt={item.name} loading={large ? 'eager' : 'lazy'} />
       ) : (
         <div className="photo-placeholder">
-          <Shirt strokeWidth={1} size={large ? 100 : 64} />
+          <GarmentSketch category={item.category} />
           <span>{item.category}</span>
         </div>
       )}

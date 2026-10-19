@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Sparkles, LoaderCircle } from 'lucide-react'
+import { ArrowUpRight, LoaderCircle } from 'lucide-react'
 import {
   checkAIConnection,
   readAIConnection,
@@ -31,7 +31,7 @@ export function AISettings() {
     <section className="settings-section ai-settings">
       <div className="section-heading">
         <h2>Online-Foto-KI</h2>
-        <Sparkles size={20} />
+        <ArrowUpRight size={20} />
       </div>
       {!communityActive && (
         <p className="muted section-intro">
@@ -168,7 +168,7 @@ export function AISettings() {
             {busy ? (
               <LoaderCircle size={18} className="spin" />
             ) : (
-              <Sparkles size={18} />
+              <ArrowUpRight size={18} />
             )}
             Kostenlose KI aktivieren
           </button>
@@ -285,7 +285,7 @@ export function AISettings() {
             {busy ? (
               <LoaderCircle size={18} className="spin" />
             ) : (
-              <Sparkles size={18} />
+              <ArrowUpRight size={18} />
             )}
             Verbinden und aktivieren
           </button>

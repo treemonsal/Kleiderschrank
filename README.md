@@ -1,8 +1,14 @@
 # MyStyle
 
+## Garderobenjournal – Version 0.15.0
+
+Die Oberfläche wurde vollständig neu gestaltet: warmes Papier, dunkle Schrift, Serifentitel, rostrote Markierungen und eine ruhige Textnavigation mit Kapitelnummern. Kleiderschrank, Tageslook, Outfits, Kalender, Editor, Einstellungen und Chat verwenden dieselbe Gestaltung. Foto-Platzhalter sind eigene Kategoriezeichnungen; vorhandene Fotos bleiben erhalten. Der freiwillige Stilcheck steht jetzt unter dem Tageslook. Frühere Theme-Einstellungen verändern das neue Design nicht.
+
+Der bisherige Stand ist vor der Änderung als Git-Tag **`design-backup/platinum-0.14.0`** auf GitHub gesichert. Zusätzlich gibt es ein Quellarchiv und einen gezielten Rückweg unter [Design-Backup](design/backups/README.md). Eine Rückkehr zur alten Optik benötigt kein Löschen oder Importieren deiner Kleidungsdaten. [Gestaltungsdetails](design/EDITORIAL.md).
+
 ## Mit deinem Stylisten sprechen – Version 0.14.0
 
-Oben rechts öffnet das Sprechblasen-Symbol **Mit deinem Stylisten sprechen** den persönlichen KI-Chat. Einmal **Kostenlosen Chat aktivieren**, dann Fragen tippen und mit **Senden** abschicken. Beispiele: „Was passt zu meinem blauen Hemd?“, „Und etwas eleganter?“ oder „Welche Farben passen zusammen?“. Der Chat nutzt echte Kleidungsangaben, dein Stilprofil, abgeleitete Vorlieben, den heutigen Look, zuletzt bestätigte Tragetage und vorhandene freigegebene Wetterwerte. Er kann Rückfragen stellen. Seine Antworten beruhen auf Angaben, nicht auf einer neuen Fotoanalyse.
+Oben rechts öffnet **Stylist ↗** (Beschriftung „Mit deinem Stylisten sprechen“) den persönlichen KI-Chat. Einmal **Kostenlosen Chat aktivieren**, dann Fragen tippen und mit **Senden** abschicken. Beispiele: „Was passt zu meinem blauen Hemd?“, „Und etwas eleganter?“ oder „Welche Farben passen zusammen?“. Der Chat nutzt echte Kleidungsangaben, dein Stilprofil, abgeleitete Vorlieben, den heutigen Look, zuletzt bestätigte Tragetage und vorhandene freigegebene Wetterwerte. Er kann Rückfragen stellen. Seine Antworten beruhen auf Angaben, nicht auf einer neuen Fotoanalyse.
 
 Qwen3-VL-8B-Instruct läuft über den vorhandenen öffentlichen Community-Dienst. Pro bewusster Sendung gehen die Frage, höchstens sechs vorherige Nachrichten, bis zu 40 relevante Kleidungsangaben, Vorlieben und gegebenenfalls Wetterwerte an den Anbieter. Keine Kleidungsfotos, Notizen oder Standortkoordinaten. Anbieter-Speicherung, kostenlose Quoten, Wartezeiten und Ausfälle sind möglich. Die Chat-Freigabe gilt nur für dieses Gerät, ist unabhängig von der Foto-KI und wird nicht mit Sicherungen übertragen. Nach dem Aktivieren verschwindet der Einführungstext; unter **Dein Kontext & Chat-Einstellungen** kannst du die Freigabe ausschalten.
 
@@ -28,9 +34,9 @@ Die Personalisierung verwendet nachvollziehbare Gewichtungen aus deinen Angaben 
 
 Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
 
-Version 0.12.1 korrigiert die Fotoanzeige beim Wäsche-Statuswechsel: Bildadressen bleiben gültig, bis die sichtbare Quelle ersetzt wurde. Originale und Freistellungen bleiben erhalten. Der Online-Stylist aus 0.12 und die durchgehend sichtbare Glasnavigation bleiben bestehen.
+Version 0.12.1 korrigiert die Fotoanzeige beim Wäsche-Statuswechsel: Bildadressen bleiben gültig, bis die sichtbare Quelle ersetzt wurde. Originale und Freistellungen bleiben erhalten. Der Online-Stylist aus 0.12 bleibt verfügbar. Ab 0.15 ersetzt die Textnavigation die frühere Glasleiste.
 
-**Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.12.1 am 16. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
+**Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Stand 0.14.0 am 19. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft; 0.15.0 wird nach Abschluss der Prüfungen veröffentlicht. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
 
 ## Lokal starten
 
@@ -75,7 +81,7 @@ Bei neuen Tragebestätigungen werden die Farben mitgesichert und bleiben bei sp�
 
 ## Animationen und Bewegung
 
-Die Waschmaschinen-Tasten lassen kurz die Trommel drehen und das Gehäuse wippen. Favoriten reagieren mit einem kleinen Herz-Puls; erneutes Tippen startet einen neuen kurzen Effekt. Die Glasnavigation federt zur gewählten Seite, unterstützte Browser blenden den Seiteninhalt weich über. Ohne diese Browserfunktion bleibt eine kurze Einblendung. Fenster öffnen sanfter, Fotos blenden ein und die Teile eines Looks erscheinen leicht versetzt. Keine Endlosschleifen, zusätzliche Bibliothek oder Modelldatei.
+Die Waschmaschinen-Tasten lassen kurz die Trommel drehen und das Gehäuse wippen. Favoriten reagieren mit einem kleinen Herz-Puls; erneutes Tippen startet einen neuen kurzen Effekt. Die schmale Markierung der Textnavigation gleitet zur gewählten Seite; der Seiteninhalt erscheint weich, während die Leiste sichtbar bleibt. Fenster öffnen sanfter, Fotos blenden ein und die Teile eines Looks erscheinen leicht versetzt. Keine Endlosschleifen, zusätzliche Bibliothek oder Modelldatei.
 
 Die Rückmeldung läuft unabhängig vom Speichern oder Filtern. Zustände ändern sich erst nach dem jeweiligen tatsächlichen Vorgang; eine Animation behauptet keinen erfolgreichen Speichervorgang. Bei **Bewegung reduzieren** im Betriebssystem stoppen laufende Tipp-Effekte, und neue Dreh-/Feder-/Seitenanimationen bleiben aus. Tageswischen und Tastaturbedienung funktionieren weiter.
 

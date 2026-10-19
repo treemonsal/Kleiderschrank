@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { LoaderCircle, Sparkles } from 'lucide-react'
+import { LoaderCircle, ArrowUpRight } from 'lucide-react'
 import {
   analyzePhoto,
   readAIConnection,
@@ -93,7 +93,7 @@ export function PhotoAssistant({
       aria-label="Foto automatisch vorbereiten"
     >
       <div className="assistant-heading">
-        <Sparkles size={21} />
+        <ArrowUpRight size={21} />
         <div>
           <h3>Dein Foto automatisch vorbereiten.</h3>
           <p>
@@ -133,7 +133,7 @@ export function PhotoAssistant({
               type="button"
               onClick={() => void start()}
             >
-              <Sparkles size={18} />
+              <ArrowUpRight size={18} />
               {message ? 'Foto erneut analysieren' : 'Foto mit KI vorbereiten'}
             </button>
           )}

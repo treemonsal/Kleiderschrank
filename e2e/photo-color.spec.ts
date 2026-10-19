@@ -208,13 +208,16 @@ test('Ein beschädigtes Ersatzfoto erhält bisheriges Foto und Farbeingabe', asy
 })
 
 for (const width of [375, 390, 430]) {
-  test(`Farbprobe ${width}px auch dunkel ohne Überlauf`, async ({
+  test(`Farbprobe ${width}px im Editorial-Design ohne Überlauf`, async ({
     page,
   }, testInfo) => {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
     await page.getByRole('button', { name: 'Mehr', exact: true }).click()
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-theme',
+      'editorial',
+    )
     await page.getByRole('button', { name: 'Heute', exact: true }).click()
     await start(page, '#0000ff', '#ff0000')
     await openPicker(page)
@@ -236,7 +239,7 @@ for (const width of [375, 390, 430]) {
       .boundingBox()
     expect(range!.height).toBeGreaterThanOrEqual(44)
     await page.screenshot({
-      path: testInfo.outputPath(`photo-color-dark-${width}.png`),
+      path: testInfo.outputPath(`photo-color-editorial-${width}.png`),
     })
   })
 }
