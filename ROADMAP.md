@@ -9,7 +9,7 @@
 - [x] Diktieren/Vorlesen nach Browser-Unterstützung, Fehler- und Abbruchverhalten mit schreibbarem Entwurf
 - [x] Erste 198 Logiktests und zwölf gezielte Chat-Browserfälle bestehen
 - [x] Gesamtlauf mit 108 Chromium-Fällen und 198 Logiktests, zwölf letzte Chat-Nachprüfungen und Projektpfad/Offline-Verlauf bestätigen
-- [ ] Öffentliche Version 0.14.0 bestätigen
+- [x] Version 0.14.0 veröffentlicht: Pages-Lauf 39288987728 erfolgreich; öffentliche Version, JS/CSS-Bytegleichheit, Installationspfad und Service Worker bestätigt
 - [ ] Spracheingabe/Vorlesen und Tastaturverhalten auf echtem iPhone/Safari erproben
 
 ## Version 0.13.0 – persönliche Empfehlungen
