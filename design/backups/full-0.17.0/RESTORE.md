@@ -20,3 +20,5 @@ Erneut prüfen, ohne die laufende App zu ändern: im Projekt-Root `python3 scrip
 ## Die laufende App zurücksetzen
 
 Die Bereinigungs-Commits regulär mit `git revert` rückgängig machen, den Revert prüfen, nach main pushen und den Pages-Workflow starten. Kein Force-Push, kein `git reset --hard` und keine Löschung der Website-Daten auf dem Handy. Einstellungen in github-settings.json sind ein Snapshot; sie werden nicht automatisch auf GitHub zurückgeschrieben. Ein Backup des persönlichen Kleiderschranks erfolgt separat in der App über „Backup exportieren“.
+
+Die eigentliche Bereinigung liegt in Commit [`6f1d4238aab952ffec97162227e2379d9485219e`](https://github.com/treemonsal/Kleiderschrank/commit/6f1d4238aab952ffec97162227e2379d9485219e). Für eine Rückkehr diesen Commit regulär rückgängig machen; bei später geänderten Dokumenten mögliche Konflikte bewusst auflösen. Der separate Sicherungscommit `4102311` und der Ausgangs-Tag sollen erhalten bleiben. Diese Bereinigung hat weder Datenbankversion 5 noch das persönliche Sicherungsformat 6 verändert.

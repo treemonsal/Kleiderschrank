@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Projektversion **0.17.1** · [iPhone-Prüfliste](IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.17.1** · [iPhone-Prüfliste](IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -207,6 +207,8 @@ VITE_BASE_PATH=/Kleiderschrank/ npm run preview
 ```
 
 Danach vor Root-Browserprüfungen wieder `npm run build` ausführen. Der echte iPhone-/Safari-Test bleibt separat in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
+
+Version 0.17.1 wurde am 20. Oktober 2026 durch [Pages-Lauf 39376534902](https://github.com/treemonsal/Kleiderschrank/actions/runs/39376534902) erfolgreich veröffentlicht. Die öffentlichen HTML-, JavaScript-, CSS-, Manifest-, Icon- und Service-Worker-Dateien entsprechen dem lokal geprüften Build. Der neue [Prüfworkflow 39375823577](https://github.com/treemonsal/Kleiderschrank/actions/runs/39375823577) besteht mit 219 Datentests und allen 129 Browserfällen.
 
 ## Projektbackup und Dokumentation
 

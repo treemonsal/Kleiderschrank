@@ -8,7 +8,7 @@
 - [x] Chat-Freigabe von erst bei Bedarf ausgeführtem Anfragecode trennen
 - [x] Node-24-Actions pinnen und automatisierte Prüfungen ergänzen
 - [x] Aktuelle Anleitung und alte Versionsbeschreibungen auseinanderziehen
-- [ ] Finale Browser-/Build-/GitHub-Prüfungen und Veröffentlichung dokumentieren
+- [x] Finale Browser-/Build-/GitHub-Prüfungen und Veröffentlichung dokumentieren
 
 ## Version 0.17.0 – vollständiger Rundgang
 
