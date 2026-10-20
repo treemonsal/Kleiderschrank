@@ -247,9 +247,17 @@ export async function savePreferences(
   styles: Preferences['styles'],
   colors: string[],
   database = db,
+  expectedRevision?: string,
 ): Promise<void> {
   await database.transaction('rw', database.preferences, async () => {
     const current = await database.preferences.get('personal')
+    if (
+      expectedRevision !== undefined &&
+      styleProfileRevision(current ?? DEFAULT_PREFERENCES) !== expectedRevision
+    )
+      throw new UserFacingError(
+        'Deine Stilvorlieben wurden inzwischen geändert. Deine Auswahl bleibt hier erhalten. Schliesse das Fenster und öffne es erneut, damit keine neueren Angaben überschrieben werden.',
+      )
     await updatePreferences(
       {
         styles: [...styles],

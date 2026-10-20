@@ -46,6 +46,7 @@ export function PlanEditor({
   return (
     <Sheet
       title="Ein Look für deinen Tag."
+      closeDisabled={busy}
       dirty={!busy && JSON.stringify({ outfitId, status, note }) !== baseline}
       eyebrow={dayLabel(day)}
       onClose={() => {

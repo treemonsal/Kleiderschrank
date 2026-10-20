@@ -4,11 +4,13 @@ import {
   checkAIConnection,
   readAIConnection,
   saveAIConnection,
+  AI_CONNECTION_KEY,
+  AI_CONNECTION_CHANGED,
   type AIConnection,
 } from './cloud-ai'
 import { ErrorMessage } from './ui'
 
-export function AISettings() {
+export function AISettings({ onConnected }: { onConnected?: () => void }) {
   const [connection, setConnection] = useState(readAIConnection)
   const [url, setUrl] = useState(
     connection?.mode === 'community' ? '' : (connection?.url ?? ''),
@@ -24,13 +26,49 @@ export function AISettings() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const controller = useRef<AbortController | null>(null)
-  useEffect(() => () => controller.current?.abort(), [])
+  const lastConnection = useRef(connection)
+  const persisting = useRef(false)
+  useEffect(() => {
+    const changed = (event: Event) => {
+      if (
+        event.type === 'storage' &&
+        (event as StorageEvent).key !== null &&
+        (event as StorageEvent).key !== AI_CONNECTION_KEY
+      )
+        return
+      if (persisting.current) return
+      const next = readAIConnection()
+      if (JSON.stringify(next) === JSON.stringify(lastConnection.current))
+        return
+      lastConnection.current = next
+      controller.current?.abort()
+      controller.current = null
+      setBusy(false)
+      setConnection(next)
+      setCommunityConsent(next?.mode === 'community' && next.enabled)
+      setEnabled(next?.mode !== 'community' && (next?.enabled ?? false))
+      // URL/code are deliberate, unsaved form drafts; do not replace them.
+      setError('')
+      setMessage(
+        'Die KI-Verbindung wurde geändert. Deine Server-Eingaben bleiben hier erhalten.',
+      )
+    }
+    window.addEventListener('storage', changed)
+    window.addEventListener(AI_CONNECTION_CHANGED, changed)
+    return () => {
+      controller.current?.abort()
+      window.removeEventListener('storage', changed)
+      window.removeEventListener(AI_CONNECTION_CHANGED, changed)
+    }
+  }, [])
   const communityActive = connection?.mode === 'community' && connection.enabled
   const Information = communityActive ? 'details' : 'div'
   function persist(value: AIConnection | null) {
     try {
-      saveAIConnection(value)
-      setConnection(value)
+      persisting.current = true
+      const normalized = saveAIConnection(value)
+      lastConnection.current = normalized
+      setConnection(normalized)
       setError('')
       return true
     } catch {
@@ -42,6 +80,8 @@ export function AISettings() {
         'Die Freigabe konnte nicht auf diesem Gerät gespeichert werden. Bitte versuche es erneut.',
       )
       return false
+    } finally {
+      persisting.current = false
     }
   }
   return (
@@ -109,6 +149,8 @@ export function AISettings() {
           </p>
           <label className="ai-consent">
             <input
+              // Settings can appear inside the garment editor, but never submit its form.
+              form=""
               type="checkbox"
               checked={communityConsent}
               onChange={(e) => {
@@ -136,6 +178,7 @@ export function AISettings() {
         </Information>
         {!communityActive && (
           <button
+            type="button"
             className="button primary full"
             disabled={!communityConsent || busy}
             onClick={async () => {
@@ -160,6 +203,7 @@ export function AISettings() {
                 setMessage(
                   'Kostenlose KI aktiviert. Neue Fotos werden automatisch erkannt und freigestellt.',
                 )
+                onConnected?.()
               } catch (e) {
                 if (!next.signal.aborted)
                   setError(
@@ -190,6 +234,7 @@ export function AISettings() {
         )}
         {communityActive && (
           <button
+            type="button"
             className="button secondary full"
             onClick={() => {
               controller.current?.abort()
@@ -218,6 +263,7 @@ export function AISettings() {
           <label className="field">
             KI-Server
             <input
+              form=""
               type="url"
               disabled={busy}
               placeholder="https://dein-space.hf.space"
@@ -231,6 +277,7 @@ export function AISettings() {
           <label className="field">
             Verbindungscode
             <input
+              form=""
               type="password"
               disabled={busy}
               value={code}
@@ -240,6 +287,7 @@ export function AISettings() {
           </label>
           <label className="ai-consent">
             <input
+              form=""
               type="checkbox"
               checked={enabled}
               onChange={(e) => {
@@ -264,6 +312,7 @@ export function AISettings() {
             </span>
           </label>
           <button
+            type="button"
             className="button primary full"
             disabled={busy || !enabled}
             onClick={async () => {
@@ -282,6 +331,7 @@ export function AISettings() {
                 setMessage(
                   'Verbunden. Neue Fotos werden jetzt automatisch vorbereitet.',
                 )
+                onConnected?.()
               } catch (e) {
                 if (controller.current === next)
                   setError(
@@ -307,6 +357,7 @@ export function AISettings() {
           </button>
           {connection && connection.mode !== 'community' && (
             <button
+              type="button"
               className="button secondary full"
               onClick={() => {
                 controller.current?.abort()

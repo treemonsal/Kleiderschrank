@@ -32,7 +32,7 @@ async function open(page: Page) {
   await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
 }
 
-test('Foto allein füllt alle Felder; PNG bewusst übernehmen und Original mitsichern (API kontrolliert)', async ({
+test('Foto allein füllt alle Felder; PNG automatisch übernehmen und Original mitsichern (API kontrolliert)', async ({
   page,
 }) => {
   await configure(page)
@@ -68,9 +68,9 @@ test('Foto allein füllt alle Felder; PNG bewusst übernehmen und Original mitsi
   await expect(
     page.getByAltText('Online-KI: Freistellung prüfen'),
   ).toBeVisible()
-  await page
-    .getByRole('button', { name: 'Freistellung übernehmen', exact: true })
-    .click()
+  await expect(
+    page.getByText('Hintergrund automatisch entfernt.', { exact: false }),
+  ).toBeVisible()
   await page
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
     .click()

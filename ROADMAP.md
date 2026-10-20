@@ -1,5 +1,15 @@
 # Entwicklungsplan
 
+## Version 0.18.0 – Kritikerprüfung und automatische Fotos
+
+- [x] Vor Änderungen Ausgangsstand als Remote-Tag sichern
+- [x] Drei Prüfrunden mit mehreren unabhängigen Perspektiven und konkreten Korrekturen
+- [x] Inline-Foto-KI-Einrichtung, automatische Online-Freistellung, Original-Rückkehr
+- [x] Experimenteller Mehrfachscan mit Auswahl, Originalausschnitten und atomarem Speichern
+- [x] Entwurfschutz, Fensterkonflikte und Empfehlungssuche verbessern
+- [ ] Abschliessender Gesamtlauf und Veröffentlichung dokumentieren
+- [ ] Reale Gruppenerkennungsqualität und echtes iPhone/Safari im Alltag bewerten
+
 ## Version 0.17.1 – Repository bereinigen
 
 - [x] Vor Änderungen vollständigen Projektstand und lesbare GitHub-Einstellungen sichern

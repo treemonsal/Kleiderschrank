@@ -174,9 +174,9 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
   await expect(
     page.getByAltText('Online-KI: Freistellung prüfen'),
   ).toBeVisible()
-  await page
-    .getByRole('button', { name: 'Freistellung übernehmen', exact: true })
-    .click()
+  await expect(
+    page.getByText('Hintergrund automatisch entfernt.', { exact: false }),
+  ).toBeVisible()
   await page
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
     .click()
@@ -321,7 +321,7 @@ for (const [failure, message] of [
     ).toHaveCount(0)
     await expect(
       page.getByRole('button', {
-        name: 'Freistellung übernehmen',
+        name: 'Original behalten',
         exact: true,
       }),
     ).toBeEnabled()

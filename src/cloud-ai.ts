@@ -16,7 +16,8 @@ export interface AIResult {
   cutout?: Blob
   warnings: string[]
 }
-const KEY = 'mystyle-photo-ai'
+export const AI_CONNECTION_KEY = 'mystyle-photo-ai'
+export const AI_CONNECTION_CHANGED = 'mystyle-photo-ai-changed'
 export function validateConnection(value: AIConnection): AIConnection {
   if (typeof value.enabled !== 'boolean')
     throw new Error('Die Foto-Freigabe ist ungültig.')
@@ -50,16 +51,22 @@ export function validateConnection(value: AIConnection): AIConnection {
 }
 export function readAIConnection(): AIConnection | null {
   try {
-    const value = JSON.parse(localStorage.getItem(KEY) || 'null')
+    const value = JSON.parse(localStorage.getItem(AI_CONNECTION_KEY) || 'null')
     return value ? validateConnection(value) : null
   } catch {
     return null
   }
 }
 export function saveAIConnection(value: AIConnection | null) {
-  if (value)
-    localStorage.setItem(KEY, JSON.stringify(validateConnection(value)))
-  else localStorage.removeItem(KEY)
+  const normalized = value ? validateConnection(value) : null
+  if (normalized)
+    localStorage.setItem(AI_CONNECTION_KEY, JSON.stringify(normalized))
+  else localStorage.removeItem(AI_CONNECTION_KEY)
+  // Native storage events only reach other documents. Notify other mounted
+  // controls in this document too, without putting URL/code/secrets in an event.
+  if (typeof window !== 'undefined')
+    window.dispatchEvent(new Event(AI_CONNECTION_CHANGED))
+  return normalized
 }
 export function stylistEnabled(): boolean {
   const connection = readAIConnection()

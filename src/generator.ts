@@ -128,8 +128,8 @@ export function generateOutfits(
         (variety === 'familiar' ? 0.5 : variety === 'explore' ? 1.5 : 1)
     )
   }
-  // Bounded search: at most 18³ + 18² bases, each with up to 4 layers × 3 accessories.
-  // Seeded variation rotates equally suitable pieces into the search window.
+  // Rank the whole wardrobe, then evaluate a preferred window first. A lazy
+  // fallback below can still reach lower-ranked pieces after repeated rejections.
   function group(category: string): Garment[] {
     return eligible
       .filter((item) => item.category === category)
@@ -140,7 +140,6 @@ export function generateOutfits(
             (suitability(a) + noise(a.id, seed) * 0.75) ||
           a.id.localeCompare(b.id),
       )
-      .slice(0, 18)
   }
   const tops = group('Oberteile'),
     bottoms = group('Hosen'),
@@ -149,45 +148,62 @@ export function generateOutfits(
     jackets = group('Jacken'),
     accessories = group('Accessoires')
   const candidates: OutfitCandidate[] = []
+  const evaluatedBases = new Set<string>()
   function add(base: Garment[]): void {
+    const baseKey = outfitKey(base.map((item) => item.id))
+    if (evaluatedBases.has(baseKey)) return
+    evaluatedBases.add(baseKey)
     const needsLayer = weather
       ? weather.min < 15
       : options.season === 'Herbst' || options.season === 'Winter'
     // Evaluate accessories and layers together with the base. Keep the best complete
     // version per base, so an unsuitable/random layer cannot hide a better alternative.
     const layers: (Garment | undefined)[] =
-      needsLayer && jackets.length ? jackets.slice(0, 4) : [undefined]
+      needsLayer && jackets.length ? jackets : [undefined]
     const extras: (Garment | undefined)[] =
-      options.includeAccessory && accessories.length
-        ? accessories.slice(0, 3)
-        : [undefined]
+      options.includeAccessory && accessories.length ? accessories : [undefined]
     let winner: { selected: Garment[]; key: string; score: number } | undefined
-    for (const layer of layers)
-      for (const extra of extras) {
-        const selected = [
-          ...base,
-          ...(layer ? [layer] : []),
-          ...(extra ? [extra] : []),
-        ]
-        const key = outfitKey(selected.map((item) => item.id))
-        if (rejected.has(key) || excluded.has(key)) continue
-        let score =
-          selected.reduce((sum, item) => sum + suitability(item), 0) /
-          selected.length
-        score += compatibility(selected).score
-        score += personal.lookScore(selected)
-        if (liked.has(key)) score += 4
-        score +=
-          noise(key, seed) * (variety === 'explore' ? 0.8 : 0.35) -
-          recentCombinationPenalty(key, history) *
-            (variety === 'familiar' ? 0.5 : variety === 'explore' ? 1.5 : 1)
+    function consider(layer: Garment | undefined, extra: Garment | undefined) {
+      const selected = [
+        ...base,
+        ...(layer ? [layer] : []),
+        ...(extra ? [extra] : []),
+      ]
+      const key = outfitKey(selected.map((item) => item.id))
+      if (rejected.has(key) || excluded.has(key)) return
+      let score =
+        selected.reduce((sum, item) => sum + suitability(item), 0) /
+        selected.length
+      score += compatibility(selected).score
+      score += personal.lookScore(selected)
+      if (liked.has(key)) score += 4
+      score +=
+        noise(key, seed) * (variety === 'explore' ? 0.8 : 0.35) -
+        recentCombinationPenalty(key, history) *
+          (variety === 'familiar' ? 0.5 : variety === 'explore' ? 1.5 : 1)
+      return { selected, key, score }
+    }
+    for (const layer of layers.slice(0, 4))
+      for (const extra of extras.slice(0, 3)) {
+        const candidate = consider(layer, extra)
         if (
-          !winner ||
-          score > winner.score ||
-          (score === winner.score && key < winner.key)
+          candidate &&
+          (!winner ||
+            candidate.score > winner.score ||
+            (candidate.score === winner.score && candidate.key < winner.key))
         )
-          winner = { selected, key, score }
+          winner = candidate
       }
+    if (!winner && (layers.length > 4 || extras.length > 3)) {
+      // A distinct blocked key belongs to exactly one base. Searching until the
+      // first valid extension costs at most the blocked extensions plus one;
+      // it does not materialize the potentially large layer/accessory product.
+      extensions: for (const layer of layers)
+        for (const extra of extras) {
+          winner = consider(layer, extra)
+          if (winner) break extensions
+        }
+    }
     if (!winner) return
     const { selected, key, score } = winner
     const ids = selected.map((item) => item.id)
@@ -289,10 +305,27 @@ export function generateOutfits(
       reasons.push('Für diese Auswahl ist kein Accessoire vorhanden.')
     candidates.push({ key, garmentIds: ids, reasons, score })
   }
-  for (const shoe of shoes) {
-    for (const dress of dresses) add([dress, shoe])
-    for (const top of tops)
-      for (const bottom of bottoms) add([top, bottom, shoe])
+  // Main ranking costs at most 18³ + 18² bases, each with 4 × 3 extensions.
+  for (const shoe of shoes.slice(0, 18)) {
+    for (const dress of dresses.slice(0, 18)) add([dress, shoe])
+    for (const top of tops.slice(0, 18))
+      for (const bottom of bottoms.slice(0, 18)) add([top, bottom, shoe])
+  }
+  if (candidates.length < 3) {
+    // Never claim the wardrobe is exhausted merely because its favourite first
+    // 18 pieces were rejected. Stop after three feasible bases; every skipped
+    // new base needs a distinct blocked combination (feedback is capped at 1000).
+    remaining: for (const shoe of shoes) {
+      for (const dress of dresses) {
+        add([dress, shoe])
+        if (candidates.length >= 3) break remaining
+      }
+      for (const top of tops)
+        for (const bottom of bottoms) {
+          add([top, bottom, shoe])
+          if (candidates.length >= 3) break remaining
+        }
+    }
   }
   candidates.sort((a, b) => b.score - a.score || a.key.localeCompare(b.key))
   const results: OutfitCandidate[] = []

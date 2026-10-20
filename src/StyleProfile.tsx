@@ -134,6 +134,7 @@ function StyleCheck({
   )
   return (
     <Sheet
+      closeDisabled={busy}
       dirty={!busy && JSON.stringify({ profile, styles, colors }) !== baseline}
       title={
         [
@@ -330,7 +331,8 @@ export function StyleProfileCard({
   const [confirm, setConfirm] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  if (!state || (invitation && state.preferences.styleProfile)) return null
+  if (!state || (invitation && state.preferences.styleProfile && !open))
+    return null
   const completed = state.preferences.styleProfile?.status === 'completed'
   async function act(action: () => Promise<unknown>) {
     setBusy(true)

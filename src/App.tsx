@@ -589,6 +589,12 @@ export default function App() {
     }
   }
   const selected = items?.find((i) => i.id === selectedId)
+  useEffect(() => {
+    if (items && selectedId && !items.some((item) => item.id === selectedId)) {
+      setSelectedId(null)
+      notify('Dieses Stück wurde inzwischen entfernt.')
+    }
+  }, [items, selectedId, notify])
   return (
     <div className="app-shell" onClickCapture={tapMotion}>
       <a className="skip-link" href="#main-content">
@@ -609,7 +615,7 @@ export default function App() {
             className="profile-button stylist-link"
             aria-label="Mit deinem Stylisten sprechen"
             aria-describedby={inbox.hasUnread ? 'stylist-notice' : undefined}
-            disabled={!items || wardrobe?.failed || !!editor || !!selectedId}
+            disabled={!items || wardrobe?.failed || !!editor || !!selected}
             onClick={() => setChatOpen(true)}
           >
             <span>Stylist</span>
@@ -643,7 +649,7 @@ export default function App() {
         </p>
       )}
       {updateError && <ErrorMessage>{updateError}</ErrorMessage>}
-      {needRefresh && !editor && !chatOpen && !selectedId && (
+      {needRefresh && !editor && !chatOpen && !selected && (
         <div className="update-banner" role="status">
           <span>Eine neue Version ist bereit.</span>
           <button
@@ -774,12 +780,14 @@ export default function App() {
           key={editor === 'new' ? 'new' : editor.id}
           item={editor === 'new' ? undefined : editor}
           onClose={() => setEditor(null)}
-          onSaved={() => {
+          onSaved={(count) => {
             setEditor(null)
             notify(
-              editor === 'new'
-                ? 'Dein neues Stück ist im Kleiderschrank.'
-                : 'Deine Änderungen sind gespeichert.',
+              count && count > 1
+                ? `${count} neue Stücke sind im Kleiderschrank.`
+                : editor === 'new'
+                  ? 'Dein neues Stück ist im Kleiderschrank.'
+                  : 'Deine Änderungen sind gespeichert.',
             )
           }}
         />

@@ -58,6 +58,8 @@ export function StylistChat({
   const [confirmClear, setConfirmClear] = useState(false)
   const [pending, setPending] = useState('')
   const [interviewActive, setInterviewActive] = useState(false)
+  const [interviewDirty, setInterviewDirty] = useState(false)
+  const [interviewBusy, setInterviewBusy] = useState(false)
   const sequence = useRef(0)
   const controller = useRef<AbortController | null>(null)
   const active = useRef<{ revision: string; saving: boolean } | null>(null)
@@ -250,6 +252,8 @@ export function StylistChat({
       className="chat-sheet"
       title="Dein Stylist."
       eyebrow="MYSTYLE · IM GESPRÄCH"
+      dirty={interviewDirty}
+      closeDisabled={saving || interviewBusy}
       onClose={close}
     >
       <div className="stylist-chat">
@@ -266,6 +270,8 @@ export function StylistChat({
                 }
                 setInterviewActive(active)
               }}
+              onDirtyChange={setInterviewDirty}
+              onBusyChange={setInterviewBusy}
               disabled={busy || saving}
             />
           </div>

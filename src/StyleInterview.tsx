@@ -20,26 +20,53 @@ export function StyleInterviewPanel({
   markRead,
   notify,
   onActiveChange,
+  onDirtyChange,
+  onBusyChange,
   disabled = false,
 }: {
   preferences: Preferences
   markRead: (token: string) => void
   notify: (message: string) => void
   onActiveChange: (active: boolean) => void
+  onDirtyChange: (dirty: boolean) => void
+  onBusyChange: (busy: boolean) => void
   disabled?: boolean
 }) {
-  const interview = preferences.styleInterview
+  const liveInterview = preferences.styleInterview
+  const [expanded, setExpanded] = useState(false)
+  const [interviewSnapshot, setInterviewSnapshot] = useState(liveInterview)
+  const interview = expanded ? interviewSnapshot : liveInterview
   const card = useRef<HTMLElement>(null)
   const visibleQuestion = useRef<HTMLHeadingElement>(null)
-  const token = interviewNotice(preferences)
-  const [expanded, setExpanded] = useState(false)
+  const token = interviewNotice({ ...preferences, styleInterview: interview })
   useVisibleNotice(visibleQuestion, token, markRead, expanded)
   const expectedRevision = useRef<string | null>(interview?.updatedAt ?? null)
   const conflict =
-    expanded && expectedRevision.current !== (interview?.updatedAt ?? null)
+    expanded && expectedRevision.current !== (liveInterview?.updatedAt ?? null)
   const [editing, setEditing] = useState<StyleQuestionId>()
   const [draft, setDraft] = useState('')
+  const [draftBaseline, setDraftBaseline] = useState('')
+  const [discardAction, setDiscardAction] = useState<(() => void) | null>(null)
+  const discardNotice = useRef<HTMLDivElement>(null)
+  const dirty = draft !== draftBaseline
+  useEffect(() => onDirtyChange(dirty), [dirty, onDirtyChange])
+  useEffect(() => () => onDirtyChange(false), [onDirtyChange])
+  useEffect(() => {
+    if (discardAction) {
+      discardNotice.current?.focus()
+      discardNotice.current?.scrollIntoView({
+        block: 'start',
+        behavior: 'instant',
+      })
+    }
+  }, [discardAction])
+  function leaveDraft(action: () => void) {
+    if (dirty) setDiscardAction(() => action)
+    else action()
+  }
   const [busy, setBusy] = useState(false)
+  useEffect(() => onBusyChange(busy), [busy, onBusyChange])
+  useEffect(() => () => onBusyChange(false), [onBusyChange])
   const [error, setError] = useState('')
   const [confirmReset, setConfirmReset] = useState(false)
   const next = nextStyleQuestion(interview)
@@ -67,7 +94,10 @@ export function StyleInterviewPanel({
         expanded ? expectedRevision.current : (interview?.updatedAt ?? null),
       )
       expectedRevision.current = updated.updatedAt
+      setInterviewSnapshot(updated)
+      setDiscardAction(null)
       setDraft('')
+      setDraftBaseline('')
       setEditing(undefined)
       setConfirmReset(false)
       if (change.type === 'dismiss' || change.type === 'reset') {
@@ -94,7 +124,10 @@ export function StyleInterviewPanel({
   async function begin() {
     if (!interview || interview.status === 'dismissed') {
       if (!(await act({ type: 'start' }))) return
-    } else expectedRevision.current = interview.updatedAt
+    } else {
+      expectedRevision.current = interview.updatedAt
+      setInterviewSnapshot(interview)
+    }
     setExpanded(true)
     onActiveChange(true)
   }
@@ -144,6 +177,36 @@ export function StyleInterviewPanel({
           auch offline.
         </p>
       )}
+      {discardAction && (
+        <div
+          className="discard-notice"
+          role="alert"
+          tabIndex={-1}
+          ref={discardNotice}
+        >
+          <p>Deine Antwort ist noch nicht gespeichert. Entwurf verwerfen?</p>
+          <div className="photo-actions">
+            <button
+              className="button secondary"
+              disabled={busy || disabled}
+              onClick={() => setDiscardAction(null)}
+            >
+              Weiter beantworten
+            </button>
+            <button
+              className="button danger"
+              disabled={busy || disabled}
+              onClick={() => {
+                const action = discardAction
+                setDiscardAction(null)
+                action()
+              }}
+            >
+              Entwurf verwerfen
+            </button>
+          </div>
+        </div>
+      )}
       {!expanded ? (
         <div className="style-check-actions">
           <button
@@ -178,8 +241,11 @@ export function StyleInterviewPanel({
               <button
                 className="text-button"
                 onClick={() => {
-                  expectedRevision.current = interview?.updatedAt ?? null
+                  expectedRevision.current = liveInterview?.updatedAt ?? null
+                  setInterviewSnapshot(liveInterview)
+                  setDiscardAction(null)
                   setDraft('')
+                  setDraftBaseline('')
                   setEditing(undefined)
                   setError('')
                 }}
@@ -271,10 +337,13 @@ export function StyleInterviewPanel({
                   <button
                     className="text-button"
                     disabled={busy}
-                    onClick={() => {
-                      setEditing(undefined)
-                      setDraft('')
-                    }}
+                    onClick={() =>
+                      leaveDraft(() => {
+                        setEditing(undefined)
+                        setDraft('')
+                        setDraftBaseline('')
+                      })
+                    }
                   >
                     Änderung abbrechen
                   </button>
@@ -304,14 +373,17 @@ export function StyleInterviewPanel({
                     className="text-button"
                     disabled={busy || disabled}
                     aria-label={`${q.title} ändern`}
-                    onClick={() => {
-                      setEditing(q.id)
-                      setDraft(interview?.answers[q.id] ?? '')
-                      card.current?.scrollIntoView({
-                        block: 'start',
-                        behavior: 'instant',
+                    onClick={() =>
+                      leaveDraft(() => {
+                        setEditing(q.id)
+                        setDraft(interview?.answers[q.id] ?? '')
+                        setDraftBaseline(interview?.answers[q.id] ?? '')
+                        card.current?.scrollIntoView({
+                          block: 'start',
+                          behavior: 'instant',
+                        })
                       })
-                    }}
+                    }
                   >
                     Ändern
                   </button>
@@ -324,7 +396,11 @@ export function StyleInterviewPanel({
               <button
                 className="button secondary"
                 disabled={busy || disabled || conflict}
-                onClick={() => void act({ type: 'complete' })}
+                onClick={() =>
+                  leaveDraft(() => {
+                    void act({ type: 'complete' })
+                  })
+                }
               >
                 Stilgespräch abschliessen
               </button>
@@ -332,13 +408,16 @@ export function StyleInterviewPanel({
             <button
               className="text-button"
               disabled={busy}
-              onClick={() => {
-                if (token) markRead(token)
-                setExpanded(false)
-                onActiveChange(false)
-                setEditing(undefined)
-                setDraft('')
-              }}
+              onClick={() =>
+                leaveDraft(() => {
+                  if (token) markRead(token)
+                  setExpanded(false)
+                  onActiveChange(false)
+                  setEditing(undefined)
+                  setDraft('')
+                  setDraftBaseline('')
+                })
+              }
             >
               {completed ? 'Antworten einklappen' : 'Später weiter'}
             </button>

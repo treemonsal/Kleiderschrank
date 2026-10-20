@@ -191,6 +191,7 @@ export function Sheet({
   onClose,
   className = '',
   dirty = false,
+  closeDisabled = false,
 }: {
   title: string
   eyebrow?: string
@@ -198,19 +199,20 @@ export function Sheet({
   onClose: () => void
   className?: string
   dirty?: boolean
+  closeDisabled?: boolean
 }) {
   const ref = useRef<HTMLDialogElement>(null)
   const [confirmClose, setConfirmClose] = useState(false)
   const discard = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (!dirty) return
+    if (!dirty && !closeDisabled) return
     const warn = (event: BeforeUnloadEvent) => {
       event.preventDefault()
       event.returnValue = ''
     }
     window.addEventListener('beforeunload', warn)
     return () => window.removeEventListener('beforeunload', warn)
-  }, [dirty])
+  }, [dirty, closeDisabled])
   useEffect(() => {
     if (confirmClose) {
       ref.current?.scrollTo({ top: 0, behavior: 'instant' })
@@ -218,6 +220,7 @@ export function Sheet({
     }
   }, [confirmClose])
   function close() {
+    if (closeDisabled) return
     if (dirty) setConfirmClose(true)
     else onClose()
   }
@@ -261,6 +264,7 @@ export function Sheet({
           <button
             className="icon-button soft"
             aria-label="Schliessen"
+            disabled={closeDisabled}
             onClick={close}
           >
             <X size={20} />
@@ -278,11 +282,19 @@ export function Sheet({
               <button
                 type="button"
                 className="button secondary"
+                disabled={closeDisabled}
                 onClick={() => setConfirmClose(false)}
               >
                 Weiter bearbeiten
               </button>
-              <button type="button" className="button danger" onClick={onClose}>
+              <button
+                type="button"
+                className="button danger"
+                disabled={closeDisabled}
+                onClick={() => {
+                  if (!closeDisabled) onClose()
+                }}
+              >
                 Verwerfen
               </button>
             </div>

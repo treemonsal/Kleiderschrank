@@ -20,7 +20,14 @@ import {
   outfitKey,
 } from './outfit-model'
 import { chooseDailyOutfit } from './daily-outfit'
-import { isDay, localDay, shiftDay, weekDays, wornCounts } from './calendar'
+import {
+  isDay,
+  localDay,
+  shiftDay,
+  weekDays,
+  wornCounts,
+  type CalendarEntry,
+} from './calendar'
 import { dayColors } from './calendar-colors'
 import { DayCalendar, DayNumber, calendarDayDescription } from './DayCalendar'
 import { PlanEditor } from './CalendarView'
@@ -152,7 +159,10 @@ export function DailyOutfit({
   }, [automatic, state, items, day, isToday, entry, fresh, forecast])
   const [weatherOpen, setWeatherOpen] = useState(false)
   const [calendarOpen, setCalendarOpen] = useState(false)
-  const [editing, setEditing] = useState(false)
+  const [editing, setEditing] = useState<{
+    day: string
+    entry?: CalendarEntry
+  } | null>(null)
   const [swapping, setSwapping] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -180,6 +190,11 @@ export function DailyOutfit({
       onSelectDay(next)
       setCalendarOpen(false)
     }
+  }
+  function editDay() {
+    // Keep the revision that the user opened. A live update from another
+    // window must not remount this form and replace its unsaved draft.
+    setEditing({ day, entry })
   }
   const badge = entry
     ? worn
@@ -520,7 +535,7 @@ export function DailyOutfit({
                 <button
                   className="text-button"
                   disabled={busy}
-                  onClick={() => (entry ? setEditing(true) : onOutfits())}
+                  onClick={() => (entry ? editDay() : onOutfits())}
                 >
                   {entry ? 'Tag bearbeiten' : 'Looks anpassen'}{' '}
                   <ArrowRight size={16} />
@@ -583,21 +598,21 @@ export function DailyOutfit({
                       ? 'Für diesen Tag ist kein Look vermerkt.'
                       : 'Für diesen Tag ist noch kein Look eingeplant.'}
               </p>
-              <button
-                className="text-button"
-                onClick={() =>
-                  !isToday && state?.outfits.length
-                    ? setEditing(true)
-                    : onOutfits()
-                }
-              >
-                {!isToday && state?.outfits.length
-                  ? past
-                    ? 'Getragenen Look eintragen'
-                    : 'Look einplanen'
-                  : 'Auswahl anpassen'}{' '}
-                <ArrowRight size={16} />
-              </button>
+              {items.length > 0 && (
+                <button
+                  className="text-button"
+                  onClick={() =>
+                    !isToday && state?.outfits.length ? editDay() : onOutfits()
+                  }
+                >
+                  {!isToday && state?.outfits.length
+                    ? past
+                      ? 'Getragenen Look eintragen'
+                      : 'Look einplanen'
+                    : 'Auswahl anpassen'}{' '}
+                  <ArrowRight size={16} />
+                </button>
+              )}
             </div>
           )}
           {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -661,12 +676,12 @@ export function DailyOutfit({
       )}
       {editing && state && (
         <PlanEditor
-          key={`${day}:${entry?.updatedAt ?? 'new'}`}
-          day={day}
-          existing={entry}
+          key={editing.day}
+          day={editing.day}
+          existing={editing.entry}
           outfits={state.outfits}
-          defaultStatus={day <= today ? 'worn' : 'planned'}
-          onClose={() => setEditing(false)}
+          defaultStatus={editing.day <= today ? 'worn' : 'planned'}
+          onClose={() => setEditing(null)}
           notify={notify}
         />
       )}

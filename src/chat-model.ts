@@ -126,9 +126,7 @@ export function buildChatContext(
     .split(/[^\p{L}\p{N}]+/u)
     .filter((word) => word.length >= 3)
     .slice(0, 40)
-  const score = (item: Garment) =>
-    (mentioned.has(item.id) ? 100 : 0) +
-    (daily.garmentIds.includes(item.id) ? 50 : 0) +
+  const matchesQuestion = (item: Garment) =>
     words.filter((word) =>
       [item.name, item.category, item.color, item.brand, ...item.styles].some(
         (value) => {
@@ -136,8 +134,11 @@ export function buildChatContext(
           return v.includes(word) || (v.length >= 3 && word.startsWith(v))
         },
       ),
-    ).length *
-      10 +
+    ).length
+  const score = (item: Garment) =>
+    (mentioned.has(item.id) ? 100 : 0) +
+    (daily.garmentIds.includes(item.id) ? 50 : 0) +
+    matchesQuestion(item) * 10 +
     (item.favorite ? 3 : 0) +
     (item.inLaundry ? 0 : 2)
   const groups = CATEGORIES.map((category) =>
@@ -146,9 +147,31 @@ export function buildChatContext(
       .sort((a, b) => score(b) - score(a) || a.id.localeCompare(b.id)),
   )
   const items: Garment[] = []
+  const included = new Set<string>()
+  const include = (item: Garment | undefined) => {
+    if (!item || included.has(item.id) || items.length >= 40) return false
+    items.push(item)
+    included.add(item.id)
+    return true
+  }
+  // The current look is one coherent reference, never a silently truncated card.
+  for (const id of daily.garmentIds)
+    include(data.garments.find((item) => item.id === id))
+  // Direct references in the current question precede older conversation hints.
+  // Keep one round free so even a broad colour query retains category diversity.
+  const questionBudget = Math.max(0, 40 - items.length - CATEGORIES.length)
+  let questionIncluded = 0
+  for (const item of [...data.garments].sort(
+    (a, b) =>
+      matchesQuestion(b) - matchesQuestion(a) ||
+      score(b) - score(a) ||
+      a.id.localeCompare(b.id),
+  )) {
+    if (questionIncluded >= questionBudget || !matchesQuestion(item)) break
+    if (include(item)) questionIncluded++
+  }
   for (let index = 0; index < 40 && items.length < 40; index++) {
-    for (const group of groups)
-      if (group[index] && items.length < 40) items.push(group[index])
+    for (const group of groups) include(group[index])
   }
   const labels = new Map(items.map((item, index) => [item.id, `G${index + 1}`]))
   const reference = {

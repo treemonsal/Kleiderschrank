@@ -16,6 +16,7 @@ import {
   db,
   saveOutfit,
   savePreferences,
+  styleProfileRevision,
   saveOutfitOptions,
   storageError,
   updateOutfit,
@@ -53,17 +54,23 @@ function PreferenceEditor({
   onClose: () => void
   notify: (message: string) => void
 }) {
-  const [styles, setStyles] = useState(current.styles)
-  const [colors, setColors] = useState(current.colors)
+  const [snapshot] = useState(() => ({
+    styles: [...current.styles],
+    colors: [...current.colors],
+    revision: styleProfileRevision(current),
+  }))
+  const [styles, setStyles] = useState(snapshot.styles)
+  const [colors, setColors] = useState(snapshot.colors)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   return (
     <Sheet
       title="Ganz dein Geschmack."
+      closeDisabled={busy}
       dirty={
         !busy &&
-        (JSON.stringify(styles) !== JSON.stringify(current.styles) ||
-          JSON.stringify(colors) !== JSON.stringify(current.colors))
+        (JSON.stringify(styles) !== JSON.stringify(snapshot.styles) ||
+          JSON.stringify(colors) !== JSON.stringify(snapshot.colors))
       }
       eyebrow="DEINE VORLIEBEN"
       onClose={() => {
@@ -76,7 +83,7 @@ function PreferenceEditor({
           event.preventDefault()
           setBusy(true)
           try {
-            await savePreferences(styles, colors)
+            await savePreferences(styles, colors, db, snapshot.revision)
             notify('Deine Stilvorlieben sind gespeichert.')
             onClose()
           } catch (error) {
@@ -159,6 +166,7 @@ function SavedEditor({
   return (
     <Sheet
       title="Deinen Look bearbeiten."
+      closeDisabled={busy}
       dirty={!busy && name !== outfit.name}
       eyebrow="GESPEICHERTES OUTFIT"
       onClose={() => {

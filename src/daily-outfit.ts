@@ -54,7 +54,14 @@ export function chooseDailyOutfit(
         garmentIds: planned.garmentIds,
         name: planned.name,
         planned: true,
-        options,
+        options: {
+          occasion: planned.occasion,
+          season: planned.season,
+          style: planned.style,
+          includeAccessory: pieces.some(
+            (item) => item.category === 'Accessoires',
+          ),
+        },
         reasons: ['Diesen Look hast du für heute im Kalender ausgewählt.'],
       }
   }

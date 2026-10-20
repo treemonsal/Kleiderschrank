@@ -221,7 +221,7 @@ export function cutoutAsset(value: unknown): string {
     throw new Error('Die Freistellung verweist auf eine unerwartete Adresse.')
   return url.href
 }
-async function removeBackground(photo: Blob, signal: AbortSignal) {
+export async function removeBackground(photo: Blob, signal: AbortSignal) {
   const form = new FormData()
   form.append('files', photo, 'garment.jpg')
   const files = await json(

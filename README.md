@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.17.1** · [iPhone-Prüfliste](IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.18.0** · [iPhone-Prüfliste](IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -29,6 +29,12 @@ Der **Chat** nutzt nach eigener Freigabe Qwen3-VL-8B: deine Frage, höchstens se
 **Nachricht diktieren** und **Vorlesen** sind optionale Browserfunktionen. Erkannten Text zuerst prüfen und selbst senden. Browser-Sprachdienste können Audio/Text an ihren Anbieter übertragen; MyStyle speichert keine Audiodateien. Tippen bleibt immer möglich.
 
 Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten oder Ausfälle haben. Keine kostenpflichtigen Ersatzdienste oder automatischen Wiederholungen. Anbieter-Speicherung und Löschfristen sind nicht garantiert. Stilurteile sind subjektiv; Passform, Material, Wärme und Schutzwirkung bleiben ohne passende Nachweise unbekannt.
+
+## Fotos automatisch erfassen
+
+Nach einmaliger Foto-Freigabe analysiert die Online-KI neu ausgewählte Fotos automatisch: Name, Kategorie, Farbe, erkennbare Marke und geschätzte Saison-/Stilangaben. Sie entfernt auch den Hintergrund und wendet die Freistellung direkt im Entwurf an. Das Original bleibt erhalten; zurück zum Original ist jederzeit möglich. Erst dein Speichern legt das Stück dauerhaft ab. Gespeicherte Fotos werden beim Öffnen nicht erneut hochgeladen.
+
+Beim Hinzufügen findest du **Mehrere Stücke auf einem Foto**. Der experimentelle Mehrfachscan erkennt bis zu sechs mit Abstand liegende Kleidungsstücke, schneidet sie einzeln aus und stellt sie nacheinander frei. Prüfe die Ergebnisse, korrigiere Name/Kategorie und wähle falsche Treffer ab. Gespeichert werden Originalausschnitte und verfügbare Freistellungen; das Gesamtfoto wird nicht zusätzlich archiviert. Überlappende Kleidung ist schwieriger. Bei einem Freistellungslimit bleiben die erkannten Originalausschnitte nutzbar; weitere Freistellungsversuche stoppen. Kein automatischer kostenpflichtiger Ersatz.
 
 ## Lokal starten
 
@@ -111,7 +117,7 @@ Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert
 
 1. **Mehr → Online-Foto-KI** öffnen. Die genannten Anbieter und Datenschutzhinweise lesen, Fotoübertragung erlauben und **Kostenlose KI aktivieren** antippen. Dafür brauchst du keinen Token und kein Abo.
 2. Neues Foto aufnehmen oder aus der Mediathek wählen. Qwen3-VL-Outpost erkennt Name, Kategorie, Farbe und sichtbare Marke sowie Notizen, Stil und Saison. Marke ohne lesbares Zeichen leer lassen; Stil/Saison sind Schätzungen. Alle Angaben bleiben korrigierbar. Während der Analyse selbst geänderte Felder bleiben erhalten.
-3. BiRefNet erstellt eine transparente Vorschau. **Freistellung übernehmen** oder **Original behalten** wählen, dann das Stück speichern. Das vorbereitete Originalfoto bleibt zusätzlich erhalten und wird mitgesichert.
+3. BiRefNet entfernt den Hintergrund und übernimmt die Freistellung automatisch in den Entwurf. Kurz prüfen, bei Bedarf **Original behalten** wählen, dann das Stück speichern. Das vorbereitete Originalfoto bleibt zusätzlich erhalten und wird mitgesichert.
 4. Nach Aktivierung zeigt die Einstellung nur den aktiven Status. Der Aktivieren-Knopf verschwindet; die Anbieter-/Datenschutzhinweise und Freigabe bleiben aufklappbar. **Community-KI ausschalten** oder die Foto-Freigabe abwählen verhindert neue Übertragungen. Die vorhandene Sammlung bleibt auf deinem Gerät. Das Öffnen/Bearbeiten gespeicherter Stücke lädt sie nicht automatisch hoch. Der Online-Stylist sendet ausgewählte gespeicherte Fotos erst beim ausdrücklich gestarteten Vergleich.
 
 Die App nutzt die öffentlich angebotenen Gradio-APIs von [Qwen3-VL-Outpost](https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost) und der [offiziellen BiRefNet-Demo](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo). **Das sind öffentliche Community-Dienste, kein privater MyStyle-Server.** Das ausgewählte Foto wird an beide übertragen; die Freistellung nutzt temporäre Dateien auf dem Server des Anbieters. Speicher-/Löschdauer können wir nicht garantieren. Fotos mit Personen oder privaten Hintergründen vermeiden. Es gibt keine Verfügbarkeitsgarantie; Warteschlangen, Tageslimits und Abschaltungen sind möglich. Dann bleibt das Foto erhalten, ein brauchbares Teilergebnis wird nicht verworfen. Keine automatischen Ausweichanbieter, Provider-Schlüssel oder bezahlten Wiederholungen.
@@ -208,11 +214,13 @@ VITE_BASE_PATH=/Kleiderschrank/ npm run preview
 
 Danach vor Root-Browserprüfungen wieder `npm run build` ausführen. Der echte iPhone-/Safari-Test bleibt separat in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
 
-Version 0.17.1 wurde am 20. Oktober 2026 durch [Pages-Lauf 39376534902](https://github.com/treemonsal/Kleiderschrank/actions/runs/39376534902) erfolgreich veröffentlicht. Die öffentlichen HTML-, JavaScript-, CSS-, Manifest-, Icon- und Service-Worker-Dateien entsprechen dem lokal geprüften Build. Der neue [Prüfworkflow 39375823577](https://github.com/treemonsal/Kleiderschrank/actions/runs/39375823577) besteht mit 219 Datentests und allen 129 Browserfällen.
+Entwicklungsstand **0.18.0**: automatische Online-Freistellung, experimenteller Mehrfachscan und Korrekturen aus der [Kritikerprüfung](CRITIC_REVIEW.md). Die letzte vor dieser Runde veröffentlichte Version war 0.17.1. Abschliessende Prüf- und Veröffentlichungsnachweise stehen in [REVIEW.md](REVIEW.md).
 
 ## Projektbackup und Dokumentation
 
-Vor dieser Bereinigung wurde die **gesamte App 0.17.0** gesichert: Quellarchiv, vollständiges Git-Bundle, GitHub-Einstellungs-Snapshot und Prüfsummen unter [design/backups/full-0.17.0](design/backups/full-0.17.0/RESTORE.md). Alle 158 Projektdateien wurden byteweise verglichen; Bundle-Klon und `git fsck` bestehen. Der GitHub-Tag **`backup/before-cleanup-0.17.0`** hält den Ausgangsstand zusätzlich fest. Rückkehr über einen regulären Revert, ohne Force-Push oder Löschen lokaler Daten.
+Vor der früheren Bereinigung wurde die **gesamte App 0.17.0** gesichert: Quellarchiv, vollständiges Git-Bundle, GitHub-Einstellungs-Snapshot und Prüfsummen unter [design/backups/full-0.17.0](design/backups/full-0.17.0/RESTORE.md). Alle 158 Projektdateien wurden byteweise verglichen; Bundle-Klon und `git fsck` bestehen. Der GitHub-Tag **`backup/before-cleanup-0.17.0`** hält den Ausgangsstand zusätzlich fest. Rückkehr über einen regulären Revert, ohne Force-Push oder Löschen lokaler Daten.
+
+Der Stand vor der aktuellen Kritikerprüfung ist zusätzlich als GitHub-Tag **`backup/before-critic-review-0.17.1`** gesichert. Kritik, Korrekturen und verbleibende Grenzen stehen in [CRITIC_REVIEW.md](CRITIC_REVIEW.md).
 
 Das frühere dunkle Design bleibt separat unter [Design-Backup](design/backups/README.md) erhalten. Einzelheiten zum aktuellen Icon stehen unter [design/app-icon](design/app-icon/README.md).
 

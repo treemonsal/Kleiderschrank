@@ -1,5 +1,13 @@
 # MyStyle
 
+## Version 0.18.0 – einfachere Fotoaufnahme und Kritikerprüfung
+
+- Neue Fotos nach vorhandener Freigabe automatisch erkennen, ausfüllen und freistellen. Online-Freistellung direkt in den Entwurf übernehmen, Original und Rückkehr erhalten; Speichern weiterhin ausdrücklich.
+- Experimenteller Mehrfachscan für bis zu sechs getrennt sichtbare Kleidungsstücke: Gesamtfoto einmal erkennen, lokale Originalausschnitte erstellen, einzeln freistellen, Ergebnisse prüfen/abwählen und atomar speichern. Keine neue Datenbank- oder Sicherungsversion.
+- Foto-KI direkt im Editor aktivieren, ohne den Entwurf zu verlassen. Schutz für offene Stilgespräch-, Planungs- und Vorliebenentwürfe, konkurrierende Fenster und laufende Schreibvorgänge.
+- Empfehlungssuche bei ausgeschöpfter Vorauswahl erweitern. Tatsächlichen geplanten Anlass und vollständigen Tageslook im begrenzten Chat-Kontext erhalten; reine Textberatung ehrlich benennen.
+- Kostenlose Dienste und freie Nutzung ohne Konto bleiben bestehen. Quoten, subjektive Stylingqualität und experimentelle Gruppenerkennung offen benennen. Details in CRITIC_REVIEW.md.
+
 ## Version 0.17.1 – abgesicherte Bereinigung
 
 - Vollständiger Stand 0.17.0 vor Änderungen als Quellarchiv, Git-Bundle und GitHub-Snapshot sichern; Ausgangs-Tag auf GitHub, nachvollziehbarer Revert und ausführbare Wiederherstellungsprüfung. Persönliche Handy-Daten bleiben eine separate In-App-Sicherung.

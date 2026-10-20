@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { Check, LoaderCircle, MessageCircle } from 'lucide-react'
-import { stylistEnabled } from './cloud-ai'
+import {
+  stylistEnabled,
+  AI_CONNECTION_KEY,
+  AI_CONNECTION_CHANGED,
+} from './cloud-ai'
 import {
   stylistPieces,
   stylistRevision,
@@ -25,6 +29,7 @@ export function OnlineStylist({
   applyLabel: string
 }) {
   const [wish, setWish] = useState('')
+  const [enabled, setEnabled] = useState(stylistEnabled)
   const revision = stylistRevision(input) + wish
   const latest = useRef(revision)
   latest.current = revision
@@ -52,9 +57,16 @@ export function OnlineStylist({
     }
   }, [revision])
   useEffect(() => {
-    const changed = (event: StorageEvent) => {
-      if (event.key !== null && event.key !== 'mystyle-photo-ai') return
-      if (!stylistEnabled()) {
+    const changed = (event: Event) => {
+      if (
+        event.type === 'storage' &&
+        (event as StorageEvent).key !== null &&
+        (event as StorageEvent).key !== AI_CONNECTION_KEY
+      )
+        return
+      const next = stylistEnabled()
+      setEnabled(next)
+      if (!next) {
         sequence.current++
         controller.current?.abort()
         setBusy(false)
@@ -63,7 +75,11 @@ export function OnlineStylist({
       }
     }
     window.addEventListener('storage', changed)
-    return () => window.removeEventListener('storage', changed)
+    window.addEventListener(AI_CONNECTION_CHANGED, changed)
+    return () => {
+      window.removeEventListener('storage', changed)
+      window.removeEventListener(AI_CONNECTION_CHANGED, changed)
+    }
   }, [])
   async function request() {
     const request = ++sequence.current,
@@ -130,7 +146,7 @@ export function OnlineStylist({
           Kombinationen begrenzt.
         </p>
       </details>
-      {!stylistEnabled() && (
+      {!enabled && (
         <p className="muted">
           Aktiviere die kostenlose Community-KI unter Mehr → Online-Foto-KI.
         </p>
@@ -148,7 +164,7 @@ export function OnlineStylist({
       <div className="stylist-actions">
         <button
           className="button secondary"
-          disabled={busy || applying || !stylistEnabled()}
+          disabled={busy || applying || !enabled}
           onClick={() => void request()}
         >
           {busy ? (
@@ -178,7 +194,11 @@ export function OnlineStylist({
       {error && <ErrorMessage>{error}</ErrorMessage>}
       {advice && (
         <div className="stylist-result" role="status">
-          <p className="eyebrow">QWEN · VISUELLE OUTFIT-BERATUNG</p>
+          <p className="eyebrow">
+            {photoCount
+              ? 'QWEN · VISUELLE OUTFIT-BERATUNG'
+              : 'QWEN · OUTFIT-BERATUNG NACH ANGABEN'}
+          </p>
           <p>{advice.reason}</p>
           <OutfitPieces
             ids={advice.candidate.garmentIds}

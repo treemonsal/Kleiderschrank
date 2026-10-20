@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Camera, ImagePlus, LoaderCircle, Trash2 } from 'lucide-react'
 import {
   CATEGORIES,
@@ -15,6 +15,7 @@ import { PhotoColorPicker } from './PhotoColorPicker'
 import { BackgroundRemoval } from './BackgroundRemoval'
 import { PhotoAssistant } from './PhotoAssistant'
 import type { PhotoAttributes } from './cloud-ai'
+import { GroupScan } from './GroupScan'
 
 export function Editor({
   item,
@@ -23,7 +24,7 @@ export function Editor({
 }: {
   item?: Garment
   onClose: () => void
-  onSaved: () => void
+  onSaved: (count?: number) => void
 }) {
   const [draft, setDraft] = useState<GarmentDraft>(() =>
     item
@@ -46,27 +47,18 @@ export function Editor({
   const [onlineBusy, setOnlineBusy] = useState(false)
   const [recognized, setRecognized] = useState(false)
   const [dirty, setDirty] = useState(false)
-  const [confirmDiscard, setConfirmDiscard] = useState(false)
+  const [group, setGroup] = useState(false)
   const [photoRevision, setPhotoRevision] = useState(0)
   const library = useRef<HTMLInputElement>(null)
   const camera = useRef<HTMLInputElement>(null)
+  const name = useRef<HTMLInputElement>(null)
   const photo = draft.cutout ?? draft.photo
-  useEffect(() => {
-    if (!dirty) return
-    const warn = (event: BeforeUnloadEvent) => {
-      event.preventDefault()
-      event.returnValue = ''
-    }
-    window.addEventListener('beforeunload', warn)
-    return () => window.removeEventListener('beforeunload', warn)
-  }, [dirty])
   function update<K extends keyof GarmentDraft>(
     key: K,
     value: GarmentDraft[K],
   ) {
     setDraft((previous) => ({ ...previous, [key]: value }))
     setDirty(true)
-    setConfirmDiscard(false)
   }
   async function upload(file?: File) {
     if (!file) return
@@ -75,6 +67,7 @@ export function Editor({
     try {
       update('photo', await preparePhoto(file))
       update('cutout', undefined)
+      setRecognized(false)
       setPhotoRevision((previous) => previous + 1)
     } catch (err) {
       setError(
@@ -86,20 +79,24 @@ export function Editor({
       setProcessing(false)
     }
   }
-  function close() {
-    if (busy || processing) return
-    if (dirty) setConfirmDiscard(true)
-    else onClose()
-  }
+  if (group)
+    return <GroupScan onClose={() => setGroup(false)} onSaved={onSaved} />
   return (
     <Sheet
       title={item ? 'Stück bearbeiten' : 'Ein neues Lieblingsstück.'}
       eyebrow="DEIN KLEIDERSCHRANK"
-      onClose={close}
+      onClose={onClose}
+      dirty={dirty}
+      closeDisabled={busy || processing}
     >
       <form
         onSubmit={async (e) => {
           e.preventDefault()
+          if (!draft.name.trim()) {
+            setError('Bitte gib deinem Stück einen Namen.')
+            name.current?.focus()
+            return
+          }
           setBusy(true)
           setError('')
           try {
@@ -113,6 +110,16 @@ export function Editor({
         }}
       >
         <fieldset disabled={busy || processing} className="editor-fields">
+          {!item && !dirty && (
+            <button
+              type="button"
+              className="text-button"
+              disabled={assisting || onlineBusy}
+              onClick={() => setGroup(true)}
+            >
+              Mehrere Stücke auf einem Foto
+            </button>
+          )}
           <div className={`photo-picker ${photo ? 'has-photo' : ''}`}>
             {photo ? (
               <PhotoImage
@@ -161,6 +168,7 @@ export function Editor({
                 onClick={() => {
                   update('photo', undefined)
                   update('cutout', undefined)
+                  setRecognized(false)
                   setPhotoRevision((previous) => previous + 1)
                 }}
               >
@@ -236,6 +244,7 @@ export function Editor({
           <label className="field">
             Name <span className="required-hint">Pflichtfeld</span>
             <input
+              ref={name}
               autoComplete="off"
               required
               maxLength={100}
@@ -368,37 +377,16 @@ export function Editor({
           </label>
         </fieldset>
         {error && <ErrorMessage>{error}</ErrorMessage>}
-        {confirmDiscard && (
-          <div className="discard-notice" role="alert">
-            <p>Ungespeicherte Änderungen verwerfen?</p>
-            <div className="photo-actions">
-              <button
-                type="button"
-                className="button secondary"
-                onClick={() => setConfirmDiscard(false)}
-              >
-                Weiter bearbeiten
-              </button>
-              <button type="button" className="button danger" onClick={onClose}>
-                Verwerfen
-              </button>
-            </div>
-          </div>
-        )}
         <div className="sheet-footer">
           <p className="micro-copy">
-            Erst mit Speichern in deinem Kleiderschrank.
+            {!draft.name.trim()
+              ? 'Gib deinem Stück noch einen Namen. Die übrigen Angaben sind optional.'
+              : 'Erst mit Speichern in deinem Kleiderschrank.'}
           </p>
           <button
             className="button primary full"
             type="submit"
-            disabled={
-              busy ||
-              processing ||
-              assisting ||
-              onlineBusy ||
-              !draft.name.trim()
-            }
+            disabled={busy || processing || assisting || onlineBusy}
           >
             {busy ? <LoaderCircle className="spin" size={18} /> : null}
             {busy
