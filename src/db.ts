@@ -281,7 +281,12 @@ export async function updatePreferences(
   patch: Partial<
     Pick<
       Preferences,
-      'styles' | 'colors' | 'useWeather' | 'backupReminder' | 'styleProfile'
+      | 'styles'
+      | 'colors'
+      | 'useWeather'
+      | 'backupReminder'
+      | 'styleProfile'
+      | 'shopping'
     >
   >,
   database = db,

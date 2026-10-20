@@ -2928,3 +2928,72 @@ fieldset {
 .group-item .field {
   margin-top: 14px;
 }
+
+.shopping-card {
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+}
+.shopping-card h2 {
+  margin: 6px 0 12px;
+}
+.shopping-card > .button {
+  margin-top: 12px;
+}
+.shopping-progress summary,
+.shopping-information summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.shopping-progress ul {
+  list-style: none;
+  padding: 0;
+}
+.shopping-progress li {
+  margin: 12px 0;
+  line-height: 1.5;
+}
+.shopping-progress li > span {
+  margin-right: 8px;
+}
+.shopping-ideas {
+  margin-top: 24px;
+}
+.shopping-idea {
+  padding: 22px 0;
+  border-top: 1px solid var(--line);
+}
+.shopping-idea h3 {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 1.5rem;
+  margin: 8px 0 12px;
+}
+.shopping-pairings {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0 18px;
+}
+.shopping-pairings > div {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.shopping-pairings .garment-picture {
+  height: 100px;
+}
+.shopping-pairings img {
+  width: 100%;
+  height: 100px;
+  object-fit: contain;
+}
+.shopping-pairings > div > span {
+  display: block;
+  margin-top: 6px;
+}
+.shopping-idea .text-button {
+  margin-top: 8px;
+}

@@ -1,3 +1,4 @@
+import { parseShoppingPreferences } from './shopping-model'
 import { CATEGORIES, COLORS, SEASONS, STYLES, type Garment } from './model'
 import { backupRevision } from './backup-reminder'
 import { parseStyleProfile } from './personalization'
@@ -39,7 +40,7 @@ export interface BackupData {
 }
 const invalid = () =>
   new Error(
-    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1 bis 6). Es wurde nichts verändert.',
+    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1 bis 7). Es wurde nichts verändert.',
   )
 export async function readBackupData(database = db): Promise<BackupData> {
   return database.transaction('r', database.tables, async () => ({
@@ -104,7 +105,7 @@ export async function createBackup(
   const json = JSON.stringify({
     ...extra,
     app: 'MyStyle',
-    version: 6,
+    version: 7,
     exportedAt: new Date().toISOString(),
     calendar: extra.calendar ?? [],
     weather: extra.weather ?? null,
@@ -252,7 +253,7 @@ export function parseFullBackup(json: string): BackupData {
   if (
     !data ||
     data.app !== 'MyStyle' ||
-    ![1, 2, 3, 4, 5, 6].includes(data.version) ||
+    ![1, 2, 3, 4, 5, 6, 7].includes(data.version) ||
     !Array.isArray(data.garments) ||
     data.garments.length > 1000
   )
@@ -376,6 +377,9 @@ export function parseFullBackup(json: string): BackupData {
         COLORS.map((c) => c.name),
       ),
       updatedAt: timestamp(item.updatedAt),
+      ...(item.shopping === undefined
+        ? {}
+        : { shopping: parseShoppingPreferences(item.shopping) }),
       ...(item.styleProfile === undefined
         ? {}
         : { styleProfile: parseStyleProfile(item.styleProfile) }),
@@ -410,6 +414,11 @@ export function parseFullBackup(json: string): BackupData {
   if (
     preferences?.styleInterview &&
     preferences.styleInterview.updatedAt > preferences.updatedAt
+  )
+    throw invalid()
+  if (
+    preferences?.shopping?.updatedAt &&
+    preferences.shopping.updatedAt > preferences.updatedAt
   )
     throw invalid()
   const calendar: CalendarEntry[] = []
@@ -582,16 +591,28 @@ export async function importFullBackup(
           : incomingInterview.updatedAt > localInterview.updatedAt
             ? incomingInterview
             : localInterview
+      const localShopping = current?.shopping,
+        incomingShopping = incoming.shopping
+      const shopping = !localShopping
+        ? incomingShopping
+        : !incomingShopping
+          ? localShopping
+          : (incomingShopping.updatedAt ?? incoming.updatedAt) >
+              (localShopping.updatedAt ?? current!.updatedAt)
+            ? incomingShopping
+            : localShopping
       const combined = interview !== base.styleInterview
       if (
         base !== current ||
         reminder !== currentReminder ||
-        interview !== localInterview
+        interview !== localInterview ||
+        shopping !== localShopping
       )
         await database.preferences.put({
           ...base,
           backupReminder: reminder,
           styleInterview: interview,
+          shopping,
           ...(combined
             ? {
                 dailySelection: undefined,

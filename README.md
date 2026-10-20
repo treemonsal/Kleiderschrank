@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.18.0** · [iPhone-Prüfliste](IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.19.0** · [iPhone-Prüfliste](IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -12,7 +12,7 @@ Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufüg
 - **Kleiderschrank:** Stücke aufnehmen, suchen, filtern, bearbeiten, favorisieren und in die Wäsche legen. Der Wäschefilter zeigt Stücke in der Wäsche; **Als sauber markieren** gibt sie wieder für Vorschläge frei.
 - **Outfits:** Kombinationen erstellen, bewerten, speichern und im Kalender planen. Accessoire- und Wettervorlieben bleiben gespeichert.
 - **Stylist ↗:** Fragen stellen oder das freiwillige vertiefte Stilgespräch öffnen. Ein kleiner Punkt kennzeichnet eine Einladung oder eine vorhandene ungelesene Antwort.
-- **Mehr:** Stilprofil, Online-Foto-KI, persönliche Sicherung, Speicher- und Installationshilfe. Ein Export sichert den eigenen Bestand; ein Projektbackup ersetzt diesen Export nicht.
+- **Mehr:** Stilprofil, Shopping-Fortschritt, Online-Foto-KI, persönliche Sicherung, Speicher- und Installationshilfe. Ein Export sichert den eigenen Bestand; ein Projektbackup ersetzt diesen Export nicht.
 
 Die Gestaltung verwendet warmes Papier, dunkle Schrift, Serifentitel und rostrote Markierungen. Das Homescreen-Icon bleibt schwarz-weiss. Bereichswechsel merken Datum, Filter und Scrollposition während der laufenden Sitzung. Erneutes Tippen auf den aktiven Bereich führt nach oben. Neue Versionen können auf dem iPhone erst nach Übernahme des Updates erscheinen; vorhandene Icons unterliegen zusätzlich dem iOS-Cache.
 
@@ -35,6 +35,16 @@ Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten od
 Nach einmaliger Foto-Freigabe analysiert die Online-KI neu ausgewählte Fotos automatisch: Name, Kategorie, Farbe, erkennbare Marke und geschätzte Saison-/Stilangaben. Sie entfernt auch den Hintergrund und wendet die Freistellung direkt im Entwurf an. Das Original bleibt erhalten; zurück zum Original ist jederzeit möglich. Erst dein Speichern legt das Stück dauerhaft ab. Gespeicherte Fotos werden beim Öffnen nicht erneut hochgeladen.
 
 Beim Hinzufügen findest du **Mehrere Stücke auf einem Foto**. Der experimentelle Mehrfachscan erkennt bis zu sechs mit Abstand liegende Kleidungsstücke, schneidet sie einzeln aus und stellt sie nacheinander frei. Prüfe die Ergebnisse, korrigiere Name/Kategorie und wähle falsche Treffer ab. Gespeichert werden Originalausschnitte und verfügbare Freistellungen; das Gesamtfoto wird nicht zusätzlich archiviert. Überlappende Kleidung ist schwieriger. Bei einem Freistellungslimit bleiben die erkannten Originalausschnitte nutzbar; weitere Freistellungsversuche stoppen. Kein automatischer kostenpflichtiger Ersatz.
+
+## Persönlich und günstig shoppen
+
+Unter **Mehr → Shopping wird persönlich** siehst du den Fortschritt. Der Button **Mit KI günstig shoppen** erscheint auf **Heute** und unter **Outfits → Entdecken**, sobald die App genügend konkrete Hinweise hat: abgeschlossener Stilcheck oder drei bestätigte vertiefte Antworten, sieben bestätigte Tragetage aus mindestens zwei Wochen und drei unterschiedliche Lookbewertungen, davon zwei positive. Tragetage zählen aus den letzten 90, Bewertungen aus den letzten 180 Tagen. Geplante Tage, fehlende Outfitreferenzen und mehrfache Bewertungen desselben Looks zählen nicht zusätzlich. Die Freischaltung ist eine nachvollziehbare Grundlage für erste Ideen; sie bedeutet keine perfekte Kenntnis deiner Vorlieben.
+
+Die freiwillige Beratung schlägt bis zu drei Ergänzungen vor und zeigt jeweils die vorhandenen Stücke, mit denen ein vollständiger Look möglich ist. Sie kann auch keinen Kauf empfehlen. Standardlimit **50 CHF**, wählbar 25/50/75/100 CHF, niemals über **100 CHF pro Stück**. Die erste Suche bleibt auch bei einem höheren Limit bei höchstens 50 CHF; Accessoires zuerst bei 25 CHF. Budget und selbst gewähltes Sortiment bleiben gespeichert und sind Teil deiner Sicherung. Das Sortiment wird nicht aus Namen, Körper oder Stil geraten.
+
+Nach eigener Shopping-Freigabe sendet eine bewusst gestartete Beratung bestätigte Stilangaben, abgeleitete Bewertungen, Tragehäufigkeiten, Bestandszahlen und bis zu 40 Kleidungsangaben samt Budget/Sortiment an den vorhandenen kostenlosen Qwen3-VL-Outpost-Dienst. Keine Kleidungsfotos, Kalendernotizen, Chatnachrichten oder Standortdaten. Freigabe jederzeit zurücknehmen; Änderungen am Bestand, Budget oder Profil verwerfen laufende oder veraltete Ideen. Bei Fehlern gibt es keine automatischen Wiederholungen.
+
+**Die Links öffnen preisgefilterte Suchideen bei Zalando Schweiz, keine geprüften Live-Produktangebote.** Aktueller Preis, Lagerbestand, Währung, Grösse, aktiver Shopfilter und Versandkosten sind im Shop zu prüfen. Die KI kann keine aktuellen Preise garantieren. MyStyle erhält keine Provision und bestellt nichts automatisch. Die externe Website öffnet erst beim Tippen auf den Link; nur der Suchbegriff und die Filter stehen darin.
 
 ## Lokal starten
 
@@ -148,7 +158,7 @@ Anlass, Saison, Stil und das Accessoire-Häkchen werden automatisch auf diesem G
 
 Wird ein Kleidungsstück gelöscht, werden gespeicherte Outfits, zugehörige Kalendereinträge und Rückmeldungen mit diesem Stück ebenfalls entfernt. Beim Löschen eines Outfits werden dessen Kalendereinträge entfernt; die Kleidung bleibt erhalten. Eine Änderung der Kategorie lässt den gespeicherten Look bestehen, zeigt aber bei einer dadurch unvollständigen Kombination einen Prüfhinweis.
 
-Neue Sicherungen verwenden **Format 6**: Kleidung mit Originalfotos und Freistellungen, Outfits, Bewertungen, Stilprofil samt vertieften Antworten, Outfit-/Wetter-Einstellungen, Kalender, gegebenenfalls Wetterort/Vorhersage und Chatverlauf. Sie stammen aus einem konsistenten Datenbanksnapshot. **Formate 1–5 bleiben importierbar.** Gerätelokale Freigaben, Verbindungscodes, Lesemarkierungen, UI-Scrollzustände, Erscheinungsbild und heruntergeladene KI-Dateien gehören nicht zur Sicherung.
+Neue Sicherungen verwenden **Format 7**: Kleidung mit Originalfotos und Freistellungen, Outfits, Bewertungen, Stilprofil samt vertieften Antworten, Shopping-Budget/-Sortiment, Outfit-/Wetter-Einstellungen, Kalender, gegebenenfalls Wetterort/Vorhersage und Chatverlauf. Sie stammen aus einem konsistenten Datenbanksnapshot. **Formate 1–6 bleiben importierbar.** Gerätelokale Freigaben, Verbindungscodes, Lesemarkierungen, UI-Scrollzustände, Erscheinungsbild und heruntergeladene KI-Dateien gehören nicht zur Sicherung.
 
 **Ersetzen** entfernt auch Datenarten, die in älteren Sicherungen fehlen; bei einer Sicherung ohne Chat wird beispielsweise ein bisheriger Verlauf geleert. **Zusammenführen** erhält fehlende lokale Datensätze und bevorzugt neuere Revisionen. Bei gleicher Kleidungs-ID wird der gesamte neuere Stückdatensatz gewählt, inklusive seiner Bilder. Eine ältere App kann neue Sicherungsformate nicht lesen. Vor einem Downgrade deshalb eine aktuelle Sicherung behalten.
 
@@ -214,7 +224,7 @@ VITE_BASE_PATH=/Kleiderschrank/ npm run preview
 
 Danach vor Root-Browserprüfungen wieder `npm run build` ausführen. Der echte iPhone-/Safari-Test bleibt separat in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
 
-Version **0.18.0** wurde am 20. Oktober 2026 durch [Pages-Lauf 39433640715](https://github.com/treemonsal/Kleiderschrank/actions/runs/39433640715) erfolgreich veröffentlicht. Der [GitHub-Prüflauf 39432537361](https://github.com/treemonsal/Kleiderschrank/actions/runs/39432537361) besteht mit **239 Datentests und allen 155 Browserfällen**. Öffentliche App-Dateien, Manifest, Icons und Service Worker sind bytegleich mit dem geprüften Pages-Build. Kritik, Bewertung **8/10** und verbleibende Grenzen stehen in [CRITIC_REVIEW.md](CRITIC_REVIEW.md).
+Die Shopping-Erweiterung wird als Version **0.19.0** geprüft. Die letzte veröffentlichte Version vor dieser Runde ist 0.18.0. Nachweise und Grenzen stehen in [REVIEW.md](REVIEW.md).
 
 ## Projektbackup und Dokumentation
 

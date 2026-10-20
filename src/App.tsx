@@ -32,6 +32,7 @@ import { CATEGORIES, filterGarments, type Garment } from './model'
 import { Editor } from './Editor'
 import { BackupView } from './BackupView'
 import { BackupReminder } from './BackupReminder'
+import { ShoppingCard } from './Shopping'
 import { DailyOutfit } from './DailyOutfit'
 import { LaundryIcon, useTapMotion } from './motion'
 import { localDay, shiftDay } from './calendar'
@@ -93,6 +94,7 @@ function Home({
           notify={notify}
         />
       </div>
+      <ShoppingCard hideLocked />
       <BackupReminder onBackup={onBackup} />
       <section className="wardrobe-summary">
         <div>

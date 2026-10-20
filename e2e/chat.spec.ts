@@ -201,7 +201,7 @@ test('Chat fragt einmal nach Freigabe, beantwortet Folgefragen, speichert echten
   )
   await dialog.getByRole('button', { name: 'Schliessen', exact: true }).click()
   const before = await exportData(page)
-  expect(before.version).toBe(6)
+  expect(before.version).toBe(7)
   expect(before.chat.messages).toHaveLength(4)
   expect(before.outfits).toHaveLength(0)
   await open(page)

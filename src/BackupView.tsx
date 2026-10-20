@@ -25,6 +25,7 @@ import { BackupReminderSettings } from './BackupReminder'
 import { updateBackupReminder } from './backup-reminder'
 import { AISettings } from './AISettings'
 import { StyleProfileCard } from './StyleProfile'
+import { ShoppingCard } from './Shopping'
 import { version } from '../package.json'
 
 export function BackupView({
@@ -256,6 +257,7 @@ export function BackupView({
           </p>
         </div>
       </section>
+      <ShoppingCard />
       <details className="settings-section settings-help">
         <summary>Navigation &amp; Tageslooks · kurz erklärt</summary>
         <p>

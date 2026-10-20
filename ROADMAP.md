@@ -1,5 +1,15 @@
 # Entwicklungsplan
 
+## Version 0.19.0 – günstig und persönlich shoppen
+
+- [x] Ausgangsstand als Remote-Tag vor Shopping-Änderungen sichern
+- [x] Nachvollziehbare Freischaltung anhand von Stilprofil, Tragetagen und Bewertungen
+- [x] KI-Kaufideen mit realen vorhandenen Outfit-Referenzen und eigener Freigabe
+- [x] Schweizer Suchlinks mit harten Budgetgrenzen und günstigeren ersten Suchen
+- [x] Dauerhaftes Budget/Sortiment und Sicherungsformat 7 mit unabhängiger Zusammenführung
+- [ ] Finale Daten-/Browser-/Unterpfadprüfung und Veröffentlichung dokumentieren
+- [ ] Reale Passung von Kaufideen und echtes iPhone/Safari im Alltag prüfen
+
 ## Version 0.18.0 – Kritikerprüfung und automatische Fotos
 
 - [x] Vor Änderungen Ausgangsstand als Remote-Tag sichern

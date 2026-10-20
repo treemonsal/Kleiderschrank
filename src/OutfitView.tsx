@@ -1,3 +1,4 @@
+import { ShoppingCard } from './Shopping'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
@@ -799,6 +800,7 @@ export function OutfitView({
           )}
         </>
       )}
+      {tab === 'discover' && <ShoppingCard hideLocked />}
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </div>
   )

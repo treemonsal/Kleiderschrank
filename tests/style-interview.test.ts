@@ -290,7 +290,7 @@ describe('Vertieftes, freiwilliges Stilprofil', () => {
       generateOutfits(garments, DEFAULT_OUTFIT_OPTIONS, p, [])[0].garmentIds,
     ).toContain(garments[0].id)
   })
-  it('sichert bestätigte Antworten in Format 6, liest Formate 1–5 und weist ungültige neue Antworten vor jedem Import ab', async () => {
+  it('sichert bestätigte Antworten in Format 7, liest Formate 1–6 und weist ungültige neue Antworten vor jedem Import ab', async () => {
     const db = await database()
     const current = await updateStyleInterview(
       { type: 'answer', question: 'avoid', answer: 'Keine Logos' },
@@ -298,10 +298,10 @@ describe('Vertieftes, freiwilliges Stilprofil', () => {
       db,
     )
     const json = await createDatabaseBackup(db)
-    expect(JSON.parse(json).version).toBe(6)
+    expect(JSON.parse(json).version).toBe(7)
     const parsed = await parseFullBackup(json)
     expect(parsed.preferences?.styleInterview).toEqual(current)
-    for (const version of [1, 2, 3, 4, 5]) {
+    for (const version of [1, 2, 3, 4, 5, 6]) {
       const old = JSON.parse(json)
       old.version = version
       delete old.preferences.styleInterview

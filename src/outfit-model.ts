@@ -1,5 +1,6 @@
 import type { Garment, Season, Style } from './model'
 import type { StyleInterview } from './style-interview'
+import type { ShoppingPreferences } from './shopping-model'
 
 export const OCCASIONS = ['Alltag', 'Büro', 'Abend', 'Freizeit'] as const
 export type Occasion = (typeof OCCASIONS)[number]
@@ -67,6 +68,7 @@ export interface Preferences {
   backupReminder?: BackupReminderState
   styleProfile?: StyleProfile
   styleInterview?: StyleInterview
+  shopping?: ShoppingPreferences
 }
 export const DEFAULT_PREFERENCES: Preferences = {
   id: 'personal',

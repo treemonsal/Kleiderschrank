@@ -1,6 +1,14 @@
 # MyStyle
 
-Die Versionsabschnitte dokumentieren die Entwicklung. Massgeblich für den aktuellen Umfang sind Version 0.18.0 und die aktuelle README; ältere Abschnitte halten die damaligen Anforderungen und Grenzen fest.
+Die Versionsabschnitte dokumentieren die Entwicklung. Massgeblich für den aktuellen Umfang sind Version 0.19.0 und die aktuelle README; ältere Abschnitte halten die damaligen Anforderungen und Grenzen fest.
+
+## Version 0.19.0 – persönliche Shopping-Beratung
+
+- Shopping erst nach bestätigtem Stilprofil oder drei vertieften Antworten, sieben bestätigten Tragetagen über mindestens zwei Wochen und drei verschiedenen Lookbewertungen (zwei positive) freischalten; nachvollziehbarer Fortschritt unter Mehr, bereite Einstiegspunkte auf Heute und Outfits. Tragetage letzte 90 Tage, Bewertungen letzte 180 Tage; keine falschen Gewissheiten über persönliches Modelltraining.
+- Budget Standard 50 CHF, hart höchstens 100 CHF pro Stück. Zuerst günstige Suchgrenzen bis 50 CHF für Kleidung und bis 25 CHF für Accessoires; optional bis zum persönlichen Maximum erweitern. Sortiment ausdrücklich wählen, keine Geschlechts-/Körperannahmen.
+- Bis zu drei generische Kaufideen mit vorhandenen Stücken zu vollständigen Looks validieren. Ablehnungen, Stilantworten und vermeidbare Farben berücksichtigen, exakte vorhandene Duplikate einschliesslich Wäsche ausschliessen. Leere Empfehlung ohne Kaufdruck zulassen.
+- Eigene Shopping-Freigabe, vorhandener kostenloser Qwen3-VL-8B-Dienst und begrenzter Textkontext. Keine Fotos, Notizen, Chattexte oder Koordinaten. Keine neuen bezahlten APIs, echten Live-Preise oder verfügbaren Produkte behaupten. Externe Zalando-Schweiz-Suchlinks ausschliesslich lokal und mit gültigen Preisfiltern konstruieren; keine Modell-URLs oder Affiliate-Codes.
+- Budget und Sortiment atomar, mit eigener Revision und ohne Tageslook-Reset speichern. Sicherungsformat 7, Formate 1–6 weiterhin lesen, DB weiterhin 5. Widerruf, Abbruch, Profil-/Bestands-/Budgetwechsel und verspätete Antworten berücksichtigen. Einkauf erfolgt im Shop, keine automatischen Bestellungen.
 
 ## Version 0.18.0 – einfachere Fotoaufnahme und Kritikerprüfung
 
