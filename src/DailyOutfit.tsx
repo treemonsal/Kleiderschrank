@@ -201,6 +201,9 @@ export function DailyOutfit({
         aria-label="Deine Tage"
         data-day-busy={busy ? 'true' : undefined}
       >
+        <span className="sr-only" role="status">
+          {date}
+        </span>
         <div className="day-navigation">
           <button
             className="icon-button"
@@ -355,9 +358,9 @@ export function DailyOutfit({
                     : 'Hier erscheinen deine eingeplanten Looks.'}
             </p>
           </header>
-          {!state ? (
+          {!state && items.length > 0 ? (
             <p role="status">Dein Tageslook wird geladen …</p>
-          ) : look?.garmentIds.length ? (
+          ) : state && look?.garmentIds.length ? (
             <>
               <p className="daily-context">
                 {[
@@ -583,12 +586,12 @@ export function DailyOutfit({
               <button
                 className="text-button"
                 onClick={() =>
-                  !isToday && state.outfits.length
+                  !isToday && state?.outfits.length
                     ? setEditing(true)
                     : onOutfits()
                 }
               >
-                {!isToday && state.outfits.length
+                {!isToday && state?.outfits.length
                   ? past
                     ? 'Getragenen Look eintragen'
                     : 'Look einplanen'

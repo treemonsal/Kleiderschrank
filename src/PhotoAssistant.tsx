@@ -5,7 +5,7 @@ import {
   readAIConnection,
   type PhotoAttributes,
 } from './cloud-ai'
-import { ErrorMessage, usePhotoUrl } from './ui'
+import { ErrorMessage, PhotoImage } from './ui'
 
 export function PhotoAssistant({
   photo,
@@ -20,18 +20,37 @@ export function PhotoAssistant({
   onChoose: (value: Blob) => void
   onBusy: (value: boolean) => void
 }) {
-  const [connection] = useState(readAIConnection)
+  const [connection, setConnection] = useState(readAIConnection)
   const [status, setStatus] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [preview, setPreview] = useState<Blob>()
-  const url = usePhotoUrl(preview)
   const controller = useRef<AbortController | null>(null)
   // Capture the draft at the start of a request; later edits must win.
   const callbacks = useRef({ onAttributes, onChoose })
   callbacks.current = { onAttributes, onChoose }
+  useEffect(() => {
+    const changed = (event: StorageEvent) => {
+      if (event.key !== null && event.key !== 'mystyle-photo-ai') return
+      controller.current?.abort()
+      controller.current = null
+      setConnection(readAIConnection())
+      setStatus('')
+      setPreview(undefined)
+      onBusy(false)
+      setMessage(
+        'Foto-Freigabe oder KI-Verbindung geändert. Starte die Analyse bei Bedarf erneut.',
+      )
+    }
+    window.addEventListener('storage', changed)
+    return () => window.removeEventListener('storage', changed)
+  }, [onBusy])
   async function start() {
-    if (!connection?.enabled) return
+    const allowed = readAIConnection()
+    if (!allowed?.enabled) {
+      setConnection(allowed)
+      return
+    }
     controller.current?.abort()
     const next = new AbortController()
     controller.current = next
@@ -43,7 +62,7 @@ export function PhotoAssistant({
     setPreview(undefined)
     onBusy(true)
     try {
-      const result = await analyzePhoto(photo, connection, next.signal)
+      const result = await analyzePhoto(photo, allowed, next.signal)
       if (next.signal.aborted) return
       if (result.attributes) apply(result.attributes)
       setPreview(result.cutout)
@@ -143,11 +162,11 @@ export function PhotoAssistant({
             </p>
           )}
           {error && <ErrorMessage>{error}</ErrorMessage>}
-          {preview && url && (
+          {preview && (
             <div className="ai-cutout-review">
-              <img
+              <PhotoImage
                 className="cutout-preview"
-                src={url}
+                photo={preview}
                 alt="Online-KI: Freistellung prüfen"
               />
               <p className="muted">

@@ -161,6 +161,9 @@ test('Echtes KI-Modell erzeugt lokal eine Maske, erhält das Original und funkti
   expect(restored.garments[0].photo).toBe(backup.garments[0].photo)
   expect(restored.garments[0].cutout).toBeUndefined()
   await page
+    .getByText('Lokale Freistellung & KI-Speicher', { exact: true })
+    .click()
+  await page
     .getByRole('button', { name: 'KI-Dateien vom Gerät entfernen' })
     .click()
   await expect(

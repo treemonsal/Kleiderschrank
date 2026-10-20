@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { LoaderCircle, Scissors } from 'lucide-react'
-import { ErrorMessage, usePhotoUrl } from './ui'
+import { ErrorMessage, PhotoImage } from './ui'
 
 export function BackgroundRemoval({
   photo,
@@ -17,7 +17,6 @@ export function BackgroundRemoval({
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
   const controller = useRef<AbortController | null>(null)
-  const url = usePhotoUrl(preview)
   useEffect(
     () => () => {
       controller.current?.abort()
@@ -94,11 +93,11 @@ export function BackgroundRemoval({
           </button>
         )}
         {error && <ErrorMessage>{error}</ErrorMessage>}
-        {preview && url && (
+        {preview && (
           <>
-            <img
+            <PhotoImage
               className="cutout-preview"
-              src={url}
+              photo={preview}
               alt="Vorschau mit entferntem Hintergrund"
             />
             <p>

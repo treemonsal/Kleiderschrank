@@ -74,7 +74,9 @@ test('Statuswechsel widerruft keine noch angezeigten Bildadressen und erhält be
     URL.revokeObjectURL = (url) => {
       if (
         [...document.images].some(
-          (image) => image.isConnected && image.getAttribute('src') === url,
+          (image) =>
+            image.isConnected &&
+            (image.getAttribute('src') === url || image.currentSrc === url),
         )
       )
         state.activePhotoRevocations.push('connected image')
@@ -215,6 +217,88 @@ test('Im Kleiderschrank bleibt das Wäschefoto sichtbar und nach Saubermarkieren
       card
         .getByAltText('Fotohemd', { exact: true })
         .evaluate((image) => (image as HTMLImageElement).naturalWidth),
+    )
+    .toBe(192)
+})
+
+test('Verzögert decodiertes currentSrc bleibt bei Favoriten und Wäsche gültig', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await wardrobe(page)
+  await page
+    .getByRole('region', { name: 'Dein Tageslook' })
+    .getByRole('button', { name: 'Fotohemd öffnen', exact: true })
+    .click()
+  const dialog = page.getByRole('dialog')
+  const picture = dialog.getByAltText('Fotohemd', { exact: true })
+  await expect
+    .poll(() =>
+      picture.evaluate((image: HTMLImageElement) => image.naturalWidth),
+    )
+    .toBe(192)
+  // Model a browser keeping its previous decoded source while the replacement
+  // src is already committed. The native getter is restored before final load.
+  await picture.evaluate((image: HTMLImageElement) => {
+    const state = window as typeof window & {
+      heldPhotoRevoked: boolean
+      heldPhotoUrl: string
+    }
+    state.heldPhotoRevoked = false
+    state.heldPhotoUrl = image.currentSrc
+    Object.defineProperty(image, 'currentSrc', {
+      configurable: true,
+      get: () => state.heldPhotoUrl,
+    })
+    const revoke = URL.revokeObjectURL.bind(URL)
+    URL.revokeObjectURL = (url) => {
+      if (url === state.heldPhotoUrl) state.heldPhotoRevoked = true
+      revoke(url)
+    }
+  })
+  await dialog
+    .getByRole('button', { name: 'Als Favorit markieren', exact: true })
+    .click()
+  await expect(
+    dialog.getByRole('button', { name: 'Favorit entfernen', exact: true }),
+  ).toBeVisible()
+  await dialog
+    .getByRole('button', { name: 'In die Wäsche legen', exact: true })
+    .click()
+  await expect(
+    dialog.getByRole('button', { name: 'Als sauber markieren', exact: true }),
+  ).toBeVisible()
+  expect(
+    await page.evaluate(
+      () =>
+        (window as typeof window & { heldPhotoRevoked: boolean })
+          .heldPhotoRevoked,
+    ),
+  ).toBe(false)
+  expect(
+    await page.evaluate(async () => {
+      const response = await fetch(
+        (window as typeof window & { heldPhotoUrl: string }).heldPhotoUrl,
+      )
+      return response.ok
+    }),
+  ).toBe(true)
+  await picture.evaluate((image: HTMLImageElement) => {
+    Reflect.deleteProperty(image, 'currentSrc')
+    image.dispatchEvent(new Event('load'))
+  })
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as typeof window & { heldPhotoRevoked: boolean })
+            .heldPhotoRevoked,
+      ),
+    )
+    .toBe(true)
+  await expect
+    .poll(() =>
+      picture.evaluate((image: HTMLImageElement) => image.naturalWidth),
     )
     .toBe(192)
 })

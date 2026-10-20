@@ -6,7 +6,6 @@ import {
   Database,
   HardDrive,
   LockKeyhole,
-  Moon,
   ShieldCheck,
   Smartphone,
 } from 'lucide-react'
@@ -122,15 +121,16 @@ export function BackupView({
         <div>
           <h2>Privat ist hier der Standard.</h2>
           <p>
-            Dein Kleiderschrank wird auf diesem Gerät gespeichert. Nur mit
-            aktivierter Online-KI wird das ausgewählte Foto an die von dir
-            freigegebenen KI-Dienste gesendet. MyStyle verwendet kein Tracking.
+            Dein Kleiderschrank wird auf diesem Gerät gespeichert. Freigegebene
+            Online-Funktionen senden die jeweils erklärten Fotos oder Angaben an
+            den Anbieter. MyStyle verwendet kein Tracking.
           </p>
         </div>
       </section>
       <AISettings />
       <StyleProfileCard items={items} notify={notify} />
-      <section className="settings-section">
+      <details className="settings-section settings-advanced">
+        <summary>Lokale Freistellung &amp; KI-Speicher</summary>
         <div className="section-heading">
           <h2>Lokale Freistellung als Alternative</h2>
         </div>
@@ -162,7 +162,7 @@ export function BackupView({
             {aiMessage}
           </p>
         )}
-      </section>
+      </details>
       <section className="settings-section" id="backup-section" tabIndex={-1}>
         <div className="section-heading">
           <h2>Deine Datensicherung</h2>
@@ -256,16 +256,30 @@ export function BackupView({
           </p>
         </div>
       </section>
-      <section className="settings-section">
-        <div className="section-heading">
-          <h2>Für die Nacht gemacht</h2>
-          <Moon size={19} />
-        </div>
-        <p className="muted section-intro">
-          Tiefes Schwarz, klare Schrift und ruhige Oberflächen. MyStyle bleibt
-          dunkel.
+      <details className="settings-section settings-help">
+        <summary>Navigation &amp; Tageslooks · kurz erklärt</summary>
+        <p>
+          Wische auf dem Tageslook nach rechts für den vorherigen Tag und nach
+          links für den nächsten. Über das Datum öffnest du den Kalender; „Zu
+          heute“ bringt dich zurück. Ein Farbring zeigt einen bestätigten
+          Tragetag.
         </p>
-      </section>
+        <p>
+          Beim Wechsel zwischen den vier Bereichen bleiben deine Auswahl und
+          Scrollposition erhalten. Tippe erneut auf den geöffneten Bereich, um
+          nach oben zu gelangen.
+        </p>
+        <p>
+          Ein Herz merkt ein Lieblingsstück oder einen Lieblingslook. Daumen
+          bewerten die Kombination. Stücke in der Wäsche bleiben sichtbar und
+          lassen sich in der Detailansicht wieder als sauber markieren.
+        </p>
+        <p>
+          Dein Kleiderschrank, gespeicherte Looks und der Kalender funktionieren
+          nach dem ersten vollständigen Laden auch offline. Online-KI und neue
+          Wetterdaten brauchen eine Verbindung.
+        </p>
+      </details>
       <section className="settings-section">
         <div className="section-heading">
           <h2>Auf deinem Gerät</h2>

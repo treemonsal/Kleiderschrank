@@ -190,7 +190,7 @@ test('Fehlende Kleidung wird erklärt; Ablehnungen können zurückgesetzt werden
   ).toHaveCount(0)
   await wardrobe(page)
   await page
-    .getByRole('button', { name: 'Outfits zusammenstellen', exact: true })
+    .getByRole('button', { name: 'Neu kombinieren', exact: true })
     .click()
   await page
     .getByRole('button', { name: 'Vorschlag 1: Passt nicht', exact: true })

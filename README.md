@@ -1,5 +1,13 @@
 # MyStyle
 
+## Rundgang & Alltag – Version 0.17.0
+
+Fotos bleiben bei Favoriten- und Wäschewechseln erhalten. Die gemeinsame Bildanzeige wartet auch auf die tatsächlich decodierte Browseradresse, versucht einen fehlgeschlagenen Ladevorgang einmal erneut und kann auf das erhaltene Original zurückfallen.
+
+Beim Wechsel zwischen Heute, Kleiderschrank, Outfits und Mehr bleiben Datum, Suche, Filter, Sortierung, Outfit-Reiter und Scrollposition innerhalb der laufenden App erhalten. Tippe erneut auf den aktiven Bereich, um nach oben zu gelangen. Wischen wechselt nur im Tagesbereich das Datum. Deine dauerhaft gespeicherten Stil-/Outfit-Einstellungen bleiben davon unabhängig.
+
+Lange Fenster behalten eine erreichbare Schliessen-Zeile. Ungespeicherte Änderungen an Look-Namen, Kalender, Vorlieben und Stilcheck verlangen vor dem Schliessen eine Entscheidung. Die Farbprobe schliesst nach Übernahme. Einstellungen enthalten eine aktuelle Bedienhilfe statt des alten Nachtmodus-Texts; lokale KI-Speicheroptionen sind eingeklappt. [Vollständiger Prüfumfang und Befunde](APP_AUDIT.md).
+
 ## Schwarz-Weiss-Icon – Version 0.16.1
 
 Das Homescreen-Icon zeigt jetzt ein weisses, verflochtenes M auf Schwarz. Es bleibt bewusst dunkel zur hellen App. iPhone-, Android- und Browser-Icons nutzen dasselbe Motiv; Original und reproduzierbare Exporte stehen unter [design/app-icon](design/app-icon/README.md). iOS kann bestehende Homescreen-Icons länger zwischenspeichern. Dafür weder die App noch Website-Daten löschen: Die Sammlung liegt auf deinem Gerät. Vor einer bewussten Neuinstallation immer eine vollständige Sicherung exportieren.

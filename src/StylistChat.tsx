@@ -136,6 +136,14 @@ export function StylistChat({
         return
       }
     }
+    // Before consent, keep the introduction and provider explanation visible
+    // instead of scrolling straight past them to the empty composer.
+    if (!enabled && !state.chat?.messages.length) {
+      bottom.current
+        ?.closest('dialog')
+        ?.scrollTo({ top: 0, behavior: 'instant' })
+      return
+    }
     const target =
       !pending && state?.chat?.messages.at(-1)?.role === 'assistant'
         ? bottom.current?.parentElement?.querySelector('article:last-of-type')
@@ -144,7 +152,7 @@ export function StylistChat({
       block: pending ? 'end' : 'start',
       behavior: 'instant',
     })
-  }, [state?.chat?.revision, pending, open, !!state, interviewActive])
+  }, [state?.chat?.revision, pending, open, !!state, interviewActive, enabled])
   useEffect(() => {
     if (open && error)
       errorNotice.current?.scrollIntoView({ block: 'end', behavior: 'instant' })
@@ -534,109 +542,113 @@ export function StylistChat({
                   )}
                   <div ref={bottom} />
                 </div>
-                <form
-                  className="chat-composer"
-                  onSubmit={(event) => {
-                    event.preventDefault()
-                    void send()
-                  }}
-                >
-                  <label className="field">
-                    Deine Nachricht
-                    <textarea
-                      value={draft}
-                      maxLength={MAX_CHAT_INPUT}
-                      rows={2}
-                      disabled={busy || saving || speech.listening}
-                      placeholder="Frag nach deinem nächsten Look …"
-                      onChange={(event) => setDraft(event.target.value)}
-                    />
-                  </label>
-                  <div className="chat-composer-actions">
-                    <span className="micro-copy">
-                      {draft.length}/{MAX_CHAT_INPUT}
-                    </span>
-                    {speech.supported && (
+                {enabled && (
+                  <form
+                    className="chat-composer"
+                    onSubmit={(event) => {
+                      event.preventDefault()
+                      void send()
+                    }}
+                  >
+                    <label className="field">
+                      Deine Nachricht
+                      <textarea
+                        value={draft}
+                        maxLength={MAX_CHAT_INPUT}
+                        rows={2}
+                        disabled={busy || saving || speech.listening}
+                        placeholder="Frag nach deinem nächsten Look …"
+                        onChange={(event) => setDraft(event.target.value)}
+                      />
+                    </label>
+                    <div className="chat-composer-actions">
+                      <span className="micro-copy">
+                        {draft.length}/{MAX_CHAT_INPUT}
+                      </span>
+                      {speech.supported && (
+                        <button
+                          type="button"
+                          className={`icon-button ${speech.listening ? 'liked' : ''}`}
+                          disabled={busy || saving}
+                          aria-label={
+                            speech.listening
+                              ? 'Diktieren beenden'
+                              : 'Nachricht diktieren'
+                          }
+                          aria-pressed={speech.listening}
+                          onClick={() =>
+                            speech.listening
+                              ? speech.finish()
+                              : speech.start(draft)
+                          }
+                        >
+                          {speech.listening ? (
+                            <Square size={18} />
+                          ) : (
+                            <Mic size={20} />
+                          )}
+                        </button>
+                      )}
                       <button
-                        type="button"
-                        className={`icon-button ${speech.listening ? 'liked' : ''}`}
-                        disabled={busy || saving}
-                        aria-label={
-                          speech.listening
-                            ? 'Diktieren beenden'
-                            : 'Nachricht diktieren'
-                        }
-                        aria-pressed={speech.listening}
-                        onClick={() =>
-                          speech.listening
-                            ? speech.finish()
-                            : speech.start(draft)
+                        className="button primary"
+                        disabled={
+                          !enabled ||
+                          confirmClear ||
+                          !draft.trim() ||
+                          busy ||
+                          saving ||
+                          speech.listening ||
+                          !navigator.onLine
                         }
                       >
-                        {speech.listening ? (
-                          <Square size={18} />
-                        ) : (
-                          <Mic size={20} />
-                        )}
+                        <Send size={17} /> Senden
                       </button>
+                      {busy && (
+                        <button
+                          type="button"
+                          className="text-button"
+                          onClick={cancel}
+                        >
+                          Antwort abbrechen
+                        </button>
+                      )}
+                    </div>
+                    {speech.listening && (
+                      <p className="micro-copy" role="status">
+                        Ich höre zu … Die Nachricht wird erst mit „Senden“
+                        abgeschickt.
+                      </p>
                     )}
-                    <button
-                      className="button primary"
-                      disabled={
-                        !enabled ||
-                        confirmClear ||
-                        !draft.trim() ||
-                        busy ||
-                        saving ||
-                        speech.listening ||
-                        !navigator.onLine
-                      }
-                    >
-                      <Send size={17} /> Senden
-                    </button>
-                    {busy && (
+                    <p className="micro-copy">
+                      {speech.supported
+                        ? 'Sprache nutzt Browserdienste; Audio oder Text kann an deren Anbieter gehen. Kein automatisches Senden.'
+                        : window.speechSynthesis
+                          ? 'Diktieren geht auch mit der Handy-Tastatur. Vorlesen nutzt Browserdienste; Text kann an deren Anbieter gehen.'
+                          : 'Du kannst auch die Diktierfunktion deiner Handy-Tastatur verwenden.'}
+                    </p>
+                    {reading && (
                       <button
                         type="button"
                         className="text-button"
-                        onClick={cancel}
+                        onClick={() => {
+                          stopVoice()
+                          setReading(false)
+                        }}
                       >
-                        Antwort abbrechen
+                        Vorlesen stoppen
                       </button>
                     )}
-                  </div>
-                  {speech.listening && (
-                    <p className="micro-copy" role="status">
-                      Ich höre zu … Die Nachricht wird erst mit „Senden“
-                      abgeschickt.
-                    </p>
-                  )}
-                  <p className="micro-copy">
-                    {speech.supported
-                      ? 'Sprache nutzt Browserdienste; Audio oder Text kann an deren Anbieter gehen. Kein automatisches Senden.'
-                      : window.speechSynthesis
-                        ? 'Diktieren geht auch mit der Handy-Tastatur. Vorlesen nutzt Browserdienste; Text kann an deren Anbieter gehen.'
-                        : 'Du kannst auch die Diktierfunktion deiner Handy-Tastatur verwenden.'}
-                  </p>
-                  {reading && (
-                    <button
-                      type="button"
-                      className="text-button"
-                      onClick={() => {
-                        stopVoice()
-                        setReading(false)
-                      }}
-                    >
-                      Vorlesen stoppen
-                    </button>
-                  )}
-                  {!navigator.onLine && (
-                    <p className="muted" role="status">
-                      Zum Antworten braucht der Chat Internet. Dein Verlauf
-                      bleibt lesbar.
-                    </p>
-                  )}
-                  {speech.error && <ErrorMessage>{speech.error}</ErrorMessage>}
-                </form>
+                    {!navigator.onLine && (
+                      <p className="muted" role="status">
+                        Zum Antworten braucht der Chat Internet. Dein Verlauf
+                        bleibt lesbar.
+                      </p>
+                    )}
+                    {speech.error && (
+                      <ErrorMessage>{speech.error}</ErrorMessage>
+                    )}
+                  </form>
+                )}
               </>
             )}
             {error && (

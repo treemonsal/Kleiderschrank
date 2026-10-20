@@ -27,6 +27,23 @@ export function AISettings() {
   useEffect(() => () => controller.current?.abort(), [])
   const communityActive = connection?.mode === 'community' && connection.enabled
   const Information = communityActive ? 'details' : 'div'
+  function persist(value: AIConnection | null) {
+    try {
+      saveAIConnection(value)
+      setConnection(value)
+      setError('')
+      return true
+    } catch {
+      setCommunityConsent(communityActive)
+      setEnabled(
+        connection?.mode !== 'community' && (connection?.enabled ?? false),
+      )
+      setError(
+        'Die Freigabe konnte nicht auf diesem Gerät gespeichert werden. Bitte versuche es erneut.',
+      )
+      return false
+    }
+  }
   return (
     <section className="settings-section ai-settings">
       <div className="section-heading">
@@ -42,7 +59,7 @@ export function AISettings() {
       )}
       <div className="settings-card ai-connection community-settings">
         <h3>
-          {connection?.mode === 'community'
+          {communityActive
             ? 'Kostenlose Community-KI ist aktiv'
             : 'Kostenlose Community-KI'}
         </h3>
@@ -101,8 +118,7 @@ export function AISettings() {
                   controller.current = null
                   setBusy(false)
                   if (connection?.mode === 'community') {
-                    saveAIConnection(null)
-                    setConnection(null)
+                    if (!persist(null)) return
                   }
                   setMessage(
                     'Community-Freigabe zurückgezogen. Neue Fotos werden nicht an diese Dienste gesendet.',
@@ -139,8 +155,7 @@ export function AISettings() {
               try {
                 await checkAIConnection(value, next.signal)
                 if (next.signal.aborted) return
-                saveAIConnection(value)
-                setConnection(value)
+                if (!persist(value)) return
                 setEnabled(false)
                 setMessage(
                   'Kostenlose KI aktiviert. Neue Fotos werden automatisch erkannt und freigestellt.',
@@ -180,8 +195,7 @@ export function AISettings() {
               controller.current?.abort()
               controller.current = null
               setBusy(false)
-              saveAIConnection(null)
-              setConnection(null)
+              if (!persist(null)) return
               setCommunityConsent(false)
               setEnabled(false)
               setMessage(
@@ -199,12 +213,13 @@ export function AISettings() {
           <p className="muted">
             {connection && connection.mode !== 'community'
               ? 'Dein persönlicher KI-Server ist verbunden.'
-              : 'Optional für einen bereits vorhandenen eigenen Server. Hugging Face verlangt für eigene Docker-Spaces derzeit ein kostenpflichtiges Abo. Für die kostenlose Community-KI brauchst du diese Felder nicht.'}
+              : 'Optional für einen bereits vorhandenen eigenen Server. Für die kostenlose Community-KI brauchst du diese Felder nicht.'}
           </p>
           <label className="field">
             KI-Server
             <input
               type="url"
+              disabled={busy}
               placeholder="https://dein-space.hf.space"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
@@ -217,6 +232,7 @@ export function AISettings() {
             Verbindungscode
             <input
               type="password"
+              disabled={busy}
               value={code}
               onChange={(e) => setCode(e.target.value)}
               autoComplete="off"
@@ -232,8 +248,8 @@ export function AISettings() {
                   controller.current?.abort()
                   controller.current = null
                   setBusy(false)
-                  saveAIConnection(null)
-                  setConnection(null)
+                  if (connection?.mode === 'community') return
+                  if (!persist(null)) return
                   setMessage(
                     'Online-KI ausgeschaltet. Es werden keine neuen Fotos gesendet.',
                   )
@@ -260,8 +276,8 @@ export function AISettings() {
               try {
                 const value = { url, code, enabled }
                 await checkAIConnection(value, next.signal)
-                saveAIConnection(value)
-                setConnection(value)
+                if (next.signal.aborted || controller.current !== next) return
+                if (!persist(value)) return
                 setCommunityConsent(false)
                 setMessage(
                   'Verbunden. Neue Fotos werden jetzt automatisch vorbereitet.',
@@ -289,24 +305,25 @@ export function AISettings() {
             )}
             Verbinden und aktivieren
           </button>
-          <button
-            className="button secondary full"
-            onClick={() => {
-              controller.current?.abort()
-              controller.current = null
-              setBusy(false)
-              saveAIConnection(null)
-              setConnection(null)
-              setEnabled(false)
-              setCode('')
-              setMessage(
-                'Online-KI ausgeschaltet. Es werden keine neuen Fotos gesendet.',
-              )
-              setError('')
-            }}
-          >
-            Online-KI ausschalten
-          </button>
+          {connection && connection.mode !== 'community' && (
+            <button
+              className="button secondary full"
+              onClick={() => {
+                controller.current?.abort()
+                controller.current = null
+                setBusy(false)
+                if (!persist(null)) return
+                setEnabled(false)
+                setCode('')
+                setMessage(
+                  'Online-KI ausgeschaltet. Es werden keine neuen Fotos gesendet.',
+                )
+                setError('')
+              }}
+            >
+              Online-KI ausschalten
+            </button>
+          )}
           <p className="micro-copy">
             Verbindung nur auf diesem Gerät. Nicht in deiner Datensicherung
             enthalten.

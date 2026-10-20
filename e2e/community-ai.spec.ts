@@ -89,6 +89,72 @@ async function activate(page: Page) {
   ).toBeVisible()
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
 }
+
+test('Widerruf in einem anderen Fenster stoppt eine laufende Fotoanalyse und erhält den Entwurf', async ({
+  page,
+  context,
+}) => {
+  await mock(page)
+  let release!: () => void
+  const held = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  await page.route(V + '/gradio_api/call/run_router', async (route) => {
+    await held
+    await route.fulfill({ json: { event_id: 'a'.repeat(32) } }).catch(() => {})
+  })
+  try {
+    await page.goto('/')
+    await activate(page)
+    await page
+      .getByRole('button', { name: 'Erstes Stück hinzufügen', exact: true })
+      .click()
+    await page
+      .getByLabel('Name', { exact: false })
+      .fill('Mein unveränderter Entwurf')
+    await page
+      .getByLabel('Foto aus Mediathek')
+      .setInputFiles(path.resolve('public/icon-192.png'))
+    await expect(
+      page.getByRole('button', { name: 'Analyse abbrechen', exact: true }),
+    ).toBeVisible()
+    const other = await context.newPage()
+    await other.goto('/')
+    await other.getByRole('button', { name: 'Mehr', exact: true }).click()
+    await other
+      .getByRole('button', { name: 'Community-KI ausschalten', exact: true })
+      .click()
+    await expect(
+      page.getByRole('button', { name: 'Analyse abbrechen', exact: true }),
+    ).toHaveCount(0)
+    await expect(
+      page.getByText('Online-KI noch nicht verbunden.', { exact: false }),
+    ).toBeVisible()
+    release()
+    await expect(page.getByLabel('Name', { exact: false })).toHaveValue(
+      'Mein unveränderter Entwurf',
+    )
+    await expect(
+      page.getByAltText('Vorschau des Kleidungsstücks'),
+    ).toBeVisible()
+    await expect(
+      page.getByRole('button', {
+        name: 'Zum Kleiderschrank hinzufügen',
+        exact: true,
+      }),
+    ).toBeEnabled()
+    await page
+      .getByRole('button', {
+        name: 'Zum Kleiderschrank hinzufügen',
+        exact: true,
+      })
+      .click()
+    await expect(page.getByRole('dialog')).not.toBeVisible()
+    await other.close()
+  } finally {
+    release()
+  }
+})
 test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeicherte Stücke nicht erneut (kontrollierte Anbieter)', async ({
   page,
 }) => {

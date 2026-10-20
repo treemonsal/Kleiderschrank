@@ -45,6 +45,7 @@ function StyleCheck({
   }))
   const [styles, setStyles] = useState(current.styles)
   const [colors, setColors] = useState(current.colors)
+  const [baseline] = useState(() => JSON.stringify({ profile, styles, colors }))
   const [step, setStep] = useState(0)
   const stepStart = useRef<HTMLFieldSetElement>(null)
   const firstStep = useRef(true)
@@ -133,6 +134,7 @@ function StyleCheck({
   )
   return (
     <Sheet
+      dirty={!busy && JSON.stringify({ profile, styles, colors }) !== baseline}
       title={
         [
           'Was fühlt sich nach dir an?',

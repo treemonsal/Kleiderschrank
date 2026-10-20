@@ -163,6 +163,10 @@ test('Stilcheck wirkt auf den ersten Look, bleibt gespeichert und kann später b
     dialog.getByRole('button', { name: 'Seltener: Rot', exact: true }),
   ).toHaveAttribute('aria-pressed', 'false')
   await dialog.getByRole('button', { name: 'Schliessen', exact: true }).click()
+  await expect(dialog.getByRole('alert')).toContainText(
+    'Ungespeicherte Änderungen',
+  )
+  await dialog.getByRole('button', { name: 'Verwerfen', exact: true }).click()
   const unchanged = await exported(page)
   expect(unchanged.preferences.styleProfile).toEqual(
     data.preferences.styleProfile,

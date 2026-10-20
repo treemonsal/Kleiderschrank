@@ -202,6 +202,19 @@ describe('Migration und Datenintegrität', () => {
     ])
     expect((await db.garments.get('top'))?.favorite).toBe(false)
   })
+  it('erhält eine neuere Favoritenänderung auch bei rückwärts gestellter Gerätezeit', async () => {
+    const current = { ...closet[0], updatedAt: '2200-01-01T00:00:00.000Z' }
+    await db.garments.put(current)
+    await toggleFavorite(current, db)
+    const updated = (await db.garments.get(current.id))!
+    expect(Date.parse(updated.updatedAt)).toBeGreaterThan(
+      Date.parse(current.updatedAt),
+    )
+    await expect(
+      saveGarment({ ...current, name: 'Alter Entwurf' }, current, db),
+    ).rejects.toThrow('inzwischen')
+    expect((await db.garments.get(current.id))?.favorite).toBe(true)
+  })
   it('verhindert das Wiederbeleben eines zwischenzeitlich gelöschten Stücks', async () => {
     await expect(saveGarment(closet[0], closet[0], db)).rejects.toThrow(
       'inzwischen gelöscht',

@@ -85,6 +85,12 @@ test('Farbprobe braucht bewusste Übernahme, bleibt korrigierbar und verändert 
   await openPicker(page)
   await page.getByRole('button', { name: 'Blau übernehmen' }).click()
   await expect(
+    page.getByRole('button', { name: 'Farbprobe schliessen' }),
+  ).toHaveCount(0)
+  await expect(
+    page.getByRole('button', { name: 'Farbe aus Foto wählen', exact: true }),
+  ).toBeFocused()
+  await expect(
     page.getByRole('button', { name: 'Blau', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
@@ -202,6 +208,7 @@ test('Ein beschädigtes Ersatzfoto erhält bisheriges Foto und Farbeingabe', asy
   await expect(
     page.getByRole('button', { name: 'Blau', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
+  await openPicker(page)
   await expect(
     page.getByRole('button', { name: 'Blau übernehmen' }),
   ).toBeVisible()

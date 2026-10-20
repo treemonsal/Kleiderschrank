@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import {
   ArrowRight,
   ArrowUpRight,
+  CircleAlert,
   Check,
   Heart,
   LoaderCircle,
@@ -39,6 +40,7 @@ import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
 import { StylistChat } from './StylistChat'
 import { useStylistInbox } from './stylist-inbox'
+import { restorePageScroll, useViewState } from './view-memory'
 
 type View = 'home' | 'wardrobe' | 'outfits' | 'settings'
 
@@ -62,7 +64,10 @@ function Home({
   notify: (message: string) => void
 }) {
   const today = localDay(new Date(useClock()))
-  const [chosenDay, setChosenDay] = useState<string | null>(null)
+  const [chosenDay, setChosenDay] = useViewState<string | null>(
+    'home.day',
+    null,
+  )
   const day = chosenDay ?? today
   const selectDay = (next: string) => setChosenDay(next === today ? null : next)
   const swipe = useDaySwipe((offset) => {
@@ -76,16 +81,18 @@ function Home({
       : [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
   ).slice(0, 4)
   return (
-    <div className="view home-view" {...swipe}>
-      <DailyOutfit
-        day={day}
-        onSelectDay={selectDay}
-        items={items}
-        onOpen={onOpen}
-        onOutfits={onOutfits}
-        onAdd={onAdd}
-        notify={notify}
-      />
+    <div className="view home-view">
+      <div className="home-day-browser" {...swipe}>
+        <DailyOutfit
+          day={day}
+          onSelectDay={selectDay}
+          items={items}
+          onOpen={onOpen}
+          onOutfits={onOutfits}
+          onAdd={onAdd}
+          notify={notify}
+        />
+      </div>
       <BackupReminder onBackup={onBackup} />
       <section className="wardrobe-summary">
         <div>
@@ -166,11 +173,11 @@ function Wardrobe({
   onOpen: (id: string) => void
   onFavorite: (item: Garment) => void
 }) {
-  const [query, setQuery] = useState('')
-  const [category, setCategory] = useState('Alle')
-  const [favorites, setFavorites] = useState(false)
-  const [laundryOnly, setLaundryOnly] = useState(false)
-  const [sort, setSort] = useState('newest')
+  const [query, setQuery] = useViewState('wardrobe.query', '')
+  const [category, setCategory] = useViewState('wardrobe.category', 'Alle')
+  const [favorites, setFavorites] = useViewState('wardrobe.favorites', false)
+  const [laundryOnly, setLaundryOnly] = useViewState('wardrobe.laundry', false)
+  const [sort, setSort] = useViewState('wardrobe.sort', 'newest')
   const [showSort, setShowSort] = useState(false)
   const filtered = filterGarments(items, query, category, favorites)
     .filter((item) => !laundryOnly || item.inLaundry)
@@ -258,6 +265,19 @@ function Wardrobe({
           {filtered.length} {filtered.length === 1 ? 'Stück' : 'Stücke'}
           {hasFilters ? ' gefunden' : ' in deiner Kollektion'}
         </span>
+        {hasFilters && (
+          <button
+            className="text-button"
+            onClick={() => {
+              setQuery('')
+              setCategory('Alle')
+              setFavorites(false)
+              setLaundryOnly(false)
+            }}
+          >
+            Filter zurücksetzen
+          </button>
+        )}
         <button
           className="text-button"
           aria-label="Sortierung ändern"
@@ -312,28 +332,11 @@ function Wardrobe({
               ? 'Versuche einen anderen Suchbegriff oder passe deine Filter an.'
               : 'Dein Kleiderschrank ist noch leer. Füge dein erstes Stück hinzu und mach ihn zu deinem.'}
           </p>
-          <button
-            className="button primary"
-            onClick={
-              hasFilters
-                ? () => {
-                    setQuery('')
-                    setCategory('Alle')
-                    setFavorites(false)
-                    setLaundryOnly(false)
-                  }
-                : onAdd
-            }
-          >
-            {hasFilters ? (
-              'Filter zurücksetzen'
-            ) : (
-              <>
-                <Plus size={18} />
-                Stück hinzufügen
-              </>
-            )}
-          </button>
+          {!hasFilters && (
+            <button className="button primary" onClick={onAdd}>
+              <Plus size={18} /> Stück hinzufügen
+            </button>
+          )}
         </div>
       )}
       {filtered.length > 0 && (
@@ -530,9 +533,15 @@ export default function App() {
   const tapMotion = useTapMotion()
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [toast, setToast] = useState('')
+  const [toast, setToast] = useState<{
+    message: string
+    error?: boolean
+  } | null>(null)
   const [offline, setOffline] = useState(!navigator.onLine)
   const [updateError, setUpdateError] = useState('')
+  const scrollPositions = useRef<Partial<Record<View, number>>>({})
+  const cancelScroll = useRef<(() => void) | undefined>(undefined)
+  useEffect(() => () => cancelScroll.current?.(), [])
   useSavedWeatherRefresh(!offline)
   const {
     needRefresh: [needRefresh],
@@ -543,10 +552,10 @@ export default function App() {
         'Offline-Vorbereitung fehlgeschlagen. Bitte lade die App online erneut, bevor du sie offline verwendest.',
       ),
   })
-  const notify = useCallback((message: string) => setToast(message), [])
+  const notify = useCallback((message: string) => setToast({ message }), [])
   useEffect(() => {
     if (!toast) return
-    const timer = window.setTimeout(() => setToast(''), 4500)
+    const timer = window.setTimeout(() => setToast(null), 4500)
     return () => clearTimeout(timer)
   }, [toast])
   useEffect(() => {
@@ -562,15 +571,21 @@ export default function App() {
   function navigate(next: View, after?: () => void) {
     // Animate the mounted page in CSS, keeping the fixed navigation in front.
     // Commit before scroll/focus actions so they target the selected page.
+    cancelScroll.current?.()
+    scrollPositions.current[view] = window.scrollY
+    const top =
+      next === view || after ? 0 : (scrollPositions.current[next] ?? 0)
     flushSync(() => setView(next))
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    if (next !== view)
+      document.getElementById('main-content')?.focus({ preventScroll: true })
+    cancelScroll.current = restorePageScroll(top)
     after?.()
   }
   async function favorite(item: Garment) {
     try {
       await toggleFavorite(item)
     } catch (err) {
-      notify(storageError(err))
+      setToast({ message: storageError(err), error: true })
     }
   }
   const selected = items?.find((i) => i.id === selectedId)
@@ -628,7 +643,7 @@ export default function App() {
         </p>
       )}
       {updateError && <ErrorMessage>{updateError}</ErrorMessage>}
-      {needRefresh && !editor && !chatOpen && (
+      {needRefresh && !editor && !chatOpen && !selectedId && (
         <div className="update-banner" role="status">
           <span>Eine neue Version ist bereit.</span>
           <button
@@ -785,12 +800,12 @@ export default function App() {
         aria-atomic="true"
       >
         {toast && (
-          <div className="toast">
-            <Check size={18} />
-            <span>{toast}</span>
+          <div className={`toast ${toast.error ? 'toast-error' : ''}`}>
+            {toast.error ? <CircleAlert size={18} /> : <Check size={18} />}
+            <span>{toast.message}</span>
             <button
               aria-label="Hinweis schliessen"
-              onClick={() => setToast('')}
+              onClick={() => setToast(null)}
             >
               <X size={17} />
             </button>

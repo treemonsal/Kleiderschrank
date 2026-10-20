@@ -1,5 +1,12 @@
 # MyStyle
 
+## Version 0.17.0 – Rundgang und Alltag
+
+- Gesamten bestehenden Funktionsumfang einschliesslich Unteransichten, Texten, Eingaben und Fehlerzuständen im [App-Audit](APP_AUDIT.md) erfassen. Gemeinsame Bildanzeige schützt sowohl `src` als auch das noch verwendete `currentSrc`; begrenzter Wiederholungsversuch und Original-Fallback ohne Änderung der Fotodaten.
+- Bereichswechsel merken ausgewählten Tag, Filter/Suche/Sortierung, Outfit-Reiter und Scrollposition nur innerhalb der laufenden App. Keine versteckten Seiten oder automatischen KI-Anfragen. Erneutes Tippen auf den aktiven Bereich führt nach oben; Wischen unterhalb des Tagesbereichs verändert kein Datum.
+- Erreichbare Schliessen-Zeile, Schutz für ungespeicherte Look-/Kalender-/Vorlieben-/Stilcheck-Entwürfe, schliessende Farbprobe und grössere Tippflächen. Gespeicherte Looks beim Favorisieren in stabiler Reihenfolge lassen. Erste Fotoaufnahme nicht vom Laden zusätzlicher Tagesdaten abhängig machen.
+- Veralteten Nachtmodus-Abschnitt entfernen, Online-Hinweise präzisieren, seltene KI-Speicheroptionen einklappen, Bedienhilfe ergänzen. Eigene Serveroption und Community-Verbindung sauber trennen; späte Antworten, fensterübergreifenden Widerruf und Speicherfehler berücksichtigen. Favoritenrevisionen auch bei zurückgestellter Gerätezeit erhalten. Keine Datenbank-/Backupformatänderung oder neue Kosten.
+
 ## Version 0.16.1 – dunkles Schwarz-Weiss-Icon
 
 - Eigenständiges verflochtenes M auf Schwarz, inspiriert vom gewünschten Mix aus ChatGPT und Essembl. Schlichte helle Bildmarke ohne Schrift oder Glanzeffekte; die App behält ihre helle Editorial-Gestaltung.

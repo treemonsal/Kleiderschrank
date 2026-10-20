@@ -42,6 +42,7 @@ import { weatherFresh, type WeatherDay } from './weather'
 import { useClock, weatherForToday } from './useWeather'
 import { OutfitPieces } from './OutfitPieces'
 import { OutfitRating } from './OutfitRating'
+import { useViewState } from './view-memory'
 
 function PreferenceEditor({
   current,
@@ -59,6 +60,11 @@ function PreferenceEditor({
   return (
     <Sheet
       title="Ganz dein Geschmack."
+      dirty={
+        !busy &&
+        (JSON.stringify(styles) !== JSON.stringify(current.styles) ||
+          JSON.stringify(colors) !== JSON.stringify(current.colors))
+      }
       eyebrow="DEINE VORLIEBEN"
       onClose={() => {
         if (!busy) onClose()
@@ -153,6 +159,7 @@ function SavedEditor({
   return (
     <Sheet
       title="Deinen Look bearbeiten."
+      dirty={!busy && name !== outfit.name}
       eyebrow="GESPEICHERTES OUTFIT"
       onClose={() => {
         if (!busy) onClose()
@@ -263,7 +270,11 @@ export function OutfitView({
         db.calendar,
         db.weather,
         async () => ({
-          outfits: await db.outfits.orderBy('updatedAt').reverse().toArray(),
+          outfits: (await db.outfits.toArray()).sort(
+            (a, b) =>
+              b.createdAt.localeCompare(a.createdAt) ||
+              a.id.localeCompare(b.id),
+          ),
           feedback: await db.feedback.toArray(),
           preferences:
             (await db.preferences.get('personal')) ?? DEFAULT_PREFERENCES,
@@ -274,7 +285,10 @@ export function OutfitView({
     [],
     null,
   )
-  const [tab, setTab] = useState<'discover' | 'saved' | 'calendar'>('discover')
+  const [tab, setTab] = useViewState<'discover' | 'saved' | 'calendar'>(
+    'outfits.tab',
+    'discover',
+  )
   const [weatherDay, setWeatherDay] = useState<WeatherDay>()
   const [options, setOptions] = useState(DEFAULT_OUTFIT_OPTIONS)
   const pendingOptions = useRef<Partial<OutfitOptions>>({})
@@ -296,13 +310,16 @@ export function OutfitView({
         ) ?? todayWeather)
       : undefined
   const historyDay = weatherContext?.day ?? localDay(new Date(now))
-  const [seed, setSeed] = useState(0)
-  const [requested, setRequested] = useState(false)
+  const [seed, setSeed] = useViewState('outfits.seed', 0)
+  const [requested, setRequested] = useViewState('outfits.requested', false)
   const [preferencesOpen, setPreferencesOpen] = useState(false)
   const [editing, setEditing] = useState<SavedOutfit | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [onlyFavorites, setOnlyFavorites] = useState(false)
+  const [onlyFavorites, setOnlyFavorites] = useViewState(
+    'outfits.favorites',
+    false,
+  )
   const [confirmReset, setConfirmReset] = useState(false)
   const candidates = useMemo(
     () =>

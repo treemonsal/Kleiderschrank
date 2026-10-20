@@ -10,7 +10,7 @@ import {
 } from './model'
 import { preparePhoto } from './photos'
 import { saveGarment, storageError } from './db'
-import { ErrorMessage, Sheet, usePhotoUrl } from './ui'
+import { ErrorMessage, PhotoImage, Sheet } from './ui'
 import { PhotoColorPicker } from './PhotoColorPicker'
 import { BackgroundRemoval } from './BackgroundRemoval'
 import { PhotoAssistant } from './PhotoAssistant'
@@ -50,7 +50,7 @@ export function Editor({
   const [photoRevision, setPhotoRevision] = useState(0)
   const library = useRef<HTMLInputElement>(null)
   const camera = useRef<HTMLInputElement>(null)
-  const url = usePhotoUrl(draft.cutout ?? draft.photo)
+  const photo = draft.cutout ?? draft.photo
   useEffect(() => {
     if (!dirty) return
     const warn = (event: BeforeUnloadEvent) => {
@@ -113,9 +113,13 @@ export function Editor({
         }}
       >
         <fieldset disabled={busy || processing} className="editor-fields">
-          <div className={`photo-picker ${url ? 'has-photo' : ''}`}>
-            {url ? (
-              <img src={url} alt="Vorschau des Kleidungsstücks" />
+          <div className={`photo-picker ${photo ? 'has-photo' : ''}`}>
+            {photo ? (
+              <PhotoImage
+                photo={photo}
+                fallbackPhoto={draft.photo}
+                alt="Vorschau des Kleidungsstücks"
+              />
             ) : (
               <div className="photo-picker-empty">
                 <ImagePlus size={32} strokeWidth={1.3} />

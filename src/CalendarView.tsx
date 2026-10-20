@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { CalendarDays, Check, Pencil, Plus, Trash2 } from 'lucide-react'
 import {
@@ -15,6 +15,8 @@ import type { SavedOutfit } from './outfit-model'
 import { ErrorMessage, GarmentPicture, Sheet } from './ui'
 import { DayCalendar } from './DayCalendar'
 import { weatherFresh, weatherLabel } from './weather'
+import { useClock } from './useWeather'
+import { useViewState } from './view-memory'
 
 export function PlanEditor({
   day,
@@ -38,11 +40,13 @@ export function PlanEditor({
     existing?.status ?? defaultStatus,
   )
   const [note, setNote] = useState(existing?.note ?? '')
+  const [baseline] = useState(() => JSON.stringify({ outfitId, status, note }))
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   return (
     <Sheet
       title="Ein Look für deinen Tag."
+      dirty={!busy && JSON.stringify({ outfitId, status, note }) !== baseline}
       eyebrow={dayLabel(day)}
       onClose={() => {
         if (!busy) onClose()
@@ -131,12 +135,8 @@ export function CalendarView({
   onDiscover: () => void
   notify: (message: string) => void
 }) {
-  const [now, setNow] = useState(Date.now())
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(Date.now()), 60000)
-    return () => window.clearInterval(timer)
-  }, [])
-  const [day, setDay] = useState(localDay)
+  const now = useClock()
+  const [day, setDay] = useViewState('calendar.day', localDay)
   const [editing, setEditing] = useState<{
     day: string
     entry?: CalendarEntry

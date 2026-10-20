@@ -1,6 +1,7 @@
 import { Component, StrictMode, type ErrorInfo, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
+import { ViewMemoryProvider } from './view-memory'
 import './styles.css'
 import './editorial.css'
 
@@ -20,10 +21,10 @@ class StorageBoundary extends Component<
       return (
         <div className="fatal-error">
           <p className="eyebrow">MYSTYLE</p>
-          <h1>Ein kleiner Moment.</h1>
+          <h1>MyStyle konnte nicht starten.</h1>
           <p>
-            Die App konnte nicht geöffnet werden. Prüfe, ob dein Browser lokale
-            Speicherung (IndexedDB) erlaubt, und lade die Seite erneut.
+            Lade die Seite erneut. Falls das Problem bleibt, prüfe, ob dein
+            Browser lokale Speicherung (IndexedDB) erlaubt.
           </p>
           <p>
             Bitte lösche keine Website-Daten, wenn du deinen Kleiderschrank noch
@@ -41,7 +42,9 @@ class StorageBoundary extends Component<
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <StorageBoundary>
-      <App />
+      <ViewMemoryProvider>
+        <App />
+      </ViewMemoryProvider>
     </StorageBoundary>
   </StrictMode>,
 )

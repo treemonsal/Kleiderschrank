@@ -1,5 +1,17 @@
 # Entwicklungsplan
 
+## Version 0.17.0 – vollständiger Rundgang
+
+- [x] Quellinventar aller 27 TSX-Dateien, Unteransichten, Bedienung und Texte in APP_AUDIT.md dokumentieren
+- [x] Bild-Lebensdauerfehler mit verzögertem currentSrc gegen alten Build reproduzieren und beheben
+- [x] Foto-Wiederholung/Original-Fallback sowie Favoriten-/Wäsche-/Exportregressionen prüfen
+- [x] Bereichszustände und Scrollposition, begrenzte Tagesgeste und stabile gespeicherte Looks
+- [x] Erreichbare Schliessen-Zeile, Entwurfschutz, eindeutiger Filter-Reset und schliessende Farbprobe
+- [x] Veraltete Texte, KI-Schalter/-Abbruch, Hinweis-Rückmeldungen und Tippflächen verbessern
+- [x] 219 Datentests, kompletter Lauf mit 129 Browserfällen und 22 Chat-/Stilgespräch-Nachprüfungen; Darstellung, Projektpfad und Offline geprüft
+- [ ] Version 0.17.0 veröffentlichen und öffentliche Dateien prüfen
+- [ ] Echte iPhone-/Safari-Geräteprüfung
+
 ## Version 0.16.1 – Schwarz-Weiss-Icon
 
 - [x] Eigenständiges verflochtenes M mit schwarzem Hintergrund erstellen und visuell prüfen

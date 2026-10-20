@@ -452,7 +452,9 @@ export async function toggleFavorite(
     if (current)
       await database.garments.update(item.id, {
         favorite: !current.favorite,
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date(
+          Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
+        ).toISOString(),
       })
   })
 }

@@ -46,7 +46,14 @@ export function PhotoColorPicker({
               <X size={19} />
             </button>
           </div>
-          <PhotoSampler photo={photo} onChoose={onChoose} />
+          <PhotoSampler
+            photo={photo}
+            onChoose={(color) => {
+              onChoose(color)
+              setOpen(false)
+              trigger.current?.focus()
+            }}
+          />
         </div>
       )}
     </div>

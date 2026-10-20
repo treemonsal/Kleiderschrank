@@ -146,8 +146,33 @@ test('Chat fragt einmal nach Freigabe, beantwortet Folgefragen, speichert echten
     dialog = await open(page, false)
   expect(api.calls).toHaveLength(0)
   await expect(
+    dialog.getByRole('heading', {
+      name: 'Was möchtest du heute tragen?',
+      exact: true,
+    }),
+  ).toBeInViewport()
+  const welcomeBox = await dialog
+    .getByRole('heading', {
+      name: 'Was möchtest du heute tragen?',
+      exact: true,
+    })
+    .boundingBox()
+  const headerBox = await dialog.locator('.sheet-header').boundingBox()
+  expect(welcomeBox!.y).toBeGreaterThanOrEqual(
+    headerBox!.y + headerBox!.height - 1,
+  )
+  expect(
+    await page.evaluate(
+      ({ x, y }) => !!document.elementFromPoint(x, y)?.closest('.chat-welcome'),
+      {
+        x: welcomeBox!.x + welcomeBox!.width / 2,
+        y: welcomeBox!.y + welcomeBox!.height / 2,
+      },
+    ),
+  ).toBe(true)
+  await expect(
     dialog.getByRole('button', { name: 'Senden', exact: true }),
-  ).toBeDisabled()
+  ).toHaveCount(0)
   await dialog
     .getByRole('button', { name: 'Kostenlosen Chat aktivieren', exact: true })
     .click()
@@ -306,7 +331,7 @@ for (const action of [
     if (action === 'widerrufen')
       await expect(
         dialog.getByRole('button', { name: 'Senden', exact: true }),
-      ).toBeDisabled()
+      ).toHaveCount(0)
     await dialog
       .getByRole('button', { name: 'Schliessen', exact: true })
       .click()
@@ -350,7 +375,7 @@ test('Gespräch wird auf zweitem Gerät wiederhergestellt, Online-Freigabe wird 
   ).toBeVisible()
   await expect(
     restored.getByRole('button', { name: 'Senden', exact: true }),
-  ).toBeDisabled()
+  ).toHaveCount(0)
   await restored
     .getByRole('button', { name: 'Neues Gespräch', exact: true })
     .click()

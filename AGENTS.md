@@ -26,6 +26,8 @@
 - Schreibvorgänge, Importe und abhängige Löschungen atomar ausführen. Schemaänderungen als additive Dexie-Migrationen; bestehende Daten erhalten.
 - Jede neu gespeicherte Datenart in Export/Import einbeziehen. Alte Sicherungen weiterhin lesbar halten. Fehlerhafte Sicherungen dürfen vorhandene Daten nicht verändern.
 - Bei Freistellung das gespeicherte Originalfoto separat erhalten; Vorschau bewusst übernehmen, abbrechen und zum Original zurückkehren können. Beide Fotovarianten validieren, sichern und auf die Kapazität anrechnen. Worker nach Abschluss/Abbruch beenden.
+- Fotoanzeige zentral über `PhotoImage` verwalten. Bei Bildwechseln weder noch gesetztes `src` noch vom Browser verwendetes `currentSrc` vorzeitig freigeben; spätes Laden, Favoriten/Wäsche und bytegleiche Original-/Freistellungsdaten regressiv prüfen. Ein Original-Fallback ändert keine gespeicherten Blobs.
+- Bereichszustände und Scrollposition innerhalb der laufenden App merken, ohne versteckte Ansichten oder Hintergrund-KI-Anfragen zu behalten. Tageswischen auf den Tagesbereich begrenzen; ungespeicherte Formularänderungen beim Schliessen schützen.
 - Outfits ausschliesslich aus tatsächlich vorhandenen, eindeutig referenzierten Kleidungsstücken erzeugen. Fehlende Kategorien und nur geschätzte Farbharmonie offen benennen.
 - iPhone-Safe-Areas, mindestens 44 Pixel grosse wichtige Touch-Ziele, Tastaturbedienung, echte Beschriftungen, das seit 19.10.2026 ausdrücklich neu gewünschte Editorial-Design (warme Papierflächen, dunkle Schrift, keine violetten KI-Motive) und reduzierte Bewegung berücksichtigen.
 

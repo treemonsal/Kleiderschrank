@@ -192,10 +192,14 @@ test('Schnelle Tabwechsel behalten die letzte Auswahl, auch beim sofortigen ZurÃ
   expect(errors).toEqual([])
 })
 
-test('Ohne Animations-APIs bleiben Filter, Navigation und Fenster bedienbar', async ({
+test('Ohne optionale Animations- und Resize-APIs bleiben Filter, Navigation und Fenster bedienbar', async ({
   page,
 }) => {
   await page.addInitScript(() => {
+    Object.defineProperty(window, 'ResizeObserver', {
+      value: undefined,
+      configurable: true,
+    })
     Object.defineProperty(document, 'startViewTransition', {
       value: undefined,
       configurable: true,
