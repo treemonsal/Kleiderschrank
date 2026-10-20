@@ -9,7 +9,7 @@
 - [x] Erreichbare Schliessen-Zeile, Entwurfschutz, eindeutiger Filter-Reset und schliessende Farbprobe
 - [x] Veraltete Texte, KI-Schalter/-Abbruch, Hinweis-Rückmeldungen und Tippflächen verbessern
 - [x] 219 Datentests, kompletter Lauf mit 129 Browserfällen und 22 Chat-/Stilgespräch-Nachprüfungen; Darstellung, Projektpfad und Offline geprüft
-- [ ] Version 0.17.0 veröffentlichen und öffentliche Dateien prüfen
+- [x] Pages-Lauf 39371910692 erfolgreich; öffentliche Version, Bildkorrektur/Bedienhilfe, HTML/JS/CSS, Manifest, Icons und Service Worker bytegleich zum geprüften Build
 - [ ] Echte iPhone-/Safari-Geräteprüfung
 
 ## Version 0.16.1 – Schwarz-Weiss-Icon
