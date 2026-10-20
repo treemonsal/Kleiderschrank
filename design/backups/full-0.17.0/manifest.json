@@ -1,0 +1,13 @@
+{
+  "version": "0.17.0",
+  "baseline": "fb4f9af01d20f757cfc2a99471b9b5fa9cb39969",
+  "tag": "backup/before-cleanup-0.17.0",
+  "files_verified": 158,
+  "verification": "Source archive: all tracked files byte-for-byte; history bundle: clone, HEAD comparison and git fsck passed.",
+  "scope": "Tracked source, assets, dependency lockfile, Git history and accessible GitHub settings. Excludes handset IndexedDB, secrets, node_modules, generated build outputs and unavailable GitHub Actions permissions (403).",
+  "sha256": {
+    "mystyle-0.17.0-source.tar.gz": "d29f9077761547471f69104341d3d23749d5cd708019dbf421fce82f977ca465",
+    "mystyle-0.17.0-history.bundle": "27fc5003f6647554b219f3364afd1f359293a3bc7ad1bda476194da970a48082",
+    "github-settings.json": "8a366177f3b348d4f55ed6c6e1760b8bef825ec443a5c3ea82761d6eddc6bd5f"
+  }
+}
