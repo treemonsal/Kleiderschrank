@@ -1,5 +1,15 @@
 # Entwicklungsplan
 
+## Version 0.17.1 – Repository bereinigen
+
+- [x] Vor Änderungen vollständigen Projektstand und lesbare GitHub-Einstellungen sichern
+- [x] Alle 158 Archivdateien, Git-Bundle und regulären Wiederherstellungsweg prüfen
+- [x] Überschriebene Stile, ungenutzte Selektoren und frühere Sicherungs-Wrapper entfernen
+- [x] Chat-Freigabe von erst bei Bedarf ausgeführtem Anfragecode trennen
+- [x] Node-24-Actions pinnen und automatisierte Prüfungen ergänzen
+- [x] Aktuelle Anleitung und alte Versionsbeschreibungen auseinanderziehen
+- [ ] Finale Browser-/Build-/GitHub-Prüfungen und Veröffentlichung dokumentieren
+
 ## Version 0.17.0 – vollständiger Rundgang
 
 - [x] Quellinventar aller 27 TSX-Dateien, Unteransichten, Bedienung und Texte in APP_AUDIT.md dokumentieren

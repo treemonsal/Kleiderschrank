@@ -1,5 +1,7 @@
 # Das vorherige Design zurückholen
 
+Die vollständige Projektsicherung vor der Bereinigung von Version 0.17.0 liegt separat unter [full-0.17.0](full-0.17.0/RESTORE.md). Dieses Dokument beschreibt weiterhin den gezielten Rückweg zum älteren dunklen Design.
+
 Vor der ersten Änderung wurde der vollständige Stand als annotierter Tag
 [`design-backup/platinum-0.14.0`](https://github.com/treemonsal/Kleiderschrank/tree/92d9ea45ca6c229804f5bc33bfd090c573d9a885)
 auf GitHub gesichert. Er zeigt auf `92d9ea45ca6c229804f5bc33bfd090c573d9a885`.

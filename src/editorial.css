@@ -170,7 +170,6 @@
   font-size: 13px;
 }
 .section-heading h2,
-.first-piece-card h3,
 .closet-empty h2,
 .outfit-empty h2,
 .sheet-header h2 {
@@ -472,7 +471,6 @@
 .outfit-empty,
 .settings-card,
 .privacy-banner,
-.first-piece-card,
 .style-profile-card,
 .online-stylist,
 .backup-reminder,
@@ -554,7 +552,6 @@ summary:focus-visible {
 .field textarea,
 .photo-picker,
 .import-choice,
-.photo-preview,
 .chat-message {
   border-radius: 4px;
 }

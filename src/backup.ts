@@ -8,7 +8,7 @@ import {
   type ChatSession,
 } from './chat-model'
 import { blobToDataURL } from './photos'
-import { db, type WardrobeDatabase } from './db'
+import { db } from './db'
 import { isDay, MAX_CALENDAR_ENTRIES, type CalendarEntry } from './calendar'
 import { parseSavedWeather, type WeatherState } from './weather'
 import {
@@ -239,9 +239,6 @@ function parseWornColors(value: unknown, status: unknown): string[] {
   return value.map((color) =>
     choice(color, [...COLORS.map((item) => item.name), '']),
   )
-}
-export function parseBackup(json: string): Garment[] {
-  return parseFullBackup(json).garments
 }
 export function parseFullBackup(json: string): BackupData {
   if (new Blob([json]).size > MAX_BACKUP_BYTES)
@@ -501,17 +498,6 @@ export function parseFullBackup(json: string): BackupData {
     }
   }
   return { garments, outfits, feedback, preferences, calendar, weather, chat }
-}
-export async function importBackup(
-  items: Garment[],
-  mode: 'merge' | 'replace',
-  database: WardrobeDatabase = db,
-): Promise<number> {
-  return importFullBackup(
-    { garments: items, outfits: [], feedback: [], preferences: null },
-    mode,
-    database,
-  )
 }
 export async function importFullBackup(
   data: BackupData,

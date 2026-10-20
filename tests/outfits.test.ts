@@ -3,7 +3,6 @@ import Dexie from 'dexie'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   createDatabaseBackup,
-  importBackup,
   importFullBackup,
   parseFullBackup,
 } from '../src/backup'
@@ -342,9 +341,13 @@ describe('Migration und Datenintegrität', () => {
     const incoming = Array.from({ length: 300 }, (_, index) =>
       garment(`new-${index}`, 'Hosen'),
     )
-    await expect(importBackup(incoming, 'merge', db)).rejects.toThrow(
-      '1000 Stücke',
-    )
+    await expect(
+      importFullBackup(
+        { garments: incoming, outfits: [], feedback: [], preferences: null },
+        'merge',
+        db,
+      ),
+    ).rejects.toThrow('1000 Stücke')
     expect(await db.garments.count()).toBe(800)
     expect(await db.garments.get('new-0')).toBeUndefined()
   })

@@ -6,7 +6,7 @@ Diese Sicherung enthält alle 158 versionierten Projektdateien, die vollständig
 
 ## Separat wiederherstellen und prüfen
 
-1. Release-Dateien herunterladen und SHA-256 mit manifest.json vergleichen.
+1. Sicherungsdateien aus diesem Ordner herunterladen und SHA-256 mit manifest.json vergleichen.
 2. `git clone mystyle-0.17.0-history.bundle mystyle-restored`
 3. `cd mystyle-restored`
 4. `git switch -c restore-0.17.0 fb4f9af01d20f757cfc2a99471b9b5fa9cb39969`
@@ -14,6 +14,8 @@ Diese Sicherung enthält alle 158 versionierten Projektdateien, die vollständig
 6. Alternativ `tar -xzf mystyle-0.17.0-source.tar.gz` für den reinen Projektstand.
 
 Verifikation: Alle 158 archivierten Dateien wurden byteweise mit Git verglichen. Das Bundle wurde separat geklont und mit `git fsck` geprüft.
+
+Erneut prüfen, ohne die laufende App zu ändern: im Projekt-Root `python3 scripts/verify_project_backup.py` ausführen. Benötigt Python 3.11+ und Git, keine zusätzlichen Python-Pakete. Das Skript kontrolliert Prüfsummen, klont in einen temporären Ordner und vergleicht jede Archivdatei mit dem Git-Stand.
 
 ## Die laufende App zurücksetzen
 

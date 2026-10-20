@@ -1,66 +1,34 @@
 # MyStyle
 
-## Rundgang & Alltag – Version 0.17.0
+Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-Fotos bleiben bei Favoriten- und Wäschewechseln erhalten. Die gemeinsame Bildanzeige wartet auch auf die tatsächlich decodierte Browseradresse, versucht einen fehlgeschlagenen Ladevorgang einmal erneut und kann auf das erhaltene Original zurückfallen.
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Projektversion **0.17.1** · [iPhone-Prüfliste](IPHONE_CHECK.md)
 
-Beim Wechsel zwischen Heute, Kleiderschrank, Outfits und Mehr bleiben Datum, Suche, Filter, Sortierung, Outfit-Reiter und Scrollposition innerhalb der laufenden App erhalten. Tippe erneut auf den aktiven Bereich, um nach oben zu gelangen. Wischen wechselt nur im Tagesbereich das Datum. Deine dauerhaft gespeicherten Stil-/Outfit-Einstellungen bleiben davon unabhängig.
+Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
-Lange Fenster behalten eine erreichbare Schliessen-Zeile. Ungespeicherte Änderungen an Look-Namen, Kalender, Vorlieben und Stilcheck verlangen vor dem Schliessen eine Entscheidung. Die Farbprobe schliesst nach Übernahme. Einstellungen enthalten eine aktuelle Bedienhilfe statt des alten Nachtmodus-Texts; lokale KI-Speicheroptionen sind eingeklappt. [Vollständiger Prüfumfang und Befunde](APP_AUDIT.md).
+## Was du wo findest
 
-## Schwarz-Weiss-Icon – Version 0.16.1
+- **Heute:** Wetter, automatisch gewählter Tageslook, Alternativen und Tragebestätigung. Im Tagesbereich links/rechts wischen; Datum oder Kalender öffnen für Rückblick und Planung.
+- **Kleiderschrank:** Stücke aufnehmen, suchen, filtern, bearbeiten, favorisieren und in die Wäsche legen. Der Wäschefilter zeigt gewaschene Stücke; **Als sauber markieren** gibt sie wieder für Vorschläge frei.
+- **Outfits:** Kombinationen erstellen, bewerten, speichern und im Kalender planen. Accessoire- und Wettervorlieben bleiben gespeichert.
+- **Stylist ↗:** Fragen stellen oder das freiwillige vertiefte Stilgespräch öffnen. Ein kleiner Punkt kennzeichnet eine Einladung oder eine vorhandene ungelesene Antwort.
+- **Mehr:** Stilprofil, Online-Foto-KI, persönliche Sicherung, Speicher- und Installationshilfe. Ein Export sichert den eigenen Bestand; ein Projektbackup ersetzt diesen Export nicht.
 
-Das Homescreen-Icon zeigt jetzt ein weisses, verflochtenes M auf Schwarz. Es bleibt bewusst dunkel zur hellen App. iPhone-, Android- und Browser-Icons nutzen dasselbe Motiv; Original und reproduzierbare Exporte stehen unter [design/app-icon](design/app-icon/README.md). iOS kann bestehende Homescreen-Icons länger zwischenspeichern. Dafür weder die App noch Website-Daten löschen: Die Sammlung liegt auf deinem Gerät. Vor einer bewussten Neuinstallation immer eine vollständige Sicherung exportieren.
+Die Gestaltung verwendet warmes Papier, dunkle Schrift, Serifentitel und rostrote Markierungen. Das Homescreen-Icon bleibt schwarz-weiss. Bereichswechsel merken Datum, Filter und Scrollposition während der laufenden Sitzung. Erneutes Tippen auf den aktiven Bereich führt nach oben. Neue Versionen können auf dem iPhone erst nach Übernahme des Updates erscheinen; vorhandene Icons unterliegen zusätzlich dem iOS-Cache.
 
-## Freiwilliges Stilgespräch – Version 0.16.0
+## Personalisierung und Beratung
 
-Der kurze Stilcheck mit drei Schritten bleibt der Einstieg. Danach zeigt ein kleiner rostfarbener Punkt an **Stylist** eine freiwillige Einladung an. Im Chat kannst du mit **Stilgespräch starten** acht zusätzliche Fragen zu Stilrichtung, Schnitten, Tagesablauf, Temperaturempfinden, Mustern, Accessoires, Dingen, die du ungern trägst, und Inspiration beantworten. Die Fragen sind geführt und funktionieren auch offline; dafür wird keine KI-Anfrage verbraucht.
+Der freiwillige Stilcheck stellt drei kurze Fragen. Danach kannst du im Stylisten acht vertiefte Fragen beantworten, überspringen, pausieren und später ändern. Jede Antwort wird ausdrücklich gespeichert. Unter **Mehr → Dein Stilprofil** sind auch die Bewertungen erreichbar. Daumen hoch stärkt passende Vorschläge; Daumen runter fragt nach einem Grund. **Anderer Look** ist eine Alternative und keine negative Bewertung.
 
-Eine Auswahl wird erst mit **Antwort speichern** übernommen. **Frage überspringen**, **Später weiter** und ein früher Abschluss sind möglich. Bestätigte Antworten und übersprungene Fragen bleiben nach einem Neustart erhalten. **Keine weiteren Fragen** blendet die Einladung dauerhaft aus; das Gespräch bleibt im Chat auf eigene Initiative erreichbar. Unter **Antworten ansehen & ändern** lassen sich auch zuvor offengelassene Fragen ergänzen. **Vertiefte Antworten löschen** entfernt diese Angaben nach Bestätigung; kurzer Stilcheck, Bewertungen und die sichtbare Outfit-Auswahl bleiben bestehen. Bereits gesendete Informationen können noch im Chatverlauf, in älteren Sicherungen oder beim Anbieter stehen.
+Lokale Vorschläge nutzen vorhandene Stücke, deine Angaben und Bewertungen sowie Wäsche, Saison, bestätigte Tragetage und freigegebenes Wetter. Die Regeln gewichten Vorlieben nachvollziehbar; es wird kein eigenes Modell auf dich trainiert. Ein kleiner Bestand kann Wiederholungen nötig machen.
 
-Der Punkt kennzeichnet ausserdem eine vorhandene ungelesene Stylist-Antwort. Ein Hinweis wird erst beim sichtbaren Lesen im geöffneten Chat als gelesen markiert; eine ausgeblendete App genügt nicht. Der Lesestand bleibt auf diesem Gerät gespeichert und wird zwischen dessen Fenstern geteilt. Es gibt keine Betriebssystem-Pushfreigabe, erfundenen Nachrichten oder automatischen Anbieter-Anfragen.
+Der **Online-Stylist** vergleicht auf deinen Tipp höchstens vier vollständige Looks mit maximal 20 unterschiedlichen Stücken. Dafür sendet er eine verkleinerte Fotoübersicht, Angaben, Stilprofil, begrenzte Bewertungsmuster, deinen Wunsch und gegebenenfalls Wetterwerte an Qwen3-VL-Outpost. Keine ganze Garderobe oder Standortkoordinaten. Er wählt nur aus vorhandenen, verfügbaren Kombinationen; eine Übernahme wird erneut lokal geprüft.
 
-Die gewählte Stilrichtung gewichtet vorhandene Stilmerkmale in lokalen Vorschlägen etwas stärker. Die Accessoire-Antwort stellt die entsprechende Outfit-Option ein; sie bleibt dort jederzeit änderbar. Alle bestätigten Detailantworten fliessen bei einer bewusst gesendeten Chatfrage bzw. einem gestarteten Online-Lookvergleich in den bestehenden freigegebenen Dienst ein. Passform, Stoff, Muster und tatsächliche Wärme bleiben ohne passende Angaben/Fotos unbekannt. Die Antworten ergänzen dein Profil; es wird kein eigenes Modell auf dich trainiert.
+Der **Chat** nutzt nach eigener Freigabe Qwen3-VL-8B: deine Frage, höchstens sechs vorherige Nachrichten, bis zu 40 relevante Kleidungsangaben, Profil, ausgewählte Rückmeldungen und gegebenenfalls Wetterwerte. Keine Kleidungsfotos, Notizen oder Koordinaten. Antworten und prüfbare Lookkarten bleiben lokal; **Look speichern** ist eine eigene Aktion. Der Chat kann keine Kleidung löschen oder Einstellungen heimlich ändern. Ein ungesendeter Entwurf bleibt bis zum Neuladen im Arbeitsspeicher; bis zu 30 abgeschlossene Gesprächsrunden bleiben gespeichert. **Neues Gespräch → Gespräch löschen** entfernt sie nach Bestätigung. Ältere Sicherungen oder bereits gesendete Inhalte beim Anbieter können weiter bestehen.
 
-Sicherungsformat **6** enthält die Detailantworten und den Fortschritt. Formate 1–5 bleiben lesbar; ältere App-Versionen können Format 6 nicht importieren. Die Datenbank bleibt Version 5, ohne Zurücksetzen vorhandener Daten. Gerätelokale Lesemarkierungen und Freigaben werden nicht exportiert. Beim Zusammenführen schützt eine eigene Änderungszeit auch gelöschte Detailantworten vor älteren Ständen. Zwei gleichzeitig geöffnete Stilgespräche überschreiben keine neuere Antwort; ein veralteter Entwurf verlangt ausdrücklich das Laden des aktuellen Stands.
+**Nachricht diktieren** und **Vorlesen** sind optionale Browserfunktionen. Erkannten Text zuerst prüfen und selbst senden. Browser-Sprachdienste können Audio/Text an ihren Anbieter übertragen; MyStyle speichert keine Audiodateien. Tippen bleibt immer möglich.
 
-## Garderobenjournal – Version 0.15.0
-
-Die Oberfläche wurde vollständig neu gestaltet: warmes Papier, dunkle Schrift, Serifentitel, rostrote Markierungen und eine ruhige Textnavigation mit Kapitelnummern. Kleiderschrank, Tageslook, Outfits, Kalender, Editor, Einstellungen und Chat verwenden dieselbe Gestaltung. Foto-Platzhalter sind eigene Kategoriezeichnungen; vorhandene Fotos bleiben erhalten. Der freiwillige Stilcheck steht jetzt unter dem Tageslook. Frühere Theme-Einstellungen verändern das neue Design nicht.
-
-Der bisherige Stand ist vor der Änderung als Git-Tag **`design-backup/platinum-0.14.0`** auf GitHub gesichert. Zusätzlich gibt es ein Quellarchiv und einen gezielten Rückweg unter [Design-Backup](design/backups/README.md). Eine Rückkehr zur alten Optik benötigt kein Löschen oder Importieren deiner Kleidungsdaten. [Gestaltungsdetails](design/EDITORIAL.md).
-
-## Mit deinem Stylisten sprechen – Version 0.14.0
-
-Oben rechts öffnet **Stylist ↗** (Beschriftung „Mit deinem Stylisten sprechen“) den persönlichen KI-Chat. Einmal **Kostenlosen Chat aktivieren**, dann Fragen tippen und mit **Senden** abschicken. Beispiele: „Was passt zu meinem blauen Hemd?“, „Und etwas eleganter?“ oder „Welche Farben passen zusammen?“. Der Chat nutzt echte Kleidungsangaben, dein Stilprofil, abgeleitete Vorlieben, den heutigen Look, zuletzt bestätigte Tragetage und vorhandene freigegebene Wetterwerte. Er kann Rückfragen stellen. Seine Antworten beruhen auf Angaben, nicht auf einer neuen Fotoanalyse.
-
-Qwen3-VL-8B-Instruct läuft über den vorhandenen öffentlichen Community-Dienst. Pro bewusster Sendung gehen die Frage, höchstens sechs vorherige Nachrichten, bis zu 40 relevante Kleidungsangaben, Vorlieben und gegebenenfalls Wetterwerte an den Anbieter. Keine Kleidungsfotos, Notizen oder Standortkoordinaten. Anbieter-Speicherung, kostenlose Quoten, Wartezeiten und Ausfälle sind möglich. Die Chat-Freigabe gilt nur für dieses Gerät, ist unabhängig von der Foto-KI und wird nicht mit Sicherungen übertragen. Nach dem Aktivieren verschwindet der Einführungstext; unter **Dein Kontext & Chat-Einstellungen** kannst du die Freigabe ausschalten.
-
-Outfitantworten zeigen prüfbare Stücke aus deinem Schrank. **Look speichern** übernimmt sie ausdrücklich als gespeichertes Outfit. Aktuelle Verfügbarkeit, Kategorien, Saison/Wetter und Ablehnungen werden erneut geprüft; erfundene, unvollständige oder inzwischen gewaschene Stücke werden abgewiesen. Der Chat kann keine Kleidung löschen, Wäsche markieren, Kalenderpläne ändern oder Einstellungen heimlich anpassen. Der Antworttext ist unverbindliche Beratung; Passform, Material und Schutzwirkung bleiben ungeprüft.
-
-Der Verlauf bleibt lokal auf dem Gerät: maximal 30 vollständige Gesprächsrunden. **Neues Gespräch → Gespräch löschen** entfernt ihn, ohne Kleiderschrank oder Stilprofil zu verändern. Vorhandene Sicherungen können den alten Verlauf weiterhin enthalten. Der Chat ist ohne Freigabe und offline lesbar; für neue Antworten braucht er Internet. Fehlgeschlagene/abgebrochene Anfragen lassen den Text zum erneuten Senden stehen. Ein ungesendeter Entwurf bleibt beim Schliessen bis zum Neuladen im Arbeitsspeicher. Keine automatischen Wiederholungen; Schliessen, Abbrechen, Kontextwechsel, Reset und Freigabewiderruf verwerfen späte Ergebnisse.
-
-Falls dein Browser die Funktion anbietet, setzt **Nachricht diktieren** deine Worte in einen bearbeitbaren Entwurf. Erst **Senden** überträgt ihn an den Stylisten. Bei fehlender Unterstützung oder verweigertem Mikrofon kannst du tippen oder die Diktierfunktion deiner Handy-Tastatur nutzen. **Vorlesen** und **Vorlesen stoppen** verwenden die Browserstimme. Browser-Sprachdienste können Audio bzw. Text an ihren Anbieter übertragen. MyStyle speichert keine Audiodateien; die Erkennung endet spätestens nach 30 Sekunden und beim Schliessen oder Wechsel in den Hintergrund. Native iPhone-/PWA-Unterstützung muss auf dem Gerät geprüft werden; dies ist kein garantierter dauerhafter Sprachdialog.
-
-Sicherungsformat 5 enthält den Gesprächsverlauf einschliesslich Look-Referenzen. Versionen 1–4 bleiben lesbar. Beim bewussten Ersetzen durch eine alte Sicherung wird ein vorhandener Chat ebenfalls entfernt; beim Zusammenführen bleiben neuere lokale Gespräche/Resets erhalten. Vor einem App-Downgrade ein vollständiges Backup behalten: ältere App-Versionen verstehen Format 5 noch nicht.
-
-## Persönlichere Vorschläge ab Version 0.13.0
-
-Auf der Startseite bietet **Stilcheck starten** drei kurze, freiwillige Schritte: Stilrichtungen, Lieblingsfarben bzw. Farben für seltenere Vorschläge sowie üblicher Anlass und gewünschte Abwechslung. **Später** oder **Stilcheck überspringen** blendet die Einladung dauerhaft aus. Unter **Mehr → Dein Stilprofil** kannst du sie nachholen oder deine Antworten ändern. Ein abgebrochener Entwurf wird nicht gespeichert. Bestehende Stilvorlieben sind vorausgewählt.
-
-An Tageslooks (auch im Rückblick), Outfitvorschlägen und gespeicherten Looks gibt es Daumen hoch und runter. Ein weiterer Daumen hoch nimmt die positive Bewertung zurück. Bei Daumen runter wählst du Kombination, Farben, Stil oder Anlass. Die App merkt sich die konkrete Ablehnung für den bewerteten Anlass; ein Farbgrund beeinflusst ähnliche Farbpaarungen, ein Stilgrund entsprechende erfasste Stilrichtungen. Ein Anlassgrund erzeugt keine allgemeine Stilabneigung. **Anderer Look** und **Neu kombinieren** sind weiterhin reine Alternativen, ohne negative Bewertung.
-
-Positive Bewertungen wirken auch auf passende neue Stücke. Der übertragene Einfluss aus Bewertungen ist begrenzt; deine ausdrücklich gewählten Vorlieben werden weiterhin berücksichtigt. „Farben seltener“ ist eine Gewichtung, kein Verbot, damit eine kleine Garderobe weiter komplette Looks liefern kann. Abwechslung beeinflusst kürzlich getragene Stücke und die Unterschiedlichkeit der Vorschläge. Wäsche-, Saison- und Wetterregeln bleiben bestehen. Ein neues Profil erneuert unbestätigte Tagesvorschläge, überschreibt aber keine Kalenderpläne oder bestätigten Tragetage.
-
-Unter **Mehr → Dein Stilprofil → Bewertungen ansehen** kannst du die 20 neuesten Rückmeldungen einzeln zurücknehmen oder nach Bestätigung alle Bewertungen zurücksetzen. Ältere rücken nach; insgesamt bleiben bis zu 1000 aktuelle Bewertungen erhalten, eine pro Kombination. Eine neue Bewertung desselben Looks ersetzt die vorherige, einschliesslich ihres Anlasses. Profil, Bewertungsgründe und Anlass sind im bestehenden Sicherungsformat 4 enthalten; ältere Sicherungen bleiben lesbar.
-
-Die Personalisierung verwendet nachvollziehbare Gewichtungen aus deinen Angaben und Rückmeldungen, kein auf dich neu trainiertes Modell. Beim bewussten Start des Online-Stylisten erhält Qwen zusätzlich das Stilprofil und eine begrenzte Zusammenfassung passender Bewertungsmuster. Keine automatische Übertragung, keine neue Dienstfreigabe, keine Gebühren. Ob dir die Vorschläge im Alltag tatsächlich besser gefallen, muss sich in der Nutzung zeigen.
-
-Dein persönlicher Kleiderschrank als private iPhone-PWA. React, TypeScript, Vite, Tailwind und Dexie/IndexedDB. Keine laufenden Software- oder API-Kosten und kein Konto nötig. Optionale Fotoübertragung nur nach Freigabe.
-
-Version 0.12.1 korrigiert die Fotoanzeige beim Wäsche-Statuswechsel: Bildadressen bleiben gültig, bis die sichtbare Quelle ersetzt wurde. Originale und Freistellungen bleiben erhalten. Der Online-Stylist aus 0.12 bleibt verfügbar. Ab 0.15 ersetzt die Textnavigation die frühere Glasleiste.
-
-**Veröffentlichte App:** https://treemonsal.github.io/Kleiderschrank/ — Version 0.17.0 am 20. Oktober 2026 erfolgreich bereitgestellt und über HTTPS geprüft. Auf dem iPhone in Safari öffnen: **Teilen → Zum Home-Bildschirm → Hinzufügen**. Danach über das neue Symbol starten und einmal vollständig online laden.
+Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten oder Ausfälle haben. Keine kostenpflichtigen Ersatzdienste oder automatischen Wiederholungen. Anbieter-Speicherung und Löschfristen sind nicht garantiert. Stilurteile sind subjektiv; Passform, Material, Wärme und Schutzwirkung bleiben ohne passende Nachweise unbekannt.
 
 ## Lokal starten
 
@@ -129,7 +97,7 @@ Die Tageskarte folgt horizontal dem Finger und gleitet beim Loslassen weiter ode
 
 ## Sicherungserinnerung
 
-Frühestens nach einer Woche erscheint auf der Startseite ein kleiner Hinweis, wenn es noch ungesicherte Änderungen gibt. **Sicherung öffnen** führt zu „Mehr“, **In einer Woche** pausiert. Unter „Mehr“ lassen sich Erinnerungen dauerhaft ausschalten. Ein unveränderter exportierter Bestand und reine Vorhersage-Aktualisierungen lösen keinen neuen Hinweis aus. Wäsche, Tagesauswahl und Erinnerungseinstellungen sind im bisherigen Sicherungsformat 4 enthalten; alte Sicherungen bleiben lesbar.
+Frühestens nach einer Woche erscheint auf der Startseite ein kleiner Hinweis, wenn es noch ungesicherte Änderungen gibt. **Sicherung öffnen** führt zu „Mehr“, **In einer Woche** pausiert. Unter „Mehr“ lassen sich Erinnerungen dauerhaft ausschalten. Ein unveränderter exportierter Bestand und reine Vorhersage-Aktualisierungen lösen keinen neuen Hinweis aus. Wäsche, Tagesauswahl und Erinnerungseinstellungen sind im aktuellen Sicherungsformat 6 enthalten; Formate 1–5 bleiben lesbar.
 
 Ein Export bedeutet, dass eine Datei erstellt wurde. Bitte selbst in „Dateien“ speichern; die App kann den tatsächlichen Abschluss des iPhone-Downloads nicht bestätigen. Es gibt weiterhin keinen automatischen Cloud-Abgleich oder Foto-Upload für Sicherungen.
 
@@ -174,7 +142,9 @@ Anlass, Saison, Stil und das Accessoire-Häkchen werden automatisch auf diesem G
 
 Wird ein Kleidungsstück gelöscht, werden gespeicherte Outfits, zugehörige Kalendereinträge und Rückmeldungen mit diesem Stück ebenfalls entfernt. Beim Löschen eines Outfits werden dessen Kalendereinträge entfernt; die Kleidung bleibt erhalten. Eine Änderung der Kategorie lässt den gespeicherten Look bestehen, zeigt aber bei einer dadurch unvollständigen Kombination einen Prüfhinweis.
 
-Neue Sicherungen (Version 4) enthalten Kleidung inklusive Originalfotos und übernommener Freistellungen, Outfits, Rückmeldungen, Stilvorlieben samt Outfit-/Wetter-Einstellungen, Kalender und gegebenenfalls den gerundeten Wetterort mit letzter Vorhersage. Alle Daten stammen aus einem konsistenten Datenbanksnapshot. Alte Sicherungen (Version 1, 2 und 3) bleiben importierbar. **Ersetzen löscht alle Datenarten, die in der Sicherung fehlen**: Version 1 enthält keine Outfits/Vorlieben, Version 2 keinen Kalender/Wetterort; Version 1–3 enthalten keine Freistellungen. Beim Zusammenführen bleiben fehlende Datensätze erhalten; bei gleicher ID wird der gesamte neuere Stückdatensatz gewählt. Das Erscheinungsbild und heruntergeladene KI-Dateien gehören nicht zur Sicherung.
+Neue Sicherungen verwenden **Format 6**: Kleidung mit Originalfotos und Freistellungen, Outfits, Bewertungen, Stilprofil samt vertieften Antworten, Outfit-/Wetter-Einstellungen, Kalender, gegebenenfalls Wetterort/Vorhersage und Chatverlauf. Sie stammen aus einem konsistenten Datenbanksnapshot. **Formate 1–5 bleiben importierbar.** Gerätelokale Freigaben, Verbindungscodes, Lesemarkierungen, UI-Scrollzustände, Erscheinungsbild und heruntergeladene KI-Dateien gehören nicht zur Sicherung.
+
+**Ersetzen** entfernt auch Datenarten, die in älteren Sicherungen fehlen; bei einer Sicherung ohne Chat wird beispielsweise ein bisheriger Verlauf geleert. **Zusammenführen** erhält fehlende lokale Datensätze und bevorzugt neuere Revisionen. Bei gleicher Kleidungs-ID wird der gesamte neuere Stückdatensatz gewählt, inklusive seiner Bilder. Eine ältere App kann neue Sicherungsformate nicht lesen. Vor einem Downgrade deshalb eine aktuelle Sicherung behalten.
 
 ## Kalender und Tragehäufigkeit
 
@@ -221,50 +191,27 @@ In der vorbereiteten Cloud-Umgebung wird automatisch `/usr/bin/chromium` verwend
 
 Die Wetter-Browserprüfungen verwenden kontrollierte API-Antworten, Fehler und eine Testposition; sie übertragen keinen echten Gerätestandort. Nach der Domainfreigabe wurden am 15. Oktober 2026 beide echten Endpunkte per HTTPS erfolgreich erreicht: Zürcher Ortssuche und sieben Vorhersagetage mit erwarteten Einheiten/Zeitzone. Die öffentliche App ist ebenfalls über HTTPS erreichbar; Skripte, Styles, Manifest, Icons, Service Worker, Worker, Modell und WASM wurden mit HTTP 200 und korrekten Binär-Prüfsummen bestätigt. Cloud-Chromiums zusätzlicher Live-Browserabruf scheitert weiterhin am Vertrauen in das Cloud-Proxy-Zertifikat (`ERR_CERT_AUTHORITY_INVALID`). Reales Browser-CORS und echtes iPhone/Safari sind dadurch nicht nachgewiesen. Keine TLS-Prüfung wurde abgeschaltet.
 
-## Veröffentlichte Website und weitere Updates
+## GitHub-Prüfungen und Veröffentlichung
 
-Die App besteht ausschliesslich aus statischen Dateien in `dist/`. Sie lässt sich beispielsweise über GitHub Pages für ein öffentliches Repository im kostenlosen Tarif bereitstellen. Für private Repositories hängt die Pages-Verfügbarkeit vom GitHub-Tarif ab. Keine Zahlungsdaten für dieses Projekt hinterlegen; Tarif und Sichtbarkeit vor Aktivierung prüfen. Eine Veröffentlichung macht den Anwendungscode öffentlich erreichbar, aber überträgt keine lokal gespeicherten Kleidungsfotos.
+Die App besteht aus statischen Dateien in `dist/`. Das öffentliche Repository verwendet kostenlose Standard-Runner und GitHub Pages. Sichtbarkeit und Tarif werden nicht automatisch geändert; private Repositories werden in den Workflows übersprungen.
 
-Für eine GitHub-Projektseite unter `/Kleiderschrank/` bauen:
+- **App prüfen** (`.github/workflows/checks.yml`) prüft bei relevanten Pushes und Pull Requests Format, Datentests, Produktionsbuild und alle Chromium-Browserfälle. Dokumentations- und Backup-Änderungen allein starten keinen solchen Lauf. Der Workflow ist auch manuell ausführbar. Bei Browserfehlern werden Testdiagnosen sieben Tage aufbewahrt.
+- **MyStyle auf GitHub Pages** (`.github/workflows/pages.yml`) bleibt bewusst manuell: **Actions → MyStyle auf GitHub Pages → Run workflow**. Er prüft Format und Daten, baut für den Pages-Unterpfad und veröffentlicht nur bei erfolgreichem Build. Normale Code-Pushes allein ändern die Live-App nicht.
+- Alle verwendeten Actions sind an geprüfte Commit-SHAs gebunden. Node folgt `.nvmrc`; der Runner ist Ubuntu 24.04. Die Prüfungen benötigen nur Lesezugriff, ausschliesslich der Deployment-Job erhält Pages-/OIDC-Schreibrechte.
+
+Für einen lokalen Build der Projektseite:
 
 ```sh
 VITE_BASE_PATH=/Kleiderschrank/ npm run build
+VITE_BASE_PATH=/Kleiderschrank/ npm run preview
 ```
 
-Auch eine lokale Vite-Vorschau dieses Builds benötigt denselben Pfad: `VITE_BASE_PATH=/Kleiderschrank/ npm run preview`. Danach für normale Root-Tests wieder mit `npm run build` bauen.
+Danach vor Root-Browserprüfungen wieder `npm run build` ausführen. Der echte iPhone-/Safari-Test bleibt separat in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
 
-Der fertige manuell auslösbare Workflow liegt in `.github/workflows/pages.yml`. Er prüft Format/Daten und baut einschließlich eigener KI-Dateien für den richtigen Unterpfad:
+## Projektbackup und Dokumentation
 
-1. Bei einem **bereits öffentlichen Repository** auf GitHub unter **Settings → Pages → Source** „GitHub Actions“ wählen.
-2. Unter **Actions → MyStyle auf GitHub Pages → Run workflow** die Veröffentlichung starten.
-3. Nach erfolgreichem Lauf die vom Deployment ausgegebene HTTPS-Adresse in Safari öffnen. Keine Adresse als live betrachten, bevor der Lauf erfolgreich und die Seite erreichbar ist.
+Vor dieser Bereinigung wurde die **gesamte App 0.17.0** gesichert: Quellarchiv, vollständiges Git-Bundle, GitHub-Einstellungs-Snapshot und Prüfsummen unter [design/backups/full-0.17.0](design/backups/full-0.17.0/RESTORE.md). Alle 158 Projektdateien wurden byteweise verglichen; Bundle-Klon und `git fsck` bestehen. Der GitHub-Tag **`backup/before-cleanup-0.17.0`** hält den Ausgangsstand zusätzlich fest. Rückkehr über einen regulären Revert, ohne Force-Push oder Löschen lokaler Daten.
 
-Der Workflow startet nicht automatisch, verwendet Standard-Runner und überspringt private Repositories, um keine privaten kostenpflichtigen Minuten oder einen Tarifwechsel auszulösen. Die Sichtbarkeit wird nicht geändert. Ohne passenden kostenlosen Pages-Zugang kann der Root-Build als statische Website auf einem anderen kostenlosen HTTPS-Host bereitgestellt werden; keine kostenpflichtige Option aktivieren. Für eine eigene Root-Adresse genügt `npm run build`.
+Das frühere dunkle Design bleibt separat unter [Design-Backup](design/backups/README.md) erhalten. Einzelheiten zum aktuellen Icon stehen unter [design/app-icon](design/app-icon/README.md).
 
-Das Repository wurde vom Nutzer öffentlich gestellt und Pages aktiviert. Anschließend wurde der [Workflow-Lauf 38783006210](https://github.com/treemonsal/Kleiderschrank/actions/runs/38783006210) erfolgreich gestartet: Installation, Formatprüfung, Datentests, Build, Upload und Deployment bestanden. Dieser erste Lauf veröffentlichte Commit `ca4af46a32520603fd42eb1a12a49a0cfdbbdf4f`. Aktuell ist Version 0.12.1 aus Commit `4bca1baa30c813a31a2730e4b306ff68dadcaa59` durch [Lauf 38885598950](https://github.com/treemonsal/Kleiderschrank/actions/runs/38885598950) erfolgreich veröffentlicht und über HTTPS geprüft. Normale Code-Pushes veröffentlichen nicht automatisch; nach späteren App-Änderungen den Workflow erneut starten. Der echte Gerätetest bleibt offen und ist in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
-
-Funktionsumfang und weitere Phasen: [PRODUCT.md](PRODUCT.md), [ROADMAP.md](ROADMAP.md).
-
-## Historie: Update 0.6
-
-Die neue dunkle Oberfläche ist unter derselben App-Adresse veröffentlicht. Öffne MyStyle online und tippe bei „Eine neue Version ist bereit“ auf **Jetzt aktualisieren**. Deine lokale Sammlung bleibt erhalten. Neue Icons können auf bereits angelegten iPhone-Verknüpfungen vom Betriebssystem zwischengespeichert sein. Diese Server-Voraussetzung galt für die frühere Version 0.6. Ab 0.6.1 kann stattdessen die kostenlose Community-KI direkt in der App freigegeben werden.
-
-## Neues Homescreen-Icon in 0.11.1
-
-Die neuen Installationsdateien zeigen den silbernen Bügel auf Graphit. Öffne die App online und übernimm das angebotene Update. Neue Homescreen-Verknüpfungen laden das neue iPhone-Icon. iOS kann das Icon vorhandener Installationen länger behalten. Lösche dafür weder die App noch Safari-Websitedaten: Deine Sammlung liegt lokal. Vor einer bewussten Neuinstallation immer unter **Mehr** eine vollständige Sicherung exportieren und die Datei aufbewahren.
-
-Original, Exportgrössen und reproduzierbare Aufbereitung stehen unter [design/app-icon](design/app-icon/README.md).
-
-## Online-Stylist ab 0.12
-
-1. Kostenlose Community-KI unter **Mehr → Online-Foto-KI** aktivieren, falls noch nicht geschehen. Ein eigener Server-Modus unterstützt diese neue Beratung nicht; es wird kein anderer Dienst im Hintergrund verwendet.
-2. Beim heutigen, noch nicht eingeplanten Tageslook oder unter **Outfits → Entdecken** den **Online-Stylisten** öffnen. Optional einen Wunsch eingeben, zum Beispiel „ruhiger fürs Büro“. Unter Outfits zuerst die normalen Vorschläge erstellen.
-3. **Looks online vergleichen** sendet eine verkleinerte Fotoübersicht von höchstens vier vollständigen Kombinationen mit maximal 20 unterschiedlichen Stücken an denselben Qwen3-VL-Outpost. Freistellungen werden bevorzugt; Originale bleiben unverändert. Zusätzlich gehen die ausgewählten Kleidungsangaben, Anlass, Stil-/Farbvorlieben, Wunsch und gegebenenfalls Temperatur-/Regenwerte mit. Keine vollständige Sicherung, Standortkoordinaten, Zugangscodes oder fremden Kleiderschränke. Für Teile ohne Foto verwendet die KI ausschliesslich Angaben.
-4. Qwen3-VL-8B wählt einen der angebotenen Looks und liefert eine kurze Begründung, aufklappbare Stylingtipps und Grenzen der Einschätzung. **Für heute übernehmen** speichert die Wahl dauerhaft; **Empfohlenen Look speichern** legt ein normales Outfit an. Die Beratung selbst bleibt nur in der aktuellen Ansicht, die übernommene Auswahl ist im bestehenden Backup enthalten.
-5. Abbrechen, Seiten-/Tageswechsel, veränderte Auswahl oder zurückgezogene Freigabe verhindern die Übernahme verspäteter Antworten. Vor einer Tagesübernahme werden Bestand, Wäsche, Ablehnung und konkurrierende Änderungen nochmals atomar geprüft.
-
-Das ist eine echte Online-Bild-KI zusätzlich zur lokalen Regelauswahl. Die Bilderkennung einzelner neuer Stücke verwendet weiterhin das sparsamere 4B-Modell, die neue Outfit-Beratung das ebenfalls öffentlich angebotene 8B-Modell. Der Dienst bleibt kostenlos, mit möglichen Nutzungslimits, Wartezeiten und Änderungen durch den Betreiber. Keine automatischen Wiederholungen oder kostenpflichtigen Ausweichdienste. Wenn er ausfällt, bleiben vorhandene Looks und alle lokalen Funktionen erhalten. Stilurteile sind subjektiv; Wärme, Wasserdichtigkeit, Dresscodes und tatsächliche Passform sind damit nicht nachgewiesen.
-
-## Korrektur der Wäsche-Fotoanzeige in 0.12.1
-
-Beim Statuswechsel werden Fotos nicht gelöscht. Die bisherige Anzeige konnte jedoch eine noch verwendete temporäre Bildadresse zu früh freigeben. Die neue Verwaltung gibt sie erst nach dem tatsächlichen Austausch der Bildquelle frei und räumt beim Schliessen auf. Öffne die App online und übernimm das angebotene Update; gespeicherte Bilder werden neu geladen. Keine Website-Daten löschen. Wäsche bleibt unter **Kleiderschrank → Waschmaschinen-Symbol** erreichbar; ein Stück öffnen und **Als sauber markieren**, um es wieder für Vorschläge zu verwenden.
+[Produktumfang](PRODUCT.md) · [Entwicklungsplan](ROADMAP.md) · [App-Audit](APP_AUDIT.md) · [Prüfprotokoll](REVIEW.md) · [Frühere Veröffentlichungen](docs/RELEASE_HISTORY.md)

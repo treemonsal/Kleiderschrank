@@ -1,5 +1,12 @@
 # MyStyle
 
+## Version 0.17.1 – abgesicherte Bereinigung
+
+- Vollständiger Stand 0.17.0 vor Änderungen als Quellarchiv, Git-Bundle und GitHub-Snapshot sichern; Ausgangs-Tag auf GitHub, nachvollziehbarer Revert und ausführbare Wiederherstellungsprüfung. Persönliche Handy-Daten bleiben eine separate In-App-Sicherung.
+- 125 überschriebene CSS-Deklarationen und neun nicht mehr verwendete Selektoren entfernen. Zwei ungenutzte frühere Sicherungs-Wrapper streichen; Tests verwenden direkt denselben vollständigen Import-/Prüfpfad wie die App. Formate 1–6 bleiben lesbar, Datenbank weiterhin Version 5.
+- Chat-Freigabe vom Anfragecode trennen: wirksame dynamische Imports statt gleichzeitiger statischer Einbindung. Vorhandene Freigaben bleiben gültig; keine Anbieter- oder Kostenänderung.
+- GitHub-Actions auf aktuelle, fest gepinnte Node-24-Versionen bringen. Separater öffentlicher Prüfworkflow für Format, Projektsicherung, Daten, Build und Browserfälle; Veröffentlichung bleibt manuell. Aktuelle Bedienung und historische Versionshinweise in der Dokumentation trennen.
+
 ## Version 0.17.0 – Rundgang und Alltag
 
 - Gesamten bestehenden Funktionsumfang einschliesslich Unteransichten, Texten, Eingaben und Fehlerzuständen im [App-Audit](APP_AUDIT.md) erfassen. Gemeinsame Bildanzeige schützt sowohl `src` als auch das noch verwendete `currentSrc`; begrenzter Wiederholungsversuch und Original-Fallback ohne Änderung der Fotodaten.

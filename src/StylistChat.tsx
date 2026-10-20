@@ -18,7 +18,7 @@ import {
   saveChatLook,
 } from './chat-db'
 import { MAX_CHAT_INPUT, buildChatContext, chatRevision } from './chat-model'
-import { CHAT_CONSENT_KEY, chatEnabled, setChatEnabled } from './chat-service'
+import { CHAT_CONSENT_KEY, chatEnabled, setChatEnabled } from './chat-consent'
 import { readAnswer, stopReading, useSpeechInput } from './useSpeechInput'
 import { useClock } from './useWeather'
 import { describeAIProblem } from './ai-errors'

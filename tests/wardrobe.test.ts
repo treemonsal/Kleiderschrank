@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { createBackup, importBackup, parseBackup } from '../src/backup'
+import { createBackup, importFullBackup, parseFullBackup } from '../src/backup'
 import { WardrobeDatabase } from '../src/db'
 import { filterGarments, type Garment } from '../src/model'
 
@@ -56,17 +56,17 @@ describe('Versioniertes Sicherungsformat', () => {
   it('exportiert alle Merkmale ohne Veränderung und liest sie wieder', async () => {
     const original = garment()
     const json = await createBackup([original])
-    expect(parseBackup(json)).toEqual([original])
+    expect(parseFullBackup(json).garments).toEqual([original])
     expect(JSON.parse(json).app).toBe('MyStyle')
   })
   it('akzeptiert eingebettete PNG-Fotos ohne externe URL', async () => {
     const data =
       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a9XcAAAAASUVORK5CYII='
-    const parsed = parseBackup(
+    const parsed = parseFullBackup(
       backup([{ ...garment(), photo: `data:image/png;base64,${data}` }]),
     )
-    expect(parsed[0].photo?.type).toBe('image/png')
-    expect(parsed[0].photo?.size).toBeGreaterThan(20)
+    expect(parsed.garments[0].photo?.type).toBe('image/png')
+    expect(parsed.garments[0].photo?.size).toBeGreaterThan(20)
   })
   it.each([
     'invalid json',
@@ -81,10 +81,10 @@ describe('Versioniertes Sicherungsformat', () => {
     backup([{ ...garment(), photo: 'data:image/jpeg;base64,PHNjcmlwdD4=' }]),
     backup([{ ...garment(), favorite: 'yes' }]),
   ])('weist beschädigte oder unzulässige Daten zurück (%#)', (input) => {
-    expect(() => parseBackup(input)).toThrow()
+    expect(() => parseFullBackup(input)).toThrow()
   })
   it('akzeptiert einen leeren Bestand als bewusste Sicherung', () => {
-    expect(parseBackup(backup([]))).toEqual([])
+    expect(parseFullBackup(backup([])).garments).toEqual([])
   })
 })
 
@@ -103,9 +103,13 @@ describe('Atomarer IndexedDB-Import', () => {
     })
     await db.garments.put(existing)
     const incoming = [garment(), garment({ id: 'new' })]
-    expect(await importBackup(incoming, 'merge', db)).toBe(1)
+    expect(
+      await importFullBackup(parseFullBackup(backup(incoming)), 'merge', db),
+    ).toBe(1)
     expect(await db.garments.get(existing.id)).toEqual(existing)
-    expect(await importBackup(incoming, 'merge', db)).toBe(0)
+    expect(
+      await importFullBackup(parseFullBackup(backup(incoming)), 'merge', db),
+    ).toBe(0)
     expect(await db.garments.count()).toBe(2)
   })
   it('übernimmt eine neuere Sicherung derselben ID', async () => {
@@ -114,16 +118,22 @@ describe('Atomarer IndexedDB-Import', () => {
       name: 'Aus der Sicherung',
       updatedAt: '2026-03-01T12:00:00.000Z',
     })
-    expect(await importBackup([newer], 'merge', db)).toBe(1)
+    expect(
+      await importFullBackup(parseFullBackup(backup([newer])), 'merge', db),
+    ).toBe(1)
     expect((await db.garments.get('shirt-1'))?.name).toBe(newer.name)
   })
   it('ersetzt den Bestand vollständig und kann auch leere Sicherungen wiederherstellen', async () => {
     await db.garments.put(garment())
-    await importBackup([garment({ id: 'replacement' })], 'replace', db)
+    await importFullBackup(
+      parseFullBackup(backup([garment({ id: 'replacement' })])),
+      'replace',
+      db,
+    )
     expect(await db.garments.toCollection().primaryKeys()).toEqual([
       'replacement',
     ])
-    await importBackup([], 'replace', db)
+    await importFullBackup(parseFullBackup(backup([])), 'replace', db)
     expect(await db.garments.count()).toBe(0)
   })
   it('stellt den ursprünglichen Bestand nach einem Schreibfehler wieder her', async () => {
@@ -133,8 +143,10 @@ describe('Atomarer IndexedDB-Import', () => {
       if (item.id === 'fail') throw new Error('Simulierter Speicherfehler')
     })
     await expect(
-      importBackup(
-        [garment({ id: 'ok' }), garment({ id: 'fail' })],
+      importFullBackup(
+        parseFullBackup(
+          backup([garment({ id: 'ok' }), garment({ id: 'fail' })]),
+        ),
         'replace',
         db,
       ),
