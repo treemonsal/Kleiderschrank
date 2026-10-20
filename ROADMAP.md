@@ -6,7 +6,7 @@
 - [x] Original, reproduzierbare Exporte, sichere Android-Maskierung und bisheriges Motiv erhalten
 - [x] HTML, Manifest und kompatible alte Icon-Adressen aktualisieren
 - [x] Build, 218 Datentests, acht betroffene Browserabläufe sowie Projektpfad und Offline-Icons prüfen
-- [ ] Veröffentlichen und öffentliche Icon-Dateien mit lokalen Prüfsummen vergleichen
+- [x] Pages-Lauf 39368617355 erfolgreich; öffentliche Icons, Aliase, HTML/Manifest, JS/CSS und Service Worker bytegleich zum geprüften Build
 - [ ] Installation und Icon-Aktualisierung auf echtem iPhone prüfen
 
 ## Version 0.16.0 – freiwilliges Stilgespräch
