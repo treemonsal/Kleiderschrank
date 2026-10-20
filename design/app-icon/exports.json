@@ -1,37 +1,37 @@
 {
-  "source": "platinum-master.png",
+  "source": "monochrome-master.png",
   "exports": [
     {
-      "file": "public/apple-touch-icon-platinum.png",
+      "file": "public/apple-touch-icon-monochrome.png",
       "legacyAlias": "public/apple-touch-icon.png",
       "size": "180x180",
       "opaque": true,
       "artworkInset": 0,
-      "sha256": "48463b5c20ebc71f1136ebee6f2766df0c0f062fc64ad997cd26dc2674416c02"
+      "sha256": "5f0ef538c26e6848c061bea03e7523a4dd830aba011541bab3d27575f820dcf9"
     },
     {
-      "file": "public/icon-platinum-192.png",
+      "file": "public/icon-monochrome-192.png",
       "legacyAlias": "public/icon-192.png",
       "size": "192x192",
       "opaque": true,
       "artworkInset": 0,
-      "sha256": "598caca46f32ca663483b70217d4ead0ab4d20dd67a2054263bce3a4c2890ddc"
+      "sha256": "8738e8de6cd123ed75835381b482d8b21ad7f1dad73f3f94cbdcd9118c3efea8"
     },
     {
-      "file": "public/icon-platinum-512.png",
+      "file": "public/icon-monochrome-512.png",
       "legacyAlias": "public/icon-512.png",
       "size": "512x512",
       "opaque": true,
       "artworkInset": 0,
-      "sha256": "4a1a497125eccd480355d3c031fad7fd69f3b9d5c4165e0824f3018d76172149"
+      "sha256": "10aa5a379b85ff7d15fc6f9c6f59b9581c69cea4cb797ae9fe70f01dfe3fd6e4"
     },
     {
-      "file": "public/icon-platinum-maskable.png",
+      "file": "public/icon-monochrome-maskable.png",
       "legacyAlias": "public/icon-maskable.png",
       "size": "512x512",
       "opaque": true,
       "artworkInset": 0.1,
-      "sha256": "4b17dc8ee454f87fe6de0c26c817ffd2f6bc63db933e672ef065b0f7e7166095"
+      "sha256": "2e5823f81a36b0fe4cfc523582686211b5c5cacddf22b418a07a3d7cc7df1509"
     }
   ]
 }

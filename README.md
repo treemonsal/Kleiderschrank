@@ -1,5 +1,9 @@
 # MyStyle
 
+## Schwarz-Weiss-Icon – Version 0.16.1
+
+Das Homescreen-Icon zeigt jetzt ein weisses, verflochtenes M auf Schwarz. Es bleibt bewusst dunkel zur hellen App. iPhone-, Android- und Browser-Icons nutzen dasselbe Motiv; Original und reproduzierbare Exporte stehen unter [design/app-icon](design/app-icon/README.md). iOS kann bestehende Homescreen-Icons länger zwischenspeichern. Dafür weder die App noch Website-Daten löschen: Die Sammlung liegt auf deinem Gerät. Vor einer bewussten Neuinstallation immer eine vollständige Sicherung exportieren.
+
 ## Freiwilliges Stilgespräch – Version 0.16.0
 
 Der kurze Stilcheck mit drei Schritten bleibt der Einstieg. Danach zeigt ein kleiner rostfarbener Punkt an **Stylist** eine freiwillige Einladung an. Im Chat kannst du mit **Stilgespräch starten** acht zusätzliche Fragen zu Stilrichtung, Schnitten, Tagesablauf, Temperaturempfinden, Mustern, Accessoires, Dingen, die du ungern trägst, und Inspiration beantworten. Die Fragen sind geführt und funktionieren auch offline; dafür wird keine KI-Anfrage verbraucht.

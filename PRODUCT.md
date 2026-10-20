@@ -1,5 +1,10 @@
 # MyStyle
 
+## Version 0.16.1 – dunkles Schwarz-Weiss-Icon
+
+- Eigenständiges verflochtenes M auf Schwarz, inspiriert vom gewünschten Mix aus ChatGPT und Essembl. Schlichte helle Bildmarke ohne Schrift oder Glanzeffekte; die App behält ihre helle Editorial-Gestaltung.
+- Deckende Exporte in 180/192/512 Pixeln und eigener Android-Maskierung; neue versionierte Adressen für HTML und Manifest, unversionierte Aliase und Offline-Verfügbarkeit. Vorheriges Platin-Motiv bleibt gesichert. Installationspfad und lokale Daten unverändert; vorhandene iOS-Icons können zwischengespeichert bleiben.
+
 ## Version 0.16.0 – freiwillige Vertiefung im Chat
 
 - Drei kurze Stilcheck-Schritte bleiben bestehen. Nach Abschluss zeigt der Stylist-Einstieg eine freiwillige Einladung mit einem kleinen Punkt; kein erzwungener Dialog.

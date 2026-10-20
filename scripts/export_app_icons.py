@@ -8,7 +8,7 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "design/app-icon/platinum-master.png"
+SOURCE = ROOT / "design/app-icon/monochrome-master.png"
 PUBLIC = ROOT / "public"
 
 
@@ -17,10 +17,10 @@ def main():
         master = image.convert("RGB")
     exports = []
     for name, legacy, size, inset in [
-        ("apple-touch-icon-platinum.png", "apple-touch-icon.png", 180, 0),
-        ("icon-platinum-192.png", "icon-192.png", 192, 0),
-        ("icon-platinum-512.png", "icon-512.png", 512, 0),
-        ("icon-platinum-maskable.png", "icon-maskable.png", 512, 0.1),
+        ("apple-touch-icon-monochrome.png", "apple-touch-icon.png", 180, 0),
+        ("icon-monochrome-192.png", "icon-192.png", 192, 0),
+        ("icon-monochrome-512.png", "icon-512.png", 512, 0),
+        ("icon-monochrome-maskable.png", "icon-maskable.png", 512, 0.1),
     ]:
         artwork_size = round(size * (1 - inset * 2))
         artwork = master.resize((artwork_size, artwork_size), Image.Resampling.LANCZOS)
@@ -40,14 +40,14 @@ def main():
         })
 
     # Retain the old SVG URL using the actual approved artwork, not the old mark.
-    png = base64.b64encode((PUBLIC / "icon-platinum-192.png").read_bytes()).decode()
+    png = base64.b64encode((PUBLIC / "icon-monochrome-192.png").read_bytes()).decode()
     (PUBLIC / "icon.svg").write_text(
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">'
         f'<image width="192" height="192" href="data:image/png;base64,{png}"/>'
         '</svg>\n'
     )
     (ROOT / "design/app-icon/exports.json").write_text(
-        json.dumps({"source": "platinum-master.png", "exports": exports}, indent=2) + "\n"
+        json.dumps({"source": SOURCE.name, "exports": exports}, indent=2) + "\n"
     )
 
 
