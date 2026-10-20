@@ -1,4 +1,14 @@
-# Aktuelle Prüfung – Version 0.19.0
+# Aktuelle Prüfung – Version 0.19.1
+
+- Ausgangsstand `73b0923` vor Änderungen vollständig als annotierter Tag `backup/before-photo-rollback-0.19.0` auf GitHub gesichert.
+- Auf Nutzerwunsch automatische Analyse nach Fotoauswahl und Inline-Aktivierung sowie automatische Freistellungsübernahme entfernt. Einzelbild-KI bewusst starten; Freistellung erst nach ausdrücklicher Übernahme. Verwerfen einer neuen Vorschau überschreibt keine vorhandene Freistellung. Experimentellen Mehrfachscan, ausschliessliche Hilfsfunktionen, Styles und Tests entfernt.
+- Shopping, normale Foto-KI, Chat, Bestände und übrige Bedienabläufe bleiben bestehen. Datenbank 5 und Sicherungsformat 7 unverändert; keine Löschung gespeicherter Stücke oder Bilder. Keine neuen Anbieter, Kosten oder Modelldownloads.
+- Beide öffentlichen API-Infoseiten mit aktiver System-TLS-Prüfung HTTP 200; Einzelbild-Parameter entsprechen dem vorhandenen Code. Zusätzlich die bisherigen produktiven Einzelbild-Endpunkte einmal mit einem künstlichen blauen T-Shirt geprüft: Qwen3-VL-4B lieferte gültige Angaben (Oberteile, Blau, keine erfundene Marke); BiRefNet ein 360 × 420 px grosses transparentes RGBA-PNG. Keine privaten Fotos verwendet und keine Wiederholungen. Das belegt einen erfolgreichen Serverablauf zu diesem Zeitpunkt, keine dauerhafte Verfügbarkeit, Alltagsqualität oder gesicherte Ursache des gemeldeten Ausfalls. Anbieterlimits bleiben möglich. Automatische Anfragen entfallen.
+- Build, Format, Projektbackup und alle 245 Datentests bestanden. Alle 30 gezielten Browserfälle für Community-/Server-Foto-KI, Editor, Freigabesynchronisierung und Shopping bestehen. Neue Regressionen prüfen ausbleibende Anfragen nach Auswahl/Aktivierung, ausdrückliche Freistellungsübernahme, Erhalt einer bereits gewählten Freistellung beim Verwerfen eines neuen Ergebnisses und Speicherung ohne Übernahme.
+- Pages-Unterpfad separat gebaut und mit Fotoaufnahme, Favorisieren, Wäsche, Offline-Neustart, Manifest und Icon-Prüfsummen geprüft: keine Browserfehler und keine unerwarteten externen Anfragen. Manuelle Foto-KI bei 320/390 px mit kontrollierter API zusätzlich geprüft: kein horizontaler Überlauf, sichtbare Schaltflächen mit mindestens 44 px Höhe, genau eine Anfrage pro Start, keine vor dem Start.
+- Vollständige Browserprüfung und Veröffentlichung folgen nach dem aktuellen Testlauf.
+
+# Vorherige Prüfung – Version 0.19.0
 
 - Vor Änderungen kompletter Quellstand als annotierter Remote-Tag `backup/before-shopping-0.18.0` auf GitHub gesichert; Ziel `b06fd2d`. Bestehende Projektarchive und persönliche Bestände erhalten.
 - Transparente Freischaltung statt behaupteter perfekter Stilkenntnis: Stilcheck oder drei vertiefte Antworten, sieben gültige bestätigte Tragetage in den letzten 90 Tagen über mindestens zwei Wochen, drei verschiedene gültige Lookbewertungen aus 180 Tagen, zwei davon positiv. Geplante/zukünftige/alte Tage, fehlende oder unvollständige Referenzen und doppelte Bewertungs-IDs zählen nicht zusätzlich. Startbutton auf Heute/Outfits erst nach Freischaltung, Fortschritt unter Mehr.

@@ -370,7 +370,7 @@ test('Eigener Server deaktiviert keine Community-Freigabe; gesperrter Speicher z
   ).toHaveCount(0)
   await page.getByText('Eigenen Server verbinden', { exact: true }).click()
   const server = page.getByRole('checkbox', {
-    name: /Neue Fotos automatisch an diesen Server/,
+    name: /Neue Fotos nach meinem Start an diesen Server/,
   })
   await server.check()
   await server.uncheck()

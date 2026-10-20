@@ -12,19 +12,18 @@ import { AISettings } from './AISettings'
 
 export function PhotoAssistant({
   photo,
-  autoRun,
   onAttributes,
   onChoose,
   onBusy,
 }: {
   photo: Blob
-  autoRun: boolean
   onAttributes: (value: PhotoAttributes) => void
   onChoose: (value?: Blob) => void
   onBusy: (value: boolean) => void
 }) {
   const [connection, setConnection] = useState(readAIConnection)
   const [status, setStatus] = useState('')
+  const [started, setStarted] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [preview, setPreview] = useState<Blob>()
@@ -80,6 +79,7 @@ export function PhotoAssistant({
     controller.current = next
     const apply = callbacks.current.onAttributes
     const timer = setTimeout(() => next.abort('timeout'), 10 * 60 * 1000)
+    setStarted(true)
     setStatus('Foto wird analysiert und freigestellt …')
     setError('')
     setMessage('')
@@ -89,7 +89,6 @@ export function PhotoAssistant({
       const result = await analyzePhoto(photo, allowed, next.signal)
       if (next.signal.aborted) return
       if (result.attributes) apply(result.attributes)
-      if (result.cutout) callbacks.current.onChoose(result.cutout)
       setPreview(result.cutout)
       setMessage(
         [
@@ -97,7 +96,7 @@ export function PhotoAssistant({
             ? 'Angaben vorbereitet. Bitte kurz prüfen: Stil und Saison sind Schätzungen.'
             : '',
           result.cutout
-            ? 'Hintergrund automatisch entfernt. Dein Original bleibt erhalten.'
+            ? 'Freistellung bereit. Prüfe sie und übernimm sie bei Bedarf.'
             : '',
           ...result.warnings,
         ]
@@ -125,7 +124,6 @@ export function PhotoAssistant({
     }
   }
   useEffect(() => {
-    if (autoRun && connection?.enabled) void start()
     return () => {
       controller.current?.abort()
       controller.current = null
@@ -139,15 +137,15 @@ export function PhotoAssistant({
       ref={section}
       tabIndex={-1}
       className="photo-assistant"
-      aria-label="Foto automatisch vorbereiten"
+      aria-label="Foto mit KI vorbereiten"
     >
       <div className="assistant-heading">
         <ArrowUpRight size={21} />
         <div>
-          <h3>Dein Foto automatisch vorbereiten.</h3>
+          <h3>Dein Foto mit KI vorbereiten.</h3>
           <p>
             {connection?.enabled
-              ? 'Erkennen, ausfüllen und freistellen.'
+              ? 'Starte die Analyse per Knopfdruck. Die Freistellung übernimmst du nach deiner Prüfung.'
               : 'Online-KI noch nicht verbunden. Du kannst sie hier kostenlos einrichten oder dein Stück manuell speichern.'}
           </p>
         </div>
@@ -168,15 +166,17 @@ export function PhotoAssistant({
           {setup && (
             <div className="photo-ai-setup" ref={setupPanel} tabIndex={-1}>
               <p className="muted">
-                Dein Foto und deine Eingaben bleiben hier. Nach deiner Freigabe
-                und dem Aktivieren wird dieses Foto analysiert.
+                Dein Foto und deine Eingaben bleiben hier. Nach dem Aktivieren
+                kannst du die Analyse selbst starten.
               </p>
               <AISettings
                 onConnected={() => {
                   setSetup(false)
                   setConnection(readAIConnection())
                   section.current?.focus()
-                  void start()
+                  setMessage(
+                    'Foto-KI verbunden. Du kannst die Analyse jetzt starten.',
+                  )
                 }}
               />
               <button
@@ -226,7 +226,7 @@ export function PhotoAssistant({
               onClick={() => void start()}
             >
               <ArrowUpRight size={18} />
-              {message ? 'Foto erneut analysieren' : 'Foto mit KI vorbereiten'}
+              {started ? 'Foto erneut analysieren' : 'Foto mit KI vorbereiten'}
             </button>
           )}
           {message && (
@@ -243,20 +243,35 @@ export function PhotoAssistant({
                 alt="Online-KI: Freistellung prüfen"
               />
               <p className="muted">
-                Bereits automatisch übernommen. Prüfe kurz, ob dein Stück
-                vollständig ist. Dein Original bleibt zusätzlich gespeichert.
+                Prüfe, ob dein Stück vollständig ist. Erst mit „Freistellung
+                übernehmen“ ersetzt du die Vorschau; dein Original bleibt
+                erhalten.
               </p>
               <div className="photo-actions">
                 <button
                   type="button"
-                  className="button secondary"
+                  className="button primary"
                   onClick={() => {
-                    callbacks.current.onChoose(undefined)
+                    callbacks.current.onChoose(preview)
                     setPreview(undefined)
-                    setMessage('Dein Originalfoto wird verwendet.')
+                    setMessage(
+                      'Freistellung übernommen. Dein Original bleibt erhalten.',
+                    )
                   }}
                 >
-                  Original behalten
+                  Freistellung übernehmen
+                </button>
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => {
+                    setPreview(undefined)
+                    setMessage(
+                      'Freistellung verworfen. Dein bisheriges Foto bleibt erhalten.',
+                    )
+                  }}
+                >
+                  Freistellung verwerfen
                 </button>
               </div>
             </div>

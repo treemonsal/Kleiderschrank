@@ -108,7 +108,6 @@ export function describeAIProblem(
     | 'Freistellung'
     | 'Outfit-Beratung'
     | 'KI-Chat'
-    | 'Mehrfachscan'
     | 'Shopping-Beratung',
   error: unknown,
 ): string {

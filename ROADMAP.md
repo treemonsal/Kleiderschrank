@@ -1,5 +1,13 @@
 # Entwicklungsplan
 
+## Version 0.19.1 – Foto-Erweiterungen gezielt zurücknehmen
+
+- [x] Vollständigen Ausgangsstand als Remote-Tag `backup/before-photo-rollback-0.19.0` sichern
+- [x] Automatische Fotoanalyse nach Auswahl/Aktivierung und automatische Freistellungsübernahme entfernen
+- [x] Experimentellen Mehrfachscan samt exklusivem Code entfernen, gespeicherte Stücke erhalten
+- [x] Manuelle Einzelbild-KI, Shopping und übrige Funktionen erhalten; aktuelle Texte anpassen
+- [ ] Fotoabläufe, Daten und Shopping prüfen und veröffentlichen
+
 ## Version 0.19.0 – günstig und persönlich shoppen
 
 - [x] Ausgangsstand als Remote-Tag vor Shopping-Änderungen sichern

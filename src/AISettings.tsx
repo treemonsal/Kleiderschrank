@@ -105,8 +105,8 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
         </h3>
         {communityActive && (
           <p className="muted">
-            Neue Fotos werden automatisch erkannt und freigestellt. Deine
-            Freigabe ist auf diesem Gerät gespeichert.
+            Die Fotoanalyse startet erst per Knopfdruck. Deine Freigabe ist auf
+            diesem Gerät gespeichert.
           </p>
         )}
         <Information className="ai-provider-info">
@@ -169,7 +169,7 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
               }}
             />
             <span>
-              Ich erlaube, neue Kleidungsfotos automatisch an diese beiden
+              Ich erlaube, neue Kleidungsfotos nach meinem Start an diese beiden
               Community-Dienste zu senden. Beim Online-Stylisten gebe ich die
               ausgewählten gespeicherten Fotos erst durch Starten der Beratung
               frei.
@@ -201,7 +201,7 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
                 if (!persist(value)) return
                 setEnabled(false)
                 setMessage(
-                  'Kostenlose KI aktiviert. Neue Fotos werden automatisch erkannt und freigestellt.',
+                  'Kostenlose KI aktiviert. Starte die Fotoanalyse bei Bedarf per Knopfdruck.',
                 )
                 onConnected?.()
               } catch (e) {
@@ -306,9 +306,9 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
               }}
             />
             <span>
-              Neue Fotos automatisch an diesen Server auf Hugging Face senden.
-              Dort werden sie verarbeitet; der MyStyle-Server speichert sie
-              nicht. Meine gespeicherte Sammlung bleibt auf meinem Gerät.
+              Neue Fotos nach meinem Start an diesen Server auf Hugging Face
+              senden. Dort werden sie verarbeitet; der MyStyle-Server speichert
+              sie nicht. Meine gespeicherte Sammlung bleibt auf meinem Gerät.
             </span>
           </label>
           <button
@@ -329,7 +329,7 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
                 if (!persist(value)) return
                 setCommunityConsent(false)
                 setMessage(
-                  'Verbunden. Neue Fotos werden jetzt automatisch vorbereitet.',
+                  'Verbunden. Starte die Fotoanalyse bei Bedarf per Knopfdruck.',
                 )
                 onConnected?.()
               } catch (e) {

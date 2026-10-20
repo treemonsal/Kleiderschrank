@@ -115,6 +115,9 @@ test('Widerruf in einem anderen Fenster stoppt eine laufende Fotoanalyse und erh
     await page
       .getByLabel('Foto aus Mediathek')
       .setInputFiles(path.resolve('public/icon-192.png'))
+    await page
+      .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+      .click()
     await expect(
       page.getByRole('button', { name: 'Analyse abbrechen', exact: true }),
     ).toBeVisible()
@@ -167,6 +170,13 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
   await page
     .getByLabel('Foto aus Mediathek')
     .setInputFiles(path.resolve('public/icon-192.png'))
+  await expect(
+    page.getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true }),
+  ).toBeVisible()
+  expect(calls).toHaveLength(2)
+  await page
+    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+    .click()
   await expect(page.getByLabel('Name', { exact: false })).toHaveValue(
     attributes.name,
   )
@@ -174,9 +184,9 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
   await expect(
     page.getByAltText('Online-KI: Freistellung prüfen'),
   ).toBeVisible()
-  await expect(
-    page.getByText('Hintergrund automatisch entfernt.', { exact: false }),
-  ).toBeVisible()
+  await page
+    .getByRole('button', { name: 'Freistellung übernehmen', exact: true })
+    .click()
   await page
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
     .click()
@@ -223,6 +233,9 @@ test('Ausgeschöpftes Erkennungslimit verwirft weder Freistellung noch Original 
   await page
     .getByLabel('Foto aus Mediathek')
     .setInputFiles(path.resolve('public/icon-192.png'))
+  await page
+    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+    .click()
   await expect(
     page.getByAltText('Online-KI: Freistellung prüfen'),
   ).toBeVisible()
@@ -238,7 +251,7 @@ test('Ausgeschöpftes Erkennungslimit verwirft weder Freistellung noch Original 
   ).toHaveLength(1)
   await page.getByLabel('Name', { exact: false }).fill('Mein Stück')
   await page
-    .getByRole('button', { name: 'Original behalten', exact: true })
+    .getByRole('button', { name: 'Freistellung verwerfen', exact: true })
     .click()
   await page
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
@@ -309,6 +322,9 @@ for (const [failure, message] of [
     await page
       .getByLabel('Foto aus Mediathek')
       .setInputFiles(path.resolve('public/icon-192.png'))
+    await page
+      .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+      .click()
     await expect(page.getByText(message, { exact: false })).toBeVisible()
     if (failure === 'gpu')
       await expect(
@@ -321,7 +337,7 @@ for (const [failure, message] of [
     ).toHaveCount(0)
     await expect(
       page.getByRole('button', {
-        name: 'Original behalten',
+        name: 'Freistellung verwerfen',
         exact: true,
       }),
     ).toBeEnabled()

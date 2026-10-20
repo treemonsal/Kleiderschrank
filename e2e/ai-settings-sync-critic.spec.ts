@@ -228,7 +228,7 @@ test('Ein externer Verbindungswechsel verhindert die späte eigene Aktivierung u
     await serverFields(page)
     await page
       .getByRole('checkbox', {
-        name: /Neue Fotos automatisch an diesen Server/,
+        name: /Neue Fotos nach meinem Start an diesen Server/,
       })
       .check()
     await page

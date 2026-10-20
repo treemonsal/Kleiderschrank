@@ -32,7 +32,7 @@ async function open(page: Page) {
   await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
 }
 
-test('Foto allein füllt alle Felder; PNG automatisch übernehmen und Original mitsichern (API kontrolliert)', async ({
+test('Manueller Start füllt die Felder; Freistellung nur bewusst übernehmen, beim erneuten Verwerfen erhalten und Original mitsichern (API kontrolliert)', async ({
   page,
 }) => {
   await configure(page)
@@ -51,6 +51,14 @@ test('Foto allein füllt alle Felder; PNG automatisch übernehmen und Original m
   await open(page)
   expect(requests).toBe(0)
   await upload(page)
+  await expect(
+    page.getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true }),
+  ).toBeVisible()
+  expect(requests).toBe(0)
+  await expect(page.getByLabel('Name', { exact: false })).toHaveValue('')
+  await page
+    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+    .click()
   await expect(page.getByLabel('Name', { exact: false })).toHaveValue(
     attributes.name,
   )
@@ -68,9 +76,28 @@ test('Foto allein füllt alle Felder; PNG automatisch übernehmen und Original m
   await expect(
     page.getByAltText('Online-KI: Freistellung prüfen'),
   ).toBeVisible()
+  const photoType = () =>
+    page
+      .getByAltText('Vorschau des Kleidungsstücks')
+      .evaluate(
+        async (image) =>
+          (await (await fetch((image as HTMLImageElement).src)).blob()).type,
+      )
+  await expect.poll(photoType).toBe('image/jpeg')
+  await page
+    .getByRole('button', { name: 'Freistellung übernehmen', exact: true })
+    .click()
+  await expect.poll(photoType).toBe('image/png')
+  await page
+    .getByRole('button', { name: 'Foto erneut analysieren', exact: true })
+    .click()
   await expect(
-    page.getByText('Hintergrund automatisch entfernt.', { exact: false }),
+    page.getByAltText('Online-KI: Freistellung prüfen'),
   ).toBeVisible()
+  await page
+    .getByRole('button', { name: 'Freistellung verwerfen', exact: true })
+    .click()
+  await expect.poll(photoType).toBe('image/png')
   await page
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
     .click()
@@ -83,7 +110,7 @@ test('Foto allein füllt alle Felder; PNG automatisch übernehmen und Original m
   expect(saved.garments[0].photo).toMatch(/^data:image\/jpeg;base64,/)
   expect(saved.garments[0].cutout).toMatch(/^data:image\/png;base64,/)
   expect(JSON.stringify(saved)).not.toContain(code)
-  expect(requests).toBe(1)
+  expect(requests).toBe(2)
 })
 
 test('Späte KI überschreibt eigene Eingaben nicht; beschädigte Freistellung erhält Foto', async ({
@@ -102,6 +129,9 @@ test('Späte KI überschreibt eigene Eingaben nicht; beschädigte Freistellung e
   })
   await open(page)
   await upload(page)
+  await page
+    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+    .click()
   await expect(
     page.getByRole('button', { name: 'Analyse abbrechen' }),
   ).toBeVisible()
@@ -140,6 +170,9 @@ test('Abbruch und Fotoentfernung verwerfen laufende Antworten', async ({
   })
   await open(page)
   await upload(page)
+  await page
+    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+    .click()
   await expect(
     page.getByRole('button', { name: 'Analyse abbrechen' }),
   ).toBeVisible()
@@ -189,15 +222,19 @@ test('Verbindung benötigt Foto-Freigabe; Ausschalten verhindert weitere Uploads
   await expect(
     page.getByRole('button', { name: 'Verbinden und aktivieren' }),
   ).toBeDisabled()
-  await page.getByRole('checkbox', { name: /Neue Fotos automatisch/ }).check()
+  await page
+    .getByRole('checkbox', { name: /Neue Fotos nach meinem Start/ })
+    .check()
   await page.getByRole('button', { name: 'Verbinden und aktivieren' }).click()
   await expect(
     page.getByText(
-      'Verbunden. Neue Fotos werden jetzt automatisch vorbereitet.',
+      'Verbunden. Starte die Fotoanalyse bei Bedarf per Knopfdruck.',
     ),
   ).toBeVisible()
   expect(photos).toBe(0)
-  await page.getByRole('checkbox', { name: /Neue Fotos automatisch/ }).uncheck()
+  await page
+    .getByRole('checkbox', { name: /Neue Fotos nach meinem Start/ })
+    .uncheck()
   expect(
     await page.evaluate(() => localStorage.getItem('mystyle-photo-ai')),
   ).toBeNull()
@@ -208,4 +245,35 @@ test('Verbindung benötigt Foto-Freigabe; Ausschalten verhindert weitere Uploads
     page.getByText('Online-KI noch nicht verbunden.', { exact: false }),
   ).toBeVisible()
   expect(photos).toBe(0)
+})
+
+test('Ohne Übernahme bleibt eine fertige KI-Freistellung ungespeichert und das Original erhalten', async ({
+  page,
+}) => {
+  await configure(page)
+  const png = (await readFile('public/icon-192.png')).toString('base64')
+  await page.route(`${url}/v1/garment`, (route) =>
+    route.fulfill({
+      json: { attributes, cutout: `data:image/png;base64,${png}` },
+    }),
+  )
+  await open(page)
+  await upload(page)
+  await page
+    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+    .click()
+  await expect(
+    page.getByAltText('Online-KI: Freistellung prüfen'),
+  ).toBeVisible()
+  await page
+    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
+    .click()
+  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
+  const saved = JSON.parse(
+    await readFile((await (await download).path())!, 'utf8'),
+  )
+  expect(saved.garments[0].photo).toMatch(/^data:image\/jpeg;base64,/)
+  expect(saved.garments[0].cutout).toBeUndefined()
 })

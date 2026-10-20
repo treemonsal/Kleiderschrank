@@ -782,14 +782,12 @@ export default function App() {
           key={editor === 'new' ? 'new' : editor.id}
           item={editor === 'new' ? undefined : editor}
           onClose={() => setEditor(null)}
-          onSaved={(count) => {
+          onSaved={() => {
             setEditor(null)
             notify(
-              count && count > 1
-                ? `${count} neue Stücke sind im Kleiderschrank.`
-                : editor === 'new'
-                  ? 'Dein neues Stück ist im Kleiderschrank.'
-                  : 'Deine Änderungen sind gespeichert.',
+              editor === 'new'
+                ? 'Dein neues Stück ist im Kleiderschrank.'
+                : 'Deine Änderungen sind gespeichert.',
             )
           }}
         />

@@ -13,7 +13,7 @@ const attributes = {
   notes: '',
 }
 
-test('Erstes Foto direkt im Entwurf freigeben und analysieren, ohne unfreiwillig zu speichern', async ({
+test('Erstes Foto im Entwurf freigeben startet nichts automatisch; manuelle Analyse und Fotoersatz erhalten den Entwurf', async ({
   page,
 }) => {
   const requests: string[] = []
@@ -74,6 +74,19 @@ test('Erstes Foto direkt im Entwurf freigeben und analysieren, ohne unfreiwillig
     .getByRole('button', { name: 'Kostenlose KI aktivieren', exact: true })
     .click()
   await expect(dialog).toBeVisible()
+  await expect(
+    dialog.getByRole('button', {
+      name: 'Foto mit KI vorbereiten',
+      exact: true,
+    }),
+  ).toBeVisible()
+  expect(requests).toHaveLength(2) // Only availability checks, no photo upload after activation.
+  await expect(dialog.getByLabel('Name', { exact: false })).toHaveValue(
+    'Mein Entwurf',
+  )
+  await dialog
+    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+    .click()
   await expect(dialog.getByLabel('Name', { exact: false })).toHaveValue(
     attributes.name,
   )
@@ -98,6 +111,10 @@ test('Erstes Foto direkt im Entwurf freigeben und analysieren, ohne unfreiwillig
   await dialog
     .getByLabel('Foto aus Mediathek')
     .setInputFiles({ name: 'hemd-neu.png', mimeType: 'image/png', buffer: png })
+  await expect(recognized).toHaveCount(0)
+  await dialog
+    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+    .click()
   await expect(recognized).toBeVisible()
   await page.route(`${vision}/gradio_api/call/run_router`, (route) =>
     route.fulfill({ status: 503, body: 'Service unavailable' }),
@@ -107,12 +124,15 @@ test('Erstes Foto direkt im Entwurf freigeben und analysieren, ohne unfreiwillig
     mimeType: 'image/png',
     buffer: png,
   })
+  await dialog
+    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+    .click()
   await expect(
     dialog.getByAltText('Online-KI: Freistellung prüfen'),
   ).toBeVisible()
   await expect(recognized).toHaveCount(0)
   await expect(
-    page.getByText('Hintergrund automatisch entfernt.', { exact: false }),
+    page.getByText('Freistellung bereit.', { exact: false }),
   ).toBeVisible()
   await dialog
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen', exact: true })

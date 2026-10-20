@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.19.0** · [iPhone-Prüfliste](IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.19.1** · [iPhone-Prüfliste](IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -30,11 +30,11 @@ Der **Chat** nutzt nach eigener Freigabe Qwen3-VL-8B: deine Frage, höchstens se
 
 Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten oder Ausfälle haben. Keine kostenpflichtigen Ersatzdienste oder automatischen Wiederholungen. Anbieter-Speicherung und Löschfristen sind nicht garantiert. Stilurteile sind subjektiv; Passform, Material, Wärme und Schutzwirkung bleiben ohne passende Nachweise unbekannt.
 
-## Fotos automatisch erfassen
+## Fotos mit KI vorbereiten
 
-Nach einmaliger Foto-Freigabe analysiert die Online-KI neu ausgewählte Fotos automatisch: Name, Kategorie, Farbe, erkennbare Marke und geschätzte Saison-/Stilangaben. Sie entfernt auch den Hintergrund und wendet die Freistellung direkt im Entwurf an. Das Original bleibt erhalten; zurück zum Original ist jederzeit möglich. Erst dein Speichern legt das Stück dauerhaft ab. Gespeicherte Fotos werden beim Öffnen nicht erneut hochgeladen.
+Wähle ein einzelnes Kleidungsfoto und tippe bei Bedarf auf **Foto mit KI vorbereiten**. Erst dieser Start sendet das Foto an die freigegebenen Dienste. Die KI trägt erkannte Angaben ein; du kannst sie prüfen und ändern. Eine Freistellung erscheint zunächst als Vorschau: **Freistellung übernehmen** wendet sie an, **Freistellung verwerfen** erhält das bisherige Foto. Original und bewusst übernommene Freistellung werden erst beim Speichern dauerhaft abgelegt.
 
-Beim Hinzufügen findest du **Mehrere Stücke auf einem Foto**. Der experimentelle Mehrfachscan erkennt bis zu sechs mit Abstand liegende Kleidungsstücke, schneidet sie einzeln aus und stellt sie nacheinander frei. Prüfe die Ergebnisse, korrigiere Name/Kategorie und wähle falsche Treffer ab. Gespeichert werden Originalausschnitte und verfügbare Freistellungen; das Gesamtfoto wird nicht zusätzlich archiviert. Überlappende Kleidung ist schwieriger. Bei einem Freistellungslimit bleiben die erkannten Originalausschnitte nutzbar; weitere Freistellungsversuche stoppen. Kein automatischer kostenpflichtiger Ersatz.
+Automatische Fotoverarbeitung nach Auswahl/Freigabe und der experimentelle Mehrfachscan sind auf Wunsch ab Version 0.19.1 entfernt. Bereits gespeicherte Stücke und die Shopping-Funktion bleiben erhalten.
 
 ## Persönlich und günstig shoppen
 
@@ -121,13 +121,13 @@ Ein Export bedeutet, dass eine Datei erstellt wurde. Bitte selbst in „Dateien�
 
 Im Kleidungseditor ein Foto hinzufügen und bei **Farbe** auf **Farbe aus Foto wählen** tippen. Eine einfarbige Stelle am Stoff antippen; die Positionsregler und Pfeiltasten helfen beim genauen Auswählen. Erst **Blau übernehmen** (beziehungsweise die vorgeschlagene Farbe) ändert das Farbfeld. Danach das Stück normal speichern oder Änderungen verwerfen. Die Farbe lässt sich weiterhin manuell ändern.
 
-Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Merkmale liefert nach Freigabe die kostenlose Online-KI; der Online-Stylist kann zusätzlich Übersichten ausgewählter Looks vergleichen; er bewertet keine Passform an deinem Körper.
+Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Erkannte Merkmale liefert nach Freigabe und bewusstem Start die kostenlose Online-KI; der Online-Stylist kann zusätzlich Übersichten ausgewählter Looks vergleichen; er bewertet keine Passform an deinem Körper.
 
-## Foto automatisch erfassen
+## Foto-KI einrichten und verwenden
 
 1. **Mehr → Online-Foto-KI** öffnen. Die genannten Anbieter und Datenschutzhinweise lesen, Fotoübertragung erlauben und **Kostenlose KI aktivieren** antippen. Dafür brauchst du keinen Token und kein Abo.
-2. Neues Foto aufnehmen oder aus der Mediathek wählen. Qwen3-VL-Outpost erkennt Name, Kategorie, Farbe und sichtbare Marke sowie Notizen, Stil und Saison. Marke ohne lesbares Zeichen leer lassen; Stil/Saison sind Schätzungen. Alle Angaben bleiben korrigierbar. Während der Analyse selbst geänderte Felder bleiben erhalten.
-3. BiRefNet entfernt den Hintergrund und übernimmt die Freistellung automatisch in den Entwurf. Kurz prüfen, bei Bedarf **Original behalten** wählen, dann das Stück speichern. Das vorbereitete Originalfoto bleibt zusätzlich erhalten und wird mitgesichert.
+2. Neues Foto aufnehmen oder aus der Mediathek wählen und **Foto mit KI vorbereiten** antippen. Fotoauswahl und Aktivierung allein senden kein Foto. Qwen3-VL-Outpost erkennt Name, Kategorie, Farbe und sichtbare Marke sowie Notizen, Stil und Saison. Marke ohne lesbares Zeichen leer lassen; Stil/Saison sind Schätzungen. Alle Angaben bleiben korrigierbar. Während der Analyse selbst geänderte Felder bleiben erhalten.
+3. BiRefNet entfernt den Hintergrund zunächst als Vorschau. Prüfen und **Freistellung übernehmen** wählen oder mit **Freistellung verwerfen** beim bisherigen Foto bleiben, dann das Stück speichern. Das vorbereitete Originalfoto bleibt zusätzlich erhalten und wird mitgesichert.
 4. Nach Aktivierung zeigt die Einstellung nur den aktiven Status. Der Aktivieren-Knopf verschwindet; die Anbieter-/Datenschutzhinweise und Freigabe bleiben aufklappbar. **Community-KI ausschalten** oder die Foto-Freigabe abwählen verhindert neue Übertragungen. Die vorhandene Sammlung bleibt auf deinem Gerät. Das Öffnen/Bearbeiten gespeicherter Stücke lädt sie nicht automatisch hoch. Der Online-Stylist sendet ausgewählte gespeicherte Fotos erst beim ausdrücklich gestarteten Vergleich.
 
 Die App nutzt die öffentlich angebotenen Gradio-APIs von [Qwen3-VL-Outpost](https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost) und der [offiziellen BiRefNet-Demo](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo). **Das sind öffentliche Community-Dienste, kein privater MyStyle-Server.** Das ausgewählte Foto wird an beide übertragen; die Freistellung nutzt temporäre Dateien auf dem Server des Anbieters. Speicher-/Löschdauer können wir nicht garantieren. Fotos mit Personen oder privaten Hintergründen vermeiden. Es gibt keine Verfügbarkeitsgarantie; Warteschlangen, Tageslimits und Abschaltungen sind möglich. Dann bleibt das Foto erhalten, ein brauchbares Teilergebnis wird nicht verworfen. Keine automatischen Ausweichanbieter, Provider-Schlüssel oder bezahlten Wiederholungen.

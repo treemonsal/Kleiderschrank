@@ -1,6 +1,12 @@
 # MyStyle
 
-Die Versionsabschnitte dokumentieren die Entwicklung. Massgeblich für den aktuellen Umfang sind Version 0.19.0 und die aktuelle README; ältere Abschnitte halten die damaligen Anforderungen und Grenzen fest.
+Die Versionsabschnitte dokumentieren die Entwicklung. Massgeblich für den aktuellen Umfang sind Version 0.19.1 und die aktuelle README; ältere Abschnitte halten die damaligen Anforderungen und Grenzen fest.
+
+## Version 0.19.1 – manuelle Foto-KI wiederherstellen
+
+- Automatische Fotoverarbeitung und experimentellen Mehrfachscan auf Wunsch entfernen; Shopping und übrige Funktionen erhalten.
+- Neue Fotoauswahl, KI-Aktivierung und Wiederöffnen lösen keine Fotoanalyse aus. Einzelbild-KI bewusst starten, erkannte Angaben prüfen und korrigieren; Freistellung erst nach explizitem Übernehmen einsetzen. Verwerfen einer erneuten Vorschau erhält auch bereits gespeicherte Freistellungen.
+- Bestehende Kleidungsstücke, Originale, Freistellungen und persönliche Daten erhalten. Keine Änderung an Datenbank 5 oder Sicherungsformat 7; frühere Formate bleiben lesbar.
 
 ## Version 0.19.0 – persönliche Shopping-Beratung
 

@@ -15,7 +15,6 @@ import { PhotoColorPicker } from './PhotoColorPicker'
 import { BackgroundRemoval } from './BackgroundRemoval'
 import { PhotoAssistant } from './PhotoAssistant'
 import type { PhotoAttributes } from './cloud-ai'
-import { GroupScan } from './GroupScan'
 
 export function Editor({
   item,
@@ -24,7 +23,7 @@ export function Editor({
 }: {
   item?: Garment
   onClose: () => void
-  onSaved: (count?: number) => void
+  onSaved: () => void
 }) {
   const [draft, setDraft] = useState<GarmentDraft>(() =>
     item
@@ -47,7 +46,6 @@ export function Editor({
   const [onlineBusy, setOnlineBusy] = useState(false)
   const [recognized, setRecognized] = useState(false)
   const [dirty, setDirty] = useState(false)
-  const [group, setGroup] = useState(false)
   const [photoRevision, setPhotoRevision] = useState(0)
   const library = useRef<HTMLInputElement>(null)
   const camera = useRef<HTMLInputElement>(null)
@@ -79,8 +77,6 @@ export function Editor({
       setProcessing(false)
     }
   }
-  if (group)
-    return <GroupScan onClose={() => setGroup(false)} onSaved={onSaved} />
   return (
     <Sheet
       title={item ? 'Stück bearbeiten' : 'Ein neues Lieblingsstück.'}
@@ -110,16 +106,6 @@ export function Editor({
         }}
       >
         <fieldset disabled={busy || processing} className="editor-fields">
-          {!item && !dirty && (
-            <button
-              type="button"
-              className="text-button"
-              disabled={assisting || onlineBusy}
-              onClick={() => setGroup(true)}
-            >
-              Mehrere Stücke auf einem Foto
-            </button>
-          )}
           <div className={`photo-picker ${photo ? 'has-photo' : ''}`}>
             {photo ? (
               <PhotoImage
@@ -132,8 +118,8 @@ export function Editor({
                 <ImagePlus size={32} strokeWidth={1.3} />
                 <p>Dein Foto ist der Anfang</p>
                 <span>
-                  Mit verbundener Online-KI werden die Angaben automatisch
-                  vorbereitet. Ohne Foto kannst du sie selbst eintragen.
+                  Wähle ein Foto und starte die KI bei Bedarf per Knopfdruck. Du
+                  kannst die Angaben auch selbst eintragen.
                 </span>
               </div>
             )}
@@ -180,7 +166,6 @@ export function Editor({
             <PhotoAssistant
               key={`online-${photoRevision}`}
               photo={draft.photo}
-              autoRun={photoRevision > 0}
               onBusy={setOnlineBusy}
               onChoose={(blob) => update('cutout', blob)}
               onAttributes={(values: PhotoAttributes) => {
