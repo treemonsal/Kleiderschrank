@@ -6,7 +6,7 @@
 - [x] Automatische Fotoanalyse nach Auswahl/Aktivierung und automatische Freistellungsübernahme entfernen
 - [x] Experimentellen Mehrfachscan samt exklusivem Code entfernen, gespeicherte Stücke erhalten
 - [x] Manuelle Einzelbild-KI, Shopping und übrige Funktionen erhalten; aktuelle Texte anpassen
-- [ ] Fotoabläufe, Daten und Shopping prüfen und veröffentlichen
+- [x] 245 Datentests und alle 159 Browserfälle im frischen GitHub-Gesamtlauf, manuelle Fotoabläufe, Shopping, echte Einzelbild-Endpunkte, Offline-Unterpfad und bytegleiche Veröffentlichung geprüft
 
 ## Version 0.19.0 – günstig und persönlich shoppen
 

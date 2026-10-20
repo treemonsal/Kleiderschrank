@@ -224,7 +224,7 @@ VITE_BASE_PATH=/Kleiderschrank/ npm run preview
 
 Danach vor Root-Browserprüfungen wieder `npm run build` ausführen. Der echte iPhone-/Safari-Test bleibt separat in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
 
-Version **0.19.0** wurde am 20. Oktober 2026 durch [Pages-Lauf 39470867899](https://github.com/treemonsal/Kleiderschrank/actions/runs/39470867899) veröffentlicht. Der [GitHub-Gesamtlauf 39469908145](https://github.com/treemonsal/Kleiderschrank/actions/runs/39469908145) besteht mit **250 Datentests und allen 162 Browserfällen**. Öffentliche App-Dateien, Manifest, Icons und Service Worker sind bytegleich mit dem geprüften Pages-Build. Aktuelle Produktpreise und Verfügbarkeit werden im Shop geprüft; die App liefert persönliche preisgefilterte Suchideen.
+Version **0.19.1** wurde am 20. Oktober 2026 durch [Pages-Lauf 39479758930](https://github.com/treemonsal/Kleiderschrank/actions/runs/39479758930) veröffentlicht. Der [GitHub-Gesamtlauf 39478848286](https://github.com/treemonsal/Kleiderschrank/actions/runs/39478848286) besteht mit **245 Datentests und allen 159 Browserfällen**. Öffentliche App-Dateien, Manifest, Icons und Service Worker sind bytegleich mit dem geprüften Pages-Build. Automatische Fotoverarbeitung und Mehrfachscan sind entfernt; manuelle Einzelbild-KI, Shopping und bestehende Daten bleiben erhalten. Die bisherigen echten Einzelbild-Endpunkte wurden zusätzlich einmal mit einem künstlichen Kleidungsfoto erfolgreich geprüft. Aktuelle Produktpreise und Verfügbarkeit werden im Shop geprüft; die App liefert persönliche preisgefilterte Suchideen.
 
 ## Projektbackup und Dokumentation
 
