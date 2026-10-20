@@ -7,7 +7,7 @@
 - [x] KI-Kaufideen mit realen vorhandenen Outfit-Referenzen und eigener Freigabe
 - [x] Schweizer Suchlinks mit harten Budgetgrenzen und günstigeren ersten Suchen
 - [x] Dauerhaftes Budget/Sortiment und Sicherungsformat 7 mit unabhängiger Zusammenführung
-- [ ] Finale Daten-/Browser-/Unterpfadprüfung und Veröffentlichung dokumentieren
+- [x] 250 Datentests, alle 162 Browserfälle im frischen GitHub-Gesamtlauf, sieben zusätzliche Shopping-Fälle im Unterpfad, Offline und bytegleich geprüfte Veröffentlichung dokumentiert
 - [ ] Reale Passung von Kaufideen und echtes iPhone/Safari im Alltag prüfen
 
 ## Version 0.18.0 – Kritikerprüfung und automatische Fotos

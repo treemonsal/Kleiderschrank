@@ -224,7 +224,7 @@ VITE_BASE_PATH=/Kleiderschrank/ npm run preview
 
 Danach vor Root-Browserprüfungen wieder `npm run build` ausführen. Der echte iPhone-/Safari-Test bleibt separat in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
 
-Die Shopping-Erweiterung wird als Version **0.19.0** geprüft. Die letzte veröffentlichte Version vor dieser Runde ist 0.18.0. Nachweise und Grenzen stehen in [REVIEW.md](REVIEW.md).
+Version **0.19.0** wurde am 20. Oktober 2026 durch [Pages-Lauf 39470867899](https://github.com/treemonsal/Kleiderschrank/actions/runs/39470867899) veröffentlicht. Der [GitHub-Gesamtlauf 39469908145](https://github.com/treemonsal/Kleiderschrank/actions/runs/39469908145) besteht mit **250 Datentests und allen 162 Browserfällen**. Öffentliche App-Dateien, Manifest, Icons und Service Worker sind bytegleich mit dem geprüften Pages-Build. Aktuelle Produktpreise und Verfügbarkeit werden im Shop geprüft; die App liefert persönliche preisgefilterte Suchideen.
 
 ## Projektbackup und Dokumentation
 
