@@ -10,7 +10,7 @@ Meine redaktionelle Gesamtbewertung nach den Korrekturen ist **8/10**. Die Gesta
 
 1. **Erste Kritik:** Einstieg und Alltag, Empfehlungen und Personalisierung sowie technische Zuverlässigkeit getrennt untersuchen. Konkrete Fehler anhand des Codes und kontrollierter Browser-/Datentests belegen.
 2. **Gegenseitige Nachprüfung:** Die Agents prüfen fremde Korrekturen. Dabei zusätzlich übersehene Zustandsanzeigen, Einstellungs-Synchronisierung, Form-Submits und laufende Schreibvorgänge untersuchen.
-3. **Frische Endnutzer-Perspektive:** Eine weitere unabhängige Prüfung des gesamten Wegs, besonders freiwilliges Stilgespräch, Abbruch, Fokus, schmale Ansichten und verbleibende Entwurfverluste. Anschliessend gemeinsam alle Regressionen und die bestehende App prüfen.
+3. **Frische Endnutzer-Perspektive:** Zusätzliche unabhängige Nachprüfung besonders des freiwilligen Stilgesprächs, von Abbruch, Fokus und verbleibenden Entwurfverlusten. Anschliessend bestehende und neue Browserabläufe im Gesamtlauf sowie schmale Ansichten und den Projektpfad durch den Hauptagent prüfen.
 
 Der Ausgangsstand bleibt unter dem GitHub-Tag `backup/before-critic-review-0.17.1` erhalten. Der ältere vollständige Archiv-/Bundle-Backupstand bleibt ebenfalls verfügbar. Die persönlichen Kleiderschränke auf fremden Handys sind davon getrennt.
 

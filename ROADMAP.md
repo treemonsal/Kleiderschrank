@@ -7,7 +7,7 @@
 - [x] Inline-Foto-KI-Einrichtung, automatische Online-Freistellung, Original-Rückkehr
 - [x] Experimenteller Mehrfachscan mit Auswahl, Originalausschnitten und atomarem Speichern
 - [x] Entwurfschutz, Fensterkonflikte und Empfehlungssuche verbessern
-- [ ] Abschliessender Gesamtlauf und Veröffentlichung dokumentieren
+- [x] 239 Datentests, alle 155 Browserfälle im frischen GitHub-Gesamtlauf, Unterpfad/Offline und Veröffentlichung dokumentiert; öffentliche Dateien bytegleich geprüft
 - [ ] Reale Gruppenerkennungsqualität und echtes iPhone/Safari im Alltag bewerten
 
 ## Version 0.17.1 – Repository bereinigen

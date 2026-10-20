@@ -1,5 +1,7 @@
 # MyStyle
 
+Die Versionsabschnitte dokumentieren die Entwicklung. Massgeblich für den aktuellen Umfang sind Version 0.18.0 und die aktuelle README; ältere Abschnitte halten die damaligen Anforderungen und Grenzen fest.
+
 ## Version 0.18.0 – einfachere Fotoaufnahme und Kritikerprüfung
 
 - Neue Fotos nach vorhandener Freigabe automatisch erkennen, ausfüllen und freistellen. Online-Freistellung direkt in den Entwurf übernehmen, Original und Rückkehr erhalten; Speichern weiterhin ausdrücklich.

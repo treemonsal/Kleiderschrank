@@ -9,7 +9,7 @@ Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufüg
 ## Was du wo findest
 
 - **Heute:** Wetter, automatisch gewählter Tageslook, Alternativen und Tragebestätigung. Im Tagesbereich links/rechts wischen; Datum oder Kalender öffnen für Rückblick und Planung.
-- **Kleiderschrank:** Stücke aufnehmen, suchen, filtern, bearbeiten, favorisieren und in die Wäsche legen. Der Wäschefilter zeigt gewaschene Stücke; **Als sauber markieren** gibt sie wieder für Vorschläge frei.
+- **Kleiderschrank:** Stücke aufnehmen, suchen, filtern, bearbeiten, favorisieren und in die Wäsche legen. Der Wäschefilter zeigt Stücke in der Wäsche; **Als sauber markieren** gibt sie wieder für Vorschläge frei.
 - **Outfits:** Kombinationen erstellen, bewerten, speichern und im Kalender planen. Accessoire- und Wettervorlieben bleiben gespeichert.
 - **Stylist ↗:** Fragen stellen oder das freiwillige vertiefte Stilgespräch öffnen. Ein kleiner Punkt kennzeichnet eine Einladung oder eine vorhandene ungelesene Antwort.
 - **Mehr:** Stilprofil, Online-Foto-KI, persönliche Sicherung, Speicher- und Installationshilfe. Ein Export sichert den eigenen Bestand; ein Projektbackup ersetzt diesen Export nicht.
@@ -111,7 +111,7 @@ Ein Export bedeutet, dass eine Datei erstellt wurde. Bitte selbst in „Dateien�
 
 Im Kleidungseditor ein Foto hinzufügen und bei **Farbe** auf **Farbe aus Foto wählen** tippen. Eine einfarbige Stelle am Stoff antippen; die Positionsregler und Pfeiltasten helfen beim genauen Auswählen. Erst **Blau übernehmen** (beziehungsweise die vorgeschlagene Farbe) ändert das Farbfeld. Danach das Stück normal speichern oder Änderungen verwerfen. Die Farbe lässt sich weiterhin manuell ändern.
 
-Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Merkmale liefert nach Freigabe die kostenlose Online-KI; Der Online-Stylist kann zusätzlich Übersichten ausgewählter Looks vergleichen; er bewertet keine Passform an deinem Körper.
+Die Farbprobe läuft auch offline vollständig auf deinem Gerät. Sie verändert dein Foto nicht. Licht, Schatten, Hintergrund und Muster können den Vorschlag verfälschen; **Bunt** bei Bedarf selbst wählen. Es handelt sich um eine lokale Pixelprobe mit grober Farbfamilie. Automatische Merkmale liefert nach Freigabe die kostenlose Online-KI; der Online-Stylist kann zusätzlich Übersichten ausgewählter Looks vergleichen; er bewertet keine Passform an deinem Körper.
 
 ## Foto automatisch erfassen
 
@@ -133,7 +133,7 @@ Ein eigener kompatibler Server bleibt unter **Eigenen Server verbinden** optiona
 3. Ergebnis prüfen. **Freistellung übernehmen** setzt die transparente Vorschau ins Formular; erst normales Speichern übernimmt sie dauerhaft. **Vorschau verwerfen** behält das bisherige Foto. Abbrechen beendet den laufenden Worker.
 4. **Originalfoto verwenden** holt das unverändert aufbewahrte Original zurück. Neue Fotoauswahl verwirft die dazugehörige alte Freistellung.
 
-Einzelne Stücke vor ruhigem Hintergrund eignen sich am besten. Das kleine U²-Net-Modell erkennt auffälligen Vordergrund; es versteht keine Kleidungskategorien, Passform oder Stilqualität. Kanten, Schatten und Muster können fehlerhaft sein. Die Funktion ist **experimentell und auf echtem iPhone noch nicht geprüft**; sie ist für die übrige App nicht erforderlich. Nach erfolgreichem ersten Laden arbeitet sie bei verfügbarem Cache auch offline. Unter **Mehr → KI-Dateien vom Gerät entfernen** lassen sich die etwa 19 MB Binärdateien löschen; Fotos und gespeicherte Freistellungen bleiben erhalten. Ein späterer Start benötigt dann wieder Netz. Quellen, Lizenzhinweise und Messgrenzen stehen in [IMAGE_ASSISTANCE.md](IMAGE_ASSISTANCE.md).
+Einzelne Stücke vor ruhigem Hintergrund eignen sich am besten. Das kleine U²-Net-Modell erkennt auffälligen Vordergrund; es versteht keine Kleidungskategorien, Passform oder Stilqualität. Kanten, Schatten und Muster können fehlerhaft sein. Die Funktion ist **experimentell und auf echtem iPhone noch nicht geprüft**; sie ist für die übrige App nicht erforderlich. Nach erfolgreichem ersten Laden arbeitet sie bei verfügbarem Cache auch offline. Unter **Mehr → Lokale Freistellung & KI-Speicher → KI-Dateien vom Gerät entfernen** lassen sich die etwa 19 MB Binärdateien löschen; Fotos und gespeicherte Freistellungen bleiben erhalten. Ein späterer Start benötigt dann wieder Netz. Quellen, Lizenzhinweise und Messgrenzen stehen in [IMAGE_ASSISTANCE.md](IMAGE_ASSISTANCE.md).
 
 ## Outfits und dein persönlicher Stil
 
@@ -170,7 +170,7 @@ Wetter wird für bis zu sieben Tage gespeichert; älter als sechs Stunden oder o
 
 Wetterquelle: [Open-Meteo](https://open-meteo.com/), Ortssuche basierend auf [GeoNames](https://www.geonames.org/), CC BY 4.0. Die kostenlose API ist für den privaten, nicht kommerziellen Gebrauch vorgesehen. Material, Isolation und Wasserdichtigkeit lassen sich aus den bisherigen Angaben nicht zuverlässig ableiten; Wetterregeln ersetzen keine eigene Prüfung.
 
-Originalfotos werden beim Import lokal auf maximal 1600 Pixel verkleinert und als JPEG neu erzeugt (weisser Hintergrund, keine Übernahme der ursprünglichen EXIF-Metadaten). Freistellungen werden separat als transparente PNGs bis 1200 Pixel gespeichert. HEIC funktioniert nur, wenn der Browser es decodieren kann; andernfalls JPEG/PNG/WebP verwenden. Die Farbprobe benötigt keinen Modelldownload. Die Freistellung ist echte lokale KI, keine Kleidungs- oder Outfitbewertung.
+Beim Auswählen werden Fotos lokal auf maximal 1600 Pixel verkleinert und als JPEG neu erzeugt (weisser Hintergrund, keine Übernahme der ursprünglichen EXIF-Metadaten). Freistellungen bleiben separate transparente PNGs: online bis 1600 Pixel, mit dem optionalen lokalen Modell bis 1200 Pixel. Ein Sicherungsimport erhält die validierten Fotovarianten. HEIC funktioniert nur, wenn der Browser es decodieren kann; andernfalls JPEG/PNG/WebP verwenden. Die Farbprobe benötigt keinen Modelldownload. Die optionale lokale Freistellung verwendet ein echtes Bildmodell; ihre Maske ist keine Kleidungs- oder Outfitbewertung.
 
 ## Datenschutz und Sicherung
 
@@ -214,7 +214,7 @@ VITE_BASE_PATH=/Kleiderschrank/ npm run preview
 
 Danach vor Root-Browserprüfungen wieder `npm run build` ausführen. Der echte iPhone-/Safari-Test bleibt separat in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
 
-Entwicklungsstand **0.18.0**: automatische Online-Freistellung, experimenteller Mehrfachscan und Korrekturen aus der [Kritikerprüfung](CRITIC_REVIEW.md). Die letzte vor dieser Runde veröffentlichte Version war 0.17.1. Abschliessende Prüf- und Veröffentlichungsnachweise stehen in [REVIEW.md](REVIEW.md).
+Version **0.18.0** wurde am 20. Oktober 2026 durch [Pages-Lauf 39433640715](https://github.com/treemonsal/Kleiderschrank/actions/runs/39433640715) erfolgreich veröffentlicht. Der [GitHub-Prüflauf 39432537361](https://github.com/treemonsal/Kleiderschrank/actions/runs/39432537361) besteht mit **239 Datentests und allen 155 Browserfällen**. Öffentliche App-Dateien, Manifest, Icons und Service Worker sind bytegleich mit dem geprüften Pages-Build. Kritik, Bewertung **8/10** und verbleibende Grenzen stehen in [CRITIC_REVIEW.md](CRITIC_REVIEW.md).
 
 ## Projektbackup und Dokumentation
 
