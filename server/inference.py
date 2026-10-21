@@ -75,10 +75,12 @@ def cutout(image):
     return 'data:image/png;base64,' + base64.b64encode(raw).decode('ascii')
 
 
-def process(image):
+def process(image, task='all'):
     # Independent failures: never discard a usable cutout because recognition failed.
     result = {'attributes': None, 'cutout': None}
     for key, operation in [('cutout', cutout), ('attributes', recognize)]:
+        if task != 'all' and key != task:
+            continue
         try:
             result[key] = operation(image)
         except Exception:

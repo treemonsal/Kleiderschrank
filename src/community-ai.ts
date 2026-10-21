@@ -1,4 +1,4 @@
-import { parseAttributes, type AIResult } from './cloud-ai'
+import { parseAttributes, type AIResult, type PhotoTask } from './cloud-ai'
 import { blobToDataURL, validateBackupPhotos } from './photos'
 import { AIProviderError, providerError, describeAIProblem } from './ai-errors'
 
@@ -279,10 +279,13 @@ async function removeBackground(photo: Blob, signal: AbortSignal) {
 export async function analyzeCommunityPhoto(
   photo: Blob,
   signal: AbortSignal,
+  task: PhotoTask = 'all',
 ): Promise<AIResult> {
   const [attributes, cutout] = await Promise.allSettled([
-    recognize(photo, signal),
-    removeBackground(photo, signal),
+    task === 'cutout' ? Promise.resolve(undefined) : recognize(photo, signal),
+    task === 'attributes'
+      ? Promise.resolve(undefined)
+      : removeBackground(photo, signal),
   ])
   if (signal.aborted)
     throw new DOMException('Analyse abgebrochen.', 'AbortError')
@@ -291,7 +294,10 @@ export async function analyzeCommunityPhoto(
     warnings.push(describeAIProblem('Bilderkennung', attributes.reason))
   if (cutout.status === 'rejected')
     warnings.push(describeAIProblem('Freistellung', cutout.reason))
-  if (attributes.status === 'rejected' && cutout.status === 'rejected')
+  if (
+    (task === 'cutout' || attributes.status === 'rejected') &&
+    (task === 'attributes' || cutout.status === 'rejected')
+  )
     throw new Error(warnings.join(' '))
   return {
     attributes:

@@ -38,3 +38,7 @@ Die Vertrags-/Sicherheitstests verwenden künstliche Fotos und gemockte Inferenz
 ## Bisheriger echter Modelltest
 
 BiRefNet-General-Lite hat in der Entwicklungs-Cloud ein reales öffentliches T-Shirt-Foto sauber freigestellt; Original und transparentes PNG wurden visuell verglichen. Gecachter Lauf inklusive Prozessimports: 35,6 s, Spitzen-RSS 7.646 MiB. Sitzungen werden zwischen Segmentierung und Erkennung vollständig freigegeben. Dies ist kein Nachweis für HF CPU Basic oder allgemeine Fotoqualität. Qwen-Gewichte konnten wegen der Cloud-Netzwerksperre für `us.aws.cdn.hf.co` noch nicht geladen werden. Die Erkennung ist somit noch nicht mit echtem Modell validiert. Details: REVIEW.md im Hauptprojekt.
+
+## Einzelne Foto-Schritte wiederholen
+
+Aktuelle Server melden unter authentifiziertem `GET /health` zusätzlich `photo_tasks: ["attributes", "cutout"]`. `POST /v1/garment` akzeptiert optional `task: "attributes"` oder `task: "cutout"` und lädt nur das betreffende Modell. Ohne Angabe bleibt die bisherige vollständige Analyse erhalten. Die App prüft diese Fähigkeit vor einem gezielten erneuten Foto-Upload; ältere Server erhalten keinen stillen zweiten Gesamtauftrag. Für diese Funktion einen selbst betriebenen Space auf den aktuellen Servercode aktualisieren. Community-Dienste sind davon unabhängig.

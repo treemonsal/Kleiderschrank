@@ -168,7 +168,7 @@ export async function setOutfitFeedback(
       if (
         (context.occasion && !OCCASIONS.includes(context.occasion)) ||
         (context.reason &&
-          !['combination', 'colors', 'style', 'occasion'].includes(
+          !['combination', 'colors', 'style', 'occasion', 'bold'].includes(
             context.reason,
           ))
       )

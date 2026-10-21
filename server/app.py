@@ -44,7 +44,7 @@ def index():
 @app.get('/health')
 def health(request: Request):
     authorize(request)
-    return {'service': 'mystyle-photo-ai', 'version': 1, 'hardware': 'cpu', 'models_loaded_lazily': True}
+    return {'service': 'mystyle-photo-ai', 'version': 1, 'hardware': 'cpu', 'models_loaded_lazily': True, 'photo_tasks': ['attributes', 'cutout']}
 
 
 @app.post('/v1/garment')
@@ -59,6 +59,11 @@ async def garment(request: Request):
             raise HTTPException(413, 'Photo too large')
     try:
         value = json.loads(raw)
+        if not isinstance(value, dict):
+            raise ValueError('Invalid request')
+        task = value.get('task', 'all')
+        if task not in ('all', 'attributes', 'cutout'):
+            raise ValueError('Invalid task')
         image = decode_photo(value['photo'])
     except (ValueError, KeyError, TypeError):
         raise HTTPException(422, 'Invalid photo') from None
@@ -68,7 +73,7 @@ async def garment(request: Request):
     def work():
         try:
             from inference import process
-            return process(image)
+            return process(image, task)
         finally:
             image.close()
             slot.release()

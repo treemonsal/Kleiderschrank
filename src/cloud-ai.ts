@@ -11,6 +11,7 @@ export type PhotoAttributes = Pick<
   GarmentDraft,
   'name' | 'category' | 'color' | 'brand' | 'seasons' | 'styles' | 'notes'
 >
+export type PhotoTask = 'all' | 'attributes' | 'cutout'
 export interface AIResult {
   attributes?: PhotoAttributes
   cutout?: Blob
@@ -169,12 +170,16 @@ export async function checkAIConnection(
   const data = JSON.parse(await readResponse(response, 4096))
   if (data.service !== 'mystyle-photo-ai' || data.version !== 1)
     throw new Error('Dieser Server ist kein kompatibler MyStyle-KI-Server.')
+  return data as { photo_tasks?: unknown }
 }
 export async function analyzePhoto(
   photo: Blob,
   connection: AIConnection,
   signal: AbortSignal,
+  task: PhotoTask = 'all',
 ): Promise<AIResult> {
+  if (!['all', 'attributes', 'cutout'].includes(task))
+    throw new Error('Unbekannter Foto-Schritt.')
   const c = validateConnection(connection)
   if (!c.enabled) throw new Error('Die Online-KI ist noch nicht freigegeben.')
   if (photo.type !== 'image/jpeg' || photo.size > 5 * 1024 * 1024)
@@ -183,7 +188,18 @@ export async function analyzePhoto(
     )
   if (c.mode === 'community') {
     const { analyzeCommunityPhoto } = await import('./community-ai')
-    return analyzeCommunityPhoto(photo, signal)
+    return analyzeCommunityPhoto(photo, signal, task)
+  }
+  if (task !== 'all') {
+    const health = await checkAIConnection(c, signal)
+    if (
+      !health ||
+      !Array.isArray(health.photo_tasks) ||
+      !health.photo_tasks.includes(task)
+    )
+      throw new Error(
+        'Dein Server unterstützt einzelne Schritte noch nicht. Aktualisiere ihn oder starte die vollständige Analyse. Dein bisheriges Ergebnis bleibt erhalten.',
+      )
   }
   const response = await fetch(`${c.url}/v1/garment`, {
     method: 'POST',
@@ -191,7 +207,10 @@ export async function analyzePhoto(
       Authorization: `Bearer ${c.code}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ photo: await blobToDataURL(photo) }),
+    body: JSON.stringify({
+      photo: await blobToDataURL(photo),
+      ...(task === 'all' ? {} : { task }),
+    }),
     signal,
     credentials: 'omit',
     referrerPolicy: 'no-referrer',
@@ -202,7 +221,7 @@ export async function analyzePhoto(
   const warnings: string[] = []
   let attributes: PhotoAttributes | undefined
   let cutout: Blob | undefined
-  if (data.attributes) {
+  if (task !== 'cutout' && data.attributes) {
     try {
       attributes = parseAttributes(data.attributes)
     } catch {
@@ -210,11 +229,12 @@ export async function analyzePhoto(
         'Die Angaben konnten nicht sicher übernommen werden. Bitte prüfe sie manuell.',
       )
     }
-  } else
+  } else if (task !== 'cutout')
     warnings.push(
       'Die KI konnte die Angaben nicht erkennen. Versuche ein Foto mit einem einzelnen, gut sichtbaren Stück.',
     )
   if (
+    task !== 'attributes' &&
     typeof data.cutout === 'string' &&
     /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(data.cutout)
   ) {
@@ -233,7 +253,7 @@ export async function analyzePhoto(
       cutout = undefined
     }
   }
-  if (!cutout)
+  if (task !== 'attributes' && !cutout)
     warnings.push(
       'Der Hintergrund konnte nicht entfernt werden. Dein Original bleibt erhalten.',
     )

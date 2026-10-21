@@ -378,13 +378,13 @@ describe('Persistenz und Sicherungsformat 7', () => {
     await saveShoppingPreferences({ maxPriceCHF: 75, assortment: 'men' }, db)
     const json = await createDatabaseBackup(db),
       raw = JSON.parse(json)
-    expect(raw.version).toBe(7)
+    expect(raw.version).toBe(8)
     expect(json).not.toContain('mystyle-shopping-consent')
     await importFullBackup(parseFullBackup(json), 'replace', other)
     expect(
       shoppingOptions((await other.preferences.get('personal'))!),
     ).toMatchObject({ maxPriceCHF: 75, assortment: 'men' })
-    for (const version of [2, 3, 4, 5, 6]) {
+    for (const version of [2, 3, 4, 5, 6, 7]) {
       const old = JSON.parse(json)
       old.version = version
       delete old.preferences.shopping

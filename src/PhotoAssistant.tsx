@@ -6,6 +6,7 @@ import {
   AI_CONNECTION_KEY,
   AI_CONNECTION_CHANGED,
   type PhotoAttributes,
+  type PhotoTask,
 } from './cloud-ai'
 import { ErrorMessage, PhotoImage } from './ui'
 import { AISettings } from './AISettings'
@@ -27,6 +28,7 @@ export function PhotoAssistant({
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [preview, setPreview] = useState<Blob>()
+  const [retry, setRetry] = useState({ attributes: false, cutout: false })
   const [setup, setSetup] = useState(false)
   const section = useRef<HTMLElement>(null)
   const setupPanel = useRef<HTMLDivElement>(null)
@@ -56,6 +58,7 @@ export function PhotoAssistant({
       setConnection(next)
       setStatus('')
       setPreview(undefined)
+      setRetry({ attributes: false, cutout: false })
       onBusy(false)
       setMessage(
         'Foto-Freigabe oder KI-Verbindung geändert. Starte die Analyse bei Bedarf erneut.',
@@ -68,7 +71,7 @@ export function PhotoAssistant({
       window.removeEventListener(AI_CONNECTION_CHANGED, changed)
     }
   }, [onBusy])
-  async function start() {
+  async function start(task: PhotoTask = 'all') {
     const allowed = readAIConnection()
     if (!allowed?.enabled) {
       setConnection(allowed)
@@ -80,16 +83,26 @@ export function PhotoAssistant({
     const apply = callbacks.current.onAttributes
     const timer = setTimeout(() => next.abort('timeout'), 10 * 60 * 1000)
     setStarted(true)
-    setStatus('Foto wird analysiert und freigestellt …')
+    setStatus(
+      task === 'attributes'
+        ? 'Angaben werden erkannt …'
+        : task === 'cutout'
+          ? 'Hintergrund wird entfernt …'
+          : 'Foto wird analysiert und freigestellt …',
+    )
     setError('')
     setMessage('')
-    setPreview(undefined)
     onBusy(true)
     try {
-      const result = await analyzePhoto(photo, allowed, next.signal)
+      const result = await analyzePhoto(photo, allowed, next.signal, task)
       if (next.signal.aborted) return
       if (result.attributes) apply(result.attributes)
-      setPreview(result.cutout)
+      if (result.cutout) setPreview(result.cutout)
+      setRetry((previous) => ({
+        attributes:
+          task === 'cutout' ? previous.attributes : !result.attributes,
+        cutout: task === 'attributes' ? previous.cutout : !result.cutout,
+      }))
       setMessage(
         [
           result.attributes
@@ -104,6 +117,11 @@ export function PhotoAssistant({
           .join(' '),
       )
     } catch (e) {
+      if (!next.signal.aborted || next.signal.reason === 'timeout')
+        setRetry((previous) => ({
+          attributes: task === 'cutout' ? previous.attributes : true,
+          cutout: task === 'attributes' ? previous.cutout : true,
+        }))
       if (!next.signal.aborted)
         setError(
           e instanceof Error
@@ -221,13 +239,47 @@ export function PhotoAssistant({
             </>
           ) : (
             <button
-              className="button secondary full"
+              className={
+                retry.attributes || retry.cutout
+                  ? 'text-button'
+                  : 'button secondary full'
+              }
               type="button"
               onClick={() => void start()}
             >
               <ArrowUpRight size={18} />
-              {started ? 'Foto erneut analysieren' : 'Foto mit KI vorbereiten'}
+              {retry.attributes || retry.cutout
+                ? 'Beide Schritte erneut starten'
+                : started
+                  ? 'Foto erneut analysieren'
+                  : 'Foto mit KI vorbereiten'}
             </button>
+          )}
+          {!status && (retry.attributes || retry.cutout) && (
+            <div className="photo-retry-actions">
+              <p className="micro-copy">
+                Gelungene Ergebnisse bleiben erhalten. Wiederhole nur den
+                fehlenden Schritt.
+              </p>
+              {retry.attributes && (
+                <button
+                  type="button"
+                  className="button secondary full"
+                  onClick={() => void start('attributes')}
+                >
+                  Nur Angaben erneut erkennen
+                </button>
+              )}
+              {retry.cutout && (
+                <button
+                  type="button"
+                  className="button secondary full"
+                  onClick={() => void start('cutout')}
+                >
+                  Nur Hintergrund erneut entfernen
+                </button>
+              )}
+            </div>
           )}
           {message && (
             <p role="status" className="muted">

@@ -120,7 +120,7 @@ test('Outfits aus echtem Bestand speichern, benennen, favorisieren und mit Vorli
   const download = await downloadPromise
   const json = await readFile((await download.path())!, 'utf8')
   const data = JSON.parse(json)
-  expect(data.version).toBe(7)
+  expect(data.version).toBe(8)
   expect(data.outfits[0].name).toBe('Mein Alltagslook')
   expect(data.outfits[0].favorite).toBe(true)
   expect(data.preferences.colors).toContain('Blau')

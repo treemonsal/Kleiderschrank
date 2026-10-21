@@ -35,6 +35,7 @@ import { recordWornOutfit } from './calendar-db'
 import { weatherFresh, weatherLabel } from './weather'
 import { useClock } from './useWeather'
 import { WeatherPanel } from './WeatherPanel'
+import { DailyRefinement } from './DailyRefinement'
 import { OutfitSwap } from './OutfitSwap'
 import { anotherDailyLook } from './daily-choice'
 import { applyStylistLook } from './daily-choice'
@@ -163,10 +164,14 @@ export function DailyOutfit({
     day: string
     entry?: CalendarEntry
   } | null>(null)
+  const [refining, setRefining] = useState(false)
   const [swapping, setSwapping] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  useEffect(() => setError(''), [day])
+  useEffect(() => {
+    setError('')
+    setRefining(false)
+  }, [day])
   const saved =
     !!look?.garmentIds.length &&
     state?.outfits.some(
@@ -459,6 +464,16 @@ export function DailyOutfit({
                   </button>
                 )}
               </div>
+              {isToday && !worn && complete && (
+                <button
+                  type="button"
+                  className="button secondary full daily-refine-button"
+                  disabled={busy}
+                  onClick={() => setRefining(true)}
+                >
+                  Tageslook verfeinern
+                </button>
+              )}
               <OutfitPieces
                 ids={look.garmentIds}
                 items={items}
@@ -619,6 +634,26 @@ export function DailyOutfit({
         </section>
       </div>
       {isToday && <StyleProfileCard items={items} notify={notify} invitation />}
+      {refining && state && look && isToday && (
+        <DailyRefinement
+          items={items}
+          ids={look.garmentIds}
+          options={look.options}
+          preferences={state.preferences}
+          feedback={state.feedback}
+          outfits={state.outfits}
+          calendar={state.calendar}
+          day={day}
+          expectedEntry={entry?.updatedAt ?? null}
+          weather={
+            state.preferences.useWeather !== false && fresh
+              ? forecast
+              : undefined
+          }
+          onClose={() => setRefining(false)}
+          notify={notify}
+        />
+      )}
       {swapping && state && look && isToday && !worn && (
         <OutfitSwap
           items={items}

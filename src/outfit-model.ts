@@ -32,7 +32,7 @@ export interface OutfitFeedback {
   garmentIds: string[]
   verdict: 'liked' | 'rejected'
   updatedAt: string
-  reason?: 'combination' | 'colors' | 'style' | 'occasion'
+  reason?: 'combination' | 'colors' | 'style' | 'occasion' | 'bold'
   occasion?: Occasion
 }
 export interface StyleProfile {

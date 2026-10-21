@@ -18,6 +18,7 @@ export const DEFAULT_STYLE_PROFILE: StyleProfile = {
   avoidColors: [],
 }
 export const FEEDBACK_REASONS = {
+  bold: 'Zu auffällig',
   combination: 'Die Kombination gefällt mir nicht',
   colors: 'Die Farben passen für mich nicht zusammen',
   style: 'Das ist nicht mein Stil',
@@ -70,7 +71,8 @@ export function createPersonalizationScorer(
   const colors = new Map<string, number>(),
     styles = new Map<string, number>(),
     pairs = new Map<string, number>()
-  let observations = 0
+  let observations = 0,
+    quieterVotes = 0
   const add = (map: Map<string, number>, key: string, value: number) =>
     map.set(key, (map.get(key) ?? 0) + value)
   // Each outfit has one bounded vote. Repeated clicks replace a rating in the database.
@@ -83,6 +85,18 @@ export function createPersonalizationScorer(
     )
       continue
     const positive = entry.verdict === 'liked'
+    // This signal describes the outfit's recorded colorfulness, never an
+    // individual color, garment, body shape, pattern or unrecorded fit.
+    if (!positive && entry.reason === 'bold') {
+      if (
+        pieces.every((piece) => piece.color) &&
+        pieces.some((piece) => !neutral.has(piece.color))
+      ) {
+        quieterVotes++
+        observations++
+      }
+      continue
+    }
     if (!positive && entry.reason !== 'colors' && entry.reason !== 'style')
       continue
     observations++
@@ -153,6 +167,7 @@ export function createPersonalizationScorer(
         count++
       }
     score += count ? (sum / count) * 2 : 0
+    score -= Math.min(2, quieterVotes * 0.75) * Math.min(3, accents)
     return score
   }
   // Readable, bounded summaries also accompany a deliberately started online comparison.
@@ -176,6 +191,14 @@ export function createPersonalizationScorer(
       observations,
       styles: strongest(styles),
       colorPairs: strongest(pairs),
+      ...(quieterVotes
+        ? {
+            colorfulness: {
+              preference: 'quieter' as const,
+              strength: Math.min(1, quieterVotes / 3),
+            },
+          }
+        : {}),
     },
   }
 }

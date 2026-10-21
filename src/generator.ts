@@ -1,3 +1,9 @@
+import {
+  acceptsRefinement,
+  refinementChanges,
+  validRefinement,
+  type OutfitRefinement,
+} from './refinement-model'
 import type { Garment } from './model'
 import {
   createPersonalizationScorer,
@@ -12,6 +18,7 @@ import {
 import type { WeatherDay } from './weather'
 import {
   outfitKey,
+  isCompleteOutfit,
   type OutfitCandidate,
   type OutfitFeedback,
   type OutfitOptions,
@@ -82,8 +89,16 @@ export function generateOutfits(
   wearCounts: Map<string, number> = new Map(),
   history?: RecentWear,
   excluded: ReadonlySet<string> = new Set(),
+  refinement?: OutfitRefinement,
 ): OutfitCandidate[] {
+  if (refinement && !validRefinement(items, refinement)) return []
   const eligible = eligibleGarments(items, options, weather)
+  const refinementOriginal = refinement
+    ? items.filter((item) => refinement.currentIds.includes(item.id))
+    : []
+  const eligibleIds = refinement
+    ? new Set(eligible.map((item) => item.id))
+    : undefined
   feedback = feedbackForOccasion(feedback, options.occasion)
   const personal = createPersonalizationScorer(items, preferences, feedback)
   const profile =
@@ -107,8 +122,11 @@ export function generateOutfits(
     for (const id of entry.garmentIds)
       likedItems.set(id, Math.min(1.5, (likedItems.get(id) || 0) + 0.3))
   }
+  const suitabilityCache = new Map<string, number>()
   function suitability(item: Garment): number {
-    return (
+    const cached = suitabilityCache.get(item.id)
+    if (cached !== undefined) return cached
+    const value =
       (item.favorite ? 1.5 : 0) +
       (preferences.colors.includes(item.color) ? 2 : 0) +
       (item.styles.some((style) => preferences.styles.includes(style))
@@ -126,19 +144,27 @@ export function generateOutfits(
       Math.min(1, (wearCounts.get(item.id) ?? 0) * 0.2) -
       recentPiecePenalty(item.id, history) *
         (variety === 'familiar' ? 0.5 : variety === 'explore' ? 1.5 : 1)
-    )
+    suitabilityCache.set(item.id, value)
+    return value
   }
   // Rank the whole wardrobe, then evaluate a preferred window first. A lazy
   // fallback below can still reach lower-ranked pieces after repeated rejections.
   function group(category: string): Garment[] {
+    const locked = refinement?.lockedIds.find((id) =>
+      items.some((item) => item.id === id && item.category === category),
+    )
     return eligible
-      .filter((item) => item.category === category)
+      .filter(
+        (item) => item.category === category && (!locked || item.id === locked),
+      )
       .sort(
         (a, b) =>
           suitability(b) +
+            (refinement?.currentIds.includes(b.id) ? 1000 : 0) +
             noise(b.id, seed) * 0.75 -
-            (suitability(a) + noise(a.id, seed) * 0.75) ||
-          a.id.localeCompare(b.id),
+            (suitability(a) +
+              (refinement?.currentIds.includes(a.id) ? 1000 : 0) +
+              noise(a.id, seed) * 0.75) || a.id.localeCompare(b.id),
       )
   }
   const tops = group('Oberteile'),
@@ -153,9 +179,14 @@ export function generateOutfits(
     const baseKey = outfitKey(base.map((item) => item.id))
     if (evaluatedBases.has(baseKey)) return
     evaluatedBases.add(baseKey)
-    const needsLayer = weather
-      ? weather.min < 15
-      : options.season === 'Herbst' || options.season === 'Winter'
+    const needsLayer =
+      refinement?.intent === 'warmer' ||
+      refinement?.lockedIds.some((id) =>
+        items.some((item) => item.id === id && item.category === 'Jacken'),
+      ) ||
+      (weather
+        ? weather.min < 15
+        : options.season === 'Herbst' || options.season === 'Winter')
     // Evaluate accessories and layers together with the base. Keep the best complete
     // version per base, so an unsuitable/random layer cannot hide a better alternative.
     const layers: (Garment | undefined)[] =
@@ -169,6 +200,13 @@ export function generateOutfits(
         ...(layer ? [layer] : []),
         ...(extra ? [extra] : []),
       ]
+      if (
+        refinement &&
+        (!selected.every((item) => eligibleIds!.has(item.id)) ||
+          !isCompleteOutfit(selected) ||
+          !acceptsRefinement(refinementOriginal, selected, refinement))
+      )
+        return
       const key = outfitKey(selected.map((item) => item.id))
       if (rejected.has(key) || excluded.has(key)) return
       let score =
@@ -181,6 +219,9 @@ export function generateOutfits(
         noise(key, seed) * (variety === 'explore' ? 0.8 : 0.35) -
         recentCombinationPenalty(key, history) *
           (variety === 'familiar' ? 0.5 : variety === 'explore' ? 1.5 : 1)
+      // All normal score terms together stay below 100. Prefer the fewest
+      // edits among variants that actually fulfil the requested change.
+      if (refinement) score -= refinementChanges(selected, refinement) * 100
       return { selected, key, score }
     }
     for (const layer of layers.slice(0, 4))
@@ -227,6 +268,10 @@ export function generateOutfits(
     if (personal.observations)
       reasons.push(
         'Deine Outfitbewertungen beeinflussen ähnliche erfasste Stilrichtungen und Farbkombinationen. Einzelne Bewertungen sind nur schwache Hinweise.',
+      )
+    if (personal.summary.colorfulness)
+      reasons.push(
+        'Dein Feedback „Zu auffällig“ gewichtet weniger erfasste Farbakzente stärker.',
       )
     if (!selected.every((item) => item.color))
       reasons.push(
@@ -304,6 +349,26 @@ export function generateOutfits(
     if (options.includeAccessory && !accessories.length)
       reasons.push('Für diese Auswahl ist kein Accessoire vorhanden.')
     candidates.push({ key, garmentIds: ids, reasons, score })
+  }
+  if (refinement) {
+    // Search every single-base-piece edit before the usual ranked window, even
+    // for a low-ranked piece beyond its first 18. Current layers/extras sort first.
+    const base = items
+      .filter(
+        (item) =>
+          refinement.currentIds.includes(item.id) &&
+          item.category !== 'Jacken' &&
+          item.category !== 'Accessoires',
+      )
+      .sort(
+        (a, b) =>
+          (a.category === 'Schuhe' ? 2 : a.category === 'Hosen' ? 1 : 0) -
+          (b.category === 'Schuhe' ? 2 : b.category === 'Hosen' ? 1 : 0),
+      )
+    add(base)
+    for (const piece of base)
+      for (const replacement of group(piece.category))
+        add(base.map((item) => (item.id === piece.id ? replacement : item)))
   }
   // Main ranking costs at most 18³ + 18² bases, each with 4 × 3 extensions.
   for (const shoe of shoes.slice(0, 18)) {

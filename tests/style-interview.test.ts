@@ -298,7 +298,7 @@ describe('Vertieftes, freiwilliges Stilprofil', () => {
       db,
     )
     const json = await createDatabaseBackup(db)
-    expect(JSON.parse(json).version).toBe(7)
+    expect(JSON.parse(json).version).toBe(8)
     const parsed = await parseFullBackup(json)
     expect(parsed.preferences?.styleInterview).toEqual(current)
     for (const version of [1, 2, 3, 4, 5, 6]) {

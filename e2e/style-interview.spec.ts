@@ -135,7 +135,7 @@ test('Nach dem kurzen Stilcheck erscheint eine freiwillige Einladung; offline be
   await close(page)
   await context.setOffline(false)
   const data = await exportData(page)
-  expect(data.version).toBe(7)
+  expect(data.version).toBe(8)
   expect(data.preferences.styleInterview.answers).toEqual({
     focus: 'Klar & elegant',
     day: 'Viel zu Fuss & unterwegs',

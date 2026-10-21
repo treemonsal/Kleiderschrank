@@ -424,7 +424,7 @@ describe('Sicherungen mit Gesprächsverlauf', () => {
     const json = await createDatabaseBackup(db),
       parsed = parseFullBackup(json),
       other = await database()
-    expect(JSON.parse(json).version).toBe(7)
+    expect(JSON.parse(json).version).toBe(8)
     expect(json).not.toContain('mystyle-chat-consent')
     await importFullBackup(parsed, 'replace', other)
     expect((await other.chat.get('stylist'))?.messages).toEqual(

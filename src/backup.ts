@@ -40,7 +40,7 @@ export interface BackupData {
 }
 const invalid = () =>
   new Error(
-    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1 bis 7). Es wurde nichts verändert.',
+    'Die Datei ist keine gültige MyStyle-Sicherung (Version 1 bis 8). Es wurde nichts verändert.',
   )
 export async function readBackupData(database = db): Promise<BackupData> {
   return database.transaction('r', database.tables, async () => ({
@@ -105,7 +105,7 @@ export async function createBackup(
   const json = JSON.stringify({
     ...extra,
     app: 'MyStyle',
-    version: 7,
+    version: 8,
     exportedAt: new Date().toISOString(),
     calendar: extra.calendar ?? [],
     weather: extra.weather ?? null,
@@ -253,7 +253,7 @@ export function parseFullBackup(json: string): BackupData {
   if (
     !data ||
     data.app !== 'MyStyle' ||
-    ![1, 2, 3, 4, 5, 6, 7].includes(data.version) ||
+    ![1, 2, 3, 4, 5, 6, 7, 8].includes(data.version) ||
     !Array.isArray(data.garments) ||
     data.garments.length > 1000
   )
@@ -356,6 +356,7 @@ export function parseFullBackup(json: string): BackupData {
                 'colors',
                 'style',
                 'occasion',
+                'bold',
               ] as const),
             }),
         ...(item.occasion === undefined

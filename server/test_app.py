@@ -38,7 +38,7 @@ def test_photo_validation_no_image_url_or_bomb():
 
 
 def test_inference_contract_and_busy(client, monkeypatch):
-    monkeypatch.setitem(sys.modules, 'inference', types.SimpleNamespace(process=lambda image: {'attributes': None, 'cutout': 'test-only'}))
+    monkeypatch.setitem(sys.modules, 'inference', types.SimpleNamespace(process=lambda image, task='all': {'attributes': None, 'cutout': 'test-only'}))
     headers = {'Authorization': 'Bearer ' + CODE, 'Origin': 'https://treemonsal.github.io'}
     assert client.post('/v1/garment', json={'photo': 'broken'}, headers=headers).status_code == 422
     assert client.post('/v1/garment', content='x', headers=headers).status_code == 415
@@ -71,3 +71,27 @@ def test_partial_failures_do_not_drop_other_result(monkeypatch):
     monkeypatch.setattr(inference, 'cutout', fail)
     monkeypatch.setattr(inference, 'recognize', lambda image: {'name': 'Hemd'})
     assert inference.process(Image.new('RGB', (64, 64))) == {'attributes': {'name': 'Hemd'}, 'cutout': None}
+
+
+def test_individual_tasks_skip_the_other_model(monkeypatch):
+    import inference
+    calls = []
+    monkeypatch.setattr(inference, 'cutout', lambda image: calls.append('cutout') or 'png')
+    monkeypatch.setattr(inference, 'recognize', lambda image: calls.append('attributes') or {'name': 'Hemd'})
+    assert inference.process(Image.new('RGB', (64, 64)), 'attributes') == {'attributes': {'name': 'Hemd'}, 'cutout': None}
+    assert calls == ['attributes']
+    calls.clear()
+    assert inference.process(Image.new('RGB', (64, 64)), 'cutout') == {'attributes': None, 'cutout': 'png'}
+    assert calls == ['cutout']
+
+
+def test_individual_task_contract_and_validation(client, monkeypatch):
+    received = []
+    monkeypatch.setitem(sys.modules, 'inference', types.SimpleNamespace(process=lambda image, task='all': received.append(task) or {'attributes': None, 'cutout': 'test-only'}))
+    headers = {'Authorization': 'Bearer ' + CODE}
+    assert client.get('/health', headers=headers).json()['photo_tasks'] == ['attributes', 'cutout']
+    assert client.post('/v1/garment', json={'photo': photo(), 'task': 'attributes'}, headers=headers).status_code == 200
+    assert received == ['attributes']
+    assert client.post('/v1/garment', json=[], headers=headers).status_code == 422
+    assert client.post('/v1/garment', json={'photo': photo(), 'task': 'other'}, headers=headers).status_code == 422
+    assert received == ['attributes']

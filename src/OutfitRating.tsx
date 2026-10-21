@@ -25,16 +25,18 @@ export function OutfitRating({
   const [error, setError] = useState('')
   const relevant = !rating?.occasion || rating.occasion === occasion
   const liked = relevant && rating?.verdict === 'liked'
-  async function rate(reason?: OutfitFeedback['reason']) {
+  async function rate(reason?: OutfitFeedback['reason'], rejected = false) {
     setBusy(true)
     setError('')
     try {
-      if (reason) {
+      if (reason || rejected) {
         await setOutfitFeedback(ids, 'rejected', db, { reason, occasion })
         notify(
           reason === 'occasion'
             ? `Für ${occasion} gemerkt. Dein allgemeiner Geschmack bleibt unverändert.`
-            : 'Bewertung gespeichert. Rückgängig geht unter Mehr → Dein Stilprofil.',
+            : reason === 'bold'
+              ? 'Gemerkt: Ähnliche Looks mit weniger Farbakzenten werden stärker gewichtet.'
+              : 'Bewertung gespeichert. Rückgängig geht unter Mehr → Dein Stilprofil.',
         )
       } else {
         const active = await toggleOutfitLike(ids, db, occasion)
@@ -87,14 +89,13 @@ export function OutfitRating({
         <Sheet
           title="Was passt nicht?"
           eyebrow="DEIN FEEDBACK"
-          onClose={() => {
-            if (!busy) setOpen(false)
-          }}
+          onClose={() => setOpen(false)}
+          closeDisabled={busy}
         >
           <p className="muted">
             Ein kurzer Hinweis macht die nächsten Vorschläge persönlicher. Du
             bewertest den Look für {occasion}, nicht jedes einzelne
-            Kleidungsstück.
+            Kleidungsstück. Ein Grund ist freiwillig.
           </p>
           <div className="feedback-reasons">
             {Object.entries(FEEDBACK_REASONS).map(([reason, text]) => (
@@ -107,7 +108,19 @@ export function OutfitRating({
                 {text}
               </button>
             ))}
+            <button
+              type="button"
+              className="text-button"
+              disabled={busy}
+              onClick={() => void rate(undefined, true)}
+            >
+              Ohne Grund ablehnen
+            </button>
           </div>
+          <p className="micro-copy">
+            „Zu auffällig“ berücksichtigt erfasste Farbakzente. Muster und
+            Passform werden daraus nicht abgeleitet.
+          </p>
           <p className="micro-copy">
             Nur heute Lust auf etwas anderes? Schliesse dieses Fenster und wähle
             „Anderer Look“ oder „Neu kombinieren“. Das zählt nicht als

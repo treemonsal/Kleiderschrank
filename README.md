@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.19.1** · [iPhone-Prüfliste](IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.20.0** · [iPhone-Prüfliste](IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -30,9 +30,19 @@ Der **Chat** nutzt nach eigener Freigabe Qwen3-VL-8B: deine Frage, höchstens se
 
 Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten oder Ausfälle haben. Keine kostenpflichtigen Ersatzdienste oder automatischen Wiederholungen. Anbieter-Speicherung und Löschfristen sind nicht garantiert. Stilurteile sind subjektiv; Passform, Material, Wärme und Schutzwirkung bleiben ohne passende Nachweise unbekannt.
 
+## Deinen Tageslook verfeinern
+
+Auf **Heute → Tageslook verfeinern** kannst du einzelne Teile für diese Anpassung festhalten, etwa deine Schuhe. **Ähnlich, aber wärmer** bevorzugt eine zusätzliche Jacke oder winterliche Saisonangaben, **Ruhiger kombinieren** weniger bekannte Farbakzente. **Ähnlich, aber anders** sucht eine andere Kombination mit möglichst wenigen Änderungen. Die Vorschau zeigt neue und erhaltene Teile. Erst **Für heute übernehmen** speichert die Auswahl; bei einem heutigen Kalenderplan bleibt dessen Notiz erhalten. Bereits getragene Tage werden hier nicht geändert. Die Auswahl bleibt nach Neustart gespeichert; die Festhalte-Häkchen gelten für den offenen Dialog.
+
+Die Anpassung nutzt lokale Kombinationsregeln, deine Angaben und vorhandenes Feedback, keine zusätzliche Online-Anfrage oder neue Fotoanalyse. Material, Muster, Passform und tatsächliche Wärme sind nicht nachgewiesen. Ohne passende verfügbare Teile oder ausreichende Farbangaben wird keine passende Variante behauptet.
+
+**Daumen runter:** Ein Grund ist freiwillig. **Zu auffällig** gibt künftigen Looks mit weniger erfassten Farbakzenten mehr Gewicht; **Ohne Grund ablehnen** blockiert nur diesen Look für den bewerteten Anlass. Vorhandene Farb-, Stil- und Anlassgründe sowie das Zurücknehmen unter **Mehr → Dein Stilprofil** bleiben erhalten.
+
 ## Fotos mit KI vorbereiten
 
 Wähle ein einzelnes Kleidungsfoto und tippe bei Bedarf auf **Foto mit KI vorbereiten**. Erst dieser Start sendet das Foto an die freigegebenen Dienste. Die KI trägt erkannte Angaben ein; du kannst sie prüfen und ändern. Eine Freistellung erscheint zunächst als Vorschau: **Freistellung übernehmen** wendet sie an, **Freistellung verwerfen** erhält das bisherige Foto. Original und bewusst übernommene Freistellung werden erst beim Speichern dauerhaft abgelegt.
+
+Wenn ein Schritt scheitert, kannst du **Nur Angaben erneut erkennen** oder **Nur Hintergrund erneut entfernen** wählen. Das gelungene Ergebnis und eigene Eingaben bleiben erhalten; nur der betroffene Community-Dienst erhält einen neuen Auftrag. Es gibt keine automatischen Wiederholungen. Eigene Server müssen die einzelnen Schritte unterstützen; bei älteren Servern wird vor einem weiteren Foto-Upload ein Hinweis angezeigt.
 
 Automatische Fotoverarbeitung nach Auswahl/Freigabe und der experimentelle Mehrfachscan sind auf Wunsch ab Version 0.19.1 entfernt. Bereits gespeicherte Stücke und die Shopping-Funktion bleiben erhalten.
 

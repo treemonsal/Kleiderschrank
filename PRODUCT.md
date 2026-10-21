@@ -1,6 +1,12 @@
 # MyStyle
 
-Die Versionsabschnitte dokumentieren die Entwicklung. Massgeblich für den aktuellen Umfang sind Version 0.19.1 und die aktuelle README; ältere Abschnitte halten die damaligen Anforderungen und Grenzen fest.
+Die Versionsabschnitte dokumentieren die Entwicklung. Massgeblich für den aktuellen Umfang sind Version 0.20.0 und die aktuelle README; ältere Abschnitte halten die damaligen Anforderungen und Grenzen fest.
+
+## Version 0.20.0 – gezielter und zuverlässiger verfeinern
+
+- Fehlgeschlagene Foto-Schritte separat, manuell wiederholen; nur betreffenden Community-Anbieter kontaktieren und gelungene Ergebnisse behalten. Eigene Server über expliziten Health-Vertrag absichern; keine stillschweigend doppelte Modellarbeit auf älteren Servern.
+- Optionales Negativfeedback ohne Grund und neuer Grund „Zu auffällig“. Nur bekannte Farbakzente daraus begrenzt verallgemeinern, keine einzelnen Farben/Stile/Teile oder unbekannte Passform ablehnen. Anlassbezug, Rücknahme und bestehende Gründe erhalten. Sicherungsformat 8 mit Lesbarkeit 1–7, Datenbank weiterhin 5.
+- Tageslook vor Tragebestätigung gezielt verfeinern: Teile für eine Anpassung festhalten und ähnliche, wärmere oder ruhigere Varianten mit möglichst wenigen Änderungen suchen. Vorschau ohne Änderung; erst explizit atomar übernehmen. Bestehende verfügbare Stücke, echte Kategorien und bisherige Eignungs-/Wäscheregeln respektieren, keine externen Anfragen. Wärme/Saison und Farbanzahl sind Heuristiken. Konflikte durch neue Bewertungen, Metadaten, Wäsche, Präferenzen, Tagesauswahl oder Tragebestätigung vor Übernahme prüfen. Heutigen Plan samt Notiz aktualisieren, historische und gespeicherte Original-Looks erhalten.
 
 ## Version 0.19.1 – manuelle Foto-KI wiederherstellen
 

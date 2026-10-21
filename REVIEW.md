@@ -1,4 +1,14 @@
-# Aktuelle Prüfung – Version 0.19.1
+# Aktuelle Prüfung – Version 0.20.0
+
+- Vollständiger Ausgangsstand `1afa369` als annotierter GitHub-Tag `backup/before-refinements-0.19.1` gesichert. Gespeicherte Bestände und bisherige Projektsicherung erhalten.
+- Gezielte manuelle Foto-Wiederholung: Attribute und Freistellung getrennt abrufen, fertige Vorschau/übernommene Freistellung und eigene Eingaben erhalten. Neuer Auftrag nur beim ausgewählten Anbieter, keine automatischen Anfragen. Eigener Server unterstützt `task`; ältere Server ohne passende Health-Fähigkeit vor einem erneuten Upload abweisen. Vorhandene vollständige Analyse bleibt kompatibel.
+- Neuer freiwilliger Ablehnungsgrund „Zu auffällig“ beeinflusst nur eine begrenzte Gewichtung bekannter Farbakzente; unbekannte Muster/Passform, einzelne Farben und Stilrichtungen werden daraus nicht abgeleitet. Ablehnung ohne Grund generalisiert nicht. Anlassbezogene Bewertung und Rücknahme bestehen weiter. Exportformat 8 mit Lesbarkeit 1–7; Dexie-Version 5 unverändert.
+- Anpassung des heutigen noch nicht getragenen Looks mit temporär festgehaltenen Teilen, ähnlicher/wärmerer/ruhigerer Variante und expliziter Vorschau/Übernahme. Alle Ein-Teil-Änderungen der Basis auch jenseits des ersten Kandidatenfensters untersuchen; passende minimale Änderungen priorisieren. Eignung, Wäsche, Vollständigkeit und abgelehnte Kombinationen auch für diese direkte Nachbarsuche prüfen. Kein Online-Upload. Atomare Übernahme mit Revisionen und erneuter Validierung schützt vor konkurrierenden Änderungen; bestehende Plan-Notiz und alte gespeicherte Looks bleiben erhalten.
+- Statische Eignungsbewertungen innerhalb einer Generierung zwischenspeichern. Keine geänderte Rangfolge normaler Vorschläge, keine erhöhte Performance-Testgrenze.
+- Build, Format, Projektsicherung und alle 259 Datentests bestanden. Die ersten 33 gezielten Browserfälle bestanden; anschliessend alle neun neuen Browserfälle einschliesslich bestätigtem Tragetag aus einem zweiten Fenster und Abbruch einer gezielten Server-Anfrage. Neue Testdateien zusätzlich mit TypeScript geprüft. Zehn Python-Serverprüfungen bestanden ohne Laden neuer Modelle; eine bestehende Starlette/httpx-Deprecation-Warnung bleibt in der leichten Testumgebung. Die 5000-ms-Performancegrenze für 1000 Stücke bleibt unverändert.
+- Vollständiger Browserlauf, Unterpfadprüfung und Veröffentlichung folgen.
+
+# Vorherige Prüfung – Version 0.19.1
 
 - Ausgangsstand `73b0923` vor Änderungen vollständig als annotierter Tag `backup/before-photo-rollback-0.19.0` auf GitHub gesichert.
 - Auf Nutzerwunsch automatische Analyse nach Fotoauswahl und Inline-Aktivierung sowie automatische Freistellungsübernahme entfernt. Einzelbild-KI bewusst starten; Freistellung erst nach ausdrücklicher Übernahme. Verwerfen einer neuen Vorschau überschreibt keine vorhandene Freistellung. Experimentellen Mehrfachscan, ausschliessliche Hilfsfunktionen, Styles und Tests entfernt.

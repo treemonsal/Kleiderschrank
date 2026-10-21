@@ -1,5 +1,13 @@
 # Entwicklungsplan
 
+## Version 0.20.0 – gezielte Foto-KI und Tageslook-Anpassungen
+
+- [x] Ausgangsstand als Remote-Tag `backup/before-refinements-0.19.1` sichern
+- [x] Fehlgeschlagene Foto-Schritte einzeln wiederholen, gute Ergebnisse erhalten und ältere Server absichern
+- [x] Freiwillige Feedbackgründe erweitern und in Sicherungsformat 8 übernehmen
+- [x] Tageslook-Vorschau mit festgehaltenen Teilen und möglichst wenigen Änderungen implementieren
+- [ ] Neue und bestehende Abläufe, Datenübernahme, Offline und Veröffentlichung prüfen
+
 ## Version 0.19.1 – Foto-Erweiterungen gezielt zurücknehmen
 
 - [x] Vollständigen Ausgangsstand als Remote-Tag `backup/before-photo-rollback-0.19.0` sichern
