@@ -6,7 +6,7 @@
 - [x] Fehlgeschlagene Foto-Schritte einzeln wiederholen, gute Ergebnisse erhalten und ältere Server absichern
 - [x] Freiwillige Feedbackgründe erweitern und in Sicherungsformat 8 übernehmen
 - [x] Tageslook-Vorschau mit festgehaltenen Teilen und möglichst wenigen Änderungen implementieren
-- [ ] Neue und bestehende Abläufe, Datenübernahme, Offline und Veröffentlichung prüfen
+- [x] 259 Datentests, alle 168 Browserfälle im frischen GitHub-Gesamtlauf, zehn Serverprüfungen und neun zusätzliche Unterpfad-Browserfälle einschliesslich Offline bestanden; veröffentlichte Dateien bytegleich geprüft
 
 ## Version 0.19.1 – Foto-Erweiterungen gezielt zurücknehmen
 
