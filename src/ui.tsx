@@ -110,13 +110,14 @@ export function GarmentPicture({
   item,
   large = false,
 }: {
-  item: Pick<Garment, 'photo' | 'cutout' | 'name' | 'category'>
+  item: Pick<Garment, 'photo' | 'cutout' | 'name' | 'category'> &
+    Partial<Pick<Garment, 'color'>>
   large?: boolean
 }) {
   const photo = item.cutout ?? item.photo
   const placeholder = (
     <div className="photo-placeholder">
-      <GarmentSketch category={item.category} />
+      <GarmentSketch category={item.category} color={item.color} />
       <span>{item.category}</span>
     </div>
   )
@@ -130,7 +131,7 @@ export function GarmentPicture({
           loading={large ? 'eager' : 'lazy'}
           fallback={
             <div className="photo-placeholder">
-              <GarmentSketch category={item.category} />
+              <GarmentSketch category={item.category} color={item.color} />
               <span>Foto nicht verfügbar</span>
             </div>
           }

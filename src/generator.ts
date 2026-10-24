@@ -285,6 +285,9 @@ export function generateOutfits(
       reasons.push(
         'Mehrere Farbakzente machen diesen Vorschlag bewusst lebhafter.',
       )
+    const fit = compatibility(selected)
+    if (fit.colorNote) reasons.push(fit.colorNote)
+    if (fit.styleNote) reasons.push(fit.styleNote)
     if (options.style !== 'Alle') {
       const desired = options.style
       const matches = selected.filter((item) =>
@@ -305,9 +308,9 @@ export function generateOutfits(
       )
     )
       reasons.push('Deine Favoriten oder Stilvorlieben wurden berücksichtigt.')
-    if (compatibility(selected).sharedStyle)
+    if (fit.sharedStyle)
       reasons.push('Gemeinsame erfasste Stilrichtungen verbinden die Stücke.')
-    if (compatibility(selected).familiar)
+    if (fit.familiar)
       reasons.push(
         'Einige dieser Stücke hast du bereits zusammen positiv bewertet.',
       )

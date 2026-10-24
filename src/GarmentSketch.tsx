@@ -1,7 +1,16 @@
-import type { Category } from './model'
+import { useId } from 'react'
+import { COLORS, type Category } from './model'
 
 /** Category drawings for missing photos; never presented as a user's garment. */
-export function GarmentSketch({ category }: { category: Category }) {
+export function GarmentSketch({
+  category,
+  color = '',
+}: {
+  category: Category
+  color?: string
+}) {
+  const gradient = useId()
+  const known = COLORS.find((entry) => entry.name === color)
   const outlines: Record<Category, string> = {
     Oberteile:
       'M35 22 22 29 12 47 26 55 32 44 32 83 68 83 68 44 74 55 88 47 78 29 65 22 Q50 33 35 22Z',
@@ -20,8 +29,15 @@ export function GarmentSketch({ category }: { category: Category }) {
     <svg
       className="garment-sketch"
       viewBox="0 0 100 100"
-      fill="currentColor"
-      fillOpacity="0.07"
+      fill={
+        !known
+          ? 'currentColor'
+          : known.name === 'Bunt'
+            ? `url(#${gradient})`
+            : known.hex
+      }
+      fillOpacity={known ? 0.92 : 0.07}
+      data-color={known?.name}
       stroke="currentColor"
       strokeWidth="1.2"
       strokeLinejoin="round"
@@ -29,6 +45,15 @@ export function GarmentSketch({ category }: { category: Category }) {
       aria-hidden="true"
       focusable="false"
     >
+      {known?.name === 'Bunt' && (
+        <defs>
+          <linearGradient id={gradient} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#d5a7b5" />
+            <stop offset="0.5" stopColor="#dec17b" />
+            <stop offset="1" stopColor="#718ba8" />
+          </linearGradient>
+        </defs>
+      )}
       <path d={outlines[category]} />
     </svg>
   )

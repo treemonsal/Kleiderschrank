@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.20.0** · [iPhone-Prüfliste](IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.21.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -29,6 +29,12 @@ Der **Chat** nutzt nach eigener Freigabe Qwen3-VL-8B: deine Frage, höchstens se
 **Nachricht diktieren** und **Vorlesen** sind optionale Browserfunktionen. Erkannten Text zuerst prüfen und selbst senden. Browser-Sprachdienste können Audio/Text an ihren Anbieter übertragen; MyStyle speichert keine Audiodateien. Tippen bleibt immer möglich.
 
 Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten oder Ausfälle haben. Keine kostenpflichtigen Ersatzdienste oder automatischen Wiederholungen. Anbieter-Speicherung und Löschfristen sind nicht garantiert. Stilurteile sind subjektiv; Passform, Material, Wärme und Schutzwirkung bleiben ohne passende Nachweise unbekannt.
+
+## Farben, Stil und Tragestatistik
+
+Lokale Vorschläge bewerten seit 0.21.0 bekannte Farbpaare nach klassischen Stylingregeln: Rot mit Grün oder Rot mit Rosa wird schwächer gewichtet, Blau mit Rosa oder Gelb stärker. Blaue Hosen zählen als Jeansbasis und damit fast neutral. Sehr sportliche und sehr elegante Stücke zusammen gelten als Stilbruch. Das sind nachvollziehbare Regeln für die erfassten Farbnamen, keine Analyse echter Farbtöne oder Muster. Stücke ohne Foto erscheinen als Skizze in ihrer erfassten Farbe.
+
+Im Detail jedes Stücks steht, wie oft es als getragen bestätigt wurde und wann zuletzt. Unter **Kleiderschrank → Sortieren → Selten getragen zuerst** findest du Stücke, die nur im Schrank hängen.
 
 ## Deinen Tageslook verfeinern
 
@@ -153,7 +159,7 @@ Ein eigener kompatibler Server bleibt unter **Eigenen Server verbinden** optiona
 3. Ergebnis prüfen. **Freistellung übernehmen** setzt die transparente Vorschau ins Formular; erst normales Speichern übernimmt sie dauerhaft. **Vorschau verwerfen** behält das bisherige Foto. Abbrechen beendet den laufenden Worker.
 4. **Originalfoto verwenden** holt das unverändert aufbewahrte Original zurück. Neue Fotoauswahl verwirft die dazugehörige alte Freistellung.
 
-Einzelne Stücke vor ruhigem Hintergrund eignen sich am besten. Das kleine U²-Net-Modell erkennt auffälligen Vordergrund; es versteht keine Kleidungskategorien, Passform oder Stilqualität. Kanten, Schatten und Muster können fehlerhaft sein. Die Funktion ist **experimentell und auf echtem iPhone noch nicht geprüft**; sie ist für die übrige App nicht erforderlich. Nach erfolgreichem ersten Laden arbeitet sie bei verfügbarem Cache auch offline. Unter **Mehr → Lokale Freistellung & KI-Speicher → KI-Dateien vom Gerät entfernen** lassen sich die etwa 19 MB Binärdateien löschen; Fotos und gespeicherte Freistellungen bleiben erhalten. Ein späterer Start benötigt dann wieder Netz. Quellen, Lizenzhinweise und Messgrenzen stehen in [IMAGE_ASSISTANCE.md](IMAGE_ASSISTANCE.md).
+Einzelne Stücke vor ruhigem Hintergrund eignen sich am besten. Das kleine U²-Net-Modell erkennt auffälligen Vordergrund; es versteht keine Kleidungskategorien, Passform oder Stilqualität. Kanten, Schatten und Muster können fehlerhaft sein. Die Funktion ist **experimentell und auf echtem iPhone noch nicht geprüft**; sie ist für die übrige App nicht erforderlich. Nach erfolgreichem ersten Laden arbeitet sie bei verfügbarem Cache auch offline. Unter **Mehr → Lokale Freistellung & KI-Speicher → KI-Dateien vom Gerät entfernen** lassen sich die etwa 19 MB Binärdateien löschen; Fotos und gespeicherte Freistellungen bleiben erhalten. Ein späterer Start benötigt dann wieder Netz. Quellen, Lizenzhinweise und Messgrenzen stehen in [IMAGE_ASSISTANCE.md](docs/IMAGE_ASSISTANCE.md).
 
 ## Outfits und dein persönlicher Stil
 
@@ -232,7 +238,7 @@ VITE_BASE_PATH=/Kleiderschrank/ npm run build
 VITE_BASE_PATH=/Kleiderschrank/ npm run preview
 ```
 
-Danach vor Root-Browserprüfungen wieder `npm run build` ausführen. Der echte iPhone-/Safari-Test bleibt separat in [IPHONE_CHECK.md](IPHONE_CHECK.md) beschrieben.
+Danach vor Root-Browserprüfungen wieder `npm run build` ausführen. Der echte iPhone-/Safari-Test bleibt separat in [IPHONE_CHECK.md](docs/IPHONE_CHECK.md) beschrieben.
 
 Version **0.20.0** wurde am 21. Oktober 2026 durch [Pages-Lauf 39627640472](https://github.com/treemonsal/Kleiderschrank/actions/runs/39627640472) veröffentlicht. Der [GitHub-Gesamtlauf 39626544776](https://github.com/treemonsal/Kleiderschrank/actions/runs/39626544776) besteht mit **259 Datentests und allen 168 Browserfällen**. Zusätzlich bestehen zehn Python-Serverprüfungen und alle neun neuen Browserfälle unter dem Pages-Unterpfad einschliesslich Offline-Neustart. Öffentliche App-Dateien, Manifest, Icons und Service Worker sind bytegleich mit dem geprüften Pages-Build. Gezielte Foto-Wiederholung, freiwilliges detaillierteres Feedback und Tageslook-Anpassungen sind verfügbar; automatische Fotoverarbeitung und Mehrfachscan bleiben entfernt. Shopping und bestehende persönliche Daten bleiben erhalten.
 
@@ -240,8 +246,8 @@ Version **0.20.0** wurde am 21. Oktober 2026 durch [Pages-Lauf 39627640472](http
 
 Vor der früheren Bereinigung wurde die **gesamte App 0.17.0** gesichert: Quellarchiv, vollständiges Git-Bundle, GitHub-Einstellungs-Snapshot und Prüfsummen unter [design/backups/full-0.17.0](design/backups/full-0.17.0/RESTORE.md). Alle 158 Projektdateien wurden byteweise verglichen; Bundle-Klon und `git fsck` bestehen. Der GitHub-Tag **`backup/before-cleanup-0.17.0`** hält den Ausgangsstand zusätzlich fest. Rückkehr über einen regulären Revert, ohne Force-Push oder Löschen lokaler Daten.
 
-Der Stand vor der aktuellen Kritikerprüfung ist zusätzlich als GitHub-Tag **`backup/before-critic-review-0.17.1`** gesichert. Kritik, Korrekturen und verbleibende Grenzen stehen in [CRITIC_REVIEW.md](CRITIC_REVIEW.md).
+Der Stand vor der aktuellen Kritikerprüfung ist zusätzlich als GitHub-Tag **`backup/before-critic-review-0.17.1`** gesichert. Kritik, Korrekturen und verbleibende Grenzen stehen in [CRITIC_REVIEW.md](docs/archive/CRITIC_REVIEW.md).
 
 Das frühere dunkle Design bleibt separat unter [Design-Backup](design/backups/README.md) erhalten. Einzelheiten zum aktuellen Icon stehen unter [design/app-icon](design/app-icon/README.md).
 
-[Produktumfang](PRODUCT.md) · [Entwicklungsplan](ROADMAP.md) · [App-Audit](APP_AUDIT.md) · [Prüfprotokoll](REVIEW.md) · [Frühere Veröffentlichungen](docs/RELEASE_HISTORY.md)
+[Produktumfang](PRODUCT.md) · [Entwicklungsplan](ROADMAP.md) · [App-Audit](docs/archive/APP_AUDIT.md) · [Prüfprotokoll](docs/archive/REVIEW.md) · [Frühere Veröffentlichungen](docs/RELEASE_HISTORY.md)

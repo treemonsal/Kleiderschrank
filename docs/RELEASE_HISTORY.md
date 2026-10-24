@@ -8,7 +8,7 @@ Fotos bleiben bei Favoriten- und Wäschewechseln erhalten. Die gemeinsame Bildan
 
 Beim Wechsel zwischen Heute, Kleiderschrank, Outfits und Mehr bleiben Datum, Suche, Filter, Sortierung, Outfit-Reiter und Scrollposition innerhalb der laufenden App erhalten. Tippe erneut auf den aktiven Bereich, um nach oben zu gelangen. Wischen wechselt nur im Tagesbereich das Datum. Deine dauerhaft gespeicherten Stil-/Outfit-Einstellungen bleiben davon unabhängig.
 
-Lange Fenster behalten eine erreichbare Schliessen-Zeile. Ungespeicherte Änderungen an Look-Namen, Kalender, Vorlieben und Stilcheck verlangen vor dem Schliessen eine Entscheidung. Die Farbprobe schliesst nach Übernahme. Einstellungen enthalten eine aktuelle Bedienhilfe statt des alten Nachtmodus-Texts; lokale KI-Speicheroptionen sind eingeklappt. [Vollständiger Prüfumfang und Befunde](../APP_AUDIT.md).
+Lange Fenster behalten eine erreichbare Schliessen-Zeile. Ungespeicherte Änderungen an Look-Namen, Kalender, Vorlieben und Stilcheck verlangen vor dem Schliessen eine Entscheidung. Die Farbprobe schliesst nach Übernahme. Einstellungen enthalten eine aktuelle Bedienhilfe statt des alten Nachtmodus-Texts; lokale KI-Speicheroptionen sind eingeklappt. [Vollständiger Prüfumfang und Befunde](archive/APP_AUDIT.md).
 
 ## Schwarz-Weiss-Icon – Version 0.16.1
 

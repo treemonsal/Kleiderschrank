@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useRegisterSW } from 'virtual:pwa-register/react'
@@ -18,7 +18,7 @@ import {
   Trash2,
   WifiOff,
   X,
-  Settings2,
+  Settings,
 } from 'lucide-react'
 import {
   db,
@@ -27,23 +27,46 @@ import {
   toggleFavorite,
   setLaundry,
 } from './db'
-import { OutfitView } from './OutfitView'
 import { CATEGORIES, filterGarments, type Garment } from './model'
-import { Editor } from './Editor'
-import { BackupView } from './BackupView'
 import { BackupReminder } from './BackupReminder'
 import { ShoppingCard } from './Shopping'
 import { DailyOutfit } from './DailyOutfit'
 import { LaundryIcon, useTapMotion } from './motion'
 import { localDay, shiftDay } from './calendar'
+import { describeWear, wearStats, type WearStats } from './wear-stats'
 import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
-import { StylistChat } from './StylistChat'
 import { useStylistInbox } from './stylist-inbox'
-import { restorePageScroll, useViewState } from './view-memory'
+import {
+  restorePageScroll,
+  scrollSectionIntoView,
+  useViewState,
+} from './view-memory'
 
 type View = 'home' | 'wardrobe' | 'outfits' | 'settings'
+
+// Rarely needed areas load on first use; the PWA still precaches every chunk.
+const OutfitView = lazy(() =>
+  import('./OutfitView').then((module) => ({ default: module.OutfitView })),
+)
+const BackupView = lazy(() =>
+  import('./BackupView').then((module) => ({ default: module.BackupView })),
+)
+const Editor = lazy(() =>
+  import('./Editor').then((module) => ({ default: module.Editor })),
+)
+const StylistChat = lazy(() =>
+  import('./StylistChat').then((module) => ({ default: module.StylistChat })),
+)
+function Loading() {
+  return (
+    <div className="loading-state" role="status">
+      <LoaderCircle className="spin" />
+      <p>Wird geöffnet …</p>
+    </div>
+  )
+}
 
 function Home({
   items,
@@ -166,11 +189,13 @@ function Home({
 
 function Wardrobe({
   items,
+  wear,
   onAdd,
   onOpen,
   onFavorite,
 }: {
   items: Garment[]
+  wear: Map<string, WearStats>
   onAdd: () => void
   onOpen: (id: string) => void
   onFavorite: (item: Garment) => void
@@ -186,9 +211,15 @@ function Wardrobe({
     .sort((a, b) =>
       sort === 'name'
         ? a.name.localeCompare(b.name, 'de')
-        : sort === 'oldest'
-          ? a.createdAt.localeCompare(b.createdAt)
-          : b.createdAt.localeCompare(a.createdAt),
+        : sort === 'least-worn'
+          ? (wear.get(a.id)?.count ?? 0) - (wear.get(b.id)?.count ?? 0) ||
+            (wear.get(a.id)?.lastWorn ?? '').localeCompare(
+              wear.get(b.id)?.lastWorn ?? '',
+            ) ||
+            a.name.localeCompare(b.name, 'de')
+          : sort === 'oldest'
+            ? a.createdAt.localeCompare(b.createdAt)
+            : b.createdAt.localeCompare(a.createdAt),
     )
   const hasFilters = !!query || category !== 'Alle' || favorites || laundryOnly
   return (
@@ -303,6 +334,7 @@ function Wardrobe({
             <option value="newest">Zuletzt hinzugefügt</option>
             <option value="oldest">Zuerst hinzugefügt</option>
             <option value="name">Name A–Z</option>
+            <option value="least-worn">Selten getragen zuerst</option>
           </select>
         </label>
       )}
@@ -350,12 +382,14 @@ function Wardrobe({
 
 function Detail({
   item,
+  wear,
   onClose,
   onEdit,
   onFavorite,
   onDeleted,
 }: {
   item: Garment
+  wear?: WearStats
   onClose: () => void
   onEdit: () => void
   onFavorite: () => Promise<void>
@@ -451,6 +485,7 @@ function Detail({
             <p>{item.notes}</p>
           </div>
         )}
+        <p className="micro-copy wear-line">{describeWear(wear)}</p>
         <p className="micro-copy">
           Hinzugefügt am{' '}
           {new Intl.DateTimeFormat('de-CH', { dateStyle: 'medium' }).format(
@@ -529,8 +564,23 @@ export default function App() {
     null,
   )
   const items = wardrobe?.items
+  const wearData = useLiveQuery(async () => {
+    try {
+      return {
+        calendar: await db.calendar.toArray(),
+        outfits: await db.outfits.toArray(),
+      }
+    } catch {
+      return undefined
+    }
+  }, [])
+  const wear = wearData
+    ? wearStats(wearData.calendar, wearData.outfits)
+    : new Map<string, WearStats>()
   const [view, setView] = useState<View>('home')
   const [chatOpen, setChatOpen] = useState(false)
+  // Keep the chat mounted after first use so drafts and requests survive closing.
+  const [chatLoaded, setChatLoaded] = useState(false)
   const inbox = useStylistInbox()
   const tapMotion = useTapMotion()
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
@@ -618,7 +668,10 @@ export default function App() {
             aria-label="Mit deinem Stylisten sprechen"
             aria-describedby={inbox.hasUnread ? 'stylist-notice' : undefined}
             disabled={!items || wardrobe?.failed || !!editor || !!selected}
-            onClick={() => setChatOpen(true)}
+            onClick={() => {
+              setChatLoaded(true)
+              setChatOpen(true)
+            }}
           >
             <span>Stylist</span>
             <span className="stylist-glyph">
@@ -640,7 +693,7 @@ export default function App() {
             aria-label="Einstellungen öffnen"
             onClick={() => navigate('settings')}
           >
-            <Settings2 size={21} strokeWidth={1.6} />
+            <Settings size={21} strokeWidth={1.6} />
           </button>
         </div>
       </header>
@@ -706,9 +759,7 @@ export default function App() {
             onOutfits={() => navigate('outfits')}
             onBackup={() => {
               navigate('settings', () => {
-                const section = document.getElementById('backup-section')
-                section?.scrollIntoView({ block: 'start' })
-                section?.focus({ preventScroll: true })
+                cancelScroll.current = scrollSectionIntoView('backup-section')
               })
             }}
             notify={notify}
@@ -716,19 +767,24 @@ export default function App() {
         ) : view === 'wardrobe' ? (
           <Wardrobe
             items={items}
+            wear={wear}
             onAdd={() => setEditor('new')}
             onOpen={setSelectedId}
             onFavorite={(item) => void favorite(item)}
           />
         ) : view === 'outfits' ? (
-          <OutfitView
-            items={items}
-            onOpen={setSelectedId}
-            onAdd={() => setEditor('new')}
-            notify={notify}
-          />
+          <Suspense fallback={<Loading />}>
+            <OutfitView
+              items={items}
+              onOpen={setSelectedId}
+              onAdd={() => setEditor('new')}
+              notify={notify}
+            />
+          </Suspense>
         ) : (
-          <BackupView items={items} notify={notify} />
+          <Suspense fallback={<Loading />}>
+            <BackupView items={items} notify={notify} />
+          </Suspense>
         )}
       </main>
       <nav className="bottom-nav" aria-label="Hauptnavigation">
@@ -765,6 +821,7 @@ export default function App() {
         <Detail
           key={selected.id}
           item={selected}
+          wear={wear.get(selected.id)}
           onClose={() => setSelectedId(null)}
           onEdit={() => {
             setEditor(selected)
@@ -778,29 +835,35 @@ export default function App() {
         />
       )}
       {editor && (
-        <Editor
-          key={editor === 'new' ? 'new' : editor.id}
-          item={editor === 'new' ? undefined : editor}
-          onClose={() => setEditor(null)}
-          onSaved={() => {
-            setEditor(null)
-            notify(
-              editor === 'new'
-                ? 'Dein neues Stück ist im Kleiderschrank.'
-                : 'Deine Änderungen sind gespeichert.',
-            )
-          }}
-        />
+        <Suspense fallback={null}>
+          <Editor
+            key={editor === 'new' ? 'new' : editor.id}
+            item={editor === 'new' ? undefined : editor}
+            onClose={() => setEditor(null)}
+            onSaved={() => {
+              setEditor(null)
+              notify(
+                editor === 'new'
+                  ? 'Dein neues Stück ist im Kleiderschrank.'
+                  : 'Deine Änderungen sind gespeichert.',
+              )
+            }}
+          />
+        </Suspense>
       )}
-      <StylistChat
-        open={chatOpen}
-        newInterview={inbox.newInterview}
-        markReplyRead={inbox.markReply}
-        markInterviewRead={inbox.markInterview}
-        onClose={() => setChatOpen(false)}
-        onOpen={setSelectedId}
-        notify={notify}
-      />
+      {chatLoaded && (
+        <Suspense fallback={null}>
+          <StylistChat
+            open={chatOpen}
+            newInterview={inbox.newInterview}
+            markReplyRead={inbox.markReply}
+            markInterviewRead={inbox.markInterview}
+            onClose={() => setChatOpen(false)}
+            onOpen={setSelectedId}
+            notify={notify}
+          />
+        </Suspense>
+      )}
       <div
         className="toast-region"
         role="status"

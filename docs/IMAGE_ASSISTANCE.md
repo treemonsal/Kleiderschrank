@@ -24,7 +24,7 @@ Auch die frühere optionale eigene Qwen2B-Inferenz konnte nach Anwendung der CDN
 
 Der Benutzer hat externe Foto-KI ausdrücklich gewünscht und die Vorgabe „komplett kostenlos“ bestätigt. Die bisherige U2NETP-Freistellung hat auf seinem iPhone nicht das gewünschte Ergebnis geliefert. Ein bestandener synthetischer Browserfall beweist keine Qualität für reale Kleidung.
 
-Die neue Online-Anbindung und Servervorlage stehen in [server/README.md](server/README.md): Qwen3-VL-2B für alle vorhandenen Merkmalsfelder, BiRefNet-General-Lite für Segmentierung. Modelle laufen auf einem kostenlosen, eigenen HF CPU Basic Space, ohne bezahlte Anbieter-API. Fotos werden nach aktivierter Freigabe einzeln übertragen, im RAM verarbeitet und nicht absichtlich gespeichert oder geloggt. Hugging Face ist der Infrastrukturbetreiber.
+Die neue Online-Anbindung und Servervorlage stehen in [server/README.md](../server/README.md): Qwen3-VL-2B für alle vorhandenen Merkmalsfelder, BiRefNet-General-Lite für Segmentierung. Modelle laufen auf einem kostenlosen, eigenen HF CPU Basic Space, ohne bezahlte Anbieter-API. Fotos werden nach aktivierter Freigabe einzeln übertragen, im RAM verarbeitet und nicht absichtlich gespeichert oder geloggt. Hugging Face ist der Infrastrukturbetreiber.
 
 Ohne bereitgestellten Server wird keine Online-Erkennung vorgetäuscht. Die PWA enthält eine echte Verbindungseinrichtung, keine Anbieter-Schlüssel. Gesundheitsprüfung bestätigt nur Erreichbarkeit/Auth/API-Version, keine Modellqualität. CPU-Laufzeit, RAM und echte Kleidung müssen zusätzlich geprüft werden. Notizen beschreiben nur sichtbare Details, Marke ohne lesbares Zeichen leer, Stil/Saison als Schätzungen.
 
