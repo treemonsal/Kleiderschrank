@@ -288,9 +288,7 @@ for (const width of [375, 390, 430]) {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
     await page.getByRole('button', { name: 'Outfits', exact: true }).click()
-    await expect(
-      page.getByRole('heading', { name: 'Deine nächsten Looks.' }),
-    ).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Outfits' })).toBeVisible()
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -301,10 +299,7 @@ for (const width of [375, 390, 430]) {
       fullPage: true,
     })
     await page.getByRole('button', { name: 'Mehr', exact: true }).click()
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-theme',
-      'editorial',
-    )
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
     await page.getByRole('button', { name: 'Outfits', exact: true }).click()
     await page.getByRole('button', { name: 'Stilvorlieben bearbeiten' }).click()
     expect(

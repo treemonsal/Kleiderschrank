@@ -118,7 +118,7 @@ export function GarmentPicture({
   const placeholder = (
     <div className="photo-placeholder">
       <GarmentSketch category={item.category} color={item.color} />
-      <span>{item.category}</span>
+      <span className="placeholder-category">{item.category}</span>
     </div>
   )
   return (

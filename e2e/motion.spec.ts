@@ -181,13 +181,13 @@ test('Schnelle Tabwechsel behalten die letzte Auswahl, auch beim sofortigen Zur√
     nav.getByRole('button', { name: 'Outfits', exact: true }),
   ).toHaveAttribute('aria-current', 'page')
   await expect(
-    page.getByRole('heading', { name: 'Deine n√§chsten Looks.', exact: true }),
+    page.getByRole('heading', { name: 'Outfits', exact: true }),
   ).toBeVisible()
   await page
     .getByRole('button', { name: 'Outfits zusammenstellen', exact: true })
     .click()
   await expect(
-    page.getByText('Noch kein kompletter Look.', { exact: true }),
+    page.getByText('Noch kein kompletter Look', { exact: true }),
   ).toBeVisible()
   expect(errors).toEqual([])
 })

@@ -221,10 +221,7 @@ for (const width of [375, 390, 430]) {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
     await page.getByRole('button', { name: 'Mehr', exact: true }).click()
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-theme',
-      'editorial',
-    )
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
     await page.getByRole('button', { name: 'Heute', exact: true }).click()
     await start(page, '#0000ff', '#ff0000')
     await openPicker(page)

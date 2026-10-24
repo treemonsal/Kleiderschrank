@@ -111,16 +111,15 @@ export function BackupView({
   return (
     <div className="view settings-view">
       <header className="page-heading">
-        <p className="eyebrow">DEIN PERSÖNLICHER RAUM</p>
-        <h1>Gut aufgehoben.</h1>
-        <p>Deine Stücke. Deine Daten. Deine Entscheidung.</p>
+        <h1>Mehr</h1>
+        <p>Profil, Foto-KI, Sicherung und Hilfe.</p>
       </header>
       <section className="privacy-banner">
         <div className="privacy-icon">
           <LockKeyhole size={23} strokeWidth={1.5} />
         </div>
         <div>
-          <h2>Privat ist hier der Standard.</h2>
+          <h2>Datenschutz</h2>
           <p>
             Dein Kleiderschrank wird auf diesem Gerät gespeichert. Freigegebene
             Online-Funktionen senden die jeweils erklärten Fotos oder Angaben an
@@ -346,8 +345,8 @@ export function BackupView({
       </p>
       {pending && (
         <Sheet
-          title="Deine Sicherung ist bereit."
-          eyebrow="IMPORT PRÜFEN"
+          title="Sicherung prüfen"
+          eyebrow="Import"
           onClose={() => {
             if (!busy) setPending(null)
           }}
@@ -442,8 +441,8 @@ export function BackupView({
       )}
       {help && (
         <Sheet
-          title="Immer griffbereit."
-          eyebrow="MYSTYLE AUF DEINEM IPHONE"
+          title="Auf dem iPhone installieren"
+          eyebrow="Installation"
           onClose={() => setHelp(false)}
         >
           <div className="install-content">

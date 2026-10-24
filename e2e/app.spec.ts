@@ -78,7 +78,7 @@ test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Suchen, Favorisieren un
     page.getByRole('button', { name: 'Sommerhemd öffnen' }),
   ).toBeVisible()
   await page.getByRole('button', { name: 'Schuhe', exact: true }).click()
-  await expect(page.getByText('Noch kein Treffer.')).toBeVisible()
+  await expect(page.getByText('Kein Treffer')).toBeVisible()
   await page.getByRole('button', { name: 'Filter zurücksetzen' }).click()
   await page.getByRole('button', { name: 'Nur Favoriten' }).click()
   await expect(
@@ -225,12 +225,9 @@ for (const width of [375, 390, 430]) {
       localStorage.setItem('mystyle-theme', 'light'),
     )
     await page.goto('/')
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-theme',
-      'editorial',
-    )
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
     await expect(
-      page.getByRole('heading', { name: 'Dein Look für heute.' }),
+      page.getByRole('heading', { name: 'Dein Look für heute' }),
     ).toBeVisible()
     expect(
       await page.evaluate(
@@ -264,10 +261,7 @@ for (const width of [375, 390, 430]) {
         )
       })
       .toBeLessThan(2)
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-theme',
-      'editorial',
-    )
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -278,10 +272,7 @@ for (const width of [375, 390, 430]) {
       fullPage: true,
     })
     await page.reload()
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-theme',
-      'editorial',
-    )
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
     await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
     expect(

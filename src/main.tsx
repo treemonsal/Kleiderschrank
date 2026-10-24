@@ -4,6 +4,7 @@ import App from './App'
 import { ViewMemoryProvider } from './view-memory'
 import './styles.css'
 import './editorial.css'
+import './luxe.css'
 
 class StorageBoundary extends Component<
   { children: ReactNode },
@@ -20,7 +21,6 @@ class StorageBoundary extends Component<
     if (this.state.failed)
       return (
         <div className="fatal-error">
-          <p className="eyebrow">MYSTYLE</p>
           <h1>MyStyle konnte nicht starten.</h1>
           <p>
             Lade die Seite erneut. Falls das Problem bleibt, prüfe, ob dein

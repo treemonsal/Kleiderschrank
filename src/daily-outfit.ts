@@ -82,7 +82,7 @@ export function chooseDailyOutfit(
     )
       return {
         garmentIds: selection.garmentIds,
-        name: 'Dein Look für heute.',
+        name: 'Dein Look für heute',
         planned: false,
         customized: true,
         options: selection.options,
@@ -104,7 +104,7 @@ export function chooseDailyOutfit(
   )[0]
   return {
     garmentIds: candidate?.garmentIds ?? [],
-    name: 'Dein Look für heute.',
+    name: 'Dein Look für heute',
     planned: false,
     options,
     reasons: candidate?.reasons ?? [],

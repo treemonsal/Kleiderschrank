@@ -88,7 +88,7 @@ export function OutfitRating({
       {open && (
         <Sheet
           title="Was passt nicht?"
-          eyebrow="DEIN FEEDBACK"
+          eyebrow="Feedback"
           onClose={() => setOpen(false)}
           closeDisabled={busy}
         >

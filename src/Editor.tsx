@@ -80,7 +80,7 @@ export function Editor({
   return (
     <Sheet
       title={item ? 'Stück bearbeiten' : 'Ein neues Lieblingsstück.'}
-      eyebrow="DEIN KLEIDERSCHRANK"
+      eyebrow="Kleiderschrank"
       onClose={onClose}
       dirty={dirty}
       closeDisabled={busy || processing}

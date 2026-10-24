@@ -143,7 +143,7 @@ function StyleCheck({
           'Wie sieht dein Alltag aus?',
         ][step]
       }
-      eyebrow={`DEIN STILCHECK · ${step + 1} VON 3`}
+      eyebrow={`Stilcheck · ${step + 1} von 3`}
       onClose={() => {
         if (!busy) onClose()
       }}
@@ -353,7 +353,7 @@ export function StyleProfileCard({
       >
         <h2>
           <SlidersHorizontal size={20} />
-          {invitation ? 'Dein Stil. Deine Vorschläge.' : 'Dein Stilprofil'}
+          {invitation ? 'Stilcheck' : 'Dein Stilprofil'}
         </h2>
         <p className="muted">
           {invitation
@@ -410,8 +410,8 @@ export function StyleProfileCard({
       )}
       {history && (
         <Sheet
-          title="Dein Geschmack entwickelt sich."
-          eyebrow="DEINE BEWERTUNGEN"
+          title="Deine Bewertungen"
+          eyebrow="Profil"
           onClose={() => {
             if (!busy) {
               setHistory(false)

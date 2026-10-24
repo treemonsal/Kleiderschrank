@@ -87,10 +87,10 @@ test('Online-Beratung ohne Kleidungsfotos behauptet im Ergebnis keine visuelle A
     .getByRole('button', { name: 'Looks online vergleichen', exact: true })
     .click()
   await expect(
-    stylist.getByText('QWEN · OUTFIT-BERATUNG NACH ANGABEN', { exact: true }),
+    stylist.getByText('Qwen · Beratung nach Angaben', { exact: true }),
   ).toBeVisible()
   await expect(
-    stylist.getByText('QWEN · VISUELLE OUTFIT-BERATUNG', { exact: true }),
+    stylist.getByText('Qwen · Visuelle Beratung', { exact: true }),
   ).toHaveCount(0)
   expect(sent).toBe(1)
 })

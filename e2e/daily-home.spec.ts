@@ -145,7 +145,7 @@ test('Tageslook erscheint ohne Klick, bleibt beim Neustart stabil und ist speich
   await importData(page)
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
   await expect(
-    look.getByRole('heading', { name: 'Dein Look für heute.' }),
+    look.getByRole('heading', { name: 'Dein Look für heute' }),
   ).toBeVisible()
   for (const name of ['Hemd', 'Hose', 'Sneaker', 'Jacke'])
     await expect(
@@ -606,7 +606,7 @@ test('Vergangene Pläne und zukünftige Looks bleiben klar von bestätigter Hist
   await swipe(page.locator('.daily-look header'), 120)
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
   await expect(
-    look.getByText('GEPLANT · NICHT BESTÄTIGT', { exact: true }),
+    look.getByText('Geplant · nicht bestätigt', { exact: true }),
   ).toBeVisible()
   await expect(look.getByText('Termin', { exact: true })).toBeVisible()
   await expect(
@@ -615,10 +615,12 @@ test('Vergangene Pläne und zukünftige Looks bleiben klar von bestätigter Hist
   await look
     .getByRole('button', { name: 'Als getragen bestätigen', exact: true })
     .click()
-  await expect(look.getByText('GETRAGEN', { exact: true })).toBeVisible()
+  await expect(
+    look.getByText('Bestätigt getragen', { exact: true }),
+  ).toBeVisible()
   await page.getByRole('button', { name: 'Nächster Tag', exact: true }).click()
   await page.getByRole('button', { name: 'Nächster Tag', exact: true }).click()
-  await expect(look.getByText('EINGEPLANT', { exact: true })).toBeVisible()
+  await expect(look.getByText('Eingeplant', { exact: true })).toBeVisible()
   await expect(look.getByRole('button', { name: /getragen/i })).toHaveCount(0)
 })
 

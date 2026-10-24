@@ -250,8 +250,8 @@ export function StylistChat({
   return (
     <Sheet
       className="chat-sheet"
-      title="Dein Stylist."
-      eyebrow="MYSTYLE · IM GESPRÄCH"
+      title="Stylist"
+      eyebrow="Chat"
       dirty={interviewDirty}
       closeDisabled={saving || interviewBusy}
       onClose={close}
@@ -416,7 +416,7 @@ export function StylistChat({
                   {enabled && !messages.length && !busy && (
                     <div className="chat-empty">
                       <MessageCircle size={25} />
-                      <h3>Frag einfach.</h3>
+                      <h3>Frag einfach</h3>
                       <p className="muted">
                         Zum Beispiel: „Was passt zu meinem blauen Hemd?“ Danach
                         kannst du direkt nachfragen.

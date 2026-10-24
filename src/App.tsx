@@ -19,6 +19,9 @@ import {
   WifiOff,
   X,
   Settings,
+  House,
+  Layers,
+  CircleEllipsis,
 } from 'lucide-react'
 import {
   db,
@@ -121,7 +124,7 @@ function Home({
       <BackupReminder onBackup={onBackup} />
       <section className="wardrobe-summary">
         <div>
-          <p className="eyebrow">DEINE GARDEROBE</p>
+          <p className="eyebrow">Garderobe</p>
           <h2>
             {items.length} {items.length === 1 ? 'Stück' : 'Stücke'}
             <span className="summary-dot">·</span>
@@ -141,7 +144,7 @@ function Home({
         <section className="home-collection">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">AUS DEINER KOLLEKTION</p>
+              <p className="eyebrow">Kollektion</p>
               <h2>
                 {favorites.length
                   ? 'Deine Lieblingsstücke'
@@ -180,9 +183,6 @@ function Home({
           <ArrowRight size={19} />
         </button>
       )}
-      <div className="editorial-note">
-        <p>MyStyle / Dein Garderobenjournal</p>
-      </div>
     </div>
   )
 }
@@ -225,9 +225,8 @@ function Wardrobe({
   return (
     <div className="view wardrobe-view">
       <header className="page-heading">
-        <p className="eyebrow">DIE KOLLEKTION</p>
         <div className="heading-row">
-          <h1>Dein Kleiderschrank.</h1>
+          <h1>Kleiderschrank</h1>
           <button
             className="icon-button primary-add"
             aria-label="Stück hinzufügen"
@@ -239,7 +238,7 @@ function Wardrobe({
         <p>
           {items.length
             ? `${items.length} ${items.length === 1 ? 'Stück' : 'Stücke'} in deiner Garderobe.`
-            : 'Eine Kollektion, die ganz dir gehört.'}
+            : 'Noch keine Stücke.'}
         </p>
       </header>
       <div className="search-row">
@@ -358,9 +357,7 @@ function Wardrobe({
               <Shirt size={35} strokeWidth={1.1} />
             )}
           </div>
-          <h2>
-            {hasFilters ? 'Noch kein Treffer.' : 'Platz für deinen Stil.'}
-          </h2>
+          <h2>{hasFilters ? 'Kein Treffer' : 'Noch leer'}</h2>
           <p>
             {hasFilters
               ? 'Versuche einen anderen Suchbegriff oder passe deine Filter an.'
@@ -372,9 +369,6 @@ function Wardrobe({
             </button>
           )}
         </div>
-      )}
-      {filtered.length > 0 && (
-        <p className="collection-footnote">Mit Sorgfalt gesammelt. Von dir.</p>
       )}
     </div>
   )
@@ -401,7 +395,7 @@ function Detail({
   return (
     <Sheet
       title={item.name}
-      eyebrow={item.category.toLocaleUpperCase('de')}
+      eyebrow={item.category}
       onClose={() => {
         if (!busy) onClose()
       }}
@@ -410,7 +404,7 @@ function Detail({
         <GarmentPicture item={item} large />
         <div className="detail-title">
           <div>
-            <p className="eyebrow">DEIN PERSÖNLICHES STÜCK</p>
+            <p className="eyebrow">Details</p>
             <h3>{item.brand || 'Ein Stück von dir'}</h3>
           </div>
           <button
@@ -658,11 +652,9 @@ export default function App() {
           aria-label="MyStyle Startseite"
           onClick={() => navigate('home')}
         >
-          My<span>Style</span>
-          <span className="wordmark-dot">/</span>
+          MyStyle
         </button>
         <div className="header-right">
-          <span className="edition">DEIN GARDEROBENJOURNAL</span>
           <button
             className="profile-button stylist-link"
             aria-label="Mit deinem Stylisten sprechen"
@@ -797,12 +789,12 @@ export default function App() {
         />
         {(
           [
-            { key: 'home', label: 'Heute', number: '01' },
-            { key: 'wardrobe', label: 'Kleiderschrank', number: '02' },
-            { key: 'outfits', label: 'Outfits', number: '03' },
-            { key: 'settings', label: 'Mehr', number: '04' },
+            { key: 'home', label: 'Heute', Icon: House },
+            { key: 'wardrobe', label: 'Kleiderschrank', Icon: Shirt },
+            { key: 'outfits', label: 'Outfits', Icon: Layers },
+            { key: 'settings', label: 'Mehr', Icon: CircleEllipsis },
           ] as const
-        ).map(({ key, label, number }) => (
+        ).map(({ key, label, Icon }) => (
           <button
             key={key}
             data-motion="nav"
@@ -811,7 +803,7 @@ export default function App() {
             onClick={() => navigate(key)}
           >
             <span className="nav-icon" aria-hidden="true">
-              {number}
+              <Icon size={22} strokeWidth={view === key ? 2 : 1.6} />
             </span>
             <span>{label}</span>
           </button>
