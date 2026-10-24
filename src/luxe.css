@@ -854,3 +854,88 @@ summary:focus-visible,
   color: var(--muted);
   font-weight: 600;
 }
+
+/* Batch import */
+.batch {
+  display: grid;
+  gap: 14px;
+  padding-bottom: 24px;
+}
+.batch-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--soft);
+  overflow: hidden;
+}
+.batch-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+  border-radius: inherit;
+  transition: width 300ms ease;
+}
+.batch-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.batch-item {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 44px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.batch-thumb {
+  position: relative;
+  width: 72px;
+  height: 88px;
+  border-radius: 14px;
+  background: var(--soft);
+  overflow: hidden;
+}
+.batch-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.batch-status {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+}
+.batch-item.done .batch-status {
+  color: var(--ink);
+}
+.batch-item.failed .batch-status {
+  color: var(--danger);
+}
+.batch-fields {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.batch-fields input,
+.batch-fields select {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--background);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+}

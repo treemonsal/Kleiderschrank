@@ -66,6 +66,9 @@ const BackupView = lazy(() =>
 const Editor = lazy(() =>
   import('./Editor').then((module) => ({ default: module.Editor })),
 )
+const BatchImport = lazy(() =>
+  import('./BatchImport').then((module) => ({ default: module.BatchImport })),
+)
 const InsightsSheet = lazy(() =>
   import('./InsightsSheet').then((module) => ({
     default: module.InsightsSheet,
@@ -623,6 +626,7 @@ export default function App() {
   const inbox = useStylistInbox()
   const tapMotion = useTapMotion()
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
+  const [batch, setBatch] = useState<File[] | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [toast, setToast] = useState<{
     message: string
@@ -885,6 +889,26 @@ export default function App() {
                 editor === 'new'
                   ? 'Dein neues Stück ist im Kleiderschrank.'
                   : 'Deine Änderungen sind gespeichert.',
+              )
+            }}
+            onBatch={(files) => {
+              setEditor(null)
+              setBatch(files)
+            }}
+          />
+        </Suspense>
+      )}
+      {batch && (
+        <Suspense fallback={null}>
+          <BatchImport
+            files={batch}
+            onClose={() => setBatch(null)}
+            onSaved={(count) => {
+              setBatch(null)
+              notify(
+                count === 1
+                  ? '1 Stück gespeichert.'
+                  : `${count} Stücke gespeichert.`,
               )
             }}
           />

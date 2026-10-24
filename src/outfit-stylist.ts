@@ -1,7 +1,7 @@
+import { askVision } from './ai-router'
 import { stylistEnabled } from './cloud-ai'
 import { garmentCollage } from './collage'
-import { callCommunity, VISION_HOST } from './community-ai'
-import { AIProviderError, providerError } from './ai-errors'
+import { AIProviderError } from './ai-errors'
 import {
   parseStylistAdvice,
   stylistLooks,
@@ -40,30 +40,18 @@ export async function askStylist(
   if (!stylistEnabled())
     throw new Error('Die Community-Freigabe wurde zurückgezogen.')
   signal.throwIfAborted()
-  const value = await callCommunity(
-    VISION_HOST,
-    'run_router',
-    [
-      'Qwen3-VL-8B-Instruct',
-      stylistPrompt(input, wish),
-      image,
-      700,
-      0.1,
-      0.9,
-      50,
-      1.05,
-      60,
-    ],
+  const answer = await askVision(
+    {
+      model: 'Qwen3-VL-8B-Instruct',
+      prompt: stylistPrompt(input, wish),
+      image: image,
+      maxTokens: 700,
+      allowTextOnly: true,
+    },
     signal,
   )
   signal.throwIfAborted()
-  if (!Array.isArray(value) || typeof value[0] !== 'string')
-    throw new AIProviderError('invalid')
-  const text = value[0]
-    .trim()
-    .replace(/^```(?:json)?\s*/, '')
-    .replace(/\s*```$/, '')
-  if (/^\[ERROR\]/i.test(text)) throw providerError(text)
+  const text = answer.text
   try {
     return parseStylistAdvice(JSON.parse(text), candidates)
   } catch {

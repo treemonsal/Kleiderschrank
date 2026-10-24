@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures'
 import { readFile } from 'node:fs/promises'
 
 const vision = 'https://prithivmlmods-qwen3-vl-outpost.hf.space'
@@ -13,7 +13,7 @@ const attributes = {
   notes: '',
 }
 
-test('Erstes Foto im Entwurf freigeben startet nichts automatisch; manuelle Analyse und Fotoersatz erhalten den Entwurf', async ({
+test('KI-Aktivierung im Entwurf startet nichts nachträglich; neue Fotos werden danach automatisch analysiert', async ({
   page,
 }) => {
   const requests: string[] = []
@@ -91,7 +91,7 @@ test('Erstes Foto im Entwurf freigeben startet nichts automatisch; manuelle Anal
     attributes.name,
   )
   await expect(
-    dialog.getByAltText('Online-KI: Freistellung prüfen'),
+    dialog.getByRole('button', { name: 'Original verwenden', exact: true }),
   ).toBeVisible()
   await expect(
     dialog.getByRole('button', {
@@ -111,10 +111,7 @@ test('Erstes Foto im Entwurf freigeben startet nichts automatisch; manuelle Anal
   await dialog
     .getByLabel('Foto aus Mediathek')
     .setInputFiles({ name: 'hemd-neu.png', mimeType: 'image/png', buffer: png })
-  await expect(recognized).toHaveCount(0)
-  await dialog
-    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-    .click()
+  // A newly chosen photo starts the analysis without another tap.
   await expect(recognized).toBeVisible()
   await page.route(`${vision}/gradio_api/call/run_router`, (route) =>
     route.fulfill({ status: 503, body: 'Service unavailable' }),
@@ -124,16 +121,10 @@ test('Erstes Foto im Entwurf freigeben startet nichts automatisch; manuelle Anal
     mimeType: 'image/png',
     buffer: png,
   })
-  await dialog
-    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-    .click()
   await expect(
-    dialog.getByAltText('Online-KI: Freistellung prüfen'),
+    page.getByText('Hintergrund entfernt.', { exact: false }),
   ).toBeVisible()
   await expect(recognized).toHaveCount(0)
-  await expect(
-    page.getByText('Freistellung bereit.', { exact: false }),
-  ).toBeVisible()
   await dialog
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen', exact: true })
     .click()
