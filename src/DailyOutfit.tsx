@@ -409,13 +409,17 @@ export function DailyOutfit({
                       setBusy(true)
                       setError('')
                       try {
-                        await recordWornOutfit(
+                        const washed = await recordWornOutfit(
                           look.garmentIds,
                           look.options,
                           day,
                           entry?.updatedAt ?? null,
                         )
-                        notify('Als getragen im Kalender vermerkt.')
+                        notify(
+                          washed.length
+                            ? `Als getragen vermerkt. ${washed.join(', ')} ${washed.length === 1 ? 'liegt' : 'liegen'} jetzt in der Wäsche.`
+                            : 'Als getragen im Kalender vermerkt.',
+                        )
                       } catch (error) {
                         setError(storageError(error))
                       } finally {

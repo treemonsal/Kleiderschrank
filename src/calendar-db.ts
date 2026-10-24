@@ -8,6 +8,7 @@ import {
 import { UserFacingError } from './constraints'
 import { isCompleteOutfit, type OutfitOptions } from './outfit-model'
 import type { Garment } from './model'
+import { dueForWash, wearsSinceWash } from './laundry'
 
 export async function saveCalendarEntry(
   draft: Pick<CalendarEntry, 'day' | 'outfitId' | 'status' | 'note'>,
@@ -102,18 +103,25 @@ export async function deleteCalendarEntry(
   })
 }
 
+/**
+ * Confirms a worn day. For today, pieces that reached their usual wear count
+ * move to the laundry (unless disabled); their names are returned.
+ */
 export async function recordWornOutfit(
   ids: string[],
   options: OutfitOptions,
   day: string,
   expectedUpdatedAt: string | null = null,
   database = db,
-): Promise<void> {
-  await database.transaction(
+): Promise<string[]> {
+  return database.transaction(
     'rw',
-    database.garments,
-    database.outfits,
-    database.calendar,
+    [
+      database.garments,
+      database.outfits,
+      database.calendar,
+      database.preferences,
+    ],
     async () => {
       const outfitId = await saveOutfit(ids, options, database)
       const current = await database.calendar.get(day)
@@ -122,6 +130,29 @@ export async function recordWornOutfit(
         expectedUpdatedAt,
         database,
       )
+      const preferences = await database.preferences.get('personal')
+      if (day !== localDay() || preferences?.autoLaundry === false) return []
+      const [entries, outfits, pieces] = await Promise.all([
+        database.calendar.toArray(),
+        database.outfits.toArray(),
+        database.garments.bulkGet(ids),
+      ])
+      const washed: string[] = []
+      for (const piece of pieces) {
+        if (
+          !piece ||
+          !dueForWash(piece, wearsSinceWash(piece, entries, outfits))
+        )
+          continue
+        await database.garments.update(piece.id, {
+          inLaundry: true,
+          updatedAt: new Date(
+            Math.max(Date.now(), Date.parse(piece.updatedAt) + 1),
+          ).toISOString(),
+        })
+        washed.push(piece.name)
+      }
+      return washed
     },
   )
 }

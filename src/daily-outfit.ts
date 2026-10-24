@@ -5,6 +5,7 @@ import { recentWear } from './wear-history'
 import {
   eligibleGarments,
   generateOutfits,
+  comfortOffset,
   missingOutfitMessage,
 } from './generator'
 import {
@@ -110,6 +111,11 @@ export function chooseDailyOutfit(
     reasons: candidate?.reasons ?? [],
     missing: candidate
       ? undefined
-      : missingOutfitMessage(items, options, weather),
+      : missingOutfitMessage(
+          items,
+          options,
+          weather,
+          comfortOffset(preferences.comfort),
+        ),
   }
 }

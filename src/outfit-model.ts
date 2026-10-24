@@ -69,7 +69,13 @@ export interface Preferences {
   styleProfile?: StyleProfile
   styleInterview?: StyleInterview
   shopping?: ShoppingPreferences
+  /** Move pieces to the laundry automatically after typical wear counts (default on). */
+  autoLaundry?: boolean
+  /** Personal temperature feeling; shifts layering thresholds. */
+  comfort?: Comfort
 }
+export const COMFORTS = ['cold', 'normal', 'warm'] as const
+export type Comfort = (typeof COMFORTS)[number]
 export const DEFAULT_PREFERENCES: Preferences = {
   id: 'personal',
   styles: [],

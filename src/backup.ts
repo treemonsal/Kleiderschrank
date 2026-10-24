@@ -20,6 +20,7 @@ import {
 } from './constraints'
 import {
   DEFAULT_PREFERENCES,
+  COMFORTS,
   OCCASIONS,
   outfitKey,
   type OutfitOptions,
@@ -168,6 +169,16 @@ function photo(value: unknown): Blob | undefined {
     throw invalid()
   return new Blob([bytes], { type: match[1] })
 }
+function price(value: unknown): number {
+  if (
+    typeof value !== 'number' ||
+    !Number.isFinite(value) ||
+    value < 0 ||
+    value > 100000
+  )
+    throw invalid()
+  return Math.round(value * 100) / 100
+}
 function boolean(value: unknown): boolean {
   if (typeof value !== 'boolean') throw invalid()
   return value
@@ -283,6 +294,10 @@ export function parseFullBackup(json: string): BackupData {
         ...(item.inLaundry === undefined
           ? {}
           : { inLaundry: boolean(item.inLaundry) }),
+        ...(item.price === undefined ? {} : { price: price(item.price) }),
+        ...(item.washedAt === undefined
+          ? {}
+          : { washedAt: timestamp(item.washedAt) }),
         createdAt: timestamp(item.createdAt),
         updatedAt: timestamp(item.updatedAt),
         photo: original,
@@ -393,6 +408,12 @@ export function parseFullBackup(json: string): BackupData {
       ...(item.useWeather === undefined
         ? {}
         : { useWeather: boolean(item.useWeather) }),
+      ...(item.autoLaundry === undefined
+        ? {}
+        : { autoLaundry: boolean(item.autoLaundry) }),
+      ...(item.comfort === undefined
+        ? {}
+        : { comfort: choice(item.comfort, COMFORTS) }),
       ...(item.dailySelection === undefined
         ? {}
         : {

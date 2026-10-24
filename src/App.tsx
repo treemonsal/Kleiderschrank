@@ -18,6 +18,7 @@ import {
   WifiOff,
   X,
   Settings,
+  ChartColumn,
   House,
   Layers,
   CircleEllipsis,
@@ -31,11 +32,18 @@ import {
 } from './db'
 import { CATEGORIES, filterGarments, type Garment } from './model'
 import { BackupReminder } from './BackupReminder'
+import { PairingSuggestions } from './PairingSuggestions'
 import { ShoppingCard } from './Shopping'
 import { DailyOutfit } from './DailyOutfit'
 import { LaundryIcon, useTapMotion } from './motion'
 import { localDay, shiftDay } from './calendar'
-import { describeWear, wearStats, type WearStats } from './wear-stats'
+import {
+  costPerWear,
+  describeWear,
+  formatChf,
+  wearStats,
+  type WearStats,
+} from './wear-stats'
 import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
@@ -57,6 +65,11 @@ const BackupView = lazy(() =>
 )
 const Editor = lazy(() =>
   import('./Editor').then((module) => ({ default: module.Editor })),
+)
+const InsightsSheet = lazy(() =>
+  import('./InsightsSheet').then((module) => ({
+    default: module.InsightsSheet,
+  })),
 )
 const StylistChat = lazy(() =>
   import('./StylistChat').then((module) => ({ default: module.StylistChat })),
@@ -203,6 +216,7 @@ function Wardrobe({
   const [laundryOnly, setLaundryOnly] = useViewState('wardrobe.laundry', false)
   const [sort, setSort] = useViewState('wardrobe.sort', 'newest')
   const [showSort, setShowSort] = useState(false)
+  const [insightsOpen, setInsightsOpen] = useState(false)
   const filtered = filterGarments(items, query, category, favorites)
     .filter((item) => !laundryOnly || item.inLaundry)
     .sort((a, b) =>
@@ -224,13 +238,22 @@ function Wardrobe({
       <header className="page-heading">
         <div className="heading-row">
           <h1>Kleiderschrank</h1>
-          <button
-            className="icon-button primary-add"
-            aria-label="Stück hinzufügen"
-            onClick={onAdd}
-          >
-            <Plus size={23} />
-          </button>
+          <div className="heading-actions">
+            <button
+              className="icon-button soft"
+              aria-label="Auswertung öffnen"
+              onClick={() => setInsightsOpen(true)}
+            >
+              <ChartColumn size={20} />
+            </button>
+            <button
+              className="icon-button primary-add"
+              aria-label="Stück hinzufügen"
+              onClick={onAdd}
+            >
+              <Plus size={23} />
+            </button>
+          </div>
         </div>
         <p>
           {items.length
@@ -367,20 +390,33 @@ function Wardrobe({
           )}
         </div>
       )}
+      {insightsOpen && (
+        <Suspense fallback={null}>
+          <InsightsSheet
+            items={items}
+            onOpen={onOpen}
+            onClose={() => setInsightsOpen(false)}
+          />
+        </Suspense>
+      )}
     </div>
   )
 }
 
 function Detail({
   item,
+  items,
   wear,
+  onOpen,
   onClose,
   onEdit,
   onFavorite,
   onDeleted,
 }: {
   item: Garment
+  items: Garment[]
   wear?: WearStats
+  onOpen: (id: string) => void
   onClose: () => void
   onEdit: () => void
   onFavorite: () => Promise<void>
@@ -444,6 +480,17 @@ function Detail({
             <dt>Stil</dt>
             <dd>{item.styles.join(', ') || 'Nicht angegeben'}</dd>
           </div>
+          {item.price !== undefined && (
+            <div>
+              <dt>Preis</dt>
+              <dd>
+                {formatChf(item.price)}
+                <small className="cost-per-wear">
+                  {formatChf(costPerWear(item.price, wear?.count)!)} pro Tragen
+                </small>
+              </dd>
+            </div>
+          )}
         </dl>
         <button
           className="button secondary full laundry-toggle"
@@ -476,6 +523,7 @@ function Detail({
             <p>{item.notes}</p>
           </div>
         )}
+        <PairingSuggestions item={item} items={items} onOpen={onOpen} />
         <p className="micro-copy wear-line">{describeWear(wear)}</p>
         <p className="micro-copy">
           Hinzugefügt am{' '}
@@ -810,7 +858,9 @@ export default function App() {
         <Detail
           key={selected.id}
           item={selected}
+          items={items ?? []}
           wear={wear.get(selected.id)}
+          onOpen={setSelectedId}
           onClose={() => setSelectedId(null)}
           onEdit={() => {
             setEditor(selected)

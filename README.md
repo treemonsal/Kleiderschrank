@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.24.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.25.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -29,6 +29,18 @@ Der **Chat** nutzt nach eigener Freigabe Qwen3-VL-8B: deine Frage, höchstens se
 **Nachricht diktieren** und **Vorlesen** sind optionale Browserfunktionen. Erkannten Text zuerst prüfen und selbst senden. Browser-Sprachdienste können Audio/Text an ihren Anbieter übertragen; MyStyle speichert keine Audiodateien. Tippen bleibt immer möglich.
 
 Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten oder Ausfälle haben. Keine kostenpflichtigen Ersatzdienste oder automatischen Wiederholungen. Anbieter-Speicherung und Löschfristen sind nicht garantiert. Stilurteile sind subjektiv; Passform, Material, Wärme und Schutzwirkung bleiben ohne passende Nachweise unbekannt.
+
+## Neu in 0.25.0
+
+- **Automatische Wäsche:** Nach „Heute getragen“ kommen Oberteile und Kleider nach 2, Hosen nach 4 und Jacken nach 12 Tragetagen seit der letzten Wäsche in die Wäsche. Abschaltbar unter **Mehr → Alltag**.
+- **Temperaturempfinden:** Unter **Mehr → Alltag**. Wer schnell friert, bekommt Jacken früher.
+- **Preis und Kosten pro Tragen:** Optionales Preisfeld im Stück; das Detail zeigt CHF pro Tragen.
+- **Auswertung:** Diagramm-Symbol im Kleiderschrank. Garderobenwert, meistgetragen, bester Preis pro Tragen, Allrounder, Stücke ohne Partner, lange oder nie getragen, Farben.
+- **Was passt dazu?** Im Detail eines Stücks bis zu drei Looks mit genau diesem Stück.
+- **Packliste:** Koffer-Symbol bei Outfits. Ein Look pro Tag mit möglichst wenigen Teilen, zum Abhaken.
+- **Eine KI-Freigabe:** „Kostenlose KI aktivieren“ schaltet Foto-KI, Stylist, Chat und Kaufideen gemeinsam frei. Der Chat sieht jetzt bis zu zwölf Fotos, deine Notizen und wie oft du etwas getragen hast.
+
+Die Ideen stammen aus einem Vergleich mit acht ähnlichen Apps ([Analyse](docs/COMPETITOR_ANALYSIS.md)).
 
 ## Farben, Stil und Tragestatistik
 

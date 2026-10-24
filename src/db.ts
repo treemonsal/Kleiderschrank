@@ -284,6 +284,8 @@ export async function updatePreferences(
       | 'styles'
       | 'colors'
       | 'useWeather'
+      | 'autoLaundry'
+      | 'comfort'
       | 'backupReminder'
       | 'styleProfile'
       | 'shopping'
@@ -492,11 +494,14 @@ export async function setLaundry(
       const current = await database.garments.get(id)
       if (!current)
         throw new UserFacingError('Dieses Stück ist nicht mehr vorhanden.')
+      const now = new Date(
+        Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
+      ).toISOString()
       await database.garments.update(id, {
         inLaundry,
-        updatedAt: new Date(
-          Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
-        ).toISOString(),
+        // Marking clean starts a fresh wear count for automatic laundry.
+        ...(!inLaundry && current.inLaundry ? { washedAt: now } : {}),
+        updatedAt: now,
       })
       const preferences = await database.preferences.get('personal')
       if (inLaundry && preferences?.dailySelection?.garmentIds.includes(id))

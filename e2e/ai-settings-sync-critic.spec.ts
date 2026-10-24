@@ -285,9 +285,17 @@ test('Geöffneter Online-Stylist übernimmt Freigaben ohne Bereichswechsel und o
   await other.goto('/')
   await activate(other)
   await expect(compare).toBeEnabled()
+  // One switch also unlocks chat and shopping ideas, and turns them off again.
+  const consents = () =>
+    other.evaluate(() => [
+      localStorage.getItem('mystyle-chat-consent'),
+      localStorage.getItem('mystyle-shopping-consent'),
+    ])
+  expect(await consents()).toEqual(['enabled-v1', 'enabled-v1'])
   await other
     .getByRole('button', { name: 'Community-KI ausschalten', exact: true })
     .click()
   await expect(compare).toBeDisabled()
+  expect(await consents()).toEqual([null, null])
   expect(comparisons).toBe(0)
 })

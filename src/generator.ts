@@ -32,10 +32,15 @@ function noise(key: string, seed: number): number {
     value = Math.imul(value ^ key.charCodeAt(i), 16777619)
   return (value >>> 0) / 4294967296
 }
+/** Perceived temperature shift: people who feel cold need layers earlier. */
+export function comfortOffset(comfort: Preferences['comfort']): number {
+  return comfort === 'cold' ? -4 : comfort === 'warm' ? 3 : 0
+}
 export function eligibleGarments(
   items: Garment[],
   options: OutfitOptions,
   weather?: WeatherDay,
+  offset = 0,
 ): Garment[] {
   // Unknown seasons stay eligible; conflicting explicitly entered seasons do not.
   return items.filter(
@@ -54,10 +59,10 @@ export function eligibleGarments(
       !(
         weather &&
         item.seasons.length > 0 &&
-        ((weather.max <= 10 &&
+        ((weather.max + offset <= 10 &&
           item.seasons.every((season) => season === 'Sommer')) ||
-          (weather.min >= 18 &&
-            weather.max >= 25 &&
+          (weather.min + offset >= 18 &&
+            weather.max + offset >= 25 &&
             item.seasons.every((season) => season === 'Winter')))
       ),
   )
@@ -66,8 +71,9 @@ export function missingOutfitMessage(
   items: Garment[],
   options: OutfitOptions,
   weather?: WeatherDay,
+  offset = 0,
 ): string {
-  const eligible = eligibleGarments(items, options, weather)
+  const eligible = eligibleGarments(items, options, weather, offset)
   const has = (category: string) =>
     eligible.some((item) => item.category === category)
   if (!has('Schuhe'))
@@ -92,7 +98,8 @@ export function generateOutfits(
   refinement?: OutfitRefinement,
 ): OutfitCandidate[] {
   if (refinement && !validRefinement(items, refinement)) return []
-  const eligible = eligibleGarments(items, options, weather)
+  const offset = comfortOffset(preferences.comfort)
+  const eligible = eligibleGarments(items, options, weather, offset)
   const refinementOriginal = refinement
     ? items.filter((item) => refinement.currentIds.includes(item.id))
     : []
@@ -185,7 +192,7 @@ export function generateOutfits(
         items.some((item) => item.id === id && item.category === 'Jacken'),
       ) ||
       (weather
-        ? weather.min < 15
+        ? weather.min + offset < 15
         : options.season === 'Herbst' || options.season === 'Winter')
     // Evaluate accessories and layers together with the base. Keep the best complete
     // version per base, so an unsuitable/random layer cannot hide a better alternative.
@@ -328,6 +335,12 @@ export function generateOutfits(
       reasons.push(
         `Vorhersage für ${weather.day}: ${Math.round(weather.min)} bis ${Math.round(weather.max)} °C. Saisonangaben helfen bei der groben Auswahl; Material und Wärme bleiben ungeprüft.`,
       )
+      if (offset)
+        reasons.push(
+          offset < 0
+            ? 'Du frierst schnell: Schichten kommen früher dazu.'
+            : 'Dir ist schnell warm: Schichten kommen später dazu.',
+        )
       if (weather.rain >= 50)
         reasons.push(
           'Regen ist möglich. Prüfe selbst, ob Schuhe und äussere Schicht wasserfest sind.',
@@ -340,7 +353,7 @@ export function generateOutfits(
       reasons.push('Einige Stücke haben noch keine Saisonangabe.')
     if (
       (weather
-        ? weather.min < 15
+        ? weather.min + offset < 15
         : options.season === 'Winter' || options.season === 'Herbst') &&
       !jackets.length
     )

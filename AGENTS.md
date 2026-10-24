@@ -8,6 +8,8 @@
 
 ## Datenschutz und Kosten
 
+- Seit 24.10.2026 ausdrücklich: Datenschutz ist für den Besitzer nachrangig, das beste Produkt zählt. Eine einzige Freigabe „Kostenlose KI aktivieren“ schaltet Foto-KI, Online-Stylist, Chat und Kaufideen gemeinsam frei (Ausschalten ebenso). Der Chat darf bis zu zwölf Kleidungsfotos als beschriftete Collage, Notizen, Tragehäufigkeit und Temperaturempfinden senden. Weiterhin gilt: keine Kosten, keine Anfrage ohne eigenen Tipp, keine Koordinaten nötig. Ältere Datenschutzregeln unten gelten, soweit sie dem nicht widersprechen.
+
 - Keine bezahlten APIs, Abonnements oder Zahlungsdaten. Externe Foto-KI ist seit 15.10.2026 ausdrücklich gewünscht, weiterhin komplett kostenlos. Nur nach aktivierter Foto-Freigabe an die klar benannten und freigegebenen Dienste senden. Community-Dienste speichern gegebenenfalls temporäre Dateien; keine falschen Zusagen über deren Löschdauer machen.
 - Seit 16.10.2026 ist Online-Outfit-Beratung mit ausgewählten gespeicherten Kleidungsfotos, Angaben, Stilwunsch und Wetterwerten ausdrücklich gewünscht. Kostenloser Qwen3-VL-Outpost-Dienst; vorhandene Community-Freigabe plus klar benannte Startaktion. Keine automatische Freigabe für andere Nutzer und kein vollständiger Sammlungs-/Sicherungsupload.
 - Fotos, Kleidung, Outfits und Präferenzen lokal in IndexedDB speichern. Kein Tracking, keine externen Fonts, keine Anbieter-/Administrationsschlüssel im Frontend. Der persönliche Server-Verbindungscode bleibt nur in lokalen Geräteeinstellungen, nie im Backup.
@@ -22,6 +24,8 @@
 - Seit 20.10.2026 ist persönliche Shopping-Beratung nach ausreichender Stilgrundlage gewünscht: Stilcheck oder drei vertiefte Antworten, sieben gültige bestätigte Tragetage in den letzten 90 Tagen über mindestens zwei Wochen und drei unterschiedliche gültige Lookbewertungen in den letzten 180 Tagen, davon zwei positiv. Das sind transparente Heuristiken, kein Beweis perfekten Modellwissens. Preislimit pro Stück strikt höchstens 100 CHF, Standard 50 CHF; zuerst bis 50 CHF, Accessoires bis 25 CHF suchen. Kostenloser bestehender Qwen-Dienst nach eigener gerätelokaler Shopping-Freigabe; höchstens 40 Kleidungsangaben, bestätigtes Profil, abgeleitete Bewertungen und Budget, keine Fotos/Notizen/Chat-/Standortdaten. Keine erfundenen Produkte, Preise oder Verfügbarkeit: aktuell Suchideen mit geprüften bestehenden Outfit-Referenzen und konstruierten Zalando-Schweiz-Suchlinks mit Preisobergrenze, keine Live-Produktliste. Sortiment nicht aus Geschlecht/Körper ableiten. Budget/Sortiment mit eigener Revision sichern und beim Import unabhängig zusammenführen; Freigabe und kurzlebige Beratungen nicht exportieren. Kein Affiliate-Tracking oder automatisches Bestellen.
 
 ## Umsetzung
+
+- Seit 0.25.0 (24.10.2026): optionale Stückfelder `price` (CHF) und `washedAt`, Präferenzen `autoLaundry` und `comfort`; alle in Sicherungsformat 8 optional validiert. Wäsche-Automatik nur für heute bestätigte Tage, Schuhe/Accessoires nie. Auswertung, „Was passt dazu?“ und Packliste nur aus echten Stücken; Packliste speichert nichts. Konkurrenzanalyse in docs/COMPETITOR_ANALYSIS.md.
 
 - React/TypeScript, Vite, Tailwind und Dexie nutzen. Abhängigkeiten sparsam ergänzen und Lockdatei erhalten.
 - Funktionen in kleine, verständliche Module trennen. Reine Fachlogik getrennt von UI und Speicherung testen.

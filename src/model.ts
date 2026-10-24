@@ -43,6 +43,10 @@ export interface Garment {
   notes: string
   favorite: boolean
   inLaundry?: boolean
+  /** Purchase price in CHF, used for cost per wear. */
+  price?: number
+  /** Last time the piece was marked clean; wears after it count towards the next wash. */
+  washedAt?: string
   photo?: Blob
   cutout?: Blob
   createdAt: string

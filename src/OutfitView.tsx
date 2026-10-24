@@ -1,3 +1,4 @@
+import { PackingSheet } from './PackingSheet'
 import { ShoppingCard } from './Shopping'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -9,6 +10,7 @@ import {
   Plus,
   RefreshCw,
   Settings2,
+  Luggage,
   ArrowUpRight,
   Trash2,
 } from 'lucide-react'
@@ -322,6 +324,7 @@ export function OutfitView({
   const [seed, setSeed] = useViewState('outfits.seed', 0)
   const [requested, setRequested] = useViewState('outfits.requested', false)
   const [preferencesOpen, setPreferencesOpen] = useState(false)
+  const [packingOpen, setPackingOpen] = useState(false)
   const [editing, setEditing] = useState<SavedOutfit | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -384,13 +387,22 @@ export function OutfitView({
       <header className="page-heading">
         <div className="heading-row">
           <h1>Outfits</h1>
-          <button
-            className="icon-button soft"
-            aria-label="Stilvorlieben bearbeiten"
-            onClick={() => setPreferencesOpen(true)}
-          >
-            <Settings2 size={21} />
-          </button>
+          <div className="heading-actions">
+            <button
+              className="icon-button soft"
+              aria-label="Packliste für eine Reise"
+              onClick={() => setPackingOpen(true)}
+            >
+              <Luggage size={20} />
+            </button>
+            <button
+              className="icon-button soft"
+              aria-label="Stilvorlieben bearbeiten"
+              onClick={() => setPreferencesOpen(true)}
+            >
+              <Settings2 size={21} />
+            </button>
+          </div>
         </div>
         <p>Kombinationen aus deinen Stücken.</p>
       </header>
@@ -780,6 +792,9 @@ export function OutfitView({
                   </article>
                 ))}
             </>
+          )}
+          {packingOpen && (
+            <PackingSheet items={items} onClose={() => setPackingOpen(false)} />
           )}
           {preferencesOpen && (
             <PreferenceEditor

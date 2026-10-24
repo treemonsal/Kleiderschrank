@@ -41,3 +41,17 @@ export function describeWear(stats: WearStats | undefined, today = localDay()) {
     days <= 0 ? 'heute' : days === 1 ? 'gestern' : `vor ${days} Tagen`
   return `${stats.count}× getragen · zuletzt ${last}`
 }
+
+export const formatChf = (value: number) =>
+  new Intl.NumberFormat('de-CH', {
+    style: 'currency',
+    currency: 'CHF',
+    minimumFractionDigits: value % 1 ? 2 : 0,
+    maximumFractionDigits: 2,
+  }).format(value)
+
+/** Price divided by confirmed wear days; undefined without a price. */
+export function costPerWear(price: number | undefined, wears = 0) {
+  if (price === undefined) return undefined
+  return Math.round((price / Math.max(1, wears)) * 100) / 100
+}
