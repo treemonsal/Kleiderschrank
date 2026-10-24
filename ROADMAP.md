@@ -1,5 +1,12 @@
 # Entwicklungsplan
 
+## Version 0.24.0 – helles Luxe-Design und Liquid-Glass-Navigation
+
+- [x] Stand 0.23.0 als Branch `backup/design-0.23.0` sichern
+- [x] Immer helles Design in warmem Elfenbein, unabhängig vom Dunkelmodus des Geräts
+- [x] Header scrollt mit der Seite statt oben zu kleben
+- [x] Navigation tiefer am Home-Balken, durchsichtiges Liquid Glass mit Lichtkante
+
 ## Version 0.23.0 – ruhigere Startseite und klarere Texte
 
 - [x] Gesamtstand 0.22.0 auf Wunsch in den Branch `backup/codex-0.20.0` übernommen (Codex-Original bleibt als Commit `945aad5` in der Historie)

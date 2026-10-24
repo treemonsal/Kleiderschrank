@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.23.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.24.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -14,7 +14,7 @@ Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufüg
 - **Stylist ↗:** Fragen stellen oder das freiwillige vertiefte Stilgespräch öffnen. Ein kleiner Punkt kennzeichnet eine Einladung oder eine vorhandene ungelesene Antwort.
 - **Mehr:** Stilprofil, Shopping-Fortschritt, Online-Foto-KI, persönliche Sicherung, Speicher- und Installationshilfe. Ein Export sichert den eigenen Bestand; ein Projektbackup ersetzt diesen Export nicht.
 
-Die Gestaltung ist seit 0.22.0 ruhig und monochrom: Systemschrift, weisse Karten auf hellem Grau, schwarze Pill-Buttons und eine schwebende Navigationsleiste aus Milchglas. Hell- und Dunkelmodus folgen der iPhone-Einstellung. Das Homescreen-Icon bleibt schwarz-weiss. Bereichswechsel merken Datum, Filter und Scrollposition während der laufenden Sitzung. Erneutes Tippen auf den aktiven Bereich führt nach oben. Neue Versionen können auf dem iPhone erst nach Übernahme des Updates erscheinen; vorhandene Icons unterliegen zusätzlich dem iOS-Cache.
+Die Gestaltung ist hell und ruhig: warmes Elfenbein, Systemschrift, weisse Karten, schwarze Pill-Buttons und eine Navigationsleiste aus durchsichtigem Liquid Glass knapp über dem Home-Balken. Die App bleibt auch im Dunkelmodus des iPhones hell. Das Homescreen-Icon bleibt schwarz-weiss. Bereichswechsel merken Datum, Filter und Scrollposition während der laufenden Sitzung. Erneutes Tippen auf den aktiven Bereich führt nach oben. Neue Versionen können auf dem iPhone erst nach Übernahme des Updates erscheinen; vorhandene Icons unterliegen zusätzlich dem iOS-Cache.
 
 ## Personalisierung und Beratung
 

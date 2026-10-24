@@ -1,53 +1,33 @@
 /*
- * Luxe art direction (0.22.0): calm monochrome surfaces, system typography,
- * soft depth and generous spacing. Loaded after styles.css and editorial.css;
- * those keep layout, gestures and motion. Follows the device light/dark mode.
+ * Luxe art direction (0.24.0): always light, warm ivory surfaces, system
+ * typography, hairline depth and Liquid Glass navigation. Loaded after
+ * styles.css and editorial.css; those keep layout, gestures and motion.
  */
 :root {
   --display-font:
     -apple-system, 'SF Pro Display', BlinkMacSystemFont, 'Helvetica Neue',
     'Segoe UI', sans-serif;
-  --background: #f5f5f7;
-  --surface: #ffffff;
-  --soft: #ededf0;
-  --ink: #1d1d1f;
-  --muted: #6b6b70;
-  --line: #e2e2e7;
-  --accent: #1d1d1f;
-  --action: #1d1d1f;
-  --accent-ink: #ffffff;
-  --hero: #ededf0;
-  --rose: #d6204e;
-  --danger: #c4001a;
-  --glass: rgb(250 250 252 / 0.86);
-  --glass-line: rgb(0 0 0 / 0.06);
+  --background: #f6f4ef;
+  --surface: #fffefb;
+  --soft: #efece5;
+  --ink: #141414;
+  --muted: #69655e;
+  --line: #e4e0d7;
+  --accent: #141414;
+  --action: #141414;
+  --accent-ink: #fffefb;
+  --hero: #efece5;
+  --rose: #c8233f;
+  --danger: #b3261e;
+  --hairline: rgb(20 20 20 / 0.06);
   --radius-card: 24px;
   --radius-control: 14px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px rgb(0 0 0 / 0.08);
-  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.03), 0 4px 16px rgb(0 0 0 / 0.04);
+  --shadow: 0 1px 2px rgb(40 32 20 / 0.05), 0 16px 40px rgb(40 32 20 / 0.08);
+  --card-shadow:
+    0 0 0 1px var(--hairline), 0 1px 2px rgb(40 32 20 / 0.03),
+    0 8px 24px rgb(40 32 20 / 0.04);
   color-scheme: light;
   letter-spacing: -0.01em;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-    --surface: #161618;
-    --soft: #232326;
-    --ink: #f5f5f7;
-    --muted: #a1a1a6;
-    --line: #2c2c2f;
-    --accent: #f5f5f7;
-    --action: #f5f5f7;
-    --accent-ink: #000000;
-    --hero: #232326;
-    --rose: #ff4d73;
-    --danger: #ff5a4f;
-    --glass: rgb(22 22 24 / 0.86);
-    --glass-line: rgb(255 255 255 / 0.08);
-    --shadow: 0 12px 40px rgb(0 0 0 / 0.6);
-    --card-shadow: none;
-    color-scheme: dark;
-  }
 }
 body {
   background: var(--background);
@@ -128,19 +108,15 @@ body {
   font-weight: 500;
 }
 
-/* Header: quiet wordmark on a translucent bar. */
+/* Header: part of the page, scrolls away with the content. */
 .app-header {
-  position: sticky;
-  top: 0;
-  z-index: 9;
+  position: static;
   height: 60px;
   margin: 0;
   padding: env(safe-area-inset-top) 20px 0;
   box-sizing: content-box;
   border-bottom: 0;
-  background: var(--glass);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
+  background: transparent;
 }
 .app-shell {
   padding-top: 0;
@@ -181,35 +157,49 @@ body {
   color: var(--muted);
 }
 
-/* Floating tab bar with frosted glass. */
+/* Liquid Glass tab bar, resting just above the home indicator. */
 .bottom-nav {
   left: 50%;
-  bottom: calc(10px + env(safe-area-inset-bottom));
-  width: calc(100% - 28px);
-  max-width: 520px;
-  padding: 6px;
-  border: 1px solid var(--glass-line);
+  bottom: max(8px, calc(env(safe-area-inset-bottom) - 16px));
+  width: calc(100% - 32px);
+  max-width: 480px;
+  padding: 4px;
+  border: 0;
   border-radius: 999px;
-  background: var(--glass);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
-  backdrop-filter: saturate(180%) blur(24px);
-  box-shadow: var(--shadow);
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.5) 0%,
+    rgb(255 255 255 / 0.22) 100%
+  );
+  -webkit-backdrop-filter: blur(26px) saturate(190%) brightness(1.05);
+  backdrop-filter: blur(26px) saturate(190%) brightness(1.05);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    inset 0 -1px 0 rgb(255 255 255 / 0.35),
+    inset 0 0 0 1px rgb(255 255 255 / 0.45),
+    0 0 0 0.5px rgb(20 20 20 / 0.08),
+    0 10px 30px rgb(40 32 20 / 0.12);
 }
 .nav-selection {
-  top: 6px;
-  left: 6px;
-  width: calc((100% - 12px) / 4);
-  height: calc(100% - 12px);
+  top: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / 4);
+  height: calc(100% - 8px);
   border-radius: 999px;
-  background: var(--soft);
+  background: rgb(20 20 20 / 0.07);
+  box-shadow: inset 0 0 0 0.5px rgb(255 255 255 / 0.6);
 }
 .bottom-nav > button {
-  min-height: 56px;
-  gap: 3px;
+  min-height: 52px;
+  gap: 2px;
   border-radius: 999px;
-  font-size: 11px;
+  color: rgb(20 20 20 / 0.62);
+  font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0;
+}
+.bottom-nav > button.active {
+  color: var(--ink);
 }
 .bottom-nav > button > span:last-child {
   max-width: 100%;
@@ -225,10 +215,10 @@ body {
   color: var(--ink);
 }
 .toast-region {
-  bottom: calc(92px + env(safe-area-inset-bottom));
+  bottom: calc(76px + max(8px, env(safe-area-inset-bottom) - 16px));
 }
 .app-shell {
-  padding-bottom: calc(110px + env(safe-area-inset-bottom));
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
 }
 
 /* Controls: pill buttons, soft fields. */
