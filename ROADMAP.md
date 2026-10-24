@@ -1,5 +1,13 @@
 # Entwicklungsplan
 
+## Version 0.22.0 – Luxe-Design
+
+- [x] Bisheriges Design als GitHub-Branch `backup/design-0.21.0` sichern ([Rückweg](design/LUXE.md))
+- [x] Monochrome Farbwelt mit Hell-/Dunkelmodus, Systemschrift statt Serifen, Karten mit weichen Schatten
+- [x] Schwebende Milchglas-Navigation mit Icons statt Nummern, transparenter Header
+- [x] Grossbuchstaben-Überzeilen, Punkt-Überschriften und Slogans durch kurze, sachliche Titel ersetzen
+- [x] Doppelte Kategorie-Beschriftung in Kleiderschrank-Kacheln entfernen
+
 ## Version 0.21.0 – Farbregeln, Tragestatistik und Überarbeitung
 
 - [x] Codex-Stand 0.20.0 als GitHub-Branch `backup/codex-0.20.0` sichern ([Rückweg](design/backups/RESTORE-0.21.0.md))

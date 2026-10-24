@@ -458,10 +458,7 @@ for (const width of [375, 390, 430]) {
       fullPage: true,
     })
     await page.getByRole('button', { name: 'Mehr', exact: true }).click()
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-theme',
-      'editorial',
-    )
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
     await page.getByRole('button', { name: 'Outfits', exact: true }).click()
     await page.getByRole('button', { name: 'Kalender', exact: true }).click()
     expect(

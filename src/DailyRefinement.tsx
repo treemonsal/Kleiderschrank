@@ -75,8 +75,8 @@ export function DailyRefinement(props: {
   }
   return (
     <Sheet
-      title="Deinen Tageslook verfeinern."
-      eyebrow="NUR DAS NÖTIGE ÄNDERN"
+      title="Tageslook verfeinern"
+      eyebrow="Heute"
       onClose={props.onClose}
       closeDisabled={busy}
     >

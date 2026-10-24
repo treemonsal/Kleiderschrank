@@ -160,7 +160,7 @@ export function PhotoAssistant({
       <div className="assistant-heading">
         <ArrowUpRight size={21} />
         <div>
-          <h3>Dein Foto mit KI vorbereiten.</h3>
+          <h3>Foto mit KI vorbereiten</h3>
           <p>
             {connection?.enabled
               ? 'Starte die Analyse per Knopfdruck. Die Freistellung übernimmst du nach deiner Prüfung.'

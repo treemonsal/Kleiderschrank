@@ -68,7 +68,7 @@ export function OutfitSwap({
   return (
     <Sheet
       title={`${target?.name ?? 'Stück'} austauschen`}
-      eyebrow="NUR DIESES TEIL ÄNDERN"
+      eyebrow="Austauschen"
       onClose={() => {
         if (!busy) onClose()
       }}

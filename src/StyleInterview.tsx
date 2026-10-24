@@ -153,7 +153,7 @@ export function StyleInterviewPanel({
       ref={card}
       aria-label="Freiwilliges Stilgespräch"
     >
-      <p className="eyebrow">DEIN STIL · EIN BISSCHEN GENAUER</p>
+      <p className="eyebrow">Stilgespräch</p>
       <h3 ref={!expanded ? visibleQuestion : undefined}>
         {completed
           ? 'Dein Stil, in deinen Worten.'

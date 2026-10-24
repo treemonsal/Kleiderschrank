@@ -203,17 +203,17 @@ export function DailyOutfit({
   }
   const badge = entry
     ? worn
-      ? 'GETRAGEN'
+      ? 'Bestätigt getragen'
       : past
-        ? 'GEPLANT · NICHT BESTÄTIGT'
-        : 'EINGEPLANT'
+        ? 'Geplant · nicht bestätigt'
+        : 'Eingeplant'
     : isToday
       ? items.length
-        ? 'FÜR DICH ZUSAMMENGESTELLT'
-        : 'DEIN ERSTER SCHRITT'
+        ? 'Für dich zusammengestellt'
+        : 'Erster Schritt'
       : past
-        ? 'DEIN RÜCKBLICK'
-        : 'DEINE PLANUNG'
+        ? 'Rückblick'
+        : 'Planung'
   return (
     <>
       <section
@@ -357,10 +357,10 @@ export function DailyOutfit({
             <h1>
               {recorded?.name ??
                 (isToday
-                  ? 'Dein Look für heute.'
+                  ? 'Dein Look für heute'
                   : past
-                    ? 'Was du getragen hast.'
-                    : 'Dein nächster Look.')}
+                    ? 'Vergangener Tag'
+                    : 'Geplanter Look')}
             </h1>
             <p className="muted">
               {entry
@@ -684,7 +684,7 @@ export function DailyOutfit({
         </Sheet>
       )}
       {calendarOpen && state && (
-        <Sheet title="Deine Tage." onClose={() => setCalendarOpen(false)}>
+        <Sheet title="Kalender" onClose={() => setCalendarOpen(false)}>
           <div className="home-calendar-picker">
             <DayCalendar
               day={day}

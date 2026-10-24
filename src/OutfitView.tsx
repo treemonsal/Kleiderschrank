@@ -66,14 +66,14 @@ function PreferenceEditor({
   const [error, setError] = useState('')
   return (
     <Sheet
-      title="Ganz dein Geschmack."
+      title="Stilvorlieben"
       closeDisabled={busy}
       dirty={
         !busy &&
         (JSON.stringify(styles) !== JSON.stringify(snapshot.styles) ||
           JSON.stringify(colors) !== JSON.stringify(snapshot.colors))
       }
-      eyebrow="DEINE VORLIEBEN"
+      eyebrow="Vorlieben"
       onClose={() => {
         if (!busy) onClose()
       }}
@@ -166,10 +166,10 @@ function SavedEditor({
   const [confirm, setConfirm] = useState(false)
   return (
     <Sheet
-      title="Deinen Look bearbeiten."
+      title="Look bearbeiten"
       closeDisabled={busy}
       dirty={!busy && name !== outfit.name}
-      eyebrow="GESPEICHERTES OUTFIT"
+      eyebrow="Gespeichert"
       onClose={() => {
         if (!busy) onClose()
       }}
@@ -382,9 +382,8 @@ export function OutfitView({
   return (
     <div className="view outfits-view">
       <header className="page-heading">
-        <p className="eyebrow">STYLING & PLANUNG</p>
         <div className="heading-row">
-          <h1>Deine nächsten Looks.</h1>
+          <h1>Outfits</h1>
           <button
             className="icon-button soft"
             aria-label="Stilvorlieben bearbeiten"
@@ -518,7 +517,7 @@ export function OutfitView({
               {requested && !candidates.length && (
                 <div className="outfit-empty" role="status">
                   <ShirtNotice />
-                  <h2>Noch kein kompletter Look.</h2>
+                  <h2>Noch kein kompletter Look</h2>
                   <p>{missingOutfitMessage(items, options, weatherContext)}</p>
                   <button className="button secondary" onClick={onAdd}>
                     <Plus size={17} />
@@ -563,9 +562,7 @@ export function OutfitView({
                       aria-label={`Outfit-Vorschlag ${index + 1}`}
                     >
                       <div className="outfit-card-heading">
-                        <p className="eyebrow">
-                          DEIN LOOK · {String(index + 1).padStart(2, '0')}
-                        </p>
+                        <p className="eyebrow">Look {index + 1}</p>
                         <span>{options.occasion}</span>
                       </div>
                       <OutfitPieces

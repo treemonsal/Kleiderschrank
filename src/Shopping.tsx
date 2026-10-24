@@ -181,7 +181,7 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
         className="shopping-card"
         aria-label="Persönliche Shopping-Beratung"
       >
-        <p className="eyebrow">DEIN STIL · BEWUSST ERGÄNZEN</p>
+        <p className="eyebrow">Shopping</p>
         <h2>
           {evidence.ready
             ? 'Ein guter nächster Kauf.'
@@ -253,8 +253,8 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
       </section>
       {open && (
         <Sheet
-          title="Weniger suchen. Passender finden."
-          eyebrow="PERSÖNLICHE KAUFIDEEN"
+          title="Kaufideen"
+          eyebrow="Shopping"
           closeDisabled={saving}
           onClose={() => {
             cancel()
@@ -395,7 +395,7 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
                       key={`${idea.name}:${index}`}
                     >
                       <p className="eyebrow">
-                        KAUFIDEE {index + 1} · SUCHBUDGET BIS {target} CHF
+                        Idee {index + 1} · bis {target} CHF
                       </p>
                       <h3>{idea.name}</h3>
                       <p>{idea.why}</p>

@@ -42,7 +42,7 @@ test('Mit ersten Stücken bleibt die Anpassung einer unvollständigen Auswahl er
     .getByRole('button', { name: 'Auswahl anpassen', exact: true })
     .click()
   await expect(
-    page.getByRole('heading', { name: 'Deine nächsten Looks.', exact: true }),
+    page.getByRole('heading', { name: 'Outfits', exact: true }),
   ).toBeVisible()
   await expect(
     page.getByText(

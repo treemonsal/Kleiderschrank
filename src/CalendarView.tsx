@@ -45,7 +45,7 @@ export function PlanEditor({
   const [busy, setBusy] = useState(false)
   return (
     <Sheet
-      title="Ein Look für deinen Tag."
+      title="Tag planen"
       closeDisabled={busy}
       dirty={!busy && JSON.stringify({ outfitId, status, note }) !== baseline}
       eyebrow={dayLabel(day)}
@@ -309,7 +309,7 @@ export function CalendarView({
         ) : (
           <div className="calendar-empty">
             <CalendarDays size={27} strokeWidth={1.2} />
-            <h3>Dein Tag, dein Look.</h3>
+            <h3>Noch nichts geplant</h3>
             <p>
               {data.outfits.length
                 ? 'Plane einen deiner gespeicherten Looks für diesen Tag.'

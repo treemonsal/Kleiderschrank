@@ -1,0 +1,532 @@
+/*
+ * Luxe art direction (0.22.0): calm monochrome surfaces, system typography,
+ * soft depth and generous spacing. Loaded after styles.css and editorial.css;
+ * those keep layout, gestures and motion. Follows the device light/dark mode.
+ */
+:root {
+  --display-font:
+    -apple-system, 'SF Pro Display', BlinkMacSystemFont, 'Helvetica Neue',
+    'Segoe UI', sans-serif;
+  --background: #f5f5f7;
+  --surface: #ffffff;
+  --soft: #ededf0;
+  --ink: #1d1d1f;
+  --muted: #6b6b70;
+  --line: #e2e2e7;
+  --accent: #1d1d1f;
+  --action: #1d1d1f;
+  --accent-ink: #ffffff;
+  --hero: #ededf0;
+  --rose: #d6204e;
+  --danger: #c4001a;
+  --glass: rgb(255 255 255 / 0.72);
+  --glass-line: rgb(0 0 0 / 0.06);
+  --radius-card: 24px;
+  --radius-control: 14px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px rgb(0 0 0 / 0.08);
+  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.03), 0 4px 16px rgb(0 0 0 / 0.04);
+  color-scheme: light;
+  letter-spacing: -0.01em;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #000000;
+    --surface: #161618;
+    --soft: #232326;
+    --ink: #f5f5f7;
+    --muted: #a1a1a6;
+    --line: #2c2c2f;
+    --accent: #f5f5f7;
+    --action: #f5f5f7;
+    --accent-ink: #000000;
+    --hero: #232326;
+    --rose: #ff4d73;
+    --danger: #ff5a4f;
+    --glass: rgb(22 22 24 / 0.72);
+    --glass-line: rgb(255 255 255 / 0.08);
+    --shadow: 0 12px 40px rgb(0 0 0 / 0.6);
+    --card-shadow: none;
+    color-scheme: dark;
+  }
+}
+body {
+  background: var(--background);
+}
+
+/* Typography: one family, weight and size carry the hierarchy. */
+.page-heading h1,
+.heading-row h1,
+.outfits-view .heading-row h1,
+.settings-view .page-heading h1,
+.daily-look h1 {
+  font-family: var(--display-font);
+  font-weight: 700;
+  font-size: clamp(30px, 8.6vw, 34px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.section-heading h2,
+.closet-empty h2,
+.outfit-empty h2,
+.sheet-header h2,
+.wardrobe-summary h2,
+.style-invitation h2,
+.style-interview > h3,
+.interview-question h4,
+.chat-welcome h3,
+.chat-empty h3 {
+  font-family: var(--display-font);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.section-heading h2 {
+  font-size: 22px;
+}
+.sheet-header h2 {
+  font-size: 24px;
+}
+.wardrobe-summary h2 {
+  font-size: 22px;
+}
+.style-invitation h2 {
+  font-size: 20px;
+}
+.style-interview > h3 {
+  font-size: 22px;
+}
+.interview-question h4 {
+  font-size: 19px;
+}
+.chat-welcome h3,
+.chat-empty h3 {
+  font-size: 24px;
+}
+.eyebrow {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.daily-look header .eyebrow {
+  color: var(--muted);
+}
+.item-category {
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.garment-caption h3 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.garment-caption p {
+  font-size: 13px;
+}
+.text-button {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Header: quiet wordmark on a translucent bar. */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 9;
+  height: 60px;
+  margin: 0;
+  padding: env(safe-area-inset-top) 20px 0;
+  box-sizing: content-box;
+  border-bottom: 0;
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+.app-shell {
+  padding-top: 0;
+}
+.wordmark {
+  font-family: var(--display-font);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+.profile-button {
+  border: 0;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--ink);
+}
+.stylist-link {
+  height: 36px;
+  min-height: 44px;
+  padding: 0 14px;
+  background: var(--soft);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.inbox-dot {
+  background: var(--rose);
+  box-shadow: 0 0 0 2px var(--soft);
+}
+.view {
+  padding: 0 20px;
+}
+.page-heading {
+  margin: 20px 0 22px;
+}
+.page-heading > p:last-child {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* Floating tab bar with frosted glass. */
+.bottom-nav {
+  left: 50%;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  width: calc(100% - 28px);
+  max-width: 520px;
+  padding: 6px;
+  border: 1px solid var(--glass-line);
+  border-radius: 999px;
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: var(--shadow);
+}
+.nav-selection {
+  top: 6px;
+  left: 6px;
+  width: calc((100% - 12px) / 4);
+  height: calc(100% - 12px);
+  border-radius: 999px;
+  background: var(--soft);
+}
+.bottom-nav > button {
+  min-height: 56px;
+  gap: 3px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.bottom-nav > button > span:last-child {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nav-icon {
+  display: inline-flex;
+  font: inherit;
+}
+.bottom-nav > button.active .nav-icon {
+  color: var(--ink);
+}
+.toast-region {
+  bottom: calc(92px + env(safe-area-inset-bottom));
+}
+.app-shell {
+  padding-bottom: calc(110px + env(safe-area-inset-bottom));
+}
+
+/* Controls: pill buttons, soft fields. */
+.button {
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.button.secondary {
+  border: 0;
+  background: var(--soft);
+  color: var(--ink);
+}
+.round-button,
+.icon-button.soft,
+.filter-button,
+.primary-add {
+  border-radius: 999px;
+}
+.filter-button,
+.round-button {
+  border: 0;
+  background: var(--soft);
+}
+.filter-button.selected {
+  background: var(--action);
+  color: var(--accent-ink);
+}
+.search-field {
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--soft);
+}
+.field input:not([type='radio']),
+.field select,
+.field textarea,
+.photo-picker,
+.import-choice {
+  border-radius: var(--radius-control);
+  border-color: var(--line);
+}
+.field {
+  font-size: 14px;
+  font-weight: 500;
+}
+.chip {
+  border-radius: 999px;
+  font-size: 14px;
+  border-color: var(--line);
+}
+.chip.active {
+  border-color: var(--action);
+}
+.category-tabs {
+  gap: 8px;
+  border-bottom: 0;
+  padding-bottom: 2px;
+}
+.category-tabs .chip {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--soft);
+  color: var(--ink);
+}
+.category-tabs .chip.active {
+  background: var(--action);
+  color: var(--accent-ink);
+}
+.collection-toolbar {
+  font-size: 13px;
+  color: var(--muted);
+}
+.outfit-tabs {
+  padding: 4px;
+  gap: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--soft);
+}
+.outfit-tabs > button {
+  border: 0;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.outfit-tabs > button.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--card-shadow);
+}
+
+/* Cards: white on grey, large radius, no outlines. */
+.daily-look,
+.outfit-options,
+.outfit-card,
+.outfit-empty,
+.settings-card,
+.privacy-banner,
+.style-profile-card,
+.online-stylist,
+.backup-reminder,
+.swap-choice,
+.weather-panel {
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.daily-look {
+  padding: 24px 20px;
+}
+.privacy-banner {
+  border-left: 0;
+}
+.settings-action {
+  padding: 18px 18px;
+}
+.settings-action strong {
+  font-size: 16px;
+  font-weight: 600;
+}
+.settings-action small {
+  font-size: 13px;
+}
+.style-invitation {
+  border-bottom: 0;
+}
+.wardrobe-summary {
+  margin-top: 8px;
+  padding: 22px 20px;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.add-banner {
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+  padding: 16px 18px;
+}
+
+/* Pieces: soft tiles, colored sketches carry the garment color. */
+.garment-picture,
+.outfit-piece > .garment-picture {
+  border-radius: 20px;
+  background: var(--soft);
+}
+.garment-sketch {
+  color: var(--muted);
+}
+.photo-placeholder > span {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+.favorite-button {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.garment-grid {
+  gap: 22px 14px;
+}
+
+/* Today: calm week strip, black selection. */
+.day-calendar-trigger {
+  font-family: var(--display-font);
+  font-size: 17px;
+  font-weight: 600;
+}
+.home-week-strip {
+  border-bottom: 0;
+}
+.home-week-strip > button {
+  border-radius: 16px;
+}
+.home-week-strip .selected {
+  background: var(--action);
+  color: var(--accent-ink);
+}
+.home-week-strip .selected small {
+  color: inherit;
+}
+.home-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.home-weather-line small {
+  font-size: 12px;
+}
+
+/* Sheets: iOS style modal cards. */
+.sheet {
+  border-radius: 28px 28px 0 0;
+  background: var(--background);
+}
+.sheet-header {
+  background: var(--background);
+}
+.sheet::backdrop {
+  background: rgb(0 0 0 / 0.4);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.sheet-handle {
+  border-radius: 999px;
+}
+@media (min-width: 600px) {
+  .sheet {
+    border-radius: 28px;
+  }
+  .daily-look {
+    padding: 32px;
+  }
+}
+.chat-message {
+  border: 0;
+  border-radius: 20px;
+  background: var(--surface);
+}
+.chat-message.user {
+  border-radius: 20px 20px 6px 20px;
+  background: var(--action);
+  color: var(--accent-ink);
+}
+.chat-message.user .chat-author {
+  color: inherit;
+  opacity: 0.75;
+}
+.toast {
+  border-radius: 18px;
+  background: var(--ink);
+  color: var(--background);
+}
+.toast.toast-error {
+  border-left: 0;
+  background: var(--danger);
+  color: #fff;
+}
+summary:focus-visible,
+:focus-visible {
+  outline-color: var(--ink);
+}
+.style-interview {
+  border-left-color: var(--line);
+}
+.interview-question {
+  border-radius: 20px;
+}
+.update-banner,
+.offline-banner {
+  border-radius: 999px;
+}
+@media (max-width: 374px) {
+  .view {
+    padding: 0 14px;
+  }
+  .app-header {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .wordmark {
+    font-size: 20px;
+  }
+}
+.wardrobe-summary .eyebrow,
+.section-heading .eyebrow,
+.sheet-header .eyebrow,
+.calendar-day-card > .eyebrow {
+  font-size: 13px;
+  letter-spacing: 0;
+  margin-bottom: 2px;
+}
+.style-invitation {
+  margin: 16px 0 0;
+  padding: 20px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.daily-look .online-stylist,
+.daily-look .outfit-reasons {
+  box-shadow: none;
+  background: var(--soft);
+}
+.daily-look .outfit-reasons {
+  border-top: 0;
+  border-radius: 16px;
+  padding: 4px 16px;
+}
+.garment-card .placeholder-category {
+  display: none;
+}

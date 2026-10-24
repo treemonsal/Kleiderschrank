@@ -200,8 +200,8 @@ export function OnlineStylist({
         <div className="stylist-result" role="status">
           <p className="eyebrow">
             {photoCount
-              ? 'QWEN · VISUELLE OUTFIT-BERATUNG'
-              : 'QWEN · OUTFIT-BERATUNG NACH ANGABEN'}
+              ? 'Qwen · Visuelle Beratung'
+              : 'Qwen · Beratung nach Angaben'}
           </p>
           <p>{advice.reason}</p>
           <OutfitPieces
