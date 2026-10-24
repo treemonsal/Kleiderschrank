@@ -168,8 +168,8 @@ body {
   border-radius: 999px;
   background: linear-gradient(
     180deg,
-    rgb(255 255 255 / 0.5) 0%,
-    rgb(255 255 255 / 0.22) 100%
+    rgb(255 255 255 / 0.68) 0%,
+    rgb(255 255 255 / 0.48) 100%
   );
   -webkit-backdrop-filter: blur(26px) saturate(190%) brightness(1.05);
   backdrop-filter: blur(26px) saturate(190%) brightness(1.05);
@@ -179,6 +179,13 @@ body {
     inset 0 0 0 1px rgb(255 255 255 / 0.45),
     0 0 0 0.5px rgb(20 20 20 / 0.08),
     0 10px 30px rgb(40 32 20 / 0.12);
+}
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .bottom-nav {
+    background: rgb(255 254 251 / 0.96);
+  }
 }
 .nav-selection {
   top: 4px;
