@@ -128,39 +128,43 @@ export function OnlineStylist({
       <h2>
         <MessageCircle size={19} /> Dein Online-Stylist
       </h2>
-      <p className="muted">
-        {photoCount
-          ? 'Lass Qwen deine Looks anhand der Fotos vergleichen.'
-          : 'Lass Qwen deine Looks anhand der Kleidungsangaben vergleichen. Ohne Fotos ist keine visuelle Einschätzung möglich.'}
-      </p>
-      <details className="stylist-disclosure">
-        <summary>Was wird gesendet?</summary>
-        <p>
-          Erst beim Start gehen bis zu {photoCount} gespeicherte Kleidungsfotos
-          als Übersicht, ihre Angaben, Anlass, dein Stilprofil, aus deinen
-          Bewertungen abgeleitete Vorlieben, dein Wunsch und gegebenenfalls die
-          Wettervorhersage an Qwen3-VL-Outpost auf Hugging Face. Keine
-          Standortkoordinaten oder vollständige Sicherung. Der Community-Dienst
-          kann Inhalte speichern; Löschdauer und Verfügbarkeit sind nicht
-          garantiert. Die Auswahl bleibt auf vorhandene, verfügbare
-          Kombinationen begrenzt.
-        </p>
-      </details>
-      {!enabled && (
+      {enabled ? (
+        <>
+          <p className="muted">
+            {photoCount
+              ? 'Lass Qwen deine Looks anhand der Fotos vergleichen.'
+              : 'Lass Qwen deine Looks anhand der Kleidungsangaben vergleichen. Ohne Fotos ist keine visuelle Einschätzung möglich.'}
+          </p>
+          <details className="stylist-disclosure">
+            <summary>Was wird gesendet?</summary>
+            <p>
+              Erst beim Start gehen bis zu {photoCount} gespeicherte
+              Kleidungsfotos als Übersicht, ihre Angaben, Anlass, dein
+              Stilprofil, aus deinen Bewertungen abgeleitete Vorlieben, dein
+              Wunsch und gegebenenfalls die Wettervorhersage an Qwen3-VL-Outpost
+              auf Hugging Face. Keine Standortkoordinaten oder vollständige
+              Sicherung. Der Community-Dienst kann Inhalte speichern; Löschdauer
+              und Verfügbarkeit sind nicht garantiert. Die Auswahl bleibt auf
+              vorhandene, verfügbare Kombinationen begrenzt.
+            </p>
+          </details>
+          <label className="field">
+            Dein Wunsch (optional)
+            <input
+              value={wish}
+              maxLength={400}
+              disabled={busy || applying}
+              placeholder="Zum Beispiel: etwas eleganter, ohne neue Teile"
+              onChange={(event) => setWish(event.target.value)}
+            />
+          </label>
+        </>
+      ) : (
         <p className="muted">
-          Aktiviere die kostenlose Community-KI unter Mehr → Online-Foto-KI.
+          Ausgeschaltet. Aktiviere die kostenlose Community-KI unter Mehr →
+          Online-Foto-KI, dann vergleicht Qwen deine Looks.
         </p>
       )}
-      <label className="field">
-        Dein Wunsch (optional)
-        <input
-          value={wish}
-          maxLength={400}
-          disabled={busy || applying}
-          placeholder="Zum Beispiel: etwas eleganter, ohne neue Teile"
-          onChange={(event) => setWish(event.target.value)}
-        />
-      </label>
       <div className="stylist-actions">
         <button
           className="button secondary"

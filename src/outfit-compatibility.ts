@@ -1,5 +1,6 @@
 import type { Garment } from './model'
 import type { OutfitFeedback } from './outfit-model'
+import { colorHarmony, styleCoherence } from './color-harmony'
 const neutral = new Set(['Schwarz', 'Weiss', 'Grau', 'Beige', 'Braun'])
 const pairKey = (a: string, b: string) => JSON.stringify([a, b].sort())
 // Bounded, explicit signals from liked combinations, never inferred from a skipped look.
@@ -39,10 +40,14 @@ export function createCompatibilityScorer(feedback: OutfitFeedback[]) {
       }
     const style = stylePairs ? (sharedStyles / stylePairs) * 1.5 : 0
     const familiarity = pairs ? (liked / pairs) * 2 : 0
+    const harmony = colorHarmony(known)
+    const coherence = styleCoherence(items)
     return {
-      score: color + style + familiarity,
+      score: color + style + familiarity + harmony.score + coherence.score,
       familiar: liked > 0,
       sharedStyle: sharedStyles > 0,
+      colorNote: harmony.note,
+      styleNote: coherence.note,
     }
   }
 }

@@ -353,5 +353,6 @@ test('Gedämpfte Beschriftungen und Aktionen bleiben auf Papierflächen lesbar',
     .click()
   await contrast(['.category-tabs .chip', '.collection-toolbar'])
   await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await expect(page.locator('.settings-action small').first()).toBeVisible()
   await contrast(['.settings-action small'])
 })

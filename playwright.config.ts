@@ -2,7 +2,9 @@ import { defineConfig, devices } from '@playwright/test'
 import { existsSync } from 'node:fs'
 const chromiumPath =
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ||
-  (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined)
+  ['/usr/bin/chromium', '/opt/pw-browsers/chromium'].find((path) =>
+    existsSync(path),
+  )
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
