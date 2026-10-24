@@ -2,7 +2,7 @@
 
 ## Version 0.21.0 – Farbregeln, Tragestatistik und Überarbeitung
 
-- [x] Codex-Stand 0.20.0 als lokaler Tag `backup/codex-0.20.0` sichern; `main` bleibt bis zur Übernahme unverändert ([Rückweg](design/backups/RESTORE-0.21.0.md))
+- [x] Codex-Stand 0.20.0 als GitHub-Branch `backup/codex-0.20.0` sichern ([Rückweg](design/backups/RESTORE-0.21.0.md))
 - [x] Generator bewertet bekannte Farbpaare (z. B. Rot/Grün schwächer, Blau/Rosa stärker), blaue Hosen als Jeansbasis und starke Stilbrüche; der wichtigste Farbgrund erscheint in „Warum diese Kombination?“
 - [x] Skizzen ohne Foto in der erfassten Farbe einfärben
 - [x] Tragestatistik pro Stück und Sortierung „Selten getragen zuerst“
