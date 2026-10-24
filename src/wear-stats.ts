@@ -31,7 +31,7 @@ export function wearStats(
 }
 
 export function describeWear(stats: WearStats | undefined, today = localDay()) {
-  if (!stats?.count) return 'Noch nie als getragen bestätigt'
+  if (!stats?.count) return 'Noch nie getragen'
   const days = Math.round(
     (Date.parse(`${today}T12:00:00Z`) -
       Date.parse(`${stats.lastWorn}T12:00:00Z`)) /

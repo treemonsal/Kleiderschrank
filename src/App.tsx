@@ -4,7 +4,6 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import {
   ArrowRight,
-  ArrowUpRight,
   CircleAlert,
   Check,
   Heart,
@@ -73,19 +72,19 @@ function Loading() {
 
 function Home({
   items,
+  wear,
   onAdd,
   onWardrobe,
   onOpen,
-  onFavorite,
   onOutfits,
   onBackup,
   notify,
 }: {
   items: Garment[]
+  wear: Map<string, WearStats>
   onAdd: () => void
   onWardrobe: () => void
   onOpen: (id: string) => void
-  onFavorite: (item: Garment) => void
   onOutfits: () => void
   onBackup: () => void
   notify: (message: string) => void
@@ -101,12 +100,24 @@ function Home({
     const next = shiftDay(day, offset)
     if (next) selectDay(next)
   }, day)
-  const favorites = items.filter((i) => i.favorite)
-  const featured = (
-    favorites.length
-      ? favorites
+  // With wear days the shelf surfaces forgotten pieces; before that it
+  // confirms what was added recently.
+  const forgottenMode = wear.size > 0
+  const shelf = (
+    forgottenMode
+      ? items
+          .filter((item) => !item.inLaundry)
+          .sort(
+            (a, b) =>
+              (wear.get(a.id)?.lastWorn ?? '').localeCompare(
+                wear.get(b.id)?.lastWorn ?? '',
+              ) || a.name.localeCompare(b.name, 'de'),
+          )
       : [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-  ).slice(0, 4)
+  ).slice(0, 6)
+  const shelfTitle = forgottenMode
+    ? 'Lange nicht getragen'
+    : 'Zuletzt hinzugefügt'
   return (
     <div className="view home-view">
       <div className="home-day-browser" {...swipe}>
@@ -122,51 +133,37 @@ function Home({
       </div>
       <ShoppingCard hideLocked />
       <BackupReminder onBackup={onBackup} />
-      <section className="wardrobe-summary">
-        <div>
-          <p className="eyebrow">Garderobe</p>
-          <h2>
-            {items.length} {items.length === 1 ? 'Stück' : 'Stücke'}
-            <span className="summary-dot">·</span>
-            <Heart size={15} />
-            {favorites.length}
-          </h2>
-        </div>
-        <button
-          className="round-button"
-          aria-label="Kleiderschrank ansehen"
-          onClick={onWardrobe}
-        >
-          <ArrowUpRight size={22} strokeWidth={1.5} />
-        </button>
-      </section>
-      {items.length > 0 && (
-        <section className="home-collection">
+      {shelf.length > 0 && (
+        <section className="home-collection" aria-label={shelfTitle}>
           <div className="section-heading">
             <div>
-              <p className="eyebrow">Kollektion</p>
-              <h2>
-                {favorites.length
-                  ? 'Deine Lieblingsstücke'
-                  : items.length
-                    ? 'Frisch im Kleiderschrank'
-                    : 'Hier beginnt dein Stil'}
-              </h2>
+              <h2>{shelfTitle}</h2>
+              <p className="muted">
+                {forgottenMode
+                  ? 'Sortiert nach letztem Tragetag.'
+                  : 'Deine neuesten Stücke.'}
+              </p>
             </div>
-            {items.length > 0 && (
-              <button className="text-button" onClick={onWardrobe}>
-                Alle <ArrowRight size={16} />
-              </button>
-            )}
+            <button className="text-button" onClick={onWardrobe}>
+              Alle <ArrowRight size={16} />
+            </button>
           </div>
-          <div className="garment-grid">
-            {featured.map((item) => (
-              <GarmentCard
+          <div className="forgotten-row">
+            {shelf.map((item) => (
+              <button
                 key={item.id}
-                item={item}
-                onOpen={() => onOpen(item.id)}
-                onFavorite={() => onFavorite(item)}
-              />
+                className="forgotten-piece"
+                aria-label={`${item.name} öffnen`}
+                onClick={() => onOpen(item.id)}
+              >
+                <GarmentPicture item={item} />
+                <strong>{item.name}</strong>
+                <small>
+                  {forgottenMode
+                    ? describeWear(wear.get(item.id), today)
+                    : item.category}
+                </small>
+              </button>
             ))}
           </div>
         </section>
@@ -404,8 +401,8 @@ function Detail({
         <GarmentPicture item={item} large />
         <div className="detail-title">
           <div>
-            <p className="eyebrow">Details</p>
-            <h3>{item.brand || 'Ein Stück von dir'}</h3>
+            <p className="eyebrow">Marke</p>
+            <h3>{item.brand || 'Ohne Marke'}</h3>
           </div>
           <button
             data-motion="heart"
@@ -744,10 +741,10 @@ export default function App() {
         ) : view === 'home' ? (
           <Home
             items={items}
+            wear={wear}
             onAdd={() => setEditor('new')}
             onWardrobe={() => navigate('wardrobe')}
             onOpen={setSelectedId}
-            onFavorite={(item) => void favorite(item)}
             onOutfits={() => navigate('outfits')}
             onBackup={() => {
               navigate('settings', () => {

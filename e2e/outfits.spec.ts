@@ -234,7 +234,7 @@ test('Fehlende Kleidung wird erklärt; Ablehnungen können zurückgesetzt werden
     .click()
   await expect(
     page.getByRole('heading', {
-      name: 'Platz für Lieblingslooks.',
+      name: 'Noch keine Looks gespeichert',
       exact: true,
     }),
   ).toBeVisible()

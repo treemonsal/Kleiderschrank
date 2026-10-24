@@ -39,8 +39,7 @@ export function OutfitPieces({
               aria-label={`${item.name} austauschen`}
               onClick={() => onSwap(item.id)}
             >
-              <RefreshCw size={14} />
-              Austauschen
+              <RefreshCw size={16} />
             </button>
           )}
         </div>

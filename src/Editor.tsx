@@ -79,7 +79,7 @@ export function Editor({
   }
   return (
     <Sheet
-      title={item ? 'Stück bearbeiten' : 'Ein neues Lieblingsstück.'}
+      title={item ? 'Stück bearbeiten' : 'Neues Stück'}
       eyebrow="Kleiderschrank"
       onClose={onClose}
       dirty={dirty}
@@ -116,7 +116,7 @@ export function Editor({
             ) : (
               <div className="photo-picker-empty">
                 <ImagePlus size={32} strokeWidth={1.3} />
-                <p>Dein Foto ist der Anfang</p>
+                <p>Foto hinzufügen</p>
                 <span>
                   Wähle ein Foto und starte die KI bei Bedarf per Knopfdruck. Du
                   kannst die Angaben auch selbst eintragen.

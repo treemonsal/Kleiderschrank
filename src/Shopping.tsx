@@ -182,11 +182,7 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
         aria-label="Persönliche Shopping-Beratung"
       >
         <p className="eyebrow">Shopping</p>
-        <h2>
-          {evidence.ready
-            ? 'Ein guter nächster Kauf.'
-            : 'Shopping wird persönlich.'}
-        </h2>
+        <h2>{evidence.ready ? 'Kaufideen' : 'Shopping'}</h2>
         <p className="muted">
           {evidence.ready
             ? 'Kleine Ergänzungen, die zu deinen Lieblingslooks passen. Lieber unter 50 CHF, höchstens 100 CHF pro Stück.'

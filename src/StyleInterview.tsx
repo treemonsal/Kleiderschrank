@@ -156,12 +156,12 @@ export function StyleInterviewPanel({
       <p className="eyebrow">Stilgespräch</p>
       <h3 ref={!expanded ? visibleQuestion : undefined}>
         {completed
-          ? 'Dein Stil, in deinen Worten.'
+          ? 'Stilgespräch abgeschlossen'
           : interview?.status === 'in-progress'
             ? !expanded && next
               ? next.title
-              : 'Dein Stilgespräch.'
-            : 'Mehr als drei kurze Antworten.'}
+              : 'Stilgespräch'
+            : 'Acht Fragen zu deinem Stil'}
       </h3>
       {!expanded && (
         <p className="muted">
