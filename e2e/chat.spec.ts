@@ -185,8 +185,10 @@ test('Chat fragt einmal nach Freigabe, beantwortet Folgefragen, speichert echten
     }),
   ).toHaveCount(1)
   expect(api.calls[0].data[0]).toBe('Qwen3-VL-8B-Instruct')
-  expect((api.calls[0].data[2] as string).length).toBeLessThan(3000)
-  expect(api.calls[0].data[1]).not.toContain('PRIVATE-NOTE')
+  // Garment photos travel as one labelled collage; notes help the stylist.
+  expect((api.calls[0].data[2] as string).length).toBeGreaterThan(3000)
+  expect(api.calls[0].data[1]).toContain('PRIVATE-NOTE')
+  expect(api.calls[0].data[1]).toContain('attached image shows photos')
   expect(api.calls[0].data[1]).not.toContain('data:image')
   await send(page, 'Und etwas eleganter?')
   await expect(

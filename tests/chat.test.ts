@@ -94,7 +94,7 @@ describe('Persönlicher, begrenzter Chat-Kontext', () => {
       }
     expect(chatRevision(changed)).toBe(chatRevision(d))
   })
-  it('enthält echte Merkmale und Vorlieben, aber keine Fotos, Notizen, Koordinaten oder Provider-Codes', () => {
+  it('enthält Merkmale, Notizen, Tragetage und Fotos als Collage, aber keine Koordinaten im Text', () => {
     const d = data()
     d.garments = pieces.map((item) => ({
       ...item,
@@ -103,10 +103,17 @@ describe('Persönlicher, begrenzter Chat-Kontext', () => {
     const context = buildChatContext(d, 'Was passt dazu?')
     expect(context.prompt).toContain('Bekannt')
     expect(context.prompt).not.toContain('private-pixels')
-    expect(context.prompt).not.toContain('PRIVATE-NOTE')
+    expect(context.prompt).toContain('PRIVATE-NOTE')
+    expect(context.prompt).toContain('timesWorn')
     expect(context.prompt).not.toContain('latitude')
-    expect(context.prompt).toContain('NO garment photos')
+    expect(context.prompt).toContain('attached image shows photos of G1')
+    expect(context.photos.length).toBe(context.items.length)
     expect(context.prompt).toContain('cannot edit, delete, plan')
+  })
+  it('sendet ohne Fotos weiterhin nur einen Platzhalter', () => {
+    const context = buildChatContext(data(), 'Was passt dazu?')
+    expect(context.photos).toEqual([])
+    expect(context.prompt).toContain('NO garment photos')
   })
   it('begrenzt grosse Sammlungen auf 40 Stücke, erhält Kategorien und priorisiert genannte Teile', () => {
     const d = data()

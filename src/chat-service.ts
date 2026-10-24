@@ -2,22 +2,28 @@ import { callCommunity, VISION_HOST } from './community-ai'
 import { AIProviderError, providerError } from './ai-errors'
 import type { ChatContext } from './chat-model'
 import { chatEnabled } from './chat-consent'
+import { garmentCollage } from './collage'
 
 export async function askChat(
   context: ChatContext,
   signal: AbortSignal,
 ): Promise<unknown> {
   if (!chatEnabled()) throw new Error('Aktiviere zuerst den Online-Chat.')
-  // The provider requires an image even for language-only questions. This blank
-  // transport image contains no wardrobe photos, metadata, or private pixels.
-  const canvas = document.createElement('canvas')
-  canvas.width = 32
-  canvas.height = 32
-  const graphics = canvas.getContext('2d')
-  if (!graphics) throw new Error('Der Chat konnte nicht vorbereitet werden.')
-  graphics.fillStyle = '#ffffff'
-  graphics.fillRect(0, 0, 32, 32)
-  const placeholder = canvas.toDataURL('image/jpeg', 0.8).split(',')[1]
+  // Garment photos go along as one labelled collage. Without photos the
+  // provider still needs an image, so a blank placeholder is sent.
+  let image: string
+  if (context.photos.length)
+    image = await garmentCollage(context.photos, signal)
+  else {
+    const canvas = document.createElement('canvas')
+    canvas.width = 32
+    canvas.height = 32
+    const graphics = canvas.getContext('2d')
+    if (!graphics) throw new Error('Der Chat konnte nicht vorbereitet werden.')
+    graphics.fillStyle = '#ffffff'
+    graphics.fillRect(0, 0, 32, 32)
+    image = canvas.toDataURL('image/jpeg', 0.8).split(',')[1]
+  }
   signal.throwIfAborted()
   if (!chatEnabled()) throw new Error('Die Chat-Freigabe wurde zurückgezogen.')
   const value = await callCommunity(
@@ -26,7 +32,7 @@ export async function askChat(
     [
       'Qwen3-VL-8B-Instruct',
       context.prompt,
-      placeholder,
+      image,
       900,
       0.1,
       0.9,

@@ -1,5 +1,16 @@
 # Entwicklungsplan
 
+## Version 0.25.0 – das Beste aus acht ähnlichen Apps
+
+- [x] Acht Open-Source-Apps analysiert, beste und schwächste Features in docs/COMPETITOR_ANALYSIS.md
+- [x] Automatische Wäsche nach typischen Tragetagen, abschaltbar
+- [x] Temperaturempfinden für Jacken und Saisongrenzen
+- [x] Preis und Kosten pro Tragen
+- [x] Auswertung: Wert, Nutzung, Allrounder, Stücke ohne Partner, Farben, Balance
+- [x] „Was passt dazu?“ im Stück-Detail
+- [x] Packliste für Reisen mit möglichst wenigen Teilen
+- [x] Eine KI-Freigabe für alles; Chat sieht Fotos, Notizen und Tragehäufigkeit
+
 ## Version 0.24.0 – helles Luxe-Design und Liquid-Glass-Navigation
 
 - [x] Stand 0.23.0 als Branch `backup/design-0.23.0` sichern

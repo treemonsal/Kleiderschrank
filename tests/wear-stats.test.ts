@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { describeWear, wearStats } from '../src/wear-stats'
+import { costPerWear, describeWear, wearStats } from '../src/wear-stats'
 import type { CalendarEntry } from '../src/calendar'
 import type { SavedOutfit } from '../src/outfit-model'
 
@@ -32,5 +32,14 @@ describe('Tragestatistik', () => {
     expect(
       describeWear({ count: 1, lastWorn: '2026-10-23' }, '2026-10-24'),
     ).toBe('1× getragen · zuletzt gestern')
+  })
+})
+
+describe('Kosten pro Tragen', () => {
+  it('teilt den Preis durch die Tragetage und zählt ungetragene als einmal', () => {
+    expect(costPerWear(undefined, 3)).toBeUndefined()
+    expect(costPerWear(60, 4)).toBe(15)
+    expect(costPerWear(60, 0)).toBe(60)
+    expect(costPerWear(10, 3)).toBe(3.33)
   })
 })

@@ -1,3 +1,5 @@
+import { setChatEnabled } from './chat-consent'
+import { setShoppingEnabled } from './shopping-consent'
 import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, LoaderCircle } from 'lucide-react'
 import {
@@ -170,9 +172,9 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
             />
             <span>
               Ich erlaube, neue Kleidungsfotos nach meinem Start an diese beiden
-              Community-Dienste zu senden. Beim Online-Stylisten gebe ich die
-              ausgewählten gespeicherten Fotos erst durch Starten der Beratung
-              frei.
+              Community-Dienste zu senden. Damit sind auch Online-Stylist, Chat
+              (mit Fotos und Notizen) und Kaufideen freigeschaltet; Anfragen
+              starten weiterhin nur auf meinen Tipp.
             </span>
           </label>
         </Information>
@@ -199,9 +201,12 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
                 await checkAIConnection(value, next.signal)
                 if (next.signal.aborted) return
                 if (!persist(value)) return
+                // One switch for every free online feature.
+                setChatEnabled(true)
+                setShoppingEnabled(true)
                 setEnabled(false)
                 setMessage(
-                  'Kostenlose KI aktiviert. Starte die Fotoanalyse bei Bedarf per Knopfdruck.',
+                  'Kostenlose KI aktiviert. Fotoanalyse, Online-Stylist, Chat und Kaufideen sind bereit.',
                 )
                 onConnected?.()
               } catch (e) {
@@ -241,10 +246,12 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
               controller.current = null
               setBusy(false)
               if (!persist(null)) return
+              setChatEnabled(false)
+              setShoppingEnabled(false)
               setCommunityConsent(false)
               setEnabled(false)
               setMessage(
-                'Online-KI ausgeschaltet. Es werden keine neuen Fotos gesendet.',
+                'Online-KI ausgeschaltet. Fotoanalyse, Stylist, Chat und Kaufideen senden nichts mehr.',
               )
             }}
           >

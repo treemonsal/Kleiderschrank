@@ -608,3 +608,249 @@ summary:focus-visible,
     flex-basis: 22%;
   }
 }
+
+/* Everyday settings */
+.everyday-card {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+}
+.everyday-card .micro-copy {
+  justify-content: flex-start;
+  text-align: left;
+  margin: 0 0 6px;
+}
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.check-row input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--action);
+}
+.cost-per-wear {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Wardrobe header actions and insights */
+.heading-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.insights {
+  display: grid;
+  gap: 22px;
+  padding-bottom: 24px;
+}
+.insight-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.insight-tiles > div {
+  display: grid;
+  gap: 4px;
+  padding: 14px 12px;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.insight-tiles strong {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.insight-tiles span {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+.insight-hint {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--soft);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.insights section h3 {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+}
+.insights section .muted {
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+.insight-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+.insight-list li + li {
+  border-top: 1px solid var(--line);
+}
+.insight-list button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 15px;
+}
+.insight-list span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.insight-list small {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.color-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.color-bars li {
+  display: grid;
+  grid-template-columns: 18px 72px 1fr 24px;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.color-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+.color-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--soft);
+  overflow: hidden;
+}
+.color-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ink);
+}
+.color-count {
+  text-align: right;
+  color: var(--muted);
+}
+
+/* What goes with this */
+.pairings {
+  display: grid;
+  gap: 14px;
+  margin: 8px 0 4px;
+}
+.pairings h4 {
+  font-size: 17px;
+  font-weight: 650;
+  margin: 0;
+}
+.pairing-look {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.pairing-look .eyebrow {
+  margin: 0;
+}
+.pairing-look .outfit-pieces {
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+}
+
+/* Packing list */
+.packing {
+  display: grid;
+  gap: 18px;
+  padding-bottom: 24px;
+}
+.packing h3 {
+  font-size: 17px;
+  font-weight: 650;
+  margin: 0 0 8px;
+}
+.packing-summary {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--soft);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.packing-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 16px;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.packing-list li + li {
+  border-top: 1px solid var(--line);
+}
+.packing-list .check-row span {
+  flex: 1;
+  min-width: 0;
+}
+.packing-list .check-row small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.packing-list input:checked + span {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.packing-days {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.packing-days li {
+  display: grid;
+  gap: 2px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+  font-size: 14px;
+}
+.packing-days strong {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+}

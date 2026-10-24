@@ -1,3 +1,4 @@
+import { EverydaySettings } from './EverydaySettings'
 import { useEffect, useRef, useState } from 'react'
 import {
   ArrowDownToLine,
@@ -129,6 +130,7 @@ export function BackupView({
       </section>
       <AISettings />
       <StyleProfileCard items={items} notify={notify} />
+      <EverydaySettings />
       <details className="settings-section settings-advanced">
         <summary>Lokale Freistellung &amp; KI-Speicher</summary>
         <div className="section-heading">

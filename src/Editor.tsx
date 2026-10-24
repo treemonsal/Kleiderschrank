@@ -46,6 +46,9 @@ export function Editor({
   const [onlineBusy, setOnlineBusy] = useState(false)
   const [recognized, setRecognized] = useState(false)
   const [dirty, setDirty] = useState(false)
+  const [priceText, setPriceText] = useState(
+    item?.price === undefined ? '' : String(item.price),
+  )
   const [photoRevision, setPhotoRevision] = useState(0)
   const library = useRef<HTMLInputElement>(null)
   const camera = useRef<HTMLInputElement>(null)
@@ -262,6 +265,27 @@ export function Editor({
               />
             </label>
           </div>
+          <label className="field">
+            <span>
+              Preis in CHF <span className="optional">optional</span>
+            </span>
+            <input
+              inputMode="decimal"
+              placeholder="z. B. 49.90"
+              value={priceText}
+              onChange={(e) => {
+                const text = e.target.value.replace(/[^0-9.,]/g, '').slice(0, 9)
+                const value = Number(text.replace(',', '.'))
+                setPriceText(text)
+                update(
+                  'price',
+                  text && Number.isFinite(value) && value <= 100000
+                    ? Math.round(value * 100) / 100
+                    : undefined,
+                )
+              }}
+            />
+          </label>
           <div className="field">
             <span>
               Farbe{' '}
