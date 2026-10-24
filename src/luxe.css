@@ -19,7 +19,7 @@
   --hero: #ededf0;
   --rose: #d6204e;
   --danger: #c4001a;
-  --glass: rgb(255 255 255 / 0.72);
+  --glass: rgb(250 250 252 / 0.86);
   --glass-line: rgb(0 0 0 / 0.06);
   --radius-card: 24px;
   --radius-control: 14px;
@@ -42,7 +42,7 @@
     --hero: #232326;
     --rose: #ff4d73;
     --danger: #ff5a4f;
-    --glass: rgb(22 22 24 / 0.72);
+    --glass: rgb(22 22 24 / 0.86);
     --glass-line: rgb(255 255 255 / 0.08);
     --shadow: 0 12px 40px rgb(0 0 0 / 0.6);
     --card-shadow: none;
