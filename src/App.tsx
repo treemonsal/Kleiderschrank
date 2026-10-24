@@ -41,7 +41,11 @@ import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
 import { StylistChat } from './StylistChat'
 import { useStylistInbox } from './stylist-inbox'
-import { restorePageScroll, useViewState } from './view-memory'
+import {
+  restorePageScroll,
+  scrollSectionIntoView,
+  useViewState,
+} from './view-memory'
 
 type View = 'home' | 'wardrobe' | 'outfits' | 'settings'
 
@@ -706,9 +710,7 @@ export default function App() {
             onOutfits={() => navigate('outfits')}
             onBackup={() => {
               navigate('settings', () => {
-                const section = document.getElementById('backup-section')
-                section?.scrollIntoView({ block: 'start' })
-                section?.focus({ preventScroll: true })
+                cancelScroll.current = scrollSectionIntoView('backup-section')
               })
             }}
             notify={notify}

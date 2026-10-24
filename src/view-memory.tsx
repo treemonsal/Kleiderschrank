@@ -59,3 +59,29 @@ export function restorePageScroll(top: number) {
   restore()
   return stop
 }
+
+/** Keep a section at the top while content above it is still loading. */
+export function scrollSectionIntoView(id: string) {
+  const reveal = () => {
+    const section = document.getElementById(id)
+    section?.scrollIntoView({ block: 'start', behavior: 'instant' })
+    return section
+  }
+  reveal()?.focus({ preventScroll: true })
+  const main = document.getElementById('main-content')
+  if (typeof ResizeObserver === 'undefined' || !main) return () => {}
+  const observer = new ResizeObserver(() => {
+    reveal()?.focus({ preventScroll: true })
+  })
+  const stop = () => {
+    observer.disconnect()
+    clearTimeout(timer)
+    for (const event of ['pointerdown', 'touchstart', 'wheel', 'keydown'])
+      window.removeEventListener(event, stop, true)
+  }
+  const timer = window.setTimeout(stop, 2000)
+  for (const event of ['pointerdown', 'touchstart', 'wheel', 'keydown'])
+    window.addEventListener(event, stop, { capture: true, passive: true })
+  observer.observe(main)
+  return stop
+}
