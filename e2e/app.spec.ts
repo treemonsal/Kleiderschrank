@@ -65,14 +65,14 @@ test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Suchen, Favorisieren un
   await dialog.getByLabel('Notizen').fill('Für warme Tage.\nLeicht und luftig.')
   await dialog.getByRole('button', { name: 'Änderungen speichern' }).click()
   await page
+    .getByRole('button', { name: 'Kleiderschrank', exact: true })
+    .click()
+  await page
     .getByRole('button', { name: 'Sommerhemd: Als Favorit markieren' })
     .click()
   await expect(
     page.getByRole('button', { name: 'Sommerhemd: Favorit entfernen' }),
   ).toHaveAttribute('aria-pressed', 'true')
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
   await page.getByRole('searchbox', { name: 'Kleidung suchen' }).fill('arket')
   await expect(
     page.getByRole('button', { name: 'Sommerhemd öffnen' }),

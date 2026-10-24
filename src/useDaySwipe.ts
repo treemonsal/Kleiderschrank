@@ -68,7 +68,10 @@ export function useDaySwipe(move: (offset: number) => void, day: string) {
     const control = node?.closest(
       'button,input,textarea,select,a,summary,label,[role="slider"],[contenteditable="true"],[data-no-swipe]',
     )
-    if (control && !control.matches('.outfit-piece, .home-week-strip > button'))
+    if (
+      control &&
+      !control.matches('.outfit-piece, .piece-swap, .home-week-strip > button')
+    )
       return true
     while (node && node !== element) {
       if (
@@ -86,7 +89,7 @@ export function useDaySwipe(move: (offset: number) => void, day: string) {
       if (
         performance.now() < suppressClick.current &&
         (event.target as Element).closest(
-          '.outfit-piece, .home-week-strip > button',
+          '.outfit-piece, .piece-swap, .home-week-strip > button',
         )
       ) {
         event.preventDefault()

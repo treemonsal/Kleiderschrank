@@ -25,7 +25,7 @@ describe('Tragestatistik', () => {
   })
 
   it('beschreibt Stücke verständlich', () => {
-    expect(describeWear(undefined)).toBe('Noch nie als getragen bestätigt')
+    expect(describeWear(undefined)).toBe('Noch nie getragen')
     expect(
       describeWear({ count: 3, lastWorn: '2026-10-20' }, '2026-10-24'),
     ).toBe('3× getragen · zuletzt vor 4 Tagen')

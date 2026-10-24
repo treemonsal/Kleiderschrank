@@ -92,9 +92,9 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
       </div>
       {!communityActive && (
         <p className="muted section-intro">
-          Ein Foto, alle Angaben. Die KI erkennt Name, Kategorie und Farbe,
-          schätzt Stil und Saison und stellt dein Stück frei. Marken bleiben
-          leer, wenn das Logo nicht lesbar ist.
+          Die KI füllt Name, Kategorie und Farbe aus, schätzt Stil und Saison
+          und stellt dein Stück frei. Marken bleiben leer, wenn kein Logo lesbar
+          ist.
         </p>
       )}
       <div className="settings-card ai-connection community-settings">

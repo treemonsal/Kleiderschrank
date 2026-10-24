@@ -158,7 +158,7 @@ test('Einladung dauerhaft ausblenden lässt den Chat und einen freiwilligen Neus
   const again = await open(page)
   await expect(
     again.getByRole('heading', {
-      name: 'Mehr als drei kurze Antworten.',
+      name: 'Acht Fragen zu deinem Stil',
       exact: true,
     }),
   ).toHaveCount(0)

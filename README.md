@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.22.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.23.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -34,7 +34,7 @@ Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten od
 
 Lokale Vorschläge bewerten seit 0.21.0 bekannte Farbpaare nach klassischen Stylingregeln: Rot mit Grün oder Rot mit Rosa wird schwächer gewichtet, Blau mit Rosa oder Gelb stärker. Blaue Hosen zählen als Jeansbasis und damit fast neutral. Sehr sportliche und sehr elegante Stücke zusammen gelten als Stilbruch. Das sind nachvollziehbare Regeln für die erfassten Farbnamen, keine Analyse echter Farbtöne oder Muster. Stücke ohne Foto erscheinen als Skizze in ihrer erfassten Farbe.
 
-Im Detail jedes Stücks steht, wie oft es als getragen bestätigt wurde und wann zuletzt. Unter **Kleiderschrank → Sortieren → Selten getragen zuerst** findest du Stücke, die nur im Schrank hängen.
+Im Detail jedes Stücks steht, wie oft es als getragen bestätigt wurde und wann zuletzt. Sobald es bestätigte Tragetage gibt, zeigt **Heute** das Regal **Lange nicht getragen**. Unter **Kleiderschrank → Sortieren → Selten getragen zuerst** findest du Stücke, die nur im Schrank hängen.
 
 ## Deinen Tageslook verfeinern
 

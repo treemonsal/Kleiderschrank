@@ -165,11 +165,11 @@ export function BackupView({
       </details>
       <section className="settings-section" id="backup-section" tabIndex={-1}>
         <div className="section-heading">
-          <h2>Deine Datensicherung</h2>
+          <h2>Sicherung</h2>
           <Database size={18} />
         </div>
         <p className="muted section-intro">
-          Ein kleines Ritual, das deine Lieblingsstücke schützt.
+          Exportiere regelmässig eine Sicherung in „Dateien“.
         </p>
         <div className="settings-card">
           <button
@@ -333,15 +333,13 @@ export function BackupView({
       <button className="install-help" onClick={() => setHelp(true)}>
         <Smartphone size={23} strokeWidth={1.4} />
         <span>
-          <strong>Ein Zuhause auf deinem iPhone</strong>
-          <small>So legst du MyStyle auf den Home-Bildschirm.</small>
+          <strong>Auf dem Home-Bildschirm installieren</strong>
+          <small>Anleitung für Safari</small>
         </span>
         <ChevronRight size={18} />
       </button>
       <p className="app-signature">
-        MyStyle <span>·</span> Mit weniger mehr du sein.
-        <br />
-        <small>Version {version} · Lokal & persönlich</small>
+        MyStyle <span>·</span> Version {version}
       </p>
       {pending && (
         <Sheet

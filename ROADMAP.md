@@ -1,5 +1,12 @@
 # Entwicklungsplan
 
+## Version 0.23.0 – ruhigere Startseite und klarere Texte
+
+- [x] Gesamtstand 0.22.0 auf Wunsch in den Branch `backup/codex-0.20.0` übernommen (Codex-Original bleibt als Commit `945aad5` in der Historie)
+- [x] Startseite: doppelte Garderobe-Karte und Favoritenraster entfernt, neues Regal „Lange nicht getragen“ (nur mit bestätigten Tragetagen)
+- [x] Austauschen als Symbol direkt auf dem Teil statt Textzeile
+- [x] Restliche Slogans und Füllertexte ersetzt (z. B. „Mit weniger mehr du sein.“, „Ein Stück von dir“)
+
 ## Version 0.22.0 – Luxe-Design
 
 - [x] Bisheriges Design als GitHub-Branch `backup/design-0.21.0` sichern ([Rückweg](design/LUXE.md))
@@ -10,7 +17,7 @@
 
 ## Version 0.21.0 – Farbregeln, Tragestatistik und Überarbeitung
 
-- [x] Codex-Stand 0.20.0 als GitHub-Branch `backup/codex-0.20.0` sichern ([Rückweg](design/backups/RESTORE-0.21.0.md))
+- [x] Codex-Stand 0.20.0 als GitHub-Branch sichern; Original bleibt Commit `945aad5` ([Rückweg](design/backups/RESTORE-0.21.0.md))
 - [x] Generator bewertet bekannte Farbpaare (z. B. Rot/Grün schwächer, Blau/Rosa stärker), blaue Hosen als Jeansbasis und starke Stilbrüche; der wichtigste Farbgrund erscheint in „Warum diese Kombination?“
 - [x] Skizzen ohne Foto in der erfassten Farbe einfärben
 - [x] Tragestatistik pro Stück und Sortierung „Selten getragen zuerst“

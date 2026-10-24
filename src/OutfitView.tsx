@@ -392,7 +392,7 @@ export function OutfitView({
             <Settings2 size={21} />
           </button>
         </div>
-        <p>Neue Ideen aus dem, was du schon hast.</p>
+        <p>Kombinationen aus deinen Stücken.</p>
       </header>
       <div className="outfit-tabs" role="group" aria-label="Outfit-Ansicht">
         <button
@@ -685,8 +685,8 @@ export function OutfitView({
                   <Bookmark size={30} strokeWidth={1.2} />
                   <h2>
                     {onlyFavorites
-                      ? 'Noch keine Favoriten.'
-                      : 'Platz für Lieblingslooks.'}
+                      ? 'Noch keine Favoriten'
+                      : 'Noch keine Looks gespeichert'}
                   </h2>
                   <p>
                     {onlyFavorites
