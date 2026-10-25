@@ -5,6 +5,7 @@ import { ViewMemoryProvider } from './view-memory'
 import './styles.css'
 import './editorial.css'
 import './luxe.css'
+import './store.css'
 
 class StorageBoundary extends Component<
   { children: ReactNode },
