@@ -33,7 +33,7 @@ Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten od
 
 ## Neu in 0.28.0
 
-Neues Design „MyStyle, ein Garderobenjournal“ aus Claude Design: Navigation I Heute · II Garderobe · III Looks · IV Journal, Einstellungen über das Zahnrad. Tageslook als Abbildungstafel, Wochen- und Monatsringe in den getragenen Farben, Farbbilanz in der Garderobe, Looks als Farbstreifen und ein eigenes Journal mit Monatsstatistik. Neue Stücke landen nach dem Speichern direkt in der Garderobe. Details in [design/JOURNAL.md](design/JOURNAL.md).
+Neues Design „MyStyle, ein Garderobenjournal“ aus Claude Design: Navigation I Heute · II Garderobe · III Looks · IV Journal, Einstellungen über das Zahnrad. Tageslook als Abbildungstafel, Wochen- und Monatsringe in den getragenen Farben, Farbbilanz in der Garderobe, Looks als Farbstreifen und ein eigenes Journal mit Monatsstatistik. Neue Stücke landen nach dem Speichern direkt in der Garderobe. Favorit oder Wäsche setzen lädt Fotos nicht mehr neu, damit kein Bild mehr verschwindet. Details in [design/JOURNAL.md](design/JOURNAL.md).
 
 ## Neu in 0.27.0
 

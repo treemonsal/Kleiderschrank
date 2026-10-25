@@ -24,9 +24,7 @@ async function addGarment(page: Page, name: string, photo = false) {
   await dialog
     .getByRole('button', { name: 'Minimalistisch', exact: true })
     .click()
-  await dialog
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await dialog.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(dialog).not.toBeVisible()
   await expect(
     page.getByRole('button', { name: `${name} öffnen` }),

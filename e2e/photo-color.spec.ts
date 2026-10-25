@@ -61,9 +61,7 @@ test('Farbprobe braucht bewusste Übernahme, bleibt korrigierbar und verändert 
   await page.goto('/')
   await start(page)
   await page.getByRole('button', { name: 'Grau', exact: true }).click()
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   const before = await exportData(page)
   await edit(page)

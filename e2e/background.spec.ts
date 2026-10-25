@@ -103,9 +103,7 @@ test('Echtes KI-Modell erzeugt lokal eine Maske, erhält das Original und funkti
     contentType: 'application/json',
   })
   await page.getByRole('button', { name: 'Freistellung übernehmen' }).click()
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   const backup = await exportData(page)
   expect(backup.version).toBe(8)
@@ -191,9 +189,7 @@ test('Beschädigte KI-Dateien werden abgewiesen und das Original bleibt speicher
   await expect(
     page.getByAltText('Vorschau mit entferntem Hintergrund'),
   ).toHaveCount(0)
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   const data = await exportData(page)
   expect(data.garments[0].photo).toBeTruthy()
@@ -268,6 +264,6 @@ test('Noch nicht geladene KI-Dateien ergeben offline eine verständliche Meldung
     page.getByAltText('Vorschau mit entferntem Hintergrund'),
   ).toHaveCount(0)
   await expect(
-    page.getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' }),
+    page.getByRole('button', { name: 'In die Garderobe legen' }),
   ).toBeEnabled()
 })

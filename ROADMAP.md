@@ -6,7 +6,9 @@
 - [x] Design aus Claude Design (Classical) übernommen: Cormorant Garamond/Lora lokal, Haarlinien, Goldakzent, umrandete Buttons
 - [x] Navigation I–IV (Heute, Garderobe, Looks, Journal), Einstellungen über das Zahnrad
 - [x] Tageslook als Abbildungstafel, Farbringe in Woche und Monat, Farbbilanz, Looks als Farbstreifen
-- [x] Journal mit Kalender, Monatsstatistik, lange nicht getragenen Stücken, Shopping und Sicherung
+- [x] Journal mit Kalender, Monatsstatistik, lange nicht getragenen bzw. zuletzt hinzugefügten Stücken, Shopping und Sicherung
+- [x] Fotos verschwinden nicht mehr beim Favorisieren oder Wäschewechsel (unveränderte Fotos behalten ihre Bildadresse)
+- [x] „Ein Stück ergänzen“ wieder auf Heute
 
 ## Version 0.27.0 – Store-Design
 

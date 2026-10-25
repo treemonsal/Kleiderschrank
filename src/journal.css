@@ -1493,3 +1493,76 @@ details.outfit-reasons p {
 .daily-look .eyebrow > span:first-child {
   color: var(--color-accent-700);
 }
+
+/* Quiet add row at the end of Heute, drawn like the journal's hairline rows. */
+.add-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 62px;
+  margin-top: 26px;
+  padding: 12px 0;
+  border: 0;
+  border-top: 1px solid var(--color-divider);
+  border-bottom: 1px solid var(--color-divider);
+  background: none;
+  text-align: left;
+  color: var(--color-text);
+}
+.add-row > span {
+  display: flex;
+  flex-direction: column;
+}
+.add-row strong {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 17px;
+}
+.add-row small {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+}
+.add-row > svg {
+  color: var(--color-accent-700);
+}
+.journal-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--color-divider);
+  margin-bottom: 4px;
+}
+.journal-section-heading h2 {
+  border: 0 !important;
+  margin: 0 !important;
+}
+.journal-section-heading .text-button {
+  min-height: 44px;
+}
+.journal-swatch {
+  overflow: hidden;
+}
+.journal-swatch .garment-picture {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border: 0;
+  outline: 0;
+}
+.journal-swatch .garment-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.journal-swatch .photo-placeholder {
+  height: 100%;
+}
+.journal-swatch .photo-placeholder .garment-sketch {
+  display: none;
+}
+.icon-button.is-favorite,
+.icon-button.soft.is-favorite {
+  color: var(--color-accent);
+}

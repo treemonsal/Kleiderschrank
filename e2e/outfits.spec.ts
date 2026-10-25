@@ -13,9 +13,7 @@ async function create(page: Page, name: string, category: Category) {
   await dialog
     .getByRole('combobox', { name: 'Kategorie', exact: true })
     .selectOption(category)
-  await dialog
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await dialog.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(dialog).not.toBeVisible()
 }
 async function wardrobe(page: Page) {

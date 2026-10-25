@@ -519,7 +519,7 @@ export function OutfitView({
                   <p>{missingOutfitMessage(items, options, weatherContext)}</p>
                   <button className="button secondary" onClick={onAdd}>
                     <Plus size={17} />
-                    Kleiderschrank ergänzen
+                    Garderobe ergänzen
                   </button>
                 </div>
               )}

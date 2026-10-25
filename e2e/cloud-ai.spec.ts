@@ -84,9 +84,7 @@ test('Neues Foto startet die KI automatisch, übernimmt die Freistellung und beh
     .getByRole('button', { name: 'Foto erneut analysieren', exact: true })
     .click()
   await expect.poll(photoType).toBe('image/png')
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -132,9 +130,7 @@ test('Späte KI überschreibt eigene Eingaben nicht; beschädigte Freistellung e
     }),
   ).toBeVisible()
   await expect(page.getByAltText('Vorschau des Kleidungsstücks')).toBeVisible()
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(
     page.getByRole('button', { name: 'Mein eigener Name öffnen' }),
   ).toBeVisible()
@@ -176,9 +172,7 @@ test('Abbruch und Fotoentfernung verwerfen laufende Antworten', async ({
     page.getByAltText('Vorschau des Kleidungsstücks'),
   ).not.toBeVisible()
   await page.getByLabel('Name', { exact: false }).fill('Ohne Foto')
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(
     page.getByRole('button', { name: 'Ohne Foto öffnen' }),
   ).toBeVisible()
@@ -244,9 +238,7 @@ test('Original verwenden speichert ohne Freistellung und erhält das Foto', asyn
   await page
     .getByRole('button', { name: 'Original verwenden', exact: true })
     .click()
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

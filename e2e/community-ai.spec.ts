@@ -145,13 +145,13 @@ test('Widerruf in einem anderen Fenster stoppt eine laufende Fotoanalyse und erh
     ).toBeVisible()
     await expect(
       page.getByRole('button', {
-        name: 'Zum Kleiderschrank hinzufügen',
+        name: 'In die Garderobe legen',
         exact: true,
       }),
     ).toBeEnabled()
     await page
       .getByRole('button', {
-        name: 'Zum Kleiderschrank hinzufügen',
+        name: 'In die Garderobe legen',
         exact: true,
       })
       .click()
@@ -181,9 +181,7 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
   await expect(
     page.getByRole('button', { name: 'Original verwenden', exact: true }),
   ).toBeVisible()
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   const before = calls.length
   await page.getByRole('button', { name: attributes.name + ' öffnen' }).click()
   await page.getByRole('button', { name: 'Bearbeiten', exact: true }).click()
@@ -248,9 +246,7 @@ test('Ausgeschöpftes Erkennungslimit behält Freistellung und Original und lös
   await page
     .getByRole('button', { name: 'Original verwenden', exact: true })
     .click()
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(
     page.getByRole('button', { name: 'Mein Stück öffnen' }),
   ).toBeVisible()

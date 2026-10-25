@@ -283,18 +283,57 @@ test('Verzögert decodiertes currentSrc bleibt bei Favoriten und Wäsche gültig
     Reflect.deleteProperty(image, 'currentSrc')
     image.dispatchEvent(new Event('load'))
   })
-  await expect
-    .poll(() =>
-      page.evaluate(
-        () =>
-          (window as typeof window & { heldPhotoRevoked: boolean })
-            .heldPhotoRevoked,
-      ),
-    )
-    .toBe(true)
+  // Unchanged photos keep their Blob, so the shown address stays in use.
+  expect(
+    await picture.evaluate(
+      (image: HTMLImageElement) =>
+        image.src ===
+        (window as typeof window & { heldPhotoUrl: string }).heldPhotoUrl,
+    ),
+  ).toBe(true)
   await expect
     .poll(() =>
       picture.evaluate((image: HTMLImageElement) => image.naturalWidth),
     )
     .toBe(192)
+})
+
+test('Favorit und Wäsche laden unveränderte Fotos nicht neu', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await wardrobe(page)
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
+  const sources = () =>
+    page
+      .locator('.garment-grid img')
+      .evaluateAll((images) =>
+        images.map((image) => (image as HTMLImageElement).src).sort(),
+      )
+  const before = await sources()
+  expect(before).toHaveLength(3)
+  await page
+    .getByRole('button', { name: 'Fotohemd: Als Favorit markieren' })
+    .click()
+  await expect(
+    page.getByRole('button', { name: 'Fotohemd: Favorit entfernen' }),
+  ).toHaveAttribute('aria-pressed', 'true')
+  expect(await sources()).toEqual(before)
+  await page.getByRole('button', { name: 'Hose öffnen' }).click()
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'In die Wäsche legen' })
+    .click()
+  await expect(
+    page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Als sauber markieren' }),
+  ).toBeVisible()
+  expect(await sources()).toEqual(before)
+  for (const image of await page.locator('.garment-grid img').all())
+    expect(
+      await image.evaluate(
+        (node) => (node as HTMLImageElement).naturalWidth > 0,
+      ),
+    ).toBe(true)
 })

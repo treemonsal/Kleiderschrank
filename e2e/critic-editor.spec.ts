@@ -128,7 +128,7 @@ test('KI-Aktivierung im Entwurf startet nichts nachträglich; neue Fotos werden 
   ).toBeVisible()
   await expect(recognized).toHaveCount(0)
   await dialog
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen', exact: true })
+    .getByRole('button', { name: 'In die Garderobe legen', exact: true })
     .click()
   await expect(dialog).toHaveCount(0)
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
@@ -150,7 +150,7 @@ test('Fehlender oder leerer Name führt zum Feld; Schliessen zeigt die Entwurfsr
   const dialog = page.getByRole('dialog')
   const name = dialog.getByLabel('Name', { exact: false })
   const save = dialog.getByRole('button', {
-    name: 'Zum Kleiderschrank hinzufügen',
+    name: 'In die Garderobe legen',
     exact: true,
   })
   await save.click()
@@ -214,7 +214,7 @@ test('KI-Einrichtung ohne Aktivierung verlassen erhält Foto und Eingaben und se
     dialog.getByAltText('Vorschau des Kleidungsstücks'),
   ).toBeVisible()
   await dialog
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen', exact: true })
+    .getByRole('button', { name: 'In die Garderobe legen', exact: true })
     .click()
   await expect(dialog).toHaveCount(0)
 })
@@ -247,7 +247,7 @@ test('Optionale KI-Serverfelder speichern den Kleidungsentwurf weder per Enter n
     'Manuelles Hemd',
   )
   await dialog
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen', exact: true })
+    .getByRole('button', { name: 'In die Garderobe legen', exact: true })
     .click()
   await expect(dialog).toHaveCount(0)
   expect(requests).toEqual([])
@@ -362,7 +362,7 @@ test('Eine offene Verwerfen-Rückfrage lässt sich während eines laufenden Spei
   try {
     await dialog
       .getByRole('button', {
-        name: 'Zum Kleiderschrank hinzufügen',
+        name: 'In die Garderobe legen',
         exact: true,
       })
       .click()

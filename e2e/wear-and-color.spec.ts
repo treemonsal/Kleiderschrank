@@ -104,7 +104,7 @@ test('Tragestatistik sortiert selten getragene Stücke nach vorne und Skizzen ze
   await expect(page.getByRole('dialog')).toContainText('Noch nie getragen')
 })
 
-test('Ohne bestätigte Tragetage listet das Journal nie getragene Stücke, Heute bleibt beim Tageslook', async ({
+test('Ohne bestätigte Tragetage zeigt das Journal die neuesten statt vergessener Stücke', async ({
   page,
 }) => {
   await page.goto('/')
@@ -144,5 +144,8 @@ test('Ohne bestätigte Tragetage listet das Journal nie getragene Stücke, Heute
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await expect(
     page.getByRole('region', { name: 'Lange nicht getragen' }),
-  ).toContainText('Noch nie getragen')
+  ).toHaveCount(0)
+  await expect(
+    page.getByRole('region', { name: 'Zuletzt hinzugefügt' }),
+  ).toBeVisible()
 })

@@ -28,6 +28,7 @@ import {
 } from './db'
 import { CATEGORIES, filterGarments, type Garment } from './model'
 import { colorHex } from './swatch'
+import { keepPhotoIdentity } from './photo-identity'
 import { BackupReminder } from './BackupReminder'
 import { PairingSuggestions } from './PairingSuggestions'
 import { EmptyIllustration } from './EmptyIllustration'
@@ -49,6 +50,7 @@ import { useStylistInbox } from './stylist-inbox'
 import {
   restorePageScroll,
   scrollSectionIntoView,
+  usePresetView,
   useViewState,
 } from './view-memory'
 
@@ -128,6 +130,15 @@ function Home({
       </div>
       <ShoppingCard hideLocked />
       <BackupReminder onBackup={onBackup} />
+      {items.length > 0 && (
+        <button className="add-row" onClick={onAdd}>
+          <span>
+            <strong>Ein Stück ergänzen</strong>
+            <small>Foto aufnehmen oder aus der Mediathek wählen.</small>
+          </span>
+          <Plus size={20} strokeWidth={1.5} aria-hidden="true" />
+        </button>
+      )}
     </div>
   )
 }
@@ -552,13 +563,21 @@ function Detail({
 }
 
 export default function App() {
+  const shownPhotos = useRef(
+    new Map<string, Pick<Garment, 'photo' | 'cutout'>>(),
+  )
   const wardrobe = useLiveQuery(
     async () => {
       try {
-        return {
-          items: await db.garments.orderBy('updatedAt').reverse().toArray(),
-          failed: false,
-        }
+        const read = await db.garments.orderBy('updatedAt').reverse().toArray()
+        const items = await keepPhotoIdentity(read, shownPhotos.current)
+        shownPhotos.current = new Map(
+          items.map((item) => [
+            item.id,
+            { photo: item.photo, cutout: item.cutout },
+          ]),
+        )
+        return { items, failed: false }
       } catch {
         return { items: null, failed: true }
       }
@@ -585,6 +604,7 @@ export default function App() {
   // Keep the chat mounted after first use so drafts and requests survive closing.
   const [chatLoaded, setChatLoaded] = useState(false)
   const inbox = useStylistInbox()
+  const presetView = usePresetView()
   const tapMotion = useTapMotion()
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
   const [batch, setBatch] = useState<File[] | null>(null)
@@ -788,6 +808,14 @@ export default function App() {
               wear={wear}
               onOpen={setSelectedId}
               onLooks={() => navigate('outfits')}
+              onWardrobe={(sort) => {
+                presetView('wardrobe.sort', sort)
+                presetView('wardrobe.category', 'Alle')
+                presetView('wardrobe.query', '')
+                presetView('wardrobe.favorites', false)
+                presetView('wardrobe.laundry', false)
+                navigate('wardrobe', () => undefined)
+              }}
               onBackup={() =>
                 navigate('settings', () => {
                   cancelScroll.current = scrollSectionIntoView('backup-section')
@@ -866,7 +894,7 @@ export default function App() {
               if (editor === 'new' && view !== 'wardrobe') navigate('wardrobe')
               notify(
                 editor === 'new'
-                  ? 'Dein neues Stück ist im Kleiderschrank.'
+                  ? 'Dein neues Stück liegt in der Garderobe.'
                   : 'Deine Änderungen sind gespeichert.',
               )
             }}
