@@ -1,5 +1,11 @@
 # Entwicklungsplan
 
+## Version 0.27.0 – Store-Design
+
+- [x] Stand 0.26.0 als Branch `backup/design-0.26.0` sichern
+- [x] Gestaltung des Apple Store übernommen: Grau `#f5f5f7`, weisse Karten, blaue Aktionen, grosse Titel
+- [x] Kategorien als Bildreihe, zweifarbige Abschnittsüberschriften, Kleidung wie Produktfotos auf Weiss
+
 ## Version 0.26.0 – Ersatz-KI, mehrere Fotos, weniger Text
 
 - [x] Stand 0.25.0 als Branch `backup/before-0.26.0` sichern

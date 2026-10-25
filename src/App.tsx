@@ -22,6 +22,7 @@ import {
   House,
   Layers,
   CircleEllipsis,
+  LayoutGrid,
 } from 'lucide-react'
 import {
   db,
@@ -30,7 +31,13 @@ import {
   toggleFavorite,
   setLaundry,
 } from './db'
-import { CATEGORIES, filterGarments, type Garment } from './model'
+import {
+  CATEGORIES,
+  filterGarments,
+  type Category,
+  type Garment,
+} from './model'
+import { GarmentSketch } from './GarmentSketch'
 import { BackupReminder } from './BackupReminder'
 import { PairingSuggestions } from './PairingSuggestions'
 import { EmptyIllustration } from './EmptyIllustration'
@@ -153,14 +160,14 @@ function Home({
       {shelf.length > 0 && (
         <section className="home-collection" aria-label={shelfTitle}>
           <div className="section-heading">
-            <div>
-              <h2>{shelfTitle}</h2>
-              <p className="muted">
+            <h2 className="two-tone">
+              {shelfTitle}.{' '}
+              <span>
                 {forgottenMode
                   ? 'Sortiert nach letztem Tragetag.'
                   : 'Deine neuesten Stücke.'}
-              </p>
-            </div>
+              </span>
+            </h2>
             <button className="text-button" onClick={onWardrobe}>
               Alle <ArrowRight size={16} />
             </button>
@@ -307,7 +314,14 @@ function Wardrobe({
             aria-pressed={category === c}
             onClick={() => setCategory(c)}
           >
-            {c}
+            <span className="category-art" aria-hidden="true">
+              {c === 'Alle' ? (
+                <LayoutGrid size={26} strokeWidth={1.3} />
+              ) : (
+                <GarmentSketch category={c as Category} />
+              )}
+            </span>
+            <span>{c}</span>
           </button>
         ))}
       </div>

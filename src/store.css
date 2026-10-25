@@ -1,0 +1,312 @@
+/*
+ * Store art direction (0.27.0): copies the Apple Store page language
+ * (apple.com/ch-de/store, measured 25.10.2026): #f5f5f7 page, white cards
+ * with 18px radius and a soft drop shadow, #1d1d1f ink, #6e6e73 secondary
+ * text, blue actions and links, large semibold titles, two-tone section
+ * headings and a picture row for categories. Loaded after luxe.css;
+ * remove the import in main.tsx to return to the 0.26.0 look.
+ */
+:root {
+  --background: #f5f5f7;
+  --surface: #ffffff;
+  --soft: #e8e8ed;
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --line: #d2d2d7;
+  --accent: #0066cc;
+  --action: #0071e3;
+  --accent-ink: #ffffff;
+  --hero: #ffffff;
+  --rose: #e30000;
+  --danger: #d70015;
+  --hairline: rgb(0 0 0 / 0.04);
+  --radius-card: 18px;
+  --radius-control: 12px;
+  --shadow: 0 4px 24px rgb(0 0 0 / 0.1);
+  --card-shadow: 2px 4px 12px rgb(0 0 0 / 0.08);
+  letter-spacing: -0.022em;
+}
+body {
+  background: var(--background);
+  color: var(--ink);
+}
+
+/* Titles: large and semibold like "Der Store", subtitle in ink. */
+.page-heading h1,
+.heading-row h1,
+.outfits-view .heading-row h1,
+.settings-view .page-heading h1,
+.daily-look h1 {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.page-heading h1,
+.heading-row h1 {
+  font-size: clamp(30px, 8.8vw, 40px);
+  line-height: 1.08;
+}
+.page-heading {
+  margin: 16px 0 24px;
+}
+.page-heading > p:last-child {
+  margin-top: 8px;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.wordmark {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Two-tone section headings: "Lange nicht getragen. Sortiert nach …" */
+.section-heading h2 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.two-tone {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.22;
+}
+.two-tone > span {
+  color: var(--muted);
+}
+.home-collection .section-heading {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.home-collection .section-heading .text-button {
+  min-height: 44px;
+  padding: 0;
+  font-size: 17px;
+  font-weight: 400;
+}
+
+/* Links and quiet actions are blue text, as on apple.com. */
+.text-button,
+.section-heading .text-button,
+summary {
+  color: var(--accent);
+}
+.text-button:hover {
+  text-decoration: underline;
+}
+.eyebrow {
+  color: var(--muted);
+}
+
+/* Buttons: blue capsule for the main action, grey capsule otherwise. */
+.button {
+  min-height: 44px;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.022em;
+}
+.button.primary {
+  background: var(--action);
+  color: #fff;
+}
+.button.primary:hover:not(:disabled) {
+  background: #0077ed;
+}
+.button.primary:disabled {
+  background: #9ac4f1;
+  opacity: 1;
+}
+.button.secondary,
+.filter-button,
+.round-button,
+.icon-button.soft {
+  background: var(--soft);
+  color: var(--ink);
+}
+.icon-button.primary-add {
+  background: var(--action);
+  color: #fff;
+}
+.filter-button.selected {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* Cards: white, 18px radius, soft shadow, no outline. */
+.daily-look,
+.outfit-options,
+.outfit-card,
+.outfit-empty,
+.settings-card,
+.style-profile-card,
+.online-stylist,
+.backup-reminder,
+.swap-choice,
+.weather-panel,
+.wardrobe-summary,
+.add-banner,
+.style-invitation,
+.insight-tiles > div {
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.daily-look {
+  padding: 28px 22px 24px;
+}
+.daily-look .online-stylist,
+.daily-look .outfit-reasons {
+  background: var(--background);
+}
+
+/* Pieces are shown like products: on white, in a white card. */
+.garment-picture,
+.outfit-piece > .garment-picture {
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.daily-look .garment-picture,
+.outfit-card .garment-picture {
+  background: var(--background);
+  box-shadow: none;
+}
+.garment-sketch {
+  color: #86868b;
+}
+.garment-grid {
+  gap: 24px 14px;
+}
+.garment-caption h3,
+.forgotten-piece strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+.forgotten-row {
+  margin: 14px -20px 0;
+  padding: 4px 20px 16px;
+  scroll-padding-inline: 20px;
+}
+.forgotten-piece {
+  flex-basis: 42%;
+}
+
+/* Category row with pictures, like the store's Mac · iPhone · iPad row. */
+.category-tabs {
+  gap: 4px;
+  margin: 4px -20px 8px;
+  padding: 0 20px 6px;
+  scroll-padding-inline: 20px;
+}
+.category-tabs .chip {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 76px;
+  min-height: 44px;
+  padding: 4px 6px 6px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 400;
+}
+.category-art {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+  color: #86868b;
+}
+.category-art .garment-sketch {
+  width: 46px;
+  height: 46px;
+}
+.category-tabs .chip.active {
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600;
+}
+.category-tabs .chip.active .category-art {
+  box-shadow: 0 0 0 2px var(--action);
+  color: var(--action);
+}
+
+/* Fields: white with a light grey rule, blue focus ring. */
+.search-field {
+  border: 0;
+  background: var(--soft);
+}
+.field input:not([type='radio']),
+.field select,
+.field textarea,
+.photo-picker,
+.import-choice {
+  background: var(--surface);
+  border-color: var(--line);
+}
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: 0;
+  border-color: var(--action);
+  box-shadow: 0 0 0 3px rgb(0 113 227 / 0.25);
+}
+:focus-visible,
+summary:focus-visible {
+  outline-color: var(--action);
+}
+.chip.active {
+  border-color: var(--ink);
+}
+
+/* Segmented control in the iOS style. */
+.outfit-tabs {
+  background: rgb(118 118 128 / 0.12);
+}
+.outfit-tabs > button.active {
+  box-shadow:
+    0 3px 8px rgb(0 0 0 / 0.12),
+    0 3px 1px rgb(0 0 0 / 0.04);
+}
+
+/* Today: selected day in ink, today's date in blue. */
+.home-week-strip .selected {
+  background: var(--ink);
+  color: #fff;
+}
+.check-row input,
+input[type='checkbox'] {
+  accent-color: var(--action);
+}
+
+/* Tab bar keeps Liquid Glass; the active tab is tinted blue as in iOS. */
+.bottom-nav > button {
+  color: rgb(29 29 31 / 0.72);
+}
+.bottom-nav > button.active,
+.bottom-nav > button.active .nav-icon {
+  color: var(--accent);
+}
+.nav-selection {
+  background: rgb(0 0 0 / 0.06);
+}
+
+/* Sheets sit on the same grey as the page. */
+.sheet,
+.sheet-header {
+  background: var(--background);
+}
+.chat-message.user {
+  background: var(--action);
+  color: #fff;
+}
+.toast {
+  background: rgb(29 29 31 / 0.92);
+  color: #fff;
+}

@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.26.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.27.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -29,6 +29,10 @@ Der **Chat** nutzt nach eigener Freigabe Qwen3-VL-8B: deine Frage, höchstens se
 **Nachricht diktieren** und **Vorlesen** sind optionale Browserfunktionen. Erkannten Text zuerst prüfen und selbst senden. Browser-Sprachdienste können Audio/Text an ihren Anbieter übertragen; MyStyle speichert keine Audiodateien. Tippen bleibt immer möglich.
 
 Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten oder Ausfälle haben. Bei Limit oder Ausfall springen automatisch kostenlose Ersatzdienste ein (siehe 0.26.0), nie kostenpflichtige. Anbieter-Speicherung und Löschfristen sind nicht garantiert. Stilurteile sind subjektiv; Passform, Material, Wärme und Schutzwirkung bleiben ohne passende Nachweise unbekannt.
+
+## Neu in 0.27.0
+
+Neues helles Design nach dem Vorbild des Apple Store: grauer Hintergrund, weisse Karten, blaue Knöpfe, Kategorien als Bildreihe. Details in [design/LUXE.md](design/LUXE.md).
 
 ## Neu in 0.26.0
 

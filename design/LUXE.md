@@ -1,4 +1,20 @@
-# Luxe-Design (ab 0.22.0, hell ab 0.24.0)
+# Store-Design (ab 0.27.0)
+
+Auf Wunsch übernimmt MyStyle seit 0.27.0 die Gestaltung des Apple Store (apple.com/ch-de/store, am 25.10.2026 vermessen). Mobbin war als Quelle vorgesehen, verlangt für den Connector aber ein bezahltes Abo und wurde deshalb nicht genutzt.
+
+| Element            | Apple Store                          | MyStyle                                                 |
+| ------------------ | ------------------------------------ | ------------------------------------------------------- |
+| Seite              | `#f5f5f7`                            | gleich, auch Sheets und Theme-Farbe                     |
+| Karten             | weiss, 18 px Radius, Schatten 2/4/12 | gleich, auch Kleidungsbilder wie Produktfotos auf Weiss |
+| Schrift            | `#1d1d1f`, Nebentext `#6e6e73`       | gleich                                                  |
+| Titel              | „Der Store“ gross, halbfett          | Seitentitel 30–40 px, Untertitel halbfett in Schwarz    |
+| Abschnitte         | „Zubehör. Must-haves, die …“         | zweifarbige Überschrift im Regal „Lange nicht getragen“ |
+| Kategorien         | Bildreihe Mac · iPhone · iPad        | Bildreihe mit Kleidungsskizzen im Kleiderschrank        |
+| Aktionen und Links | blaue Kapsel `#0071e3`, Links `#06c` | gleich; aktiver Tab blau, Liquid Glass bleibt           |
+
+Code: `src/store.css` wird nach `luxe.css` geladen. Rückweg zum Luxe-Design 0.26.0: Import in `src/main.tsx` entfernen oder Branch `backup/design-0.26.0`.
+
+# Luxe-Design (0.22.0 bis 0.26.0, hell ab 0.24.0)
 
 Ziel: ruhig, hochwertig und nicht nach KI aussehen. Vorbilder sind Apple- und Revolut-Apps.
 
