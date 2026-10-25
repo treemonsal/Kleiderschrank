@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './fixtures'
 import { readFile } from 'node:fs/promises'
 const vision = 'https://prithivmlmods-qwen3-vl-outpost.hf.space'
 const cutout = 'https://zhengpeng7-birefnet-demo.hf.space'
@@ -74,10 +74,6 @@ for (const failing of ['attributes', 'cutout'] as const) {
       throw new Error(`Unexpected request: ${url}`)
     })
     await open(page)
-    expect(counts).toEqual({ attributes: 0, cutout: 0 })
-    await page
-      .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-      .click()
     const retry = page.getByRole('button', {
       name:
         failing === 'attributes'
@@ -86,11 +82,7 @@ for (const failing of ['attributes', 'cutout'] as const) {
       exact: true,
     })
     await expect(retry).toBeVisible()
-    if (failing === 'attributes') {
-      await page
-        .getByRole('button', { name: 'Freistellung übernehmen', exact: true })
-        .click()
-    } else {
+    if (failing === 'cutout') {
       await expect(page.getByLabel('Name', { exact: false })).toHaveValue(
         attributes.name,
       )
@@ -114,7 +106,7 @@ for (const failing of ['attributes', 'cutout'] as const) {
         'Mein eigener Name',
       )
       await expect(
-        page.getByAltText('Online-KI: Freistellung prüfen'),
+        page.getByRole('button', { name: 'Original verwenden', exact: true }),
       ).toBeVisible()
     }
     expect(counts).toEqual(
@@ -154,16 +146,13 @@ test('Eigener älterer Server führt bei gezieltem Wiederholen keine zweite voll
   })
   await open(page)
   await page
-    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-    .click()
-  await page
     .getByRole('button', { name: 'Nur Angaben erneut erkennen', exact: true })
     .click()
   await expect(page.getByRole('alert')).toContainText(
     'unterstützt einzelne Schritte noch nicht',
   )
   await expect(
-    page.getByAltText('Online-KI: Freistellung prüfen'),
+    page.getByRole('button', { name: 'Original verwenden', exact: true }),
   ).toBeVisible()
   expect(analyses).toBe(1)
 })
@@ -211,12 +200,6 @@ test('Aktueller eigener Server verarbeitet nur den gewünschten Schritt; Abbruch
   })
   try {
     await open(page)
-    await page
-      .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-      .click()
-    await page
-      .getByRole('button', { name: 'Freistellung übernehmen', exact: true })
-      .click()
     await page.getByLabel('Name', { exact: false }).fill('Mein Entwurf')
     await page
       .getByRole('button', { name: 'Nur Angaben erneut erkennen', exact: true })

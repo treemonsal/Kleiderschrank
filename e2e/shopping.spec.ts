@@ -1,4 +1,4 @@
-import { test, expect, type Page, type BrowserContext } from '@playwright/test'
+import { test, expect, type Page, type BrowserContext } from './fixtures'
 import { shoppingFixture } from '../tests/fixtures/shopping'
 const host = 'https://prithivmlmods-qwen3-vl-outpost.hf.space'
 test.use({ timezoneId: 'Europe/Zurich' })

@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.25.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.26.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
@@ -28,7 +28,14 @@ Der **Chat** nutzt nach eigener Freigabe Qwen3-VL-8B: deine Frage, höchstens se
 
 **Nachricht diktieren** und **Vorlesen** sind optionale Browserfunktionen. Erkannten Text zuerst prüfen und selbst senden. Browser-Sprachdienste können Audio/Text an ihren Anbieter übertragen; MyStyle speichert keine Audiodateien. Tippen bleibt immer möglich.
 
-Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten oder Ausfälle haben. Keine kostenpflichtigen Ersatzdienste oder automatischen Wiederholungen. Anbieter-Speicherung und Löschfristen sind nicht garantiert. Stilurteile sind subjektiv; Passform, Material, Wärme und Schutzwirkung bleiben ohne passende Nachweise unbekannt.
+Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten oder Ausfälle haben. Bei Limit oder Ausfall springen automatisch kostenlose Ersatzdienste ein (siehe 0.26.0), nie kostenpflichtige. Anbieter-Speicherung und Löschfristen sind nicht garantiert. Stilurteile sind subjektiv; Passform, Material, Wärme und Schutzwirkung bleiben ohne passende Nachweise unbekannt.
+
+## Neu in 0.26.0
+
+- **Ersatz-KI:** Erreicht Qwen3-VL-Outpost sein Limit, übernimmt automatisch der zweite Qwen3-VL-Dienst (gleiche Modellfamilie). Stylist, Chat und Kaufideen weichen danach auf Pollinations (Textmodell, sieht keine Bilder) aus, die Freistellung auf das Gerätemodell. Hinweis: Hugging Face zählt das Gratis-Kontingent pro Nutzer über alle Dienste, deshalb ist der Pollinations-Schritt die eigentliche Rettung bei Tageslimit.
+- **Mehrere Fotos:** In der Mediathek mehrere Bilder wählen. Jedes wird nacheinander erkannt und freigestellt; Name und Kategorie lassen sich vor „Alle speichern“ ändern.
+- **Automatische Analyse:** Bei aktiver KI startet die Erkennung und Freistellung direkt nach Foto oder Upload. „Original verwenden“ macht die Freistellung rückgängig.
+- **Weniger Text:** Slogans und Erklärsätze entfernt, Wetter, Anlass und Saison als Symbol-Chips, Illustration im leeren Kleiderschrank.
 
 ## Neu in 0.25.0
 

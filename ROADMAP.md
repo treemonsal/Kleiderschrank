@@ -1,5 +1,13 @@
 # Entwicklungsplan
 
+## Version 0.26.0 – Ersatz-KI, mehrere Fotos, weniger Text
+
+- [x] Stand 0.25.0 als Branch `backup/before-0.26.0` sichern
+- [x] Ersatz-KI: Bei Limit oder Ausfall übernimmt automatisch ein zweiter Qwen3-VL-Dienst; Ratschläge ohne Bild zusätzlich über Pollinations, Freistellung über das Gerätemodell
+- [x] Mehrere Fotos auf einmal hinzufügen (bis 30), nacheinander erkannt und freigestellt, vor dem Speichern prüfbar
+- [x] Neue Fotos werden bei aktiver KI automatisch analysiert, eingeordnet und freigestellt; „Original verwenden“ jederzeit
+- [x] Textdiät: Slogans, Datenschutz-Banner, doppelte Zählungen und Erklärsätze entfernt; Symbole für Wetter, Anlass und Saison; Illustration für leere Ansichten
+
 ## Version 0.25.0 – das Beste aus acht ähnlichen Apps
 
 - [x] Acht Open-Source-Apps analysiert, beste und schwächste Features in docs/COMPETITOR_ANALYSIS.md

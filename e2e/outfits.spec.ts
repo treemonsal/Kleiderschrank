@@ -221,9 +221,12 @@ test('Fehlende Kleidung wird erklärt; Ablehnungen können zurückgesetzt werden
   await page.getByRole('button', { name: 'Hemd öffnen', exact: true }).click()
   await page.getByRole('button', { name: 'Stück löschen', exact: true }).click()
   await expect(
-    page.getByText('gespeicherte Outfits, Kalendereinträge und Rückmeldungen', {
-      exact: false,
-    }),
+    page.getByText(
+      'Outfits, Kalendereinträge und Bewertungen mit diesem Stück',
+      {
+        exact: false,
+      },
+    ),
   ).toBeVisible()
   await page
     .getByRole('button', { name: 'Endgültig löschen', exact: true })

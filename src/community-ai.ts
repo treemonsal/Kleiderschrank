@@ -1,6 +1,7 @@
 import { parseAttributes, type AIResult, type PhotoTask } from './cloud-ai'
 import { blobToDataURL, validateBackupPhotos } from './photos'
 import { AIProviderError, providerError, describeAIProblem } from './ai-errors'
+import { askVision, fallbackDisabled } from './ai-router'
 
 export const VISION_HOST = 'https://prithivmlmods-qwen3-vl-outpost.hf.space'
 export const CUTOUT_HOST = 'https://zhengpeng7-birefnet-demo.hf.space'
@@ -184,23 +185,34 @@ export async function checkCommunity(signal: AbortSignal) {
 }
 async function recognize(photo: Blob, signal: AbortSignal) {
   const encoded = (await blobToDataURL(photo)).split(',')[1]
-  const value = await callCommunity(
-    VISION_HOST,
-    'run_router',
-    ['Qwen3-VL-4B-Instruct', PROMPT, encoded, 400, 0.1, 0.9, 50, 1.05, 60],
+  const answer = await askVision(
+    {
+      model: 'Qwen3-VL-4B-Instruct',
+      prompt: PROMPT,
+      image: encoded,
+      maxTokens: 400,
+      allowTextOnly: false,
+    },
     signal,
   )
-  if (!Array.isArray(value) || typeof value[0] !== 'string')
-    throw new Error('Die Bilderkennung hat keine Angaben geliefert.')
-  const text = value[0]
-    .trim()
-    .replace(/^```(?:json)?\s*/, '')
-    .replace(/\s*```$/, '')
   try {
-    return parseAttributes(JSON.parse(text))
+    return parseAttributes(JSON.parse(answer.text))
   } catch {
-    if (/^\[ERROR\]/i.test(text)) throw providerError(text)
     throw new AIProviderError('invalid')
+  }
+}
+/** Main cutout service first; on any failure the on-device model takes over. */
+async function cutoutWithFallback(photo: Blob, signal: AbortSignal) {
+  try {
+    return await removeBackground(photo, signal)
+  } catch (error) {
+    if (signal.aborted || fallbackDisabled()) throw error
+    const { removePhotoBackground } = await import('./background-removal')
+    try {
+      return await removePhotoBackground(photo, signal, () => {})
+    } catch {
+      throw error
+    }
   }
 }
 export function cutoutAsset(value: unknown): string {
@@ -285,7 +297,7 @@ export async function analyzeCommunityPhoto(
     task === 'cutout' ? Promise.resolve(undefined) : recognize(photo, signal),
     task === 'attributes'
       ? Promise.resolve(undefined)
-      : removeBackground(photo, signal),
+      : cutoutWithFallback(photo, signal),
   ])
   if (signal.aborted)
     throw new DOMException('Analyse abgebrochen.', 'AbortError')

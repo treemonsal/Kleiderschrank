@@ -94,9 +94,7 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
       </div>
       {!communityActive && (
         <p className="muted section-intro">
-          Die KI füllt Name, Kategorie und Farbe aus, schätzt Stil und Saison
-          und stellt dein Stück frei. Marken bleiben leer, wenn kein Logo lesbar
-          ist.
+          Neue Fotos werden automatisch erkannt und freigestellt.
         </p>
       )}
       <div className="settings-card ai-connection community-settings">
@@ -107,8 +105,7 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
         </h3>
         {communityActive && (
           <p className="muted">
-            Die Fotoanalyse startet erst per Knopfdruck. Deine Freigabe ist auf
-            diesem Gerät gespeichert.
+            Neue Fotos werden automatisch erkannt und freigestellt.
           </p>
         )}
         <Information className="ai-provider-info">
@@ -116,19 +113,7 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
             <summary>Anbieter, Datenschutz und Freigabe</summary>
           )}
           <p className="muted">
-            Qwen3-VL erkennt die Angaben. BiRefNet stellt dein Stück frei. Kein
-            Konto, Token oder Abo nötig. Die öffentlichen Dienste können
-            ausgelastet sein und Nutzungslimits haben.
-          </p>
-          <p className="muted">
-            Der Online-Stylist vergleicht auf deinen Tipp gespeicherte Looks mit
-            Qwen3-VL-8B. Dafür sendet er eine Fotoübersicht der gezeigten
-            Auswahl, Kleidungsangaben, Anlass, Stilwünsche und gegebenenfalls
-            Wetterwerte an Qwen3-VL-Outpost. Er lädt nicht automatisch deine
-            gesamte Sammlung hoch.
-          </p>
-          <p className="muted">
-            Dein ausgewähltes Foto wird an{' '}
+            Fotos gehen an{' '}
             <a
               href="https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost"
               target="_blank"
@@ -136,18 +121,16 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
             >
               Qwen3-VL-Outpost
             </a>{' '}
-            und die{' '}
+            und{' '}
             <a
               href="https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo"
               target="_blank"
               rel="noreferrer"
             >
-              BiRefNet-Demo
+              BiRefNet
             </a>{' '}
-            auf Hugging Face gesendet. Die Freistellung nutzt temporäre Dateien
-            beim Anbieter. Wir können deren Speicher- oder Löschdauer nicht
-            garantieren. Bitte keine Fotos mit privaten Hintergründen oder
-            Personen verwenden.
+            auf Hugging Face. Bei Limits springen ein zweiter Qwen3-VL-Dienst
+            und Pollinations ein. Die Dienste können Dateien temporär speichern.
           </p>
           <label className="ai-consent">
             <input
@@ -171,10 +154,9 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
               }}
             />
             <span>
-              Ich erlaube, neue Kleidungsfotos nach meinem Start an diese beiden
-              Community-Dienste zu senden. Damit sind auch Online-Stylist, Chat
-              (mit Fotos und Notizen) und Kaufideen freigeschaltet; Anfragen
-              starten weiterhin nur auf meinen Tipp.
+              Ich erlaube, neue Kleidungsfotos automatisch an diese kostenlosen
+              Dienste zu senden. Stylist, Chat und Kaufideen sind damit auch
+              frei.
             </span>
           </label>
         </Information>
@@ -336,7 +318,7 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
                 if (!persist(value)) return
                 setCommunityConsent(false)
                 setMessage(
-                  'Verbunden. Starte die Fotoanalyse bei Bedarf per Knopfdruck.',
+                  'Verbunden. Neue Fotos werden automatisch analysiert.',
                 )
                 onConnected?.()
               } catch (e) {

@@ -16,11 +16,14 @@ export function PhotoAssistant({
   onAttributes,
   onChoose,
   onBusy,
+  autoStart = false,
 }: {
   photo: Blob
   onAttributes: (value: PhotoAttributes) => void
   onChoose: (value?: Blob) => void
   onBusy: (value: boolean) => void
+  /** New photos are analysed and cut out right away when the AI is enabled. */
+  autoStart?: boolean
 }) {
   const [connection, setConnection] = useState(readAIConnection)
   const [status, setStatus] = useState('')
@@ -28,6 +31,7 @@ export function PhotoAssistant({
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [preview, setPreview] = useState<Blob>()
+  const [applied, setApplied] = useState(false)
   const [retry, setRetry] = useState({ attributes: false, cutout: false })
   const [setup, setSetup] = useState(false)
   const section = useRef<HTMLElement>(null)
@@ -97,7 +101,10 @@ export function PhotoAssistant({
       const result = await analyzePhoto(photo, allowed, next.signal, task)
       if (next.signal.aborted) return
       if (result.attributes) apply(result.attributes)
-      if (result.cutout) setPreview(result.cutout)
+      if (result.cutout && autoStart) {
+        callbacks.current.onChoose(result.cutout)
+        setApplied(true)
+      } else if (result.cutout) setPreview(result.cutout)
       setRetry((previous) => ({
         attributes:
           task === 'cutout' ? previous.attributes : !result.attributes,
@@ -109,7 +116,9 @@ export function PhotoAssistant({
             ? 'Angaben vorbereitet. Bitte kurz prüfen: Stil und Saison sind Schätzungen.'
             : '',
           result.cutout
-            ? 'Freistellung bereit. Prüfe sie und übernimm sie bei Bedarf.'
+            ? autoStart
+              ? 'Hintergrund entfernt.'
+              : 'Freistellung bereit. Prüfe sie und übernimm sie bei Bedarf.'
             : '',
           ...result.warnings,
         ]
@@ -142,6 +151,7 @@ export function PhotoAssistant({
     }
   }
   useEffect(() => {
+    if (autoStart && readAIConnection()?.enabled) void start()
     return () => {
       controller.current?.abort()
       controller.current = null
@@ -163,8 +173,10 @@ export function PhotoAssistant({
           <h3>Foto mit KI vorbereiten</h3>
           <p>
             {connection?.enabled
-              ? 'Starte die Analyse per Knopfdruck. Die Freistellung übernimmst du nach deiner Prüfung.'
-              : 'Online-KI noch nicht verbunden. Du kannst sie hier kostenlos einrichten oder dein Stück manuell speichern.'}
+              ? autoStart
+                ? 'Läuft automatisch für neue Fotos.'
+                : 'Angaben erkennen und Hintergrund entfernen.'
+              : 'Noch nicht eingerichtet.'}
           </p>
         </div>
       </div>
@@ -183,10 +195,6 @@ export function PhotoAssistant({
           )}
           {setup && (
             <div className="photo-ai-setup" ref={setupPanel} tabIndex={-1}>
-              <p className="muted">
-                Dein Foto und deine Eingaben bleiben hier. Nach dem Aktivieren
-                kannst du die Analyse selbst starten.
-              </p>
               <AISettings
                 onConnected={() => {
                   setSetup(false)
@@ -223,7 +231,7 @@ export function PhotoAssistant({
               </p>
               <p className="muted">
                 {connection.mode === 'community'
-                  ? 'Community-Dienste können Warteschlangen und Tageslimits haben. Bitte halte die App während der Analyse geöffnet.'
+                  ? 'Bitte App geöffnet lassen.'
                   : 'Der Start und die Analyse können mehrere Minuten dauern.'}
               </p>
               <button
@@ -257,10 +265,6 @@ export function PhotoAssistant({
           )}
           {!status && (retry.attributes || retry.cutout) && (
             <div className="photo-retry-actions">
-              <p className="micro-copy">
-                Gelungene Ergebnisse bleiben erhalten. Wiederhole nur den
-                fehlenden Schritt.
-              </p>
               {retry.attributes && (
                 <button
                   type="button"
@@ -287,6 +291,19 @@ export function PhotoAssistant({
             </p>
           )}
           {error && <ErrorMessage>{error}</ErrorMessage>}
+          {applied && !status && (
+            <button
+              type="button"
+              className="text-button"
+              onClick={() => {
+                callbacks.current.onChoose(undefined)
+                setApplied(false)
+                setMessage('Original wird verwendet.')
+              }}
+            >
+              Original verwenden
+            </button>
+          )}
           {preview && (
             <div className="ai-cutout-review">
               <PhotoImage

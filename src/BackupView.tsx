@@ -6,7 +6,6 @@ import {
   ChevronRight,
   Database,
   HardDrive,
-  LockKeyhole,
   ShieldCheck,
   Smartphone,
 } from 'lucide-react'
@@ -113,21 +112,8 @@ export function BackupView({
     <div className="view settings-view">
       <header className="page-heading">
         <h1>Mehr</h1>
-        <p>Profil, Foto-KI, Sicherung und Hilfe.</p>
+        <p>Profil, KI und Sicherung.</p>
       </header>
-      <section className="privacy-banner">
-        <div className="privacy-icon">
-          <LockKeyhole size={23} strokeWidth={1.5} />
-        </div>
-        <div>
-          <h2>Datenschutz</h2>
-          <p>
-            Dein Kleiderschrank wird auf diesem Gerät gespeichert. Freigegebene
-            Online-Funktionen senden die jeweils erklärten Fotos oder Angaben an
-            den Anbieter. MyStyle verwendet kein Tracking.
-          </p>
-        </div>
-      </section>
       <AISettings />
       <StyleProfileCard items={items} notify={notify} />
       <EverydaySettings />
@@ -137,9 +123,8 @@ export function BackupView({
           <h2>Lokale Freistellung als Alternative</h2>
         </div>
         <p className="muted section-intro">
-          Die experimentelle Freistellung startet im Fotoeditor nur auf deinen
-          Wunsch. Ihre etwa 19 MB Modelldaten lassen sich entfernen. Deine Fotos
-          und gespeicherten Freistellungen bleiben dabei erhalten.
+          Freistellung direkt auf dem Gerät, wenn die Online-KI nicht verfügbar
+          ist. Etwa 19 MB.
         </p>
         <button
           type="button"
@@ -251,38 +236,11 @@ export function BackupView({
         <div className="storage-note">
           <ShieldCheck size={19} />
           <p>
-            iOS kann Website-Daten entfernen. Sichere regelmässig in „Dateien“,
-            besonders vor einem Geräte- oder Domainwechsel. Backups enthalten
-            unverschlüsselte private Fotos. Bis 100 MB und 1000 Stücke pro
-            Sicherung.
+            iOS kann Website-Daten löschen. Sichere regelmässig in „Dateien“.
           </p>
         </div>
       </section>
       <ShoppingCard />
-      <details className="settings-section settings-help">
-        <summary>Navigation &amp; Tageslooks · kurz erklärt</summary>
-        <p>
-          Wische auf dem Tageslook nach rechts für den vorherigen Tag und nach
-          links für den nächsten. Über das Datum öffnest du den Kalender; „Zu
-          heute“ bringt dich zurück. Ein Farbring zeigt einen bestätigten
-          Tragetag.
-        </p>
-        <p>
-          Beim Wechsel zwischen den vier Bereichen bleiben deine Auswahl und
-          Scrollposition erhalten. Tippe erneut auf den geöffneten Bereich, um
-          nach oben zu gelangen.
-        </p>
-        <p>
-          Ein Herz merkt ein Lieblingsstück oder einen Lieblingslook. Daumen
-          bewerten die Kombination. Stücke in der Wäsche bleiben sichtbar und
-          lassen sich in der Detailansicht wieder als sauber markieren.
-        </p>
-        <p>
-          Dein Kleiderschrank, gespeicherte Looks und der Kalender funktionieren
-          nach dem ersten vollständigen Laden auch offline. Online-KI und neue
-          Wetterdaten brauchen eine Verbindung.
-        </p>
-      </details>
       <section className="settings-section">
         <div className="section-heading">
           <h2>Auf deinem Gerät</h2>

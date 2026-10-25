@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures'
 
 // Controlled provider response: verifies honest metadata-only presentation,
 // not availability or recommendation quality of the public community service.

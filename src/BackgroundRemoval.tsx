@@ -65,11 +65,6 @@ export function BackgroundRemoval({
           nach Möglichkeit für offline gespeichert. Es werden keine Fotos
           gesendet.
         </p>
-        <p>
-          Am besten mit einem einzelnen Stück vor ruhigem Hintergrund. Kanten
-          und Muster können fehlerhaft sein. Auf deinem iPhone noch nicht
-          geprüft. Dein Original bleibt erhalten.
-        </p>
         {status ? (
           <>
             <p role="status">

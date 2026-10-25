@@ -20,10 +20,13 @@ export function Editor({
   item,
   onClose,
   onSaved,
+  onBatch,
 }: {
   item?: Garment
   onClose: () => void
   onSaved: () => void
+  /** Several library photos at once go to the batch import. */
+  onBatch?: (files: File[]) => void
 }) {
   const [draft, setDraft] = useState<GarmentDraft>(() =>
     item
@@ -46,6 +49,8 @@ export function Editor({
   const [onlineBusy, setOnlineBusy] = useState(false)
   const [recognized, setRecognized] = useState(false)
   const [dirty, setDirty] = useState(false)
+  // Only photos picked in this session start the AI automatically.
+  const [freshPhoto, setFreshPhoto] = useState(false)
   const [priceText, setPriceText] = useState(
     item?.price === undefined ? '' : String(item.price),
   )
@@ -68,6 +73,7 @@ export function Editor({
     try {
       update('photo', await preparePhoto(file))
       update('cutout', undefined)
+      setFreshPhoto(true)
       setRecognized(false)
       setPhotoRevision((previous) => previous + 1)
     } catch (err) {
@@ -120,10 +126,7 @@ export function Editor({
               <div className="photo-picker-empty">
                 <ImagePlus size={32} strokeWidth={1.3} />
                 <p>Foto hinzufügen</p>
-                <span>
-                  Wähle ein Foto und starte die KI bei Bedarf per Knopfdruck. Du
-                  kannst die Angaben auch selbst eintragen.
-                </span>
+                <span>Mehrere Fotos auf einmal möglich.</span>
               </div>
             )}
             {processing && (
@@ -170,6 +173,7 @@ export function Editor({
               key={`online-${photoRevision}`}
               photo={draft.photo}
               onBusy={setOnlineBusy}
+              autoStart={freshPhoto}
               onChoose={(blob) => update('cutout', blob)}
               onAttributes={(values: PhotoAttributes) => {
                 const baseline = draft
@@ -205,11 +209,14 @@ export function Editor({
             ref={library}
             type="file"
             accept="image/*"
+            multiple={!item && !!onBatch}
             hidden
             aria-label="Foto aus Mediathek"
             onChange={(e) => {
-              void upload(e.target.files?.[0])
+              const files = [...(e.target.files ?? [])]
               e.target.value = ''
+              if (files.length > 1 && onBatch) onBatch(files)
+              else void upload(files[0])
             }}
           />
           <input
@@ -388,9 +395,7 @@ export function Editor({
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <div className="sheet-footer">
           <p className="micro-copy">
-            {!draft.name.trim()
-              ? 'Gib deinem Stück noch einen Namen. Die übrigen Angaben sind optional.'
-              : 'Erst mit Speichern in deinem Kleiderschrank.'}
+            {!draft.name.trim() ? 'Nur der Name ist nötig.' : ''}
           </p>
           <button
             className="button primary full"

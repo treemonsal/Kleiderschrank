@@ -161,10 +161,6 @@ function StyleCheck({
             <span key={index} className={index <= step ? 'active' : ''} />
           ))}
         </div>
-        <p className="muted">
-          Etwa eine Minute. Jede Frage ist freiwillig. Deine Antworten lassen
-          sich später ändern.
-        </p>
         <fieldset
           disabled={busy}
           className="style-step"
@@ -175,10 +171,6 @@ function StyleCheck({
           {step === 0 && (
             <>
               <legend>Welche Stilrichtungen trägst du gern?</legend>
-              <p className="micro-copy">
-                Mehrere oder keine auswählen. Du musst dich nicht auf einen Stil
-                festlegen.
-              </p>
               <div className="chips wrap">
                 {STYLES.map((style) => (
                   <button
@@ -360,7 +352,7 @@ export function StyleProfileCard({
             ? 'Eine Minute für passendere Looks.'
             : completed
               ? `${state.preferences.styles.join(', ') || 'Stil bleibt offen'} · ${state.preferences.colors.join(', ') || 'Farben bleiben offen'}`
-              : 'Sag uns, was du gern trägst. Den Stilcheck kannst du jederzeit nachholen.'}
+              : 'Drei Fragen zu deinem Stil.'}
         </p>
         <div className="style-check-actions">
           <button className="button secondary" onClick={() => setOpen(true)}>
@@ -390,15 +382,6 @@ export function StyleProfileCard({
             </button>
           )}
         </div>
-        {!invitation && (
-          <p className="micro-copy">
-            Bewertungen gewichten ähnliche erfasste Farben und Stile. Deine
-            Profilantworten werden zusätzlich berücksichtigt. Einzelne
-            Bewertungen sind nur Hinweise auf ähnliche Looks. Profil und
-            Bewertungen bleiben gespeichert und sind Teil deiner Sicherung. Die
-            Online-Beratung erhält sie erst beim bewussten Start.
-          </p>
-        )}
         {!history && error && <ErrorMessage>{error}</ErrorMessage>}
       </section>
       {open && (
@@ -420,11 +403,6 @@ export function StyleProfileCard({
             }
           }}
         >
-          <p className="muted">
-            Jeder Look hat eine aktuelle Bewertung. Zurücknehmen entfernt auch
-            seinen Einfluss auf ähnliche Vorschläge. Gespeicherte und getragene
-            Outfits bleiben erhalten.
-          </p>
           {!state.feedback.length && (
             <p>Noch keine Bewertungen. Nutze die Daumen an deinen Looks.</p>
           )}
@@ -471,10 +449,7 @@ export function StyleProfileCard({
             ))}
           </div>
           {state.feedback.length > 20 && (
-            <p className="micro-copy">
-              Die 20 neuesten Bewertungen. Nach dem Zurücknehmen rücken ältere
-              nach. Bis zu 1000 Bewertungen bleiben erhalten.
-            </p>
+            <p className="micro-copy">Die 20 neuesten Bewertungen.</p>
           )}
           {!!state.feedback.length &&
             (confirm ? (

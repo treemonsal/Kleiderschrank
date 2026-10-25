@@ -1,4 +1,4 @@
-import { test, expect, type Page, type BrowserContext } from '@playwright/test'
+import { test, expect, type Page, type BrowserContext } from './fixtures'
 import { readFile } from 'node:fs/promises'
 
 const host = 'https://prithivmlmods-qwen3-vl-outpost.hf.space'

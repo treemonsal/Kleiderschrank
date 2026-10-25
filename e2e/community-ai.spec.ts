@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './fixtures'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 const V = 'https://prithivmlmods-qwen3-vl-outpost.hf.space'
@@ -115,9 +115,6 @@ test('Widerruf in einem anderen Fenster stoppt eine laufende Fotoanalyse und erh
     await page
       .getByLabel('Foto aus Mediathek')
       .setInputFiles(path.resolve('public/icon-192.png'))
-    await page
-      .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-      .click()
     await expect(
       page.getByRole('button', { name: 'Analyse abbrechen', exact: true }),
     ).toBeVisible()
@@ -131,7 +128,7 @@ test('Widerruf in einem anderen Fenster stoppt eine laufende Fotoanalyse und erh
       page.getByRole('button', { name: 'Analyse abbrechen', exact: true }),
     ).toHaveCount(0)
     await expect(
-      page.getByText('Online-KI noch nicht verbunden.', { exact: false }),
+      page.getByText('Noch nicht eingerichtet.', { exact: true }),
     ).toBeVisible()
     release()
     await expect(page.getByLabel('Name', { exact: false })).toHaveValue(
@@ -170,23 +167,14 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
   await page
     .getByLabel('Foto aus Mediathek')
     .setInputFiles(path.resolve('public/icon-192.png'))
-  await expect(
-    page.getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true }),
-  ).toBeVisible()
-  expect(calls).toHaveLength(2)
-  await page
-    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-    .click()
   await expect(page.getByLabel('Name', { exact: false })).toHaveValue(
     attributes.name,
   )
   await expect(page.getByLabel('Marke', { exact: true })).toHaveValue('VANS')
+  // A new photo is analysed and cut out automatically.
   await expect(
-    page.getByAltText('Online-KI: Freistellung prüfen'),
+    page.getByRole('button', { name: 'Original verwenden', exact: true }),
   ).toBeVisible()
-  await page
-    .getByRole('button', { name: 'Freistellung übernehmen', exact: true })
-    .click()
   await page
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
     .click()
@@ -223,7 +211,7 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
     await page.evaluate(() => localStorage.getItem('mystyle-photo-ai')),
   ).toBeNull()
 })
-test('Ausgeschöpftes Erkennungslimit verwirft weder Freistellung noch Original und löst keine Dauerversuche aus', async ({
+test('Ausgeschöpftes Erkennungslimit behält Freistellung und Original und löst keine Dauerversuche aus', async ({
   page,
 }) => {
   const calls = await mock(page, 'limit')
@@ -233,11 +221,8 @@ test('Ausgeschöpftes Erkennungslimit verwirft weder Freistellung noch Original 
   await page
     .getByLabel('Foto aus Mediathek')
     .setInputFiles(path.resolve('public/icon-192.png'))
-  await page
-    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-    .click()
   await expect(
-    page.getByAltText('Online-KI: Freistellung prüfen'),
+    page.getByRole('button', { name: 'Original verwenden', exact: true }),
   ).toBeVisible()
   await expect(
     page.getByText('Bilderkennung: Nutzungslimit des Dienstes erreicht', {
@@ -251,7 +236,7 @@ test('Ausgeschöpftes Erkennungslimit verwirft weder Freistellung noch Original 
   ).toHaveLength(1)
   await page.getByLabel('Name', { exact: false }).fill('Mein Stück')
   await page
-    .getByRole('button', { name: 'Freistellung verwerfen', exact: true })
+    .getByRole('button', { name: 'Original verwenden', exact: true })
     .click()
   await page
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
@@ -299,7 +284,7 @@ test('Widerruf während Verbindungsprüfung kann durch späte Antworten nicht r�
     .getByLabel('Foto aus Mediathek')
     .setInputFiles(path.resolve('public/icon-192.png'))
   await expect(
-    page.getByText('Online-KI noch nicht verbunden.', { exact: false }),
+    page.getByText('Noch nicht eingerichtet.', { exact: true }),
   ).toBeVisible()
 })
 
@@ -322,9 +307,6 @@ for (const [failure, message] of [
     await page
       .getByLabel('Foto aus Mediathek')
       .setInputFiles(path.resolve('public/icon-192.png'))
-    await page
-      .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-      .click()
     await expect(page.getByText(message, { exact: false })).toBeVisible()
     if (failure === 'gpu')
       await expect(
@@ -337,7 +319,7 @@ for (const [failure, message] of [
     ).toHaveCount(0)
     await expect(
       page.getByRole('button', {
-        name: 'Freistellung verwerfen',
+        name: 'Original verwenden',
         exact: true,
       }),
     ).toBeEnabled()

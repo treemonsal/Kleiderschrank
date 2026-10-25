@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './fixtures'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 const url = 'https://mystyle-test.hf.space'
@@ -32,7 +32,7 @@ async function open(page: Page) {
   await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
 }
 
-test('Manueller Start füllt die Felder; Freistellung nur bewusst übernehmen, beim erneuten Verwerfen erhalten und Original mitsichern (API kontrolliert)', async ({
+test('Neues Foto startet die KI automatisch, übernimmt die Freistellung und behält das Original (API kontrolliert)', async ({
   page,
 }) => {
   await configure(page)
@@ -51,14 +51,6 @@ test('Manueller Start füllt die Felder; Freistellung nur bewusst übernehmen, b
   await open(page)
   expect(requests).toBe(0)
   await upload(page)
-  await expect(
-    page.getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true }),
-  ).toBeVisible()
-  expect(requests).toBe(0)
-  await expect(page.getByLabel('Name', { exact: false })).toHaveValue('')
-  await page
-    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-    .click()
   await expect(page.getByLabel('Name', { exact: false })).toHaveValue(
     attributes.name,
   )
@@ -73,9 +65,6 @@ test('Manueller Start füllt die Felder; Freistellung nur bewusst übernehmen, b
   await expect(
     page.getByRole('button', { name: 'Minimalistisch', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
-  await expect(
-    page.getByAltText('Online-KI: Freistellung prüfen'),
-  ).toBeVisible()
   const photoType = () =>
     page
       .getByAltText('Vorschau des Kleidungsstücks')
@@ -83,19 +72,14 @@ test('Manueller Start füllt die Felder; Freistellung nur bewusst übernehmen, b
         async (image) =>
           (await (await fetch((image as HTMLImageElement).src)).blob()).type,
       )
-  await expect.poll(photoType).toBe('image/jpeg')
-  await page
-    .getByRole('button', { name: 'Freistellung übernehmen', exact: true })
-    .click()
+  // The cutout is applied automatically; the original stays one tap away.
   await expect.poll(photoType).toBe('image/png')
   await page
-    .getByRole('button', { name: 'Foto erneut analysieren', exact: true })
+    .getByRole('button', { name: 'Original verwenden', exact: true })
     .click()
-  await expect(
-    page.getByAltText('Online-KI: Freistellung prüfen'),
-  ).toBeVisible()
+  await expect.poll(photoType).toBe('image/jpeg')
   await page
-    .getByRole('button', { name: 'Freistellung verwerfen', exact: true })
+    .getByRole('button', { name: 'Foto erneut analysieren', exact: true })
     .click()
   await expect.poll(photoType).toBe('image/png')
   await page
@@ -129,9 +113,6 @@ test('Späte KI überschreibt eigene Eingaben nicht; beschädigte Freistellung e
   })
   await open(page)
   await upload(page)
-  await page
-    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-    .click()
   await expect(
     page.getByRole('button', { name: 'Analyse abbrechen' }),
   ).toBeVisible()
@@ -170,9 +151,6 @@ test('Abbruch und Fotoentfernung verwerfen laufende Antworten', async ({
   })
   await open(page)
   await upload(page)
-  await page
-    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
-    .click()
   await expect(
     page.getByRole('button', { name: 'Analyse abbrechen' }),
   ).toBeVisible()
@@ -227,9 +205,7 @@ test('Verbindung benötigt Foto-Freigabe; Ausschalten verhindert weitere Uploads
     .check()
   await page.getByRole('button', { name: 'Verbinden und aktivieren' }).click()
   await expect(
-    page.getByText(
-      'Verbunden. Starte die Fotoanalyse bei Bedarf per Knopfdruck.',
-    ),
+    page.getByText('Verbunden. Neue Fotos werden automatisch analysiert.'),
   ).toBeVisible()
   expect(photos).toBe(0)
   await page
@@ -242,12 +218,12 @@ test('Verbindung benötigt Foto-Freigabe; Ausschalten verhindert weitere Uploads
   await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
   await upload(page)
   await expect(
-    page.getByText('Online-KI noch nicht verbunden.', { exact: false }),
+    page.getByText('Noch nicht eingerichtet.', { exact: true }),
   ).toBeVisible()
   expect(photos).toBe(0)
 })
 
-test('Ohne Übernahme bleibt eine fertige KI-Freistellung ungespeichert und das Original erhalten', async ({
+test('Original verwenden speichert ohne Freistellung und erhält das Foto', async ({
   page,
 }) => {
   await configure(page)
@@ -260,11 +236,8 @@ test('Ohne Übernahme bleibt eine fertige KI-Freistellung ungespeichert und das 
   await open(page)
   await upload(page)
   await page
-    .getByRole('button', { name: 'Foto mit KI vorbereiten', exact: true })
+    .getByRole('button', { name: 'Original verwenden', exact: true })
     .click()
-  await expect(
-    page.getByAltText('Online-KI: Freistellung prüfen'),
-  ).toBeVisible()
   await page
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
     .click()

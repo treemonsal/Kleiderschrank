@@ -132,8 +132,8 @@ export function OnlineStylist({
         <>
           <p className="muted">
             {photoCount
-              ? 'Lass Qwen deine Looks anhand der Fotos vergleichen.'
-              : 'Lass Qwen deine Looks anhand der Kleidungsangaben vergleichen. Ohne Fotos ist keine visuelle Einschätzung möglich.'}
+              ? 'Vergleicht deine Looks anhand der Fotos.'
+              : 'Ohne Fotos ist keine visuelle Einschätzung möglich.'}
           </p>
           <details className="stylist-disclosure">
             <summary>Was wird gesendet?</summary>
@@ -160,10 +160,7 @@ export function OnlineStylist({
           </label>
         </>
       ) : (
-        <p className="muted">
-          Ausgeschaltet. Aktiviere die kostenlose Community-KI unter Mehr →
-          Online-Foto-KI, dann vergleicht Qwen deine Looks.
-        </p>
+        <p className="muted">KI unter Mehr aktivieren.</p>
       )}
       <div className="stylist-actions">
         <button

@@ -167,7 +167,7 @@ export function StyleInterviewPanel({
         <p className="muted">
           {completed
             ? `${answers.length} bestätigte Antworten für persönlichere Beratung.`
-            : 'Optional · acht Fragen zu deinem Alltag und Geschmack. Überspringen und Pausieren sind jederzeit möglich.'}
+            : 'Optional · acht Fragen'}
         </p>
       )}
       {expanded && (

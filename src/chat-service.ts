@@ -1,5 +1,5 @@
-import { callCommunity, VISION_HOST } from './community-ai'
-import { AIProviderError, providerError } from './ai-errors'
+import { askVision } from './ai-router'
+import { AIProviderError } from './ai-errors'
 import type { ChatContext } from './chat-model'
 import { chatEnabled } from './chat-consent'
 import { garmentCollage } from './collage'
@@ -26,31 +26,19 @@ export async function askChat(
   }
   signal.throwIfAborted()
   if (!chatEnabled()) throw new Error('Die Chat-Freigabe wurde zurückgezogen.')
-  const value = await callCommunity(
-    VISION_HOST,
-    'run_router',
-    [
-      'Qwen3-VL-8B-Instruct',
-      context.prompt,
-      image,
-      900,
-      0.1,
-      0.9,
-      50,
-      1.05,
-      60,
-    ],
+  const answer = await askVision(
+    {
+      model: 'Qwen3-VL-8B-Instruct',
+      prompt: context.prompt,
+      image: image,
+      maxTokens: 900,
+      allowTextOnly: true,
+    },
     signal,
   )
   signal.throwIfAborted()
   if (!chatEnabled()) throw new Error('Die Chat-Freigabe wurde zurückgezogen.')
-  if (!Array.isArray(value) || typeof value[0] !== 'string')
-    throw new AIProviderError('invalid')
-  const text = value[0]
-    .trim()
-    .replace(/^```(?:json)?\s*/, '')
-    .replace(/\s*```$/, '')
-  if (/^\[ERROR\]/i.test(text)) throw providerError(text)
+  const text = answer.text
   try {
     return JSON.parse(text)
   } catch {
