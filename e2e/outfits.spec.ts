@@ -3,9 +3,7 @@ import { readFile } from 'node:fs/promises'
 import type { Category } from '../src/model'
 
 async function create(page: Page, name: string, category: Category) {
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page
     .getByRole('button', { name: 'Stück hinzufügen', exact: true })
     .first()
@@ -24,7 +22,7 @@ async function wardrobe(page: Page) {
   await create(page, 'Hemd', 'Oberteile')
   await create(page, 'Hose', 'Hosen')
   await create(page, 'Sneaker', 'Schuhe')
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
 }
 
 test('Outfits aus echtem Bestand speichern, benennen, favorisieren und mit Vorlieben vollständig sichern', async ({
@@ -107,14 +105,16 @@ test('Outfits aus echtem Bestand speichern, benennen, favorisieren und mit Vorli
     fullPage: true,
   })
   await page.reload()
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('button', { name: 'Gespeichert (1)', exact: true })
     .click()
   await expect(
     page.getByRole('heading', { name: 'Mein Alltagslook', exact: true }),
   ).toBeVisible()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const download = await downloadPromise
@@ -158,7 +158,7 @@ test('Outfits aus echtem Bestand speichern, benennen, favorisieren und mit Vorli
     .getByRole('button', { name: 'Sicherung importieren', exact: true })
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('button', { name: 'Gespeichert (1)', exact: true })
     .click()
@@ -176,7 +176,7 @@ test('Fehlende Kleidung wird erklärt; Ablehnungen können zurückgesetzt werden
   page,
 }) => {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('button', { name: 'Outfits zusammenstellen', exact: true })
     .click()
@@ -215,9 +215,7 @@ test('Fehlende Kleidung wird erklärt; Ablehnungen können zurückgesetzt werden
     page.getByRole('article', { name: 'Outfit-Vorschlag 1' }),
   ).toBeVisible()
   await page.getByRole('button', { name: 'Speichern', exact: true }).click()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'Hemd öffnen', exact: true }).click()
   await page.getByRole('button', { name: 'Stück löschen', exact: true }).click()
   await expect(
@@ -231,7 +229,7 @@ test('Fehlende Kleidung wird erklärt; Ablehnungen können zurückgesetzt werden
   await page
     .getByRole('button', { name: 'Endgültig löschen', exact: true })
     .click()
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('button', { name: 'Gespeichert (0)', exact: true })
     .click()
@@ -248,7 +246,9 @@ test('Eine gefälschte Bildsignatur reicht nicht für einen gültigen Import', a
 }) => {
   await page.goto('/')
   await create(page, 'Original', 'Oberteile')
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const item = {
     id: 'forged',
     name: 'Beschädigtes Foto',
@@ -273,9 +273,7 @@ test('Eine gefälschte Bildsignatur reicht nicht für einen gültigen Import', a
     'Foto in der Sicherung ist beschädigt',
   )
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect(
     page.getByRole('button', { name: 'Original öffnen', exact: true }),
   ).toBeVisible()
@@ -290,8 +288,8 @@ for (const width of [375, 390, 430]) {
   }, testInfo) => {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
-    await page.getByRole('button', { name: 'Outfits', exact: true }).click()
-    await expect(page.getByRole('heading', { name: 'Outfits' })).toBeVisible()
+    await page.getByRole('button', { name: 'Looks', exact: true }).click()
+    await expect(page.getByRole('heading', { name: 'Looks' })).toBeVisible()
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -301,9 +299,11 @@ for (const width of [375, 390, 430]) {
       path: testInfo.outputPath(`outfits-${width}.png`),
       fullPage: true,
     })
-    await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+    await page
+      .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+      .click()
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
-    await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+    await page.getByRole('button', { name: 'Looks', exact: true }).click()
     await page.getByRole('button', { name: 'Stilvorlieben bearbeiten' }).click()
     expect(
       await page

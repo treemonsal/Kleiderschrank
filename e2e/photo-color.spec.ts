@@ -39,16 +39,16 @@ async function openPicker(page: Page) {
   ).toBeVisible()
 }
 async function exportData(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const downloading = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const download = await downloading
   return JSON.parse(await readFile((await download.path())!, 'utf8'))
 }
 async function edit(page: Page) {
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'Farbstück öffnen' }).click()
   await page.getByRole('button', { name: 'Bearbeiten', exact: true }).click()
 }
@@ -220,7 +220,9 @@ for (const width of [375, 390, 430]) {
   }, testInfo) => {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
-    await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+    await page
+      .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+      .click()
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
     await page.getByRole('button', { name: 'Heute', exact: true }).click()
     await start(page, '#0000ff', '#ff0000')

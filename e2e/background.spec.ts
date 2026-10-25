@@ -42,7 +42,9 @@ async function editor(page: Page) {
   await page.getByText('Hintergrund mit KI entfernen', { exact: false }).click()
 }
 async function exportData(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const waiting = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   return JSON.parse(await readFile((await (await waiting).path())!, 'utf8'))
@@ -124,9 +126,7 @@ test('Echtes KI-Modell erzeugt lokal eine Maske, erhält das Original und funkti
     })
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'KI-Testhemd öffnen' }).click()
   const restoredAlpha = await page
     .getByRole('dialog')
@@ -210,9 +210,7 @@ test('Beschädigte KI-Dateien werden abgewiesen und das Original bleibt speicher
     'Foto in der Sicherung ist beschädigt',
   )
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect(
     page.getByRole('button', { name: 'KI-Testhemd öffnen' }),
   ).toBeVisible()

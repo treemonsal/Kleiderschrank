@@ -19,7 +19,9 @@ async function mockProviders(context: BrowserContext) {
   })
 }
 async function activate(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page
     .getByRole('checkbox', { name: /Ich erlaube, neue Kleidungsfotos/ })
     .check()
@@ -96,7 +98,9 @@ async function seed(page: Page, chat = false) {
         }
       : {}),
   }
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'sync.json',
     mimeType: 'application/json',
@@ -115,7 +119,9 @@ test('Geöffnete KI-Einstellungen folgen anderem Fenster und erhalten ungespeich
 }) => {
   await mockProviders(context)
   await page.goto('/')
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await serverFields(page)
   const other = await context.newPage()
   await other.goto('/')
@@ -224,7 +230,9 @@ test('Ein externer Verbindungswechsel verhindert die späte eigene Aktivierung u
   })
   try {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+    await page
+      .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+      .click()
     await serverFields(page)
     await page
       .getByRole('checkbox', {

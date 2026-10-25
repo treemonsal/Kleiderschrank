@@ -6,6 +6,7 @@ import './styles.css'
 import './editorial.css'
 import './luxe.css'
 import './store.css'
+import './journal.css'
 
 class StorageBoundary extends Component<
   { children: ReactNode },

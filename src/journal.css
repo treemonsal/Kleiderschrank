@@ -1,0 +1,1495 @@
+/*
+ * Journal art direction (0.28.0): "MyStyle, ein Garderobenjournal" from the
+ * Claude Design handoff (Classical design system). The app reads like a
+ * printed almanac of your own clothes: Cormorant Garamond headings over Lora
+ * body, hairline rules instead of filled cards, outlined buttons, one gold
+ * accent applied as stroke. Pieces without a photo are cloth swatches in
+ * their recorded colour. Fonts are self-hosted (OFL, src/fonts).
+ * Remove the import in main.tsx to return to the 0.27.0 store look.
+ */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/cormorant-garamond-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  src: url('./fonts/cormorant-garamond-latin-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/cormorant-garamond-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+  src: url('./fonts/cormorant-garamond-latin-600-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Lora';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/lora-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Lora';
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  src: url('./fonts/lora-latin-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Lora';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/lora-latin-600-normal.woff2') format('woff2');
+}
+
+:root {
+  /* Classical tokens */
+  --font-heading: 'Cormorant Garamond', ui-serif, Georgia, serif;
+  --font-body: 'Lora', ui-serif, Georgia, serif;
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201f1d;
+  --color-accent: #b68235;
+  --color-divider: color-mix(in srgb, #201f1d 16%, transparent);
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+  --color-accent-100: #fff3e4;
+  --color-accent-600: #a06f24;
+  --color-accent-700: #7d5411;
+  --color-accent-800: #5a3b0a;
+  --radius-md: 4px;
+  --radius-lg: 7px;
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+
+  /* The app's own variables, mapped onto the tokens */
+  --display-font: var(--font-heading);
+  --serif-font: var(--font-heading);
+  --background: var(--color-bg);
+  --surface: var(--color-bg);
+  --soft: var(--color-surface);
+  --ink: var(--color-text);
+  --muted: var(--color-neutral-700);
+  --line: var(--color-divider);
+  --accent: var(--color-accent);
+  --action: var(--color-accent);
+  --accent-ink: var(--color-bg);
+  --hero: var(--color-bg);
+  --rose: var(--color-accent);
+  --danger: #8f2b1d;
+  --hairline: var(--color-divider);
+  --radius-card: var(--radius-md);
+  --radius-control: var(--radius-md);
+  --shadow: var(--shadow-lg);
+  --card-shadow: none;
+  font-family: var(--font-body);
+  letter-spacing: 0;
+  font-variant-numeric: normal;
+}
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.015em;
+}
+
+/* ── Shell ─────────────────────────────────────────────────────────── */
+.app-header {
+  height: 56px;
+  padding: env(safe-area-inset-top) 12px 0 22px;
+}
+.wordmark {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 23px;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+.header-right {
+  gap: 2px;
+}
+.profile-button,
+.stylist-link {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+}
+.profile-button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+}
+.profile-button.active {
+  color: var(--color-accent-700);
+}
+.stylist-glyph {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.inbox-dot {
+  top: -2px;
+  right: -3px;
+  width: 7px;
+  height: 7px;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-bg);
+}
+.view {
+  padding: 0 22px;
+}
+
+/* Tab bar: roman numerals over serif labels, one gold hairline marks the page. */
+.bottom-nav.journal-nav {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  padding: 0 10px calc(env(safe-area-inset-bottom) + 8px);
+  border: 0;
+  border-top: 1px solid var(--color-divider);
+  border-radius: 0;
+  background: var(--color-bg);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+.journal-nav .nav-selection {
+  top: -1px;
+  left: 10px;
+  width: calc((100% - 20px) / 4);
+  height: 1.5px;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  display: flex;
+  justify-content: center;
+  transition: transform 380ms cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.journal-nav .nav-selection::after {
+  content: '';
+  width: 34px;
+  background: var(--color-accent);
+}
+.journal-nav > button {
+  min-height: 52px;
+  gap: 1px;
+  padding: 10px 0 4px;
+  border-radius: 0;
+  color: var(--color-neutral-700);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.journal-nav > button.active {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.journal-nav .nav-numeral {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--color-neutral-700);
+  font-weight: 400;
+}
+.journal-nav > button.active .nav-numeral {
+  color: var(--color-accent-700);
+}
+.toast-region {
+  bottom: calc(84px + env(safe-area-inset-bottom));
+}
+.app-shell {
+  padding-bottom: calc(110px + env(safe-area-inset-bottom));
+}
+
+/* ── Type helpers ──────────────────────────────────────────────────── */
+.eyebrow,
+.kicker,
+.card-kicker {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent-700);
+}
+.muted,
+.micro-copy {
+  color: var(--color-neutral-700);
+}
+.page-heading,
+.journal-heading {
+  margin: 4px 0 6px;
+}
+.page-heading h1,
+.heading-row h1,
+.outfits-view .heading-row h1,
+.settings-view .page-heading h1 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.heading-row {
+  align-items: flex-end;
+}
+.page-heading > p:last-child,
+.page-sub {
+  margin: 6px 0 0;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--color-neutral-700);
+  font-variant-numeric: tabular-nums;
+}
+.section-heading h2,
+.two-tone,
+.sheet-header h2 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+}
+.two-tone span {
+  color: var(--color-neutral-700);
+}
+
+/* ── Controls ──────────────────────────────────────────────────────── */
+.button {
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+  box-shadow: none;
+}
+.button.primary {
+  background: transparent;
+  color: var(--color-accent-700);
+  border: 1px solid var(--color-accent);
+}
+.button.primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+}
+.button.primary:active:not(:disabled) {
+  background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+}
+.button.primary:disabled {
+  background: transparent;
+  color: var(--color-neutral-600);
+  border-color: var(--color-divider);
+  opacity: 0.7;
+}
+.button.secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-divider);
+}
+.button.secondary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+}
+.button.danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+.text-button {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-accent-700);
+}
+.icon-button {
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  box-shadow: none;
+}
+.icon-button.soft {
+  background: transparent;
+  border: 0;
+}
+.icon-button.primary-add {
+  width: 46px;
+  height: 46px;
+  background: transparent;
+  color: var(--color-accent-700);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-md);
+}
+.chip,
+.chips button,
+.chips .chip {
+  min-height: 36px;
+  padding: 5px 12px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: 1px solid var(--color-divider);
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: 14.5px;
+  font-weight: 600;
+  box-shadow: none;
+}
+.chip.active,
+.chips .chip.active,
+.chip[aria-pressed='true'] {
+  background: transparent;
+  color: var(--color-accent-700);
+  border-color: var(--color-accent);
+}
+.field,
+.field > label {
+  font-size: 12px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+input:not([type='checkbox']):not([type='radio']):not([type='file']),
+select,
+textarea {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  box-shadow: none;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-color: var(--color-accent);
+  outline-offset: 0;
+}
+input[type='checkbox'],
+.check-row input {
+  accent-color: var(--color-accent);
+}
+
+/* Cards become bordered, unfilled surfaces. */
+.card,
+.settings-card,
+.outfit-card,
+.calendar-day-card,
+.wear-summary,
+.daily-look,
+.shopping-card,
+.style-profile-card,
+.style-invitation,
+.backup-reminder,
+.add-banner,
+.online-stylist,
+details.outfit-reasons {
+  background: transparent;
+  box-shadow: none;
+  border-radius: var(--radius-md);
+}
+
+/* Sheets: paper ground, small radius, whisper shadow. */
+.sheet,
+.sheet-header {
+  background: var(--color-bg);
+}
+.sheet {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-lg);
+}
+.sheet::backdrop {
+  background: color-mix(in srgb, var(--color-neutral-900) 38%, transparent);
+}
+.sheet-handle {
+  width: 38px;
+  height: 3px;
+  background: var(--color-neutral-400);
+}
+.sheet-header h2 {
+  font-size: 27px;
+  font-style: italic;
+}
+.toast {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-size: 13px;
+}
+.toast > svg {
+  color: var(--color-accent-700);
+}
+.chat-message.user {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg) var(--radius-lg) 2px var(--radius-lg);
+}
+.chat-message:not(.user) .chat-text {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+/* ── Pictures: matted plates, swatches instead of missing photos ──── */
+.garment-picture {
+  background: var(--color-surface);
+  border-radius: 0;
+}
+.garment-picture img {
+  filter: sepia(0.12) saturate(0.9) contrast(1.03);
+}
+.photo-placeholder.is-swatch {
+  color: rgb(255 255 255 / 0.55);
+  mix-blend-mode: normal;
+}
+.photo-placeholder.is-swatch .garment-sketch {
+  opacity: 0.35;
+  color: var(--color-text);
+}
+.photo-placeholder.is-swatch .placeholder-category {
+  display: none;
+}
+
+/* ── Heute ─────────────────────────────────────────────────────────── */
+.journal-day-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0 12px;
+  min-height: 0;
+}
+.journal-date {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.journal-date .home-date {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(34px, 11vw, 46px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+.journal-day-head .home-weather {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 0 0 4px;
+  min-height: 44px;
+  background: none;
+  border: 0;
+  text-align: right;
+  color: var(--color-text);
+}
+.journal-day-head .home-weather-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-accent);
+}
+.journal-day-head .weather-range {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  line-height: 1;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+.journal-day-head .home-weather small {
+  font-size: 11.5px;
+  color: var(--color-neutral-700);
+}
+.journal-day-head .home-history-date {
+  min-height: 0;
+  padding-bottom: 6px;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--color-neutral-700);
+}
+
+.home-timeline {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.day-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 -10px 2px;
+}
+.day-navigation .icon-button {
+  width: 40px;
+  height: 40px;
+  color: var(--color-neutral-700);
+}
+.day-calendar-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  background: none;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.day-calendar-trigger svg {
+  color: var(--color-accent);
+}
+.home-week-strip {
+  border-top: 1px solid var(--color-divider);
+  border-bottom: 1px solid var(--color-divider);
+  padding: 10px 0 6px;
+  gap: 0;
+}
+.home-week-strip > button,
+.home-week-strip .selected {
+  min-height: 44px;
+  padding: 2px 0 0;
+  gap: 5px;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: var(--color-text);
+  box-shadow: none;
+}
+.home-week-strip > button::after {
+  content: '';
+  width: 16px;
+  height: 1.5px;
+  background: transparent;
+}
+.home-week-strip > button.selected::after {
+  background: var(--color-accent);
+}
+.home-week-strip small {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+}
+.home-week-strip .selected small,
+.home-week-strip [aria-current='date'] small {
+  color: var(--color-neutral-700);
+}
+
+/* Day numbers: a 38px ring in the worn look's colours, paper inside. */
+.day-number {
+  width: 38px;
+  height: 38px;
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  box-shadow: none;
+  color: var(--color-text);
+}
+.day-number.has-worn {
+  box-shadow: none;
+}
+.day-number > span:last-child {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-bg);
+}
+.day-color-ring {
+  border: 1px dashed var(--color-neutral-500);
+}
+.has-worn .day-color-ring {
+  border: 1px solid var(--color-neutral-400);
+}
+.day-color-ring.has-colors {
+  border: 0;
+  -webkit-mask: none;
+  mask: none;
+  transition: background 600ms;
+}
+.home-week-strip .selected .day-number > span:last-child,
+.calendar-grid > button.selected .day-number > span:last-child {
+  font-weight: 600;
+}
+[aria-current='date'] .day-number > span:last-child {
+  color: var(--color-accent-700);
+}
+.week-legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 8px 0 0;
+  font-size: 10.5px;
+  color: var(--color-neutral-700);
+}
+.week-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.week-legend i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.legend-worn {
+  background: conic-gradient(#d6c4ac 0 33%, #718ba8 0 66%, #faf9f6 0);
+}
+.legend-plan {
+  border: 1px dashed var(--color-neutral-500);
+}
+.return-today {
+  margin-top: 8px;
+}
+
+.day-slide-viewport {
+  margin-top: 20px;
+}
+.daily-look {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.daily-look > header {
+  margin-bottom: 14px;
+}
+.daily-look .eyebrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0 0 2px;
+}
+.look-count {
+  font-size: 11.5px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-neutral-700);
+  font-variant-numeric: tabular-nums;
+}
+.daily-look h1 {
+  font-family: var(--font-heading);
+  font-size: 31px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.12;
+  margin: 0 0 3px;
+}
+.daily-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: -12px 0 14px;
+}
+.context-chip {
+  padding: 0;
+  min-height: 0;
+  background: none;
+  border: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-neutral-700);
+}
+.context-chip svg {
+  display: none;
+}
+.context-chip + .context-chip::before {
+  content: '·';
+  margin: 0 6px;
+}
+
+/* The look as a book plate: Abb. 1–n on a surface mat. */
+.figure-plate-wrap {
+  margin: 0;
+}
+.figure-plate {
+  display: grid;
+  grid-template-columns: 1.12fr 1fr;
+  grid-template-rows: 170px 134px;
+  grid-auto-rows: 98px;
+  gap: 8px;
+  padding: 9px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+}
+.figure-plate.pieces-1 {
+  grid-template-columns: 1fr;
+}
+.figure-tile {
+  position: relative;
+  min-width: 0;
+  display: flex;
+}
+.figure-tile:first-child {
+  grid-row: span 2;
+}
+.figure-plate.pieces-2 .figure-tile:first-child,
+.figure-plate.pieces-1 .figure-tile:first-child {
+  grid-row: span 2;
+}
+.figure-plate.pieces-2 .figure-tile:nth-child(2) {
+  grid-row: span 2;
+}
+.figure-tile > .outfit-piece {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  text-align: left;
+  box-shadow: none;
+}
+.figure-tile > .outfit-piece > .garment-picture {
+  flex: 1;
+  min-height: 0;
+  aspect-ratio: auto;
+  height: auto;
+  border-radius: 0;
+}
+.figure-tile .garment-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.figure-tile .photo-placeholder {
+  height: 100%;
+}
+.figure-tile .photo-placeholder .garment-sketch {
+  width: 46%;
+  max-width: 64px;
+  height: auto;
+}
+.figure-tile .outfit-piece > .figure-caption {
+  display: flex;
+  align-items: flex-start;
+  white-space: normal;
+  width: 100%;
+  font-size: inherit;
+  text-align: left;
+  flex-direction: column;
+  min-width: 0;
+  padding: 6px 8px 7px;
+  background: var(--color-bg);
+}
+.figure-caption small {
+  display: block;
+  line-height: 1.4;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent-700);
+  font-variant-numeric: tabular-nums;
+}
+.figure-caption > span {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.15;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.figure-tile:nth-child(n + 4) .figure-caption {
+  padding: 5px 8px 6px;
+}
+.figure-tile:nth-child(n + 4) .figure-caption > span {
+  font-size: 15px;
+}
+.figure-tile .laundry-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+.figure-tile .piece-swap {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-bg) 82%, transparent);
+  color: var(--color-text);
+  box-shadow: none;
+}
+.figure-plate-wrap figcaption {
+  margin: 7px 0 0;
+  font-size: 11.5px;
+  font-style: italic;
+  color: var(--color-neutral-700);
+}
+
+details.outfit-reasons {
+  border: 0;
+  padding: 0 !important;
+  background: none;
+  margin: 16px 0 18px;
+}
+details.outfit-reasons summary {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+  cursor: pointer;
+}
+details.outfit-reasons p,
+details.outfit-reasons li {
+  font-size: 13.5px;
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+  color: var(--color-neutral-800);
+}
+details.outfit-reasons p {
+  margin: 6px 0 0;
+}
+
+.refine-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.refine-row > span {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+}
+.refine-row .button {
+  min-height: 40px;
+  padding: 6px 12px;
+  font-size: 15px;
+  width: auto;
+}
+.daily-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-bottom: 4px;
+}
+.daily-quick-actions > .button {
+  flex: 1 1 100%;
+  min-height: 50px;
+  font-size: 17px;
+}
+.daily-quick-actions > .button.secondary:disabled {
+  opacity: 1;
+  justify-content: flex-start;
+  padding: 12px 0;
+  border: 0;
+  border-top: 1px solid var(--color-divider);
+  border-bottom: 1px solid var(--color-divider);
+  border-radius: 0;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--color-accent-700);
+}
+.calendar-note {
+  margin-top: 18px;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--color-divider);
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-style: italic;
+  background: none;
+}
+
+/* Rating row: "Wie gefällt dir der Look?" with outlined thumbs. */
+.outfit-rating .icon-button,
+.rating-buttons button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  background: transparent;
+}
+.outfit-rating .icon-button[aria-pressed='true'],
+.rating-buttons button[aria-pressed='true'] {
+  color: var(--color-accent-700);
+  border-color: var(--color-accent);
+  background: var(--color-accent-100);
+}
+
+/* ── Garderobe ─────────────────────────────────────────────────────── */
+.text-tabs {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  margin: 14px -22px 0;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--color-divider);
+  scrollbar-width: none;
+}
+.text-tabs::-webkit-scrollbar {
+  display: none;
+}
+.text-tabs > button {
+  flex: none;
+  min-height: 44px;
+  padding: 10px 0 9px;
+  border: 0;
+  background: none;
+  white-space: nowrap;
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--color-neutral-700);
+}
+.text-tabs > button.active {
+  font-weight: 600;
+  color: var(--color-text);
+  box-shadow: inset 0 -1.5px 0 var(--color-accent);
+}
+.text-tabs small {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  color: var(--color-neutral-700);
+  font-variant-numeric: tabular-nums;
+}
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  margin: 14px 0 16px;
+}
+.filter-chips .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.color-balance {
+  margin: 0 0 18px;
+}
+.color-balance > div {
+  display: flex;
+  height: 12px;
+  padding: 2px;
+  border: 1px solid var(--color-divider);
+  background: var(--color-surface);
+}
+.color-balance figcaption {
+  margin-top: 5px;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--color-neutral-700);
+}
+.wardrobe-view .search-row {
+  margin: 0 0 4px;
+}
+.search-field {
+  min-height: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-divider);
+  background: transparent;
+  box-shadow: none;
+}
+.search-field input {
+  border: 0 !important;
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+.collection-toolbar {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+}
+.collection-toolbar .text-button {
+  font-size: 14px;
+}
+.garment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 14px;
+}
+.garment-card {
+  position: relative;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+.garment-open {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+}
+.garment-card .garment-picture {
+  aspect-ratio: 4 / 5;
+  height: auto;
+  border: 6px solid var(--color-surface);
+  outline: 1px solid var(--color-divider);
+  border-radius: 0;
+  margin: 1px;
+}
+.garment-card .photo-placeholder .garment-sketch {
+  width: 42%;
+  max-width: 80px;
+}
+.garment-caption {
+  padding: 0;
+  min-width: 0;
+}
+.garment-caption .item-category {
+  display: none;
+}
+.garment-caption h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.garment-caption p {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--color-neutral-700);
+}
+.laundry-badge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 3px;
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-800);
+  font-size: 11px;
+  font-weight: 400;
+}
+.garment-card .laundry-badge {
+  position: absolute;
+  left: 13px;
+  top: calc(100% - 92px);
+}
+.garment-card:has(.laundry-badge) .garment-picture {
+  opacity: 0.55;
+}
+.favorite-button {
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-bg) 82%, transparent);
+  color: var(--color-text);
+  box-shadow: none;
+}
+.favorite-button.is-favorite,
+.is-favorite {
+  color: var(--color-accent);
+}
+
+/* ── Looks ─────────────────────────────────────────────────────────── */
+.outfit-tabs {
+  display: flex;
+  margin: 18px 0 22px;
+  padding: 0;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  background: transparent;
+  overflow: hidden;
+}
+.outfit-tabs > button {
+  flex: 1;
+  min-height: 40px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 400;
+  box-shadow: none;
+}
+.outfit-tabs > button + button {
+  border-left: 1px solid var(--color-divider);
+}
+.outfit-tabs > button.active {
+  color: var(--color-accent-700);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+.outfit-tabs > button svg {
+  display: none;
+}
+.look-bands {
+  display: flex;
+  gap: 3px;
+  padding: 5px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+}
+.outfit-card {
+  border: 0;
+  padding: 0 0 18px;
+  margin-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.outfit-card + .outfit-card {
+  border-top: 0;
+}
+.saved-outfit-heading h2,
+.outfit-card h2 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.15;
+}
+.look-number {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-accent-700);
+  font-variant-numeric: tabular-nums;
+  margin-right: 4px;
+}
+.saved-outfit-heading span,
+.outfit-card-heading span {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+}
+.outfit-card .outfit-pieces {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+.outfit-card .outfit-piece > span {
+  font-size: 11px;
+}
+.outfit-piece {
+  background: none;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+}
+.outfit-piece > .garment-picture {
+  border: 4px solid var(--color-surface);
+  outline: 1px solid var(--color-divider);
+}
+.figure-tile > .outfit-piece > .garment-picture {
+  border: 0;
+  outline: 0;
+}
+
+/* ── Journal ───────────────────────────────────────────────────────── */
+.journal-month {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-style: italic;
+  padding-bottom: 4px;
+}
+.calendar-view {
+  margin-top: 12px;
+}
+.calendar-month-heading {
+  border-top: 1px solid var(--color-divider);
+  padding-top: 6px;
+}
+.calendar-month-heading h2 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 20px;
+}
+.calendar-weekdays span {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+}
+.calendar-grid {
+  row-gap: 4px;
+}
+.calendar-grid > button {
+  min-height: 46px;
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+.calendar-grid > button.selected {
+  background: none;
+  outline: 0;
+}
+.calendar-grid > button.selected .day-number {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+.calendar-grid .day-number {
+  font-size: 16px;
+}
+.calendar-day-picker {
+  margin: 10px 0 0;
+}
+.calendar-day-card {
+  border: 0;
+  border-top: 1px solid var(--color-divider);
+  border-bottom: 1px solid var(--color-divider);
+  border-radius: 0;
+  padding: 14px 0;
+  margin-top: 8px;
+}
+.calendar-day-card .eyebrow {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text);
+}
+.calendar-outfit-heading h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 19px;
+}
+.calendar-status {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent-700);
+  background: none;
+  padding: 0;
+}
+.calendar-day-card .look-bands {
+  margin: 8px 0;
+}
+.calendar-day-card .outfit-pieces {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+.calendar-day-card .outfit-piece > span {
+  font-size: 11px;
+}
+.calendar-empty h3 {
+  font-style: italic;
+  font-weight: 400;
+}
+.wear-summary {
+  border: 0;
+  padding: 18px 0 0;
+}
+.wear-summary h3 {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 400;
+}
+.journal-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 22px 0 26px;
+}
+.journal-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.journal-stats > div:first-child {
+  padding-right: 14px;
+  border-right: 1px solid var(--color-divider);
+}
+.journal-stats > div + div {
+  padding-left: 16px;
+}
+.journal-stats strong {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 46px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.journal-stats span {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+}
+.journal-forgotten h2 {
+  margin: 0 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-divider);
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 22px;
+}
+.journal-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-divider);
+  background: none;
+  text-align: left;
+  color: var(--color-text);
+}
+.journal-row > svg {
+  color: var(--color-neutral-600);
+}
+.journal-swatch {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border: 4px solid var(--color-surface);
+  outline: 1px solid var(--color-divider);
+}
+.journal-row-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.journal-row-text strong {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 17px;
+}
+.journal-row-text small {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+}
+.journal-view .shopping-card,
+.journal-view > section:has(> .shopping-card) {
+  margin-top: 26px;
+}
+.journal-backup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 12px 0;
+  border-top: 1px solid var(--color-divider);
+}
+.journal-backup > div {
+  display: flex;
+  flex-direction: column;
+}
+.journal-backup span {
+  font-size: 13.5px;
+}
+.journal-backup small {
+  font-size: 11.5px;
+  color: var(--color-neutral-700);
+}
+.journal-backup .button {
+  min-height: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal-nav .nav-selection,
+  .day-color-ring.has-colors {
+    transition: none;
+  }
+}
+
+/* Former white store cards: hairline-bordered paper surfaces. */
+.outfit-empty,
+.settings-card,
+.style-profile-card,
+.online-stylist,
+.backup-reminder,
+.weather-panel,
+.wardrobe-summary,
+.add-banner,
+.style-invitation,
+.insight-tiles > div,
+.swap-choice,
+.photo-picker,
+.import-choice {
+  background: transparent;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+}
+.daily-look .online-stylist {
+  margin-top: 22px;
+}
+.daily-look .outfit-reasons {
+  background: none;
+  border: 0;
+}
+.weather-panel {
+  border: 0;
+  border-top: 1px solid var(--color-divider);
+  border-bottom: 1px solid var(--color-divider);
+  border-radius: 0;
+}
+.journal-date .kicker {
+  display: block;
+  white-space: nowrap;
+}
+/* An even number of slots below the lead piece: the last one spans the row. */
+.figure-plate.pieces-4 .figure-tile:nth-child(4) {
+  grid-column: span 2;
+}
+.outfit-options {
+  background: transparent;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+}
+.daily-look .eyebrow > span:first-child {
+  color: var(--color-accent-700);
+}

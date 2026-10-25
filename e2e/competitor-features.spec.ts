@@ -38,7 +38,9 @@ const look = {
   updatedAt: stamp,
 }
 async function importData(page: Page, calendar: unknown[] = []) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'features.json',
     mimeType: 'application/json',
@@ -77,9 +79,7 @@ test('Auswertung zeigt Wert, Kosten pro Tragen und Partner; Detail kombiniert ei
   await page.clock.install({ time: new Date(now) })
   await page.goto('/')
   await importData(page, [worn('2026-10-10'), worn('2026-10-12')])
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'Auswertung öffnen' }).click()
   const sheet = page.getByRole('dialog')
   await expect(sheet).toContainText('CHF 140')
@@ -128,9 +128,7 @@ test('Heute getragen legt ein zweimal getragenes Oberteil automatisch in die Wä
   await expect(
     page.getByRole('status').filter({ hasText: 'Wäsche' }),
   ).toContainText('Leinenhemd liegt jetzt in der Wäsche')
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'Nur Wäsche' }).click()
   await expect(
     page.getByRole('button', { name: 'Leinenhemd öffnen' }),
@@ -145,7 +143,7 @@ test('Packliste plant Looks pro Tag; Alltag-Einstellungen bleiben gespeichert', 
 }) => {
   await page.goto('/')
   await importData(page)
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page.getByRole('button', { name: 'Packliste für eine Reise' }).click()
   const sheet = page.getByRole('dialog')
   await sheet.getByRole('combobox', { name: 'Tage' }).selectOption('2')
@@ -155,7 +153,9 @@ test('Packliste plant Looks pro Tag; Alltag-Einstellungen bleiben gespeichert', 
   await first.check()
   await expect(first).toBeChecked()
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page
     .getByRole('combobox', { name: 'Temperaturempfinden' })
     .selectOption('cold')
@@ -163,7 +163,9 @@ test('Packliste plant Looks pro Tag; Alltag-Einstellungen bleiben gespeichert', 
     .getByRole('checkbox', { name: 'Automatisch in die Wäsche legen' })
     .uncheck()
   await page.reload()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await expect(
     page.getByRole('combobox', { name: 'Temperaturempfinden' }),
   ).toHaveValue('cold')

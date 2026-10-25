@@ -32,6 +32,8 @@ async function open(page: Page) {
   await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
 }
 
+// Network mocks use page.route, which a controlling service worker bypasses.
+test.use({ serviceWorkers: 'block' })
 test('Neues Foto startet die KI automatisch, übernimmt die Freistellung und behält das Original (API kontrolliert)', async ({
   page,
 }) => {
@@ -85,7 +87,9 @@ test('Neues Foto startet die KI automatisch, übernimmt die Freistellung und beh
   await page
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
     .click()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const saved = JSON.parse(
@@ -193,7 +197,9 @@ test('Verbindung benötigt Foto-Freigabe; Ausschalten verhindert weitere Uploads
     return route.fulfill({ json: { attributes, cutout: null } })
   })
   await page.goto('/')
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByText('Eigenen Server verbinden', { exact: true }).click()
   await page.getByLabel('KI-Server', { exact: true }).fill(url)
   await page.getByLabel('Verbindungscode', { exact: true }).fill(code)
@@ -241,7 +247,9 @@ test('Original verwenden speichert ohne Freistellung und erhält das Foto', asyn
   await page
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
     .click()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const saved = JSON.parse(

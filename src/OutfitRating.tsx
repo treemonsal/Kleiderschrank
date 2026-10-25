@@ -36,7 +36,7 @@ export function OutfitRating({
             ? `Für ${occasion} gemerkt. Dein allgemeiner Geschmack bleibt unverändert.`
             : reason === 'bold'
               ? 'Gemerkt: Ähnliche Looks mit weniger Farbakzenten werden stärker gewichtet.'
-              : 'Bewertung gespeichert. Rückgängig geht unter Mehr → Dein Stilprofil.',
+              : 'Bewertung gespeichert. Rückgängig geht unter Einstellungen → Dein Stilprofil.',
         )
       } else {
         const active = await toggleOutfitLike(ids, db, occasion)

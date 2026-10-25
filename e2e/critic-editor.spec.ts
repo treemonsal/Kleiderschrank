@@ -13,6 +13,8 @@ const attributes = {
   notes: '',
 }
 
+// Network mocks use page.route, which a controlling service worker bypasses.
+test.use({ serviceWorkers: 'block' })
 test('KI-Aktivierung im Entwurf startet nichts nachträglich; neue Fotos werden danach automatisch analysiert', async ({
   page,
 }) => {
@@ -129,9 +131,7 @@ test('KI-Aktivierung im Entwurf startet nichts nachträglich; neue Fotos werden 
     .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen', exact: true })
     .click()
   await expect(dialog).toHaveCount(0)
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect(
     page.getByRole('button', {
       name: `${attributes.name} öffnen`,
@@ -383,9 +383,7 @@ test('Eine offene Verwerfen-Rückfrage lässt sich während eines laufenden Spei
     )
   }
   await expect(dialog).toHaveCount(0)
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect(
     page.getByRole('button', { name: 'Sicher speichern öffnen', exact: true }),
   ).toBeVisible()

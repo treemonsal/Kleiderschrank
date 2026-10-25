@@ -6,7 +6,9 @@ test.use({ timezoneId: 'Etc/UTC' })
 async function seed(page: Page) {
   await page.goto('/')
   const data = refinementFixture(await page.evaluate(() => Date.now()))
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'refinement.json',
     mimeType: 'application/json',
@@ -22,7 +24,9 @@ async function seed(page: Page) {
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
 }
 async function exported(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   return JSON.parse(await readFile((await (await download).path())!, 'utf8'))
@@ -125,9 +129,7 @@ test('Eine inzwischen in die Wäsche gelegte Alternative überschreibt die Vorsc
     .click()
   const other = await context.newPage()
   await other.goto('/')
-  await other
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await other.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await other
     .getByRole('button', { name: 'Beige Jacke öffnen', exact: true })
     .click()

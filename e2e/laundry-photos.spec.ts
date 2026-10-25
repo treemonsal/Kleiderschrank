@@ -28,7 +28,9 @@ async function wardrobe(page: Page) {
     createdAt: stamp,
     updatedAt: stamp,
   }))
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'photos.json',
     mimeType: 'application/json',
@@ -86,9 +88,7 @@ test('Statuswechsel widerruft keine noch angezeigten Bildadressen und erhält be
   })
   await page.goto('/')
   const original = await wardrobe(page)
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page
     .getByRole('button', { name: 'Fotohemd öffnen', exact: true })
     .click()
@@ -134,7 +134,9 @@ test('Statuswechsel widerruft keine noch angezeigten Bildadressen und erhält be
     ),
   ).toEqual([])
   await dialog.getByRole('button', { name: 'Schliessen', exact: true }).click()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await expect
     .poll(() =>
       page.evaluate(
@@ -162,9 +164,7 @@ test('Im Kleiderschrank bleibt das Wäschefoto sichtbar und nach Saubermarkieren
 }) => {
   await page.goto('/')
   await wardrobe(page)
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page
     .getByRole('button', { name: 'Fotohemd öffnen', exact: true })
     .click()
@@ -177,9 +177,7 @@ test('Im Kleiderschrank bleibt das Wäschefoto sichtbar und nach Saubermarkieren
     .getByRole('button', { name: 'Schliessen', exact: true })
     .click()
   await page.reload()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'Nur Wäsche', exact: true }).click()
   const card = page.locator('.garment-card').filter({ hasText: 'Fotohemd' })
   await expect
@@ -209,9 +207,7 @@ test('Im Kleiderschrank bleibt das Wäschefoto sichtbar und nach Saubermarkieren
     )
     .toBe(192)
   await page.reload()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect
     .poll(() =>
       card

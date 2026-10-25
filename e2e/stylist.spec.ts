@@ -35,7 +35,9 @@ const answer = {
 
 async function importPieces(page: Page, withPhotos = true) {
   const photo = `data:image/png;base64,${(await readFile('public/icon-192.png')).toString('base64')}`
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'stylist.json',
     mimeType: 'application/json',
@@ -66,7 +68,9 @@ async function importPieces(page: Page, withPhotos = true) {
   ).toBeVisible()
 }
 async function activate(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page
     .getByRole('checkbox', { name: /Ich erlaube, neue Kleidungsfotos/ })
     .check()
@@ -140,7 +144,7 @@ async function mock(page: Page, mode = 'ok', hold?: Promise<void>) {
 async function mainNames(page: Page) {
   return page
     .getByRole('region', { name: 'Dein Tageslook' })
-    .locator(':scope > .outfit-pieces .outfit-piece')
+    .locator('.figure-plate .outfit-piece')
     .evaluateAll((nodes) =>
       nodes
         .map((node) => node.getAttribute('aria-label')!.replace(/ öffnen$/, ''))
@@ -148,6 +152,8 @@ async function mainNames(page: Page) {
     )
 }
 
+// Network mocks use page.route, which a controlling service worker bypasses.
+test.use({ serviceWorkers: 'block' })
 test('Online-Beratung sendet erst auf Aktion ausgewählte Fotos, übernimmt echte IDs und erhält Foto/Backup', async ({
   page,
 }) => {
@@ -189,7 +195,9 @@ test('Online-Beratung sendet erst auf Aktion ausgewählte Fotos, übernimmt echt
   await page.reload()
   await expect.poll(() => mainNames(page)).toEqual(expected)
   expect(sent).toHaveLength(1)
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const downloading = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const download = await downloading
@@ -228,7 +236,7 @@ test('Online-Stylist vergleicht unter Outfits und speichert die Empfehlung nur e
   await page.goto('/')
   await importPieces(page)
   await activate(page)
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('button', { name: 'Outfits zusammenstellen', exact: true })
     .click()
