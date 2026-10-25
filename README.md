@@ -32,7 +32,7 @@ Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten od
 
 ## Neu in 0.27.0
 
-Neues helles Design nach dem Vorbild des Apple Store: grauer Hintergrund, weisse Karten, blaue Knöpfe, Kategorien als Bildreihe. Details in [design/LUXE.md](design/LUXE.md).
+Neues helles Design: Aufbau wie im Apple Store (weisse Karten, Kategorien als Bildreihe), nur zwei Farben (Off-White und iPhone-Burgund), Titel in Serifenschrift wie bei Claude. Details in [design/LUXE.md](design/LUXE.md).
 
 ## Neu in 0.26.0
 

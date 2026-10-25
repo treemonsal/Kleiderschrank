@@ -2,15 +2,17 @@
 
 Auf Wunsch übernimmt MyStyle seit 0.27.0 die Gestaltung des Apple Store (apple.com/ch-de/store, am 25.10.2026 vermessen). Mobbin war als Quelle vorgesehen, verlangt für den Connector aber ein bezahltes Abo und wurde deshalb nicht genutzt.
 
-| Element            | Apple Store                          | MyStyle                                                 |
-| ------------------ | ------------------------------------ | ------------------------------------------------------- |
-| Seite              | `#f5f5f7`                            | gleich, auch Sheets und Theme-Farbe                     |
-| Karten             | weiss, 18 px Radius, Schatten 2/4/12 | gleich, auch Kleidungsbilder wie Produktfotos auf Weiss |
-| Schrift            | `#1d1d1f`, Nebentext `#6e6e73`       | gleich                                                  |
-| Titel              | „Der Store“ gross, halbfett          | Seitentitel 30–40 px, Untertitel halbfett in Schwarz    |
-| Abschnitte         | „Zubehör. Must-haves, die …“         | zweifarbige Überschrift im Regal „Lange nicht getragen“ |
-| Kategorien         | Bildreihe Mac · iPhone · iPad        | Bildreihe mit Kleidungsskizzen im Kleiderschrank        |
-| Aktionen und Links | blaue Kapsel `#0071e3`, Links `#06c` | gleich; aktiver Tab blau, Liquid Glass bleibt           |
+Farben und Schrift kommen auf Wunsch nicht von Apple: nur zwei Hauptfarben, warmes Off-White und das Burgund des neuen iPhone. Titel in einer Serifenschrift wie bei Claude.
+
+| Element            | Vorbild                               | MyStyle                                                                          |
+| ------------------ | ------------------------------------- | -------------------------------------------------------------------------------- |
+| Farben             | Burgund des neuen iPhone (Store-Bild) | Off-White `#f7f3f2`, Karten `#fffdfc`, Burgund `#6b2433`                         |
+| Text               | ebenfalls Burgund-Töne                | Schrift `#2b171b`, Nebentext `#7a5c61`; kein Blau, Grau oder Schwarz             |
+| Schrift            | Claude: Serif-Titel, schlichte UI     | Titel in `ui-serif` (New York auf dem iPhone, kein Download), Rest Systemschrift |
+| Karten             | Apple Store: weiss, 18 px, Schatten   | gleich, Kleidungsbilder wie Produktfotos auf Weiss                               |
+| Abschnitte         | „Zubehör. Must-haves, die …“          | zweifarbige Überschrift im Regal „Lange nicht getragen“                          |
+| Kategorien         | Bildreihe Mac · iPhone · iPad         | Bildreihe mit Kleidungsskizzen im Kleiderschrank                                 |
+| Aktionen und Links | Kapsel-Knöpfe, Textlinks              | Burgund; aktiver Tab Burgund, Liquid Glass bleibt                                |
 
 Code: `src/store.css` wird nach `luxe.css` geladen. Rückweg zum Luxe-Design 0.26.0: Import in `src/main.tsx` entfernen oder Branch `backup/design-0.26.0`.
 
