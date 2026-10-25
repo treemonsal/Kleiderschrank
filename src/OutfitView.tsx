@@ -96,10 +96,7 @@ function PreferenceEditor({
           }
         }}
       >
-        <p className="muted">
-          Was magst du besonders? Deine Auswahl gibt passenden Stücken bei den
-          Vorschlägen mehr Gewicht. Alles bleibt auf diesem Gerät.
-        </p>
+        <p className="muted">Was magst du besonders?</p>
         <fieldset disabled={busy}>
           <legend>Bevorzugte Stilrichtungen</legend>
           <div className="chips wrap">
@@ -519,12 +516,6 @@ export function OutfitView({
                   )}
                   {requested ? 'Neu kombinieren' : 'Outfits zusammenstellen'}
                 </button>
-                <p className="generator-disclosure">
-                  Lokale Kombinationsregeln, keine Bild-KI. Deine Angaben,
-                  Farben und Vorlieben geben die Richtung vor. Passform, Wärme
-                  und Dresscode prüfst du selbst. Wetter wird nur nach
-                  ausdrücklicher Aktivierung berücksichtigt.
-                </p>
               </section>
               {requested && !candidates.length && (
                 <div className="outfit-empty" role="status">
@@ -540,8 +531,7 @@ export function OutfitView({
               {!requested && (
                 <p className="outfit-start-note">
                   Für einen Look brauchst du Schuhe und entweder ein Kleid oder
-                  ein Oberteil mit Hose. Für diese Outfit-Auswahl werden keine
-                  Fotos übertragen.
+                  ein Oberteil mit Hose.
                 </p>
               )}
               {!!candidates.length && (
@@ -624,7 +614,7 @@ export function OutfitView({
                   <p>
                     {rejectedCount} abgelehnte{' '}
                     {rejectedCount === 1 ? 'Kombination' : 'Kombinationen'}{' '}
-                    gemerkt. Bis zu 1000 Rückmeldungen bleiben erhalten.
+                    gemerkt.
                   </p>
                   {confirmReset ? (
                     <>

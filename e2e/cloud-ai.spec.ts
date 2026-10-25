@@ -205,9 +205,7 @@ test('Verbindung benötigt Foto-Freigabe; Ausschalten verhindert weitere Uploads
     .check()
   await page.getByRole('button', { name: 'Verbinden und aktivieren' }).click()
   await expect(
-    page.getByText(
-      'Verbunden. Starte die Fotoanalyse bei Bedarf per Knopfdruck.',
-    ),
+    page.getByText('Verbunden. Neue Fotos werden automatisch analysiert.'),
   ).toBeVisible()
   expect(photos).toBe(0)
   await page

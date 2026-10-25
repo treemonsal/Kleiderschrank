@@ -199,10 +199,6 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
         ) : (
           <details className="shopping-progress">
             <summary>Wann wird Shopping freigeschaltet?</summary>
-            <p className="micro-copy">
-              Diese Hinweise aus deinem Bestand reichen für erste persönliche
-              Ideen, nicht für eine perfekte Stilvorhersage.
-            </p>
             <ul>
               <li>
                 <span aria-hidden="true">{evidence.profile ? '✓' : '○'}</span>{' '}
@@ -230,9 +226,7 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
               </li>
             </ul>
             <p className="micro-copy">
-              Bestätige getragene Looks im Kalender und nutze die Daumen an
-              deinen Outfits. Geplante Tage und wiederholte Bewertungen
-              desselben Looks zählen nicht zusätzlich.
+              Getragene Looks bestätigen und Looks bewerten.
             </p>
           </details>
         )}

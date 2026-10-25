@@ -195,10 +195,6 @@ export function PhotoAssistant({
           )}
           {setup && (
             <div className="photo-ai-setup" ref={setupPanel} tabIndex={-1}>
-              <p className="muted">
-                Dein Foto und deine Eingaben bleiben hier. Nach dem Aktivieren
-                kannst du die Analyse selbst starten.
-              </p>
               <AISettings
                 onConnected={() => {
                   setSetup(false)
@@ -235,7 +231,7 @@ export function PhotoAssistant({
               </p>
               <p className="muted">
                 {connection.mode === 'community'
-                  ? 'Community-Dienste können Warteschlangen und Tageslimits haben. Bitte halte die App während der Analyse geöffnet.'
+                  ? 'Bitte App geöffnet lassen.'
                   : 'Der Start und die Analyse können mehrere Minuten dauern.'}
               </p>
               <button
@@ -269,10 +265,6 @@ export function PhotoAssistant({
           )}
           {!status && (retry.attributes || retry.cutout) && (
             <div className="photo-retry-actions">
-              <p className="micro-copy">
-                Gelungene Ergebnisse bleiben erhalten. Wiederhole nur den
-                fehlenden Schritt.
-              </p>
               {retry.attributes && (
                 <button
                   type="button"

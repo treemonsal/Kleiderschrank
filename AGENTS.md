@@ -25,6 +25,8 @@
 
 ## Umsetzung
 
+- Seit 0.26.0 (24.10.2026, ausdrücklicher Wunsch): Bei aktiver kostenloser KI starten Erkennung und Freistellung automatisch nach Foto/Upload; mehrere Fotos (höchstens 30) nacheinander als prüfbarer Stapel, gespeichert erst mit „Alle speichern“. „Original verwenden“ bleibt jederzeit möglich. Ersatzkette in src/ai-router.ts: Qwen3-VL-Outpost → prithivMLmods/Qwen3-VL-HF-Demo → (nur Text-Aufgaben) Pollinations `openai-fast`; Freistellung fällt auf das lokale Gerätemodell zurück. Kein Wechsel nach Abbruch oder Zugriffsfehler. E2E-Tests deaktivieren die Ersatzkette über `__MYSTYLE_NO_AI_FALLBACK__` (e2e/fixtures.ts). Die gegenteiligen Regeln vom 20./21.10. zu manueller Fotoverarbeitung gelten nur noch, soweit sie dem nicht widersprechen. Texte minimal halten; ehrliche Grenzen (z. B. ohne Fotos keine visuelle Einschätzung, Löschfolgen) bleiben.
+
 - Seit 0.25.0 (24.10.2026): optionale Stückfelder `price` (CHF) und `washedAt`, Präferenzen `autoLaundry` und `comfort`; alle in Sicherungsformat 8 optional validiert. Wäsche-Automatik nur für heute bestätigte Tage, Schuhe/Accessoires nie. Auswertung, „Was passt dazu?“ und Packliste nur aus echten Stücken; Packliste speichert nichts. Konkurrenzanalyse in docs/COMPETITOR_ANALYSIS.md.
 
 - React/TypeScript, Vite, Tailwind und Dexie nutzen. Abhängigkeiten sparsam ergänzen und Lockdatei erhalten.

@@ -126,10 +126,7 @@ export function Editor({
               <div className="photo-picker-empty">
                 <ImagePlus size={32} strokeWidth={1.3} />
                 <p>Foto hinzufügen</p>
-                <span>
-                  Wähle ein Foto und starte die KI bei Bedarf per Knopfdruck. Du
-                  kannst die Angaben auch selbst eintragen.
-                </span>
+                <span>Mehrere Fotos auf einmal möglich.</span>
               </div>
             )}
             {processing && (
@@ -398,9 +395,7 @@ export function Editor({
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <div className="sheet-footer">
           <p className="micro-copy">
-            {!draft.name.trim()
-              ? 'Gib deinem Stück noch einen Namen. Die übrigen Angaben sind optional.'
-              : 'Erst mit Speichern in deinem Kleiderschrank.'}
+            {!draft.name.trim() ? 'Nur der Name ist nötig.' : ''}
           </p>
           <button
             className="button primary full"

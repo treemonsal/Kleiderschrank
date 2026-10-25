@@ -939,3 +939,50 @@ summary:focus-visible,
   font: inherit;
   font-size: 16px;
 }
+
+/* Illustrations and context chips instead of explanatory text */
+.empty-illustration {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 4px;
+  margin: 8px auto 16px;
+}
+.empty-illustration > span {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 96px;
+  border-radius: 22px;
+  background: var(--soft);
+}
+.empty-illustration .garment-sketch {
+  width: 70%;
+  height: 70%;
+}
+.empty-illustration .tilt-left {
+  transform: rotate(-6deg) translateY(-6px);
+}
+.empty-illustration .tilt-right {
+  transform: rotate(6deg) translateY(-6px);
+}
+.daily-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 2px;
+}
+.context-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 500;
+}
+.context-chip svg {
+  color: var(--muted);
+}

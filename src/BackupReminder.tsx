@@ -114,11 +114,7 @@ export function BackupReminderSettings() {
         />
         An Sicherungen erinnern
       </label>
-      <p className="micro-copy">
-        Frühestens nach einer Woche, nur bei neuen Daten. „In einer Woche“
-        pausiert für eine weitere Woche. Ein Export bestätigt noch nicht das
-        Speichern in „Dateien“.
-      </p>
+      <p className="micro-copy">Höchstens einmal pro Woche.</p>
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </div>
   )

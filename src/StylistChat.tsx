@@ -282,18 +282,9 @@ export function StylistChat({
               <section className="chat-welcome">
                 <MessageCircle size={28} strokeWidth={1.4} />
                 <h3>Was möchtest du heute tragen?</h3>
-                <p>
-                  Frag nach Kombinationen, sprich über deinen Stil oder
-                  verfeinere einen Vorschlag im Gespräch.
-                </p>
                 <p className="muted">
-                  Beim Senden gehen deine Frage, die letzten sechs Nachrichten,
-                  bis zu 40 passende Kleidungsangaben, Stilvorlieben und
-                  gegebenenfalls Wetterwerte sowie bestätigte Antworten aus dem
-                  Stilgespräch an Qwen3-VL-Outpost auf Hugging Face. Keine
-                  Kleidungsfotos oder Standortkoordinaten. Der kostenlose
-                  Community-Dienst kann Inhalte speichern und hat
-                  Nutzungslimits.
+                  Gesendet werden deine Frage, bis zu zwölf Fotos und passende
+                  Angaben an kostenlose KI-Dienste.
                 </p>
                 <button
                   className="button primary full"

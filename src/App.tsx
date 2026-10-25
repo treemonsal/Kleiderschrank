@@ -33,6 +33,7 @@ import {
 import { CATEGORIES, filterGarments, type Garment } from './model'
 import { BackupReminder } from './BackupReminder'
 import { PairingSuggestions } from './PairingSuggestions'
+import { EmptyIllustration } from './EmptyIllustration'
 import { ShoppingCard } from './Shopping'
 import { DailyOutfit } from './DailyOutfit'
 import { LaundryIcon, useTapMotion } from './motion'
@@ -258,11 +259,6 @@ function Wardrobe({
             </button>
           </div>
         </div>
-        <p>
-          {items.length
-            ? `${items.length} ${items.length === 1 ? 'Stück' : 'Stücke'} in deiner Garderobe.`
-            : 'Noch keine Stücke.'}
-        </p>
       </header>
       <div className="search-row">
         <label className="search-field">
@@ -373,18 +369,18 @@ function Wardrobe({
         </div>
       ) : (
         <div className="closet-empty">
-          <div className="empty-icon">
-            {hasFilters ? (
+          {hasFilters ? (
+            <div className="empty-icon">
               <Search size={32} strokeWidth={1.2} />
-            ) : (
-              <Shirt size={35} strokeWidth={1.1} />
-            )}
-          </div>
+            </div>
+          ) : (
+            <EmptyIllustration />
+          )}
           <h2>{hasFilters ? 'Kein Treffer' : 'Noch leer'}</h2>
           <p>
             {hasFilters
-              ? 'Versuche einen anderen Suchbegriff oder passe deine Filter an.'
-              : 'Dein Kleiderschrank ist noch leer. Füge dein erstes Stück hinzu und mach ihn zu deinem.'}
+              ? 'Anderer Suchbegriff oder Filter?'
+              : 'Füge dein erstes Stück hinzu.'}
           </p>
           {!hasFilters && (
             <button className="button primary" onClick={onAdd}>
@@ -539,9 +535,8 @@ function Detail({
           <div className="delete-confirm" role="alert">
             <h4>Dieses Stück wirklich löschen?</h4>
             <p>
-              Auch das Foto sowie gespeicherte Outfits, Kalendereinträge und
-              Rückmeldungen mit diesem Stück werden entfernt. Das lässt sich nur
-              mit einer Sicherung rückgängig machen.
+              Outfits, Kalendereinträge und Bewertungen mit diesem Stück werden
+              ebenfalls gelöscht.
             </p>
             <div className="photo-actions">
               <button

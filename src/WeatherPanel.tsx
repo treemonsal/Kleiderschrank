@@ -157,13 +157,6 @@ export function WeatherPanel({
             <X size={19} />
           </button>
         </div>
-        <p className="weather-privacy">
-          Die Ortssuche sendet den Ortsnamen an Open-Meteo. Mit der Ortsauswahl
-          laden und speichern wir die Vorhersage und verwenden sie für deine
-          Looks. Der gespeicherte Ort wird beim Öffnen bei Bedarf aktualisiert;
-          nur gerundete Koordinaten (ungefähr 1 km), keine Fotos. Der
-          Gerätestandort wird nur mit „Standort verwenden“ abgefragt.
-        </p>
         <form
           className="weather-search"
           onSubmit={(event) => {

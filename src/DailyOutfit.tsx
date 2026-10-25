@@ -9,6 +9,10 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarDays,
+  CloudSun,
+  CloudOff,
+  Leaf,
+  Tag,
 } from 'lucide-react'
 import type { Garment } from './model'
 import { db, saveOutfit, storageError } from './db'
@@ -44,6 +48,7 @@ import { generateOutfits } from './generator'
 import { WeatherSymbol } from './WeatherSymbol'
 import { recentWear } from './wear-history'
 import { OutfitPieces } from './OutfitPieces'
+import { EmptyIllustration } from './EmptyIllustration'
 import { ErrorMessage, Sheet } from './ui'
 
 export function DailyOutfit({
@@ -362,27 +367,20 @@ export function DailyOutfit({
                     ? 'Vergangener Tag'
                     : 'Geplanter Look')}
             </h1>
-            <p className="muted">
-              {entry
-                ? worn
-                  ? 'Dein bestätigter Look für diesen Tag.'
-                  : past
-                    ? 'Dieser Look war geplant. Ob du ihn getragen hast, ist noch nicht bestätigt.'
-                    : 'Deine Auswahl aus dem Kalender.'
-                : isToday
-                  ? items.length
-                    ? 'Aus deinen verfügbaren Stücken und Vorlieben kombiniert.'
-                    : 'Für deinen ersten Look brauchst du Schuhe und ein Oberteil mit Hose oder ein Kleid.'
-                  : past
-                    ? 'Hier erscheinen deine bestätigten Tragetage.'
-                    : 'Hier erscheinen deine eingeplanten Looks.'}
-            </p>
+            {(entry && !worn && past) ||
+            (isToday && !entry && !items.length) ? (
+              <p className="muted">
+                {entry
+                  ? 'Geplant, noch nicht bestätigt.'
+                  : 'Für deinen ersten Look brauchst du Schuhe und ein Oberteil mit Hose oder ein Kleid.'}
+              </p>
+            ) : null}
           </header>
           {!state && items.length > 0 ? (
             <p role="status">Dein Tageslook wird geladen …</p>
           ) : state && look?.garmentIds.length ? (
             <>
-              <p className="daily-context">
+              <div className="daily-context">
                 {[
                   look.options.occasion,
                   look.options.season !== 'Alle' ? look.options.season : '',
@@ -398,8 +396,21 @@ export function DailyOutfit({
                         : '',
                 ]
                   .filter(Boolean)
-                  .join(' · ')}
-              </p>
+                  .map((label) => (
+                    <span key={label} className="context-chip">
+                      {label.startsWith('Wetter berücksichtigt') ? (
+                        <CloudSun size={14} />
+                      ) : label.includes('Wetter') ? (
+                        <CloudOff size={14} />
+                      ) : label === look.options.occasion ? (
+                        <Tag size={14} />
+                      ) : (
+                        <Leaf size={14} />
+                      )}
+                      {label}
+                    </span>
+                  ))}
+              </div>
               <div className="daily-quick-actions">
                 {day <= today && (
                   <button
@@ -488,12 +499,7 @@ export function DailyOutfit({
                 !worn &&
                 look.garmentIds.some(
                   (id) => items.find((item) => item.id === id)?.inLaundry,
-                ) && (
-                  <p className="muted">
-                    Ein Teil liegt in der Wäsche. Tausche es aus oder markiere
-                    es nach dem Waschen als sauber.
-                  </p>
-                )}
+                ) && <p className="muted">Ein Teil liegt in der Wäsche.</p>}
               {!complete && (
                 <p className="muted">
                   Die Angaben dieses Looks haben sich geändert oder ein Stück
@@ -509,11 +515,6 @@ export function DailyOutfit({
                       <li key={reason}>{reason}</li>
                     ))}
                   </ul>
-                  <p className="generator-disclosure">
-                    Lokale Kombinationsregeln mit deinen erfassten
-                    Kleidungsmerkmalen. Passform, Wärme und Dresscode bitte
-                    selbst prüfen.
-                  </p>
                 </details>
               )}
               {day <= today && complete && (
@@ -598,6 +599,7 @@ export function DailyOutfit({
             </>
           ) : (
             <div className="daily-look-empty">
+              {isToday && !items.length && <EmptyIllustration />}
               {isToday && !entry && (
                 <button className="button primary daily-add" onClick={onAdd}>
                   <Plus size={18} />
@@ -612,7 +614,7 @@ export function DailyOutfit({
                   : isToday
                     ? items.length
                       ? automatic?.missing
-                      : 'Starte mit einem Foto. Die Online-Foto-KI kann die Angaben nach deiner Freigabe vorbereiten.'
+                      : 'Starte mit einem Foto.'
                     : past
                       ? 'Für diesen Tag ist kein Look vermerkt.'
                       : 'Für diesen Tag ist noch kein Look eingeplant.'}
