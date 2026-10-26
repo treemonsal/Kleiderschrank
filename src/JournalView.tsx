@@ -1,13 +1,12 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { ChevronRight } from 'lucide-react'
 import { db } from './db'
 import { localDay } from './calendar'
 import type { Garment } from './model'
 import { CalendarView } from './CalendarView'
 import { ShoppingCard } from './Shopping'
 import { useClock } from './useWeather'
-import { describeWear, wearStats, type WearStats } from './wear-stats'
-import { GarmentPicture } from './ui'
+import { wearStats, type WearStats } from './wear-stats'
+import { ForgottenShelf } from './ForgottenShelf'
 
 export function JournalView({
   items,
@@ -54,24 +53,6 @@ export function JournalView({
     'de-CH',
     { month: 'long' },
   )
-  // With wear days the list surfaces pieces that waited longest (never-worn
-  // first); before that it confirms what was added recently.
-  const forgottenMode = wear.size > 0
-  const shelfTitle = forgottenMode
-    ? 'Lange nicht getragen'
-    : 'Zuletzt hinzugefügt'
-  const forgotten = (
-    forgottenMode
-      ? items
-          .filter((item) => !item.inLaundry)
-          .sort(
-            (a, b) =>
-              (wear.get(a.id)?.lastWorn ?? '').localeCompare(
-                wear.get(b.id)?.lastWorn ?? '',
-              ) || a.name.localeCompare(b.name, 'de'),
-          )
-      : [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-  ).slice(0, 4)
   const lastExport = data?.reminder?.lastExportedAt
   return (
     <div className="view journal-view">
@@ -96,42 +77,13 @@ export function JournalView({
           <span>verschiedene Stücke getragen</span>
         </div>
       </div>
-      {forgotten.length > 0 && (
-        <section className="journal-forgotten" aria-label={shelfTitle}>
-          <div className="journal-section-heading">
-            <h2>{shelfTitle}</h2>
-            <button
-              className="text-button"
-              onClick={() =>
-                onWardrobe(forgottenMode ? 'least-worn' : 'newest')
-              }
-            >
-              Alle
-            </button>
-          </div>
-          {forgotten.map((item) => (
-            <button
-              key={item.id}
-              className="journal-row"
-              aria-label={`${item.name} öffnen`}
-              onClick={() => onOpen(item.id)}
-            >
-              <span className="journal-swatch" aria-hidden="true">
-                <GarmentPicture item={item} />
-              </span>
-              <span className="journal-row-text">
-                <strong>{item.name}</strong>
-                <small>
-                  {forgottenMode
-                    ? describeWear(wear.get(item.id), today)
-                    : `${item.category} · hinzugefügt am ${new Date(item.createdAt).toLocaleDateString('de-CH')}`}
-                </small>
-              </span>
-              <ChevronRight size={16} strokeWidth={1.5} aria-hidden="true" />
-            </button>
-          ))}
-        </section>
-      )}
+      <ForgottenShelf
+        items={items}
+        wear={wear}
+        today={today}
+        onOpen={onOpen}
+        onWardrobe={onWardrobe}
+      />
       <ShoppingCard />
       <div className="journal-backup">
         <div>

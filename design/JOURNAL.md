@@ -27,6 +27,8 @@ Quelle: Claude-Design-Entwurf „MyStyle, ein Garderobenjournal“ (Classical-De
 - Wärmer/Ruhiger/Ähnlich bleiben im bestehenden Dialog „Tageslook verfeinern“.
 - Der Titel des Tageslooks nennt die zwei führenden erfassten Farben („Beige & Blau“). Der Entwurf zeigte Fantasienamen, die App kennt nur die festen Farbnamen.
 - Stoffmuster sind ein Hinweis pro Kategorie, kein erfasster Stoff.
+- Funktionen von 0.27.0 bleiben am gewohnten Ort: „Lange nicht getragen“ (drei Stücke, nur mit Tragetagen) zusätzlich auf Heute, Reiter „Kalender“ zusätzlich in Looks. Beide nutzen dieselben Bausteine wie das Journal (`ForgottenShelf`, `CalendarView`). Abgleich per Bedienelement-Inventar aller Ansichten von 0.27.0 und 0.28.0.
+- „Warum diese Kombination?“ ist auf Heute zugeklappt, damit die Startseite textarm bleibt.
 
 ## Stylesheets
 

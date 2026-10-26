@@ -156,6 +156,11 @@ test('Tageslook erscheint ohne Klick, bleibt beim Neustart stabil und ist speich
       look.getByRole('button', { name: `${name} öffnen`, exact: true }),
     ).toBeVisible()
   await expect(page.getByText('Dein Moment.', { exact: true })).toHaveCount(0)
+  // The reasoning stays one tap away instead of filling Today with text.
+  const reasons = look.locator('details.outfit-reasons')
+  await expect(reasons).not.toHaveAttribute('open')
+  await reasons.getByText('Warum diese Kombination?', { exact: true }).click()
+  await expect(reasons).toHaveAttribute('open')
   const before = await look.locator('.outfit-piece').allTextContents()
   await page.reload()
   await expect(look.locator('.outfit-piece')).toHaveCount(4)

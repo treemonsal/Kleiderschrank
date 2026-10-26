@@ -60,6 +60,13 @@ test('Outfits aus echtem Bestand speichern, benennen, favorisieren und mit Vorli
   await expect(
     result.getByRole('button', { name: 'Gespeichert', exact: true }),
   ).toBeDisabled()
+  // The calendar stays reachable from Looks as in earlier versions.
+  await page.getByRole('button', { name: 'Kalender', exact: true }).click()
+  await expect(
+    page.getByRole('region', { name: 'Outfit-Kalender' }),
+  ).toBeVisible()
+  await page.getByRole('button', { name: 'Entdecken', exact: true }).click()
+  await expect(result).toBeVisible()
   await result
     .getByRole('button', { name: 'Vorschlag 1: Gefällt mir', exact: true })
     .click()

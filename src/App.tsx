@@ -45,6 +45,7 @@ import {
 } from './wear-stats'
 import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
+import { ForgottenShelf } from './ForgottenShelf'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
 import { useStylistInbox } from './stylist-inbox'
 import {
@@ -91,6 +92,8 @@ function Loading() {
 
 function Home({
   items,
+  wear,
+  onWardrobe,
   onAdd,
   onOpen,
   onOutfits,
@@ -98,6 +101,8 @@ function Home({
   notify,
 }: {
   items: Garment[]
+  wear: Map<string, WearStats>
+  onWardrobe: (sort: 'least-worn' | 'newest') => void
   onAdd: () => void
   onOpen: (id: string) => void
   onOutfits: () => void
@@ -130,6 +135,15 @@ function Home({
       </div>
       <ShoppingCard hideLocked />
       <BackupReminder onBackup={onBackup} />
+      <ForgottenShelf
+        items={items}
+        wear={wear}
+        today={today}
+        onOpen={onOpen}
+        onWardrobe={onWardrobe}
+        limit={3}
+        fallback={false}
+      />
       {items.length > 0 && (
         <button className="add-row" onClick={onAdd}>
           <span>
@@ -657,6 +671,14 @@ export default function App() {
     cancelScroll.current = restorePageScroll(top)
     after?.()
   }
+  function openWardrobeSorted(sort: 'least-worn' | 'newest') {
+    presetView('wardrobe.sort', sort)
+    presetView('wardrobe.category', 'Alle')
+    presetView('wardrobe.query', '')
+    presetView('wardrobe.favorites', false)
+    presetView('wardrobe.laundry', false)
+    navigate('wardrobe', () => undefined)
+  }
   async function favorite(item: Garment) {
     try {
       await toggleFavorite(item)
@@ -774,6 +796,8 @@ export default function App() {
         ) : view === 'home' ? (
           <Home
             items={items}
+            wear={wear}
+            onWardrobe={openWardrobeSorted}
             onAdd={() => setEditor('new')}
             onOpen={setSelectedId}
             onOutfits={() => navigate('outfits')}
@@ -808,14 +832,7 @@ export default function App() {
               wear={wear}
               onOpen={setSelectedId}
               onLooks={() => navigate('outfits')}
-              onWardrobe={(sort) => {
-                presetView('wardrobe.sort', sort)
-                presetView('wardrobe.category', 'Alle')
-                presetView('wardrobe.query', '')
-                presetView('wardrobe.favorites', false)
-                presetView('wardrobe.laundry', false)
-                navigate('wardrobe', () => undefined)
-              }}
+              onWardrobe={openWardrobeSorted}
               onBackup={() =>
                 navigate('settings', () => {
                   cancelScroll.current = scrollSectionIntoView('backup-section')

@@ -9,6 +9,7 @@
 - [x] Journal mit Kalender, Monatsstatistik, lange nicht getragenen bzw. zuletzt hinzugefügten Stücken, Shopping und Sicherung
 - [x] Fotos verschwinden nicht mehr beim Favorisieren oder Wäschewechsel (unveränderte Fotos behalten ihre Bildadresse)
 - [x] „Ein Stück ergänzen“ wieder auf Heute
+- [x] „Lange nicht getragen“ wieder auf Heute, Reiter „Kalender“ wieder in Looks; „Warum diese Kombination?“ standardmässig zugeklappt
 - [x] Alte Design-Schichten (editorial, luxe, store) entfernt; nur noch styles.css und journal.css, optisch identisch geprüft
 
 ## Version 0.27.0 – Store-Design

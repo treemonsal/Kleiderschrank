@@ -70,6 +70,13 @@ test('Tragestatistik sortiert selten getragene Stücke nach vorne und Skizzen ze
     .getByRole('button', { name: 'Sicherung importieren', exact: true })
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
+  // Today keeps the shelf from earlier versions, limited to three rows.
+  await page.getByRole('button', { name: 'Heute', exact: true }).click()
+  const todayShelf = page.getByRole('region', { name: 'Lange nicht getragen' })
+  await expect(todayShelf.locator('.journal-row strong').first()).toHaveText(
+    'Grüner Pulli',
+  )
+  await expect(todayShelf.locator('.journal-row')).toHaveCount(3)
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
   const shelf = page.getByRole('region', { name: 'Lange nicht getragen' })
   await expect(shelf.locator('.journal-row strong').first()).toHaveText(

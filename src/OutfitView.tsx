@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
   Bookmark,
+  CalendarDays,
   Check,
   Heart,
   Plus,
@@ -14,6 +15,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { COLORS, SEASONS, STYLES, type Garment } from './model'
+import { CalendarView } from './CalendarView'
 import {
   db,
   saveOutfit,
@@ -292,7 +294,7 @@ export function OutfitView({
     [],
     null,
   )
-  const [tab, setTab] = useViewState<'discover' | 'saved'>(
+  const [tab, setTab] = useViewState<'discover' | 'saved' | 'calendar'>(
     'outfits.tab',
     'discover',
   )
@@ -422,6 +424,14 @@ export function OutfitView({
         >
           <Bookmark size={16} />
           Gespeichert ({state?.outfits.length ?? 0})
+        </button>
+        <button
+          className={tab === 'calendar' ? 'active' : ''}
+          aria-pressed={tab === 'calendar'}
+          onClick={() => setTab('calendar')}
+        >
+          <CalendarDays size={16} />
+          Kalender
         </button>
       </div>
       {!state ? (
@@ -657,6 +667,13 @@ export function OutfitView({
                 </div>
               )}
             </>
+          ) : tab === 'calendar' ? (
+            <CalendarView
+              items={items}
+              onOpen={onOpen}
+              onDiscover={() => setTab('discover')}
+              notify={notify}
+            />
           ) : (
             <>
               <div className="collection-toolbar">

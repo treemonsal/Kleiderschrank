@@ -543,7 +543,7 @@ export function DailyOutfit({
                 onSwap={isToday && !worn ? setSwapping : undefined}
               />
               {!!look.reasons.length && (
-                <details className="outfit-reasons" open>
+                <details className="outfit-reasons">
                   <summary>Warum diese Kombination?</summary>
                   <p>{look.reasons.join(' ')}</p>
                 </details>
