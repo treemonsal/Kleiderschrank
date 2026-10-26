@@ -51,9 +51,6 @@ export function Editor({
   const [dirty, setDirty] = useState(false)
   // Only photos picked in this session start the AI automatically.
   const [freshPhoto, setFreshPhoto] = useState(false)
-  const [priceText, setPriceText] = useState(
-    item?.price === undefined ? '' : String(item.price),
-  )
   const [photoRevision, setPhotoRevision] = useState(0)
   const library = useRef<HTMLInputElement>(null)
   const camera = useRef<HTMLInputElement>(null)
@@ -89,7 +86,7 @@ export function Editor({
   return (
     <Sheet
       title={item ? 'Stück bearbeiten' : 'Neues Stück'}
-      eyebrow="Kleiderschrank"
+      eyebrow="Garderobe"
       onClose={onClose}
       dirty={dirty}
       closeDisabled={busy || processing}
@@ -272,27 +269,6 @@ export function Editor({
               />
             </label>
           </div>
-          <label className="field">
-            <span>
-              Preis in CHF <span className="optional">optional</span>
-            </span>
-            <input
-              inputMode="decimal"
-              placeholder="z. B. 49.90"
-              value={priceText}
-              onChange={(e) => {
-                const text = e.target.value.replace(/[^0-9.,]/g, '').slice(0, 9)
-                const value = Number(text.replace(',', '.'))
-                setPriceText(text)
-                update(
-                  'price',
-                  text && Number.isFinite(value) && value <= 100000
-                    ? Math.round(value * 100) / 100
-                    : undefined,
-                )
-              }}
-            />
-          </label>
           <div className="field">
             <span>
               Farbe{' '}
@@ -407,7 +383,7 @@ export function Editor({
               ? 'Wird gespeichert …'
               : item
                 ? 'Änderungen speichern'
-                : 'Zum Kleiderschrank hinzufügen'}
+                : 'In die Garderobe legen'}
           </button>
         </div>
       </form>

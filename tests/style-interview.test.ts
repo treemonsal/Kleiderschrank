@@ -29,7 +29,6 @@ import {
   chatRevision,
   type ChatData,
 } from '../src/chat-model'
-import { stylistPrompt } from '../src/stylist-model'
 import { parseReadMarkers, unreadStylist } from '../src/stylist-inbox'
 import { generateOutfits } from '../src/generator'
 import type { Garment } from '../src/model'
@@ -234,7 +233,7 @@ describe('Vertieftes, freiwilliges Stilprofil', () => {
     const saved = await updateStyleInterview({ type: 'complete' }, future, db)
     expect(saved.updatedAt > future).toBe(true)
   })
-  it('nimmt bestätigte Angaben in beide Online-Kontexte auf und verwirft Antworten bei Reset', async () => {
+  it('nimmt bestätigte Angaben in den Chat-Kontext auf und verwirft Antworten bei Reset', async () => {
     const db = await database()
     const start = await updateStyleInterview({ type: 'start' }, null, db)
     await updateStyleInterview(
@@ -253,17 +252,6 @@ describe('Vertieftes, freiwilliges Stilprofil', () => {
     expect(buildChatContext(d, 'Ein Look bitte').prompt).toContain(
       'Keine kratzigen Stoffe',
     )
-    expect(
-      stylistPrompt(
-        {
-          items: garments,
-          candidates: generateOutfits(garments, DEFAULT_OUTFIT_OPTIONS, p, []),
-          options: DEFAULT_OUTFIT_OPTIONS,
-          preferences: p,
-        },
-        '',
-      ),
-    ).toContain('Keine kratzigen Stoffe')
     const revision = chatRevision(d)
     await updateStyleInterview(
       { type: 'reset' },

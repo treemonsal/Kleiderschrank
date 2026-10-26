@@ -1,5 +1,6 @@
 import { test, expect, type Page, type Locator } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
+import { stepDay } from './day-helpers'
 const stamp = '2026-01-01T00:00:00.000Z'
 const now = '2026-10-15T10:00:00.000Z'
 const garments = ['Oberteile', 'Hosen', 'Schuhe', 'Jacken', 'Accessoires'].map(
@@ -18,7 +19,9 @@ const garments = ['Oberteile', 'Hosen', 'Schuhe', 'Jacken', 'Accessoires'].map(
   }),
 )
 async function importData(page: Page, extra: Record<string, unknown> = {}) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'daily.json',
     mimeType: 'application/json',
@@ -133,7 +136,9 @@ async function swipe(target: Locator, dx: number, dy = 0, startX = 195) {
   )
 }
 test.use({ timezoneId: 'Europe/Zurich' })
-test('Tageslook erscheint ohne Klick, bleibt beim Neustart stabil und ist speicherbar', async ({
+// Network mocks use page.route, which a controlling service worker bypasses.
+test.use({ serviceWorkers: 'block' })
+test('Tageslook erscheint ohne Klick und bleibt beim Neustart stabil', async ({
   page,
 }, info) => {
   await page.clock.install({ time: new Date(now) })
@@ -152,81 +157,19 @@ test('Tageslook erscheint ohne Klick, bleibt beim Neustart stabil und ist speich
       look.getByRole('button', { name: `${name} öffnen`, exact: true }),
     ).toBeVisible()
   await expect(page.getByText('Dein Moment.', { exact: true })).toHaveCount(0)
+  // The reasoning stays one tap away instead of filling Today with text.
+  const reasons = look.locator('details.outfit-reasons')
+  await expect(reasons).not.toHaveAttribute('open')
+  await reasons.getByText('Warum diese Kombination?', { exact: true }).click()
+  await expect(reasons).toHaveAttribute('open')
   const before = await look.locator('.outfit-piece').allTextContents()
   await page.reload()
   await expect(look.locator('.outfit-piece')).toHaveCount(4)
   expect(await look.locator('.outfit-piece').allTextContents()).toEqual(before)
-  await look
-    .getByRole('button', { name: 'Look speichern', exact: true })
-    .click()
-  await expect(
-    look.getByRole('button', { name: 'Gespeichert', exact: true }),
-  ).toBeDisabled()
   expect(external).toEqual([])
   await page.screenshot({
     path: info.outputPath('daily-home-390.png'),
     fullPage: true,
-  })
-})
-test('Anlass, Saison, Stil und Accessoire bleiben nach Navigation, Neustart und Vorlieben-Speichern erhalten und stehen im Backup', async ({
-  page,
-}) => {
-  await page.goto('/')
-  await importData(page)
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
-  await page
-    .getByRole('combobox', { name: 'Anlass', exact: true })
-    .selectOption('Büro')
-  await page
-    .getByRole('combobox', { name: 'Saison', exact: true })
-    .selectOption('Winter')
-  await page
-    .getByRole('combobox', { name: 'Gewünschter Stil', exact: true })
-    .selectOption('Minimalistisch')
-  await page
-    .getByRole('checkbox', {
-      name: 'Ein Accessoire ergänzen, wenn eines passt',
-    })
-    .check()
-  await page.getByRole('button', { name: 'Heute', exact: true }).click()
-  await page.reload()
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
-  await expect(
-    page.getByRole('combobox', { name: 'Anlass', exact: true }),
-  ).toHaveValue('Büro')
-  await expect(
-    page.getByRole('combobox', { name: 'Saison', exact: true }),
-  ).toHaveValue('Winter')
-  await expect(
-    page.getByRole('combobox', { name: 'Gewünschter Stil', exact: true }),
-  ).toHaveValue('Minimalistisch')
-  await expect(
-    page.getByRole('checkbox', {
-      name: 'Ein Accessoire ergänzen, wenn eines passt',
-    }),
-  ).toBeChecked()
-  await page.getByRole('button', { name: 'Stilvorlieben bearbeiten' }).click()
-  await page
-    .getByRole('dialog')
-    .getByRole('button', { name: 'Vorlieben speichern' })
-    .click()
-  await expect(page.getByRole('dialog')).not.toBeVisible()
-  await expect(
-    page.getByRole('checkbox', {
-      name: 'Ein Accessoire ergänzen, wenn eines passt',
-    }),
-  ).toBeChecked()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
-  const downloadPromise = page.waitForEvent('download')
-  await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
-  const data = JSON.parse(
-    await readFile((await (await downloadPromise).path())!, 'utf8'),
-  )
-  expect(data.preferences.outfitOptions).toEqual({
-    occasion: 'Büro',
-    season: 'Winter',
-    style: 'Minimalistisch',
-    includeAccessory: true,
   })
 })
 test('Wetterauswahl auf der Startseite speichert und schliesst, Einstellung bleibt erhalten, alte Vorhersage wird sichtbar als veraltet markiert', async ({
@@ -239,7 +182,8 @@ test('Wetterauswahl auf der Startseite speichert und schliesst, Einstellung blei
   await importData(page)
   expect(calls).toEqual([])
   await pickWeather(page)
-  await expect(page.locator('.home-weather')).toContainText('5–9 °C · Regen')
+  await expect(page.locator('.home-weather')).toContainText('5°–9°')
+  await expect(page.locator('.home-weather')).toContainText('Regen')
   await expect(page.locator('.home-weather .lucide-cloud-rain')).toBeVisible()
   await expect(page.locator('.daily-context')).toContainText(
     'Wetter berücksichtigt',
@@ -314,22 +258,20 @@ test('Wischen wechselt Tage auf Heute und lässt Tabs, vertikales Scrollen, Eing
   ).toBeVisible()
   await page.getByRole('button', { name: 'Zu heute', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Tageskalender öffnen', exact: true })
+    .getByRole('button', { name: 'Wetter anzeigen und Ort ändern' })
     .click()
   await swipe(page.locator('.home-view'), 120)
   await expect(page.getByRole('dialog')).toBeVisible()
   await expect(look).toHaveAttribute('data-day', '2026-10-15')
-  await swipe(page.getByRole('dialog').getByLabel('Direkt zu einem Tag'), 120)
+  await swipe(page.getByRole('dialog').getByLabel('Ort manuell suchen'), 120)
   await expect(look).toHaveAttribute('data-day', '2026-10-15')
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
   await swipe(page.locator('.daily-look header'), 120, 0, 8)
   await expect(look).toHaveAttribute('data-day', '2026-10-15')
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await swipe(page.locator('.page-heading'), -120)
   await expect(
-    page.getByRole('button', { name: 'Kleiderschrank', exact: true }),
+    page.getByRole('button', { name: 'Garderobe', exact: true }),
   ).toHaveAttribute('aria-current', 'page')
 })
 
@@ -535,24 +477,13 @@ for (const width of [375, 390, 430]) {
     await expect(
       look.getByRole('button', { name: 'Getragen', exact: true }),
     ).toBeDisabled()
-    await page
-      .getByRole('button', { name: 'Vorheriger Tag', exact: true })
-      .click()
+    await stepDay(page, -1)
     await expect(
       page.getByText('Für diesen Tag ist kein Look vermerkt.', { exact: true }),
     ).toBeVisible()
     await expect(look.locator('.outfit-piece')).toHaveCount(0)
-    await page
-      .getByRole('button', { name: 'Tageskalender öffnen', exact: true })
-      .click()
-    const dialog = page.getByRole('dialog')
-    await expect(
-      dialog
-        .getByRole('button', { name: /15. Oktober 2026.*Getragen/ })
-        .locator('.day-color-ring.has-colors'),
-    ).toBeVisible()
-    await dialog.getByLabel('Direkt zu einem Tag').fill('2026-10-15')
-    await expect(dialog).not.toBeVisible()
+    await ring.click()
+    await expect(look).toHaveAttribute('data-day', '2026-10-15')
     await expect(
       look.getByRole('button', { name: 'Getragen', exact: true }),
     ).toBeDisabled()
@@ -565,8 +496,8 @@ for (const width of [375, 390, 430]) {
       path: info.outputPath(`day-rings-${width}.png`),
       fullPage: true,
     })
-    await page.getByRole('button', { name: 'Outfits', exact: true }).click()
-    await page.getByRole('button', { name: 'Kalender', exact: true }).click()
+    await page.getByRole('button', { name: 'Looks', exact: true }).click()
+    await page.getByRole('button', { name: 'Journal', exact: true }).click()
     await expect(
       page
         .getByRole('button', { name: /15. Oktober 2026.*Getragen/ })
@@ -618,8 +549,8 @@ test('Vergangene Pläne und zukünftige Looks bleiben klar von bestätigter Hist
   await expect(
     look.getByText('Bestätigt getragen', { exact: true }),
   ).toBeVisible()
-  await page.getByRole('button', { name: 'Nächster Tag', exact: true }).click()
-  await page.getByRole('button', { name: 'Nächster Tag', exact: true }).click()
+  await stepDay(page, 1)
+  await stepDay(page, 1)
   await expect(look.getByText('Eingeplant', { exact: true })).toBeVisible()
   await expect(look.getByRole('button', { name: /getragen/i })).toHaveCount(0)
 })
@@ -639,10 +570,8 @@ test('Ein Teil tauschen bleibt nach Neustart erhalten, der Rest bleibt gleich un
     garments: [...garments, { ...extraTop, photo, cutout: photo }],
   })
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
-  const before = await look
-    .locator('.outfit-piece > span:first-of-type')
-    .allTextContents()
-  const oldTop = before[0],
+  const before = await look.locator('.figure-caption > span').allTextContents()
+  const oldTop = before.find((name) => name === 'Hemd' || name === 'Pullover')!,
     newTop = oldTop === 'Hemd' ? 'Pullover' : 'Hemd'
   await look
     .getByRole('button', { name: `${oldTop} austauschen`, exact: true })
@@ -663,13 +592,15 @@ test('Ein Teil tauschen bleibt nach Neustart erhalten, der Rest bleibt gleich un
     look.getByRole('button', { name: `${newTop} öffnen`, exact: true }),
   ).toBeVisible()
   expect(
-    await look.locator('.outfit-piece > span:first-of-type').allTextContents(),
-  ).toEqual([newTop, ...before.slice(1)])
+    await look.locator('.figure-caption > span').allTextContents(),
+  ).toEqual(before.map((name) => (name === oldTop ? newTop : name)))
   await page.reload()
   await expect(
     look.getByRole('button', { name: `${newTop} öffnen`, exact: true }),
   ).toBeVisible()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const data = JSON.parse(
@@ -720,9 +651,7 @@ test('Wäsche-Status übersteht Neustart und Bearbeitung, filtert Vorschläge un
       .getByRole('button', { name: 'Hemd öffnen', exact: true }),
   ).toHaveCount(0)
   await page.reload()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'Nur Wäsche', exact: true }).click()
   await expect(page.locator('.garment-card')).toHaveCount(1)
   await expect(page.locator('.garment-card')).toContainText('Hemd')
@@ -764,65 +693,14 @@ test('Wäsche-Status übersteht Neustart und Bearbeitung, filtert Vorschläge un
   ).toBeVisible()
 })
 
-test('Sicherungserinnerung lässt sich pausieren und dauerhaft ausschalten; unveränderter Export bleibt ruhig', async ({
-  page,
-}, info) => {
-  await page.clock.install({ time: new Date(now) })
-  await page.goto('/')
-  await importData(page, {
-    preferences: {
-      id: 'personal',
-      styles: [],
-      colors: [],
-      updatedAt: stamp,
-      backupReminder: { firstSeenAt: stamp },
-    },
-  })
-  const reminder = page.getByRole('complementary', {
-    name: 'Sicherungserinnerung',
-  })
-  await expect(reminder).toBeVisible()
-  await page.screenshot({
-    path: info.outputPath('backup-reminder-390.png'),
-    fullPage: true,
-  })
-  await reminder
-    .getByRole('button', { name: 'In einer Woche', exact: true })
-    .click()
-  await expect(reminder).toHaveCount(0)
-  await page.reload()
-  await expect(reminder).toHaveCount(0)
-  await page.clock.fastForward(7 * 86400000 + 1000)
-  await expect(reminder).toBeVisible()
-  await reminder
-    .getByRole('button', { name: 'Sicherung öffnen', exact: true })
-    .click()
-  const setting = page.getByRole('checkbox', {
-    name: 'An Sicherungen erinnern',
-    exact: true,
-  })
-  await expect(setting).toBeVisible()
-  await expect(setting).toBeInViewport()
-  await setting.uncheck()
-  await expect(setting).toBeEnabled()
-  await page.reload()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
-  await expect(setting).not.toBeChecked()
-  await setting.check()
-  await expect(setting).toBeChecked()
-  const download = page.waitForEvent('download')
-  await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
-  await download
-  await page.getByRole('button', { name: 'Heute', exact: true }).click()
-  await page.clock.fastForward(8 * 86400000)
-  await expect(reminder).toHaveCount(0)
-})
-
 test('Tageskarte folgt dem Finger, federt bei kurzer Geste zurück und manuelle Auswahl stoppt einen ausstehenden Wechsel', async ({
   page,
 }) => {
   await page.goto('/')
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
+  const today = await look.getAttribute('data-day')
+  // Start on another day so „Zu heute“ is the manual choice below.
+  await stepDay(page, 1)
   const before = await look.getAttribute('data-day')
   async function touch(type: string, x: number) {
     await page.locator('.daily-look header').evaluate(
@@ -872,12 +750,11 @@ test('Tageskarte folgt dem Finger, federt bei kurzer Geste zurück und manuelle 
     node.dispatchEvent(
       new TouchEvent('touchend', { bubbles: true, changedTouches: [t] }),
     )
-    document
-      .querySelector<HTMLButtonElement>('[aria-label="Nächster Tag"]')!
-      .click()
+    document.querySelector<HTMLButtonElement>('.return-today')!.click()
   })
   const next = await look.getAttribute('data-day')
   expect(next).not.toBe(before)
+  expect(next).toBe(today)
   await expect
     .poll(() => look.evaluate((node) => getComputedStyle(node).transform))
     .toBe('none')

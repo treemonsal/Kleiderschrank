@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { Heart, X } from 'lucide-react'
 import type { Garment } from './model'
 import { GarmentSketch } from './GarmentSketch'
+import { swatch } from './swatch'
 
 function usePhotoUrl(photo?: Blob) {
   const [url, setUrl] = useState<string>()
@@ -115,9 +116,14 @@ export function GarmentPicture({
   large?: boolean
 }) {
   const photo = item.cutout ?? item.photo
+  // Without a photo the piece reads as a cloth swatch in its recorded colour.
   const placeholder = (
-    <div className="photo-placeholder">
-      <GarmentSketch category={item.category} color={item.color} />
+    <div
+      className="photo-placeholder is-swatch"
+      data-color={item.color || undefined}
+      style={{ background: swatch(item) }}
+    >
+      <GarmentSketch category={item.category} />
       <span className="placeholder-category">{item.category}</span>
     </div>
   )

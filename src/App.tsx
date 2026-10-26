@@ -11,18 +11,10 @@ import {
   MessageCircle,
   Pencil,
   Plus,
-  Search,
-  Shirt,
-  SlidersHorizontal,
   Trash2,
   WifiOff,
   X,
   Settings,
-  ChartColumn,
-  House,
-  Layers,
-  CircleEllipsis,
-  LayoutGrid,
 } from 'lucide-react'
 import {
   db,
@@ -31,27 +23,15 @@ import {
   toggleFavorite,
   setLaundry,
 } from './db'
-import {
-  CATEGORIES,
-  filterGarments,
-  type Category,
-  type Garment,
-} from './model'
-import { GarmentSketch } from './GarmentSketch'
-import { BackupReminder } from './BackupReminder'
+import { CATEGORIES, filterGarments, type Garment } from './model'
+import { colorHex } from './swatch'
+import { keepPhotoIdentity } from './photo-identity'
 import { PairingSuggestions } from './PairingSuggestions'
 import { EmptyIllustration } from './EmptyIllustration'
-import { ShoppingCard } from './Shopping'
 import { DailyOutfit } from './DailyOutfit'
 import { LaundryIcon, useTapMotion } from './motion'
 import { localDay, shiftDay } from './calendar'
-import {
-  costPerWear,
-  describeWear,
-  formatChf,
-  wearStats,
-  type WearStats,
-} from './wear-stats'
+import { describeWear, wearStats, type WearStats } from './wear-stats'
 import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
@@ -59,10 +39,11 @@ import { useStylistInbox } from './stylist-inbox'
 import {
   restorePageScroll,
   scrollSectionIntoView,
+  usePresetView,
   useViewState,
 } from './view-memory'
 
-type View = 'home' | 'wardrobe' | 'outfits' | 'settings'
+type View = 'home' | 'wardrobe' | 'outfits' | 'journal' | 'settings'
 
 // Rarely needed areas load on first use; the PWA still precaches every chunk.
 const OutfitView = lazy(() =>
@@ -77,10 +58,8 @@ const Editor = lazy(() =>
 const BatchImport = lazy(() =>
   import('./BatchImport').then((module) => ({ default: module.BatchImport })),
 )
-const InsightsSheet = lazy(() =>
-  import('./InsightsSheet').then((module) => ({
-    default: module.InsightsSheet,
-  })),
+const JournalView = lazy(() =>
+  import('./JournalView').then((module) => ({ default: module.JournalView })),
 )
 const StylistChat = lazy(() =>
   import('./StylistChat').then((module) => ({ default: module.StylistChat })),
@@ -96,21 +75,15 @@ function Loading() {
 
 function Home({
   items,
-  wear,
   onAdd,
-  onWardrobe,
   onOpen,
   onOutfits,
-  onBackup,
   notify,
 }: {
   items: Garment[]
-  wear: Map<string, WearStats>
   onAdd: () => void
-  onWardrobe: () => void
   onOpen: (id: string) => void
   onOutfits: () => void
-  onBackup: () => void
   notify: (message: string) => void
 }) {
   const today = localDay(new Date(useClock()))
@@ -124,24 +97,6 @@ function Home({
     const next = shiftDay(day, offset)
     if (next) selectDay(next)
   }, day)
-  // With wear days the shelf surfaces forgotten pieces; before that it
-  // confirms what was added recently.
-  const forgottenMode = wear.size > 0
-  const shelf = (
-    forgottenMode
-      ? items
-          .filter((item) => !item.inLaundry)
-          .sort(
-            (a, b) =>
-              (wear.get(a.id)?.lastWorn ?? '').localeCompare(
-                wear.get(b.id)?.lastWorn ?? '',
-              ) || a.name.localeCompare(b.name, 'de'),
-          )
-      : [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-  ).slice(0, 6)
-  const shelfTitle = forgottenMode
-    ? 'Lange nicht getragen'
-    : 'Zuletzt hinzugefügt'
   return (
     <div className="view home-view">
       <div className="home-day-browser" {...swipe}>
@@ -155,55 +110,6 @@ function Home({
           notify={notify}
         />
       </div>
-      <ShoppingCard hideLocked />
-      <BackupReminder onBackup={onBackup} />
-      {shelf.length > 0 && (
-        <section className="home-collection" aria-label={shelfTitle}>
-          <div className="section-heading">
-            <h2 className="two-tone">
-              {shelfTitle}.{' '}
-              <span>
-                {forgottenMode
-                  ? 'Sortiert nach letztem Tragetag.'
-                  : 'Deine neuesten Stücke.'}
-              </span>
-            </h2>
-            <button className="text-button" onClick={onWardrobe}>
-              Alle <ArrowRight size={16} />
-            </button>
-          </div>
-          <div className="forgotten-row">
-            {shelf.map((item) => (
-              <button
-                key={item.id}
-                className="forgotten-piece"
-                aria-label={`${item.name} öffnen`}
-                onClick={() => onOpen(item.id)}
-              >
-                <GarmentPicture item={item} />
-                <strong>{item.name}</strong>
-                <small>
-                  {forgottenMode
-                    ? describeWear(wear.get(item.id), today)
-                    : item.category}
-                </small>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
-      {items.length > 0 && (
-        <button className="add-banner" onClick={onAdd}>
-          <span className="add-banner-icon">
-            <Plus size={22} strokeWidth={1.5} />
-          </span>
-          <span>
-            <strong>Ein Stück ergänzen</strong>
-            <small>Foto aufnehmen oder aus der Mediathek wählen.</small>
-          </span>
-          <ArrowRight size={19} />
-        </button>
-      )}
     </div>
   )
 }
@@ -221,154 +127,103 @@ function Wardrobe({
   onOpen: (id: string) => void
   onFavorite: (item: Garment) => void
 }) {
-  const [query, setQuery] = useViewState('wardrobe.query', '')
   const [category, setCategory] = useViewState('wardrobe.category', 'Alle')
   const [favorites, setFavorites] = useViewState('wardrobe.favorites', false)
   const [laundryOnly, setLaundryOnly] = useViewState('wardrobe.laundry', false)
-  const [sort, setSort] = useViewState('wardrobe.sort', 'newest')
-  const [showSort, setShowSort] = useState(false)
-  const [insightsOpen, setInsightsOpen] = useState(false)
-  const filtered = filterGarments(items, query, category, favorites)
+  const filtered = filterGarments(items, '', category, favorites)
     .filter((item) => !laundryOnly || item.inLaundry)
-    .sort((a, b) =>
-      sort === 'name'
-        ? a.name.localeCompare(b.name, 'de')
-        : sort === 'least-worn'
-          ? (wear.get(a.id)?.count ?? 0) - (wear.get(b.id)?.count ?? 0) ||
-            (wear.get(a.id)?.lastWorn ?? '').localeCompare(
-              wear.get(b.id)?.lastWorn ?? '',
-            ) ||
-            a.name.localeCompare(b.name, 'de')
-          : sort === 'oldest'
-            ? a.createdAt.localeCompare(b.createdAt)
-            : b.createdAt.localeCompare(a.createdAt),
-    )
-  const hasFilters = !!query || category !== 'Alle' || favorites || laundryOnly
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+  const hasFilters = category !== 'Alle' || favorites || laundryOnly
   return (
     <div className="view wardrobe-view">
-      <header className="page-heading">
+      <header className="page-heading journal-heading">
         <div className="heading-row">
-          <h1>Kleiderschrank</h1>
+          <div>
+            <h1>Garderobe</h1>
+            <p className="page-sub">
+              {items.length} {items.length === 1 ? 'Stück' : 'Stücke'} ·{' '}
+              {items.filter((item) => item.inLaundry).length} in der Wäsche
+            </p>
+          </div>
           <div className="heading-actions">
-            <button
-              className="icon-button soft"
-              aria-label="Auswertung öffnen"
-              onClick={() => setInsightsOpen(true)}
-            >
-              <ChartColumn size={20} />
-            </button>
             <button
               className="icon-button primary-add"
               aria-label="Stück hinzufügen"
               onClick={onAdd}
             >
-              <Plus size={23} />
+              <Plus size={22} strokeWidth={1.5} />
             </button>
           </div>
         </div>
       </header>
-      <div className="search-row">
-        <label className="search-field">
-          <Search size={19} strokeWidth={1.6} />
-          <input
-            type="search"
-            aria-label="Kleidung suchen"
-            placeholder="Deine Stücke durchsuchen"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          {query && (
-            <button aria-label="Suche leeren" onClick={() => setQuery('')}>
-              <X size={17} />
-            </button>
-          )}
-        </label>
-        <button
-          className={`icon-button filter-button ${favorites ? 'selected' : ''}`}
-          data-motion="heart"
-          aria-label="Nur Favoriten"
-          aria-pressed={favorites}
-          onClick={() => setFavorites(!favorites)}
-        >
-          <Heart size={20} fill={favorites ? 'currentColor' : 'none'} />
-        </button>
-        <button
-          className={`icon-button filter-button ${laundryOnly ? 'selected' : ''}`}
-          data-motion="laundry"
-          aria-label="Nur Wäsche"
-          aria-pressed={laundryOnly}
-          onClick={() => setLaundryOnly(!laundryOnly)}
-        >
-          <LaundryIcon size={20} />
-        </button>
-      </div>
       <div
-        className="chips category-tabs"
+        className="category-tabs text-tabs"
         role="group"
         aria-label="Kategorie filtern"
       >
         {['Alle', ...CATEGORIES].map((c) => (
           <button
             key={c}
-            className={`chip ${category === c ? 'active' : ''}`}
+            className={category === c ? 'active' : ''}
+            aria-label={c}
             aria-pressed={category === c}
             onClick={() => setCategory(c)}
           >
-            <span className="category-art" aria-hidden="true">
-              {c === 'Alle' ? (
-                <LayoutGrid size={26} strokeWidth={1.3} />
-              ) : (
-                <GarmentSketch category={c as Category} />
-              )}
-            </span>
-            <span>{c}</span>
+            {c}{' '}
+            <small>
+              {c === 'Alle'
+                ? items.length
+                : items.filter((item) => item.category === c).length}
+            </small>
           </button>
         ))}
       </div>
-      <div className="collection-toolbar">
-        <span>
-          {filtered.length} {filtered.length === 1 ? 'Stück' : 'Stücke'}
-          {hasFilters ? ' gefunden' : ' in deiner Kollektion'}
-        </span>
-        {hasFilters && (
-          <button
-            className="text-button"
-            onClick={() => {
-              setQuery('')
-              setCategory('Alle')
-              setFavorites(false)
-              setLaundryOnly(false)
-            }}
-          >
-            Filter zurücksetzen
-          </button>
-        )}
+      <div className="filter-chips">
         <button
-          className="text-button"
-          aria-label="Sortierung ändern"
-          aria-expanded={showSort}
-          onClick={() => setShowSort(!showSort)}
+          className={`chip ${favorites ? 'active' : ''}`}
+          data-motion="heart"
+          aria-label="Nur Favoriten"
+          aria-pressed={favorites}
+          onClick={() => setFavorites(!favorites)}
         >
-          <SlidersHorizontal size={15} />
-          Sortieren
+          <Heart
+            size={14}
+            strokeWidth={1.6}
+            fill={favorites ? 'currentColor' : 'none'}
+          />
+          Favoriten
+        </button>
+        <button
+          className={`chip ${laundryOnly ? 'active' : ''}`}
+          data-motion="laundry"
+          aria-label="Nur Wäsche"
+          aria-pressed={laundryOnly}
+          onClick={() => setLaundryOnly(!laundryOnly)}
+        >
+          <LaundryIcon size={15} />
+          In der Wäsche
         </button>
       </div>
-      {showSort && (
-        <label className="field sort-field">
-          Sortierung
-          <select
-            value={sort}
-            onChange={(e) => {
-              setSort(e.target.value)
-              setShowSort(false)
-            }}
-          >
-            <option value="newest">Zuletzt hinzugefügt</option>
-            <option value="oldest">Zuerst hinzugefügt</option>
-            <option value="name">Name A–Z</option>
-            <option value="least-worn">Selten getragen zuerst</option>
-          </select>
-        </label>
+      {items.length > 0 && (
+        <figure className="color-balance">
+          <div aria-hidden="true">
+            {[...items]
+              .sort(
+                (a, b) =>
+                  (wear.get(b.id)?.count ?? 0) - (wear.get(a.id)?.count ?? 0),
+              )
+              .map((item) => (
+                <span
+                  key={item.id}
+                  style={{
+                    flex: Math.max(wear.get(item.id)?.count ?? 0, 1),
+                    background: colorHex(item.color),
+                  }}
+                />
+              ))}
+          </div>
+          <figcaption>Farbbilanz, gewichtet nach Tragehäufigkeit</figcaption>
+        </figure>
       )}
       {filtered.length ? (
         <div className="garment-grid">
@@ -383,18 +238,10 @@ function Wardrobe({
         </div>
       ) : (
         <div className="closet-empty">
-          {hasFilters ? (
-            <div className="empty-icon">
-              <Search size={32} strokeWidth={1.2} />
-            </div>
-          ) : (
-            <EmptyIllustration />
-          )}
-          <h2>{hasFilters ? 'Kein Treffer' : 'Noch leer'}</h2>
+          {!hasFilters && <EmptyIllustration />}
+          <h2>{hasFilters ? 'Hier liegt gerade nichts.' : 'Noch leer'}</h2>
           <p>
-            {hasFilters
-              ? 'Anderer Suchbegriff oder Filter?'
-              : 'Füge dein erstes Stück hinzu.'}
+            {hasFilters ? 'Anderer Filter?' : 'Füge dein erstes Stück hinzu.'}
           </p>
           {!hasFilters && (
             <button className="button primary" onClick={onAdd}>
@@ -402,15 +249,6 @@ function Wardrobe({
             </button>
           )}
         </div>
-      )}
-      {insightsOpen && (
-        <Suspense fallback={null}>
-          <InsightsSheet
-            items={items}
-            onOpen={onOpen}
-            onClose={() => setInsightsOpen(false)}
-          />
-        </Suspense>
       )}
     </div>
   )
@@ -493,17 +331,6 @@ function Detail({
             <dt>Stil</dt>
             <dd>{item.styles.join(', ') || 'Nicht angegeben'}</dd>
           </div>
-          {item.price !== undefined && (
-            <div>
-              <dt>Preis</dt>
-              <dd>
-                {formatChf(item.price)}
-                <small className="cost-per-wear">
-                  {formatChf(costPerWear(item.price, wear?.count)!)} pro Tragen
-                </small>
-              </dd>
-            </div>
-          )}
         </dl>
         <button
           className="button secondary full laundry-toggle"
@@ -600,13 +427,21 @@ function Detail({
 }
 
 export default function App() {
+  const shownPhotos = useRef(
+    new Map<string, Pick<Garment, 'photo' | 'cutout'>>(),
+  )
   const wardrobe = useLiveQuery(
     async () => {
       try {
-        return {
-          items: await db.garments.orderBy('updatedAt').reverse().toArray(),
-          failed: false,
-        }
+        const read = await db.garments.orderBy('updatedAt').reverse().toArray()
+        const items = await keepPhotoIdentity(read, shownPhotos.current)
+        shownPhotos.current = new Map(
+          items.map((item) => [
+            item.id,
+            { photo: item.photo, cutout: item.cutout },
+          ]),
+        )
+        return { items, failed: false }
       } catch {
         return { items: null, failed: true }
       }
@@ -633,6 +468,7 @@ export default function App() {
   // Keep the chat mounted after first use so drafts and requests survive closing.
   const [chatLoaded, setChatLoaded] = useState(false)
   const inbox = useStylistInbox()
+  const presetView = usePresetView()
   const tapMotion = useTapMotion()
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
   const [batch, setBatch] = useState<File[] | null>(null)
@@ -723,9 +559,8 @@ export default function App() {
               setChatOpen(true)
             }}
           >
-            <span>Stylist</span>
             <span className="stylist-glyph">
-              <MessageCircle size={17} strokeWidth={1.5} />
+              <MessageCircle size={21} strokeWidth={1.5} />
               {inbox.hasUnread && (
                 <span className="inbox-dot" aria-hidden="true" />
               )}
@@ -739,11 +574,12 @@ export default function App() {
             </span>
           )}
           <button
-            className="profile-button"
+            className={`profile-button ${view === 'settings' ? 'active' : ''}`}
             aria-label="Einstellungen öffnen"
+            aria-current={view === 'settings' ? 'page' : undefined}
             onClick={() => navigate('settings')}
           >
-            <Settings size={21} strokeWidth={1.6} />
+            <Settings size={20} strokeWidth={1.5} />
           </button>
         </div>
       </header>
@@ -802,16 +638,9 @@ export default function App() {
         ) : view === 'home' ? (
           <Home
             items={items}
-            wear={wear}
             onAdd={() => setEditor('new')}
-            onWardrobe={() => navigate('wardrobe')}
             onOpen={setSelectedId}
             onOutfits={() => navigate('outfits')}
-            onBackup={() => {
-              navigate('settings', () => {
-                cancelScroll.current = scrollSectionIntoView('backup-section')
-              })
-            }}
             notify={notify}
           />
         ) : view === 'wardrobe' ? (
@@ -826,8 +655,26 @@ export default function App() {
           <Suspense fallback={<Loading />}>
             <OutfitView
               items={items}
-              onOpen={setSelectedId}
               onAdd={() => setEditor('new')}
+              onToday={() => {
+                presetView('home.day', null)
+                navigate('home')
+              }}
+              notify={notify}
+            />
+          </Suspense>
+        ) : view === 'journal' ? (
+          <Suspense fallback={<Loading />}>
+            <JournalView
+              items={items}
+              wear={wear}
+              onOpen={setSelectedId}
+              onLooks={() => navigate('outfits')}
+              onBackup={() =>
+                navigate('settings', () => {
+                  cancelScroll.current = scrollSectionIntoView('backup-section')
+                })
+              }
               notify={notify}
             />
           </Suspense>
@@ -837,33 +684,36 @@ export default function App() {
           </Suspense>
         )}
       </main>
-      <nav className="bottom-nav" aria-label="Hauptnavigation">
-        <span
-          className="nav-selection"
-          aria-hidden="true"
-          style={{
-            transform: `translateX(${{ home: 0, wardrobe: 1, outfits: 2, settings: 3 }[view] * 100}%)`,
-          }}
-        />
+      <nav className="bottom-nav journal-nav" aria-label="Hauptnavigation">
+        {view !== 'settings' && (
+          <span
+            className="nav-selection"
+            aria-hidden="true"
+            style={{
+              transform: `translateX(${{ home: 0, wardrobe: 1, outfits: 2, journal: 3 }[view] * 100}%)`,
+            }}
+          />
+        )}
         {(
           [
-            { key: 'home', label: 'Heute', Icon: House },
-            { key: 'wardrobe', label: 'Kleiderschrank', Icon: Shirt },
-            { key: 'outfits', label: 'Outfits', Icon: Layers },
-            { key: 'settings', label: 'Mehr', Icon: CircleEllipsis },
+            { key: 'home', label: 'Heute', numeral: 'I' },
+            { key: 'wardrobe', label: 'Garderobe', numeral: 'II' },
+            { key: 'outfits', label: 'Looks', numeral: 'III' },
+            { key: 'journal', label: 'Journal', numeral: 'IV' },
           ] as const
-        ).map(({ key, label, Icon }) => (
+        ).map(({ key, label, numeral }) => (
           <button
             key={key}
             data-motion="nav"
             className={view === key ? 'active' : ''}
             aria-current={view === key ? 'page' : undefined}
+            aria-label={label}
             onClick={() => navigate(key)}
           >
-            <span className="nav-icon" aria-hidden="true">
-              <Icon size={22} strokeWidth={view === key ? 2 : 1.6} />
+            <span className="nav-numeral" aria-hidden="true">
+              {numeral}
             </span>
-            <span>{label}</span>
+            <span aria-hidden="true">{label}</span>
           </button>
         ))}
       </nav>
@@ -894,9 +744,11 @@ export default function App() {
             onClose={() => setEditor(null)}
             onSaved={() => {
               setEditor(null)
+              // New pieces land where they are shown: in the wardrobe.
+              if (editor === 'new' && view !== 'wardrobe') navigate('wardrobe')
               notify(
                 editor === 'new'
-                  ? 'Dein neues Stück ist im Kleiderschrank.'
+                  ? 'Dein neues Stück liegt in der Garderobe.'
                   : 'Deine Änderungen sind gespeichert.',
               )
             }}

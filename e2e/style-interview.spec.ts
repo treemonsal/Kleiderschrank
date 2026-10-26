@@ -26,7 +26,9 @@ const garments = (['Oberteile', 'Hosen', 'Schuhe'] as const).map(
 )
 async function seed(page: Page) {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'interview.json',
     mimeType: 'application/json',
@@ -70,7 +72,9 @@ async function close(page: Page) {
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
 }
 async function exportData(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   return JSON.parse(await readFile((await (await download).path())!, 'utf8'))
@@ -426,13 +430,16 @@ test('Alle acht Antworten gelangen erst bei einer bewusst gesendeten Frage in de
     'Keine kratzigen Stoffe',
   )
   await close(page)
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
-  await expect(
-    page.getByRole('checkbox', {
-      name: 'Ein Accessoire ergänzen, wenn eines passt',
-      exact: true,
-    }),
-  ).toBeChecked()
+  // „Gern ein Accessoire“ switches accessories on for real suggestions.
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
+  const data = JSON.parse(
+    await readFile((await (await download).path())!, 'utf8'),
+  )
+  expect(data.preferences.outfitOptions.includeAccessory).toBe(true)
 })
 
 for (const width of [320, 390, 430])

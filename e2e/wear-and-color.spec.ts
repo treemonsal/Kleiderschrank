@@ -41,12 +41,14 @@ const worn = (day: string) => ({
   updatedAt: stamp,
 })
 
-test('Tragestatistik sortiert selten getragene Stücke nach vorne und Skizzen zeigen die Farbe', async ({
+test('Journal zeigt selten getragene Stücke zuerst und Skizzen zeigen die Farbe', async ({
   page,
 }) => {
   await page.clock.install({ time: new Date(now) })
   await page.goto('/')
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'wear.json',
     mimeType: 'application/json',
@@ -68,9 +70,9 @@ test('Tragestatistik sortiert selten getragene Stücke nach vorne und Skizzen ze
     .getByRole('button', { name: 'Sicherung importieren', exact: true })
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  await page.getByRole('button', { name: 'Heute', exact: true }).click()
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   const shelf = page.getByRole('region', { name: 'Lange nicht getragen' })
-  await expect(shelf.locator('.forgotten-piece strong').first()).toHaveText(
+  await expect(shelf.locator('.journal-row strong').first()).toHaveText(
     'Grüner Pulli',
   )
   await expect(shelf).toContainText('Noch nie getragen')
@@ -79,18 +81,9 @@ test('Tragestatistik sortiert selten getragene Stücke nach vorne und Skizzen ze
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true)
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
-  await page.getByRole('button', { name: 'Sortierung ändern' }).click()
-  await page
-    .getByRole('combobox', { name: 'Sortierung' })
-    .selectOption('least-worn')
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect(
-    page.locator('.garment-grid .garment-card h3').first(),
-  ).toHaveText('Grüner Pulli')
-  await expect(
-    page.locator('.garment-card .garment-sketch[data-color="Grün"]'),
+    page.locator('.garment-card .photo-placeholder[data-color="Grün"]'),
   ).toHaveCount(1)
   await page.getByRole('button', { name: 'Jeans öffnen' }).click()
   await expect(page.getByRole('dialog')).toContainText(
@@ -104,11 +97,13 @@ test('Tragestatistik sortiert selten getragene Stücke nach vorne und Skizzen ze
   await expect(page.getByRole('dialog')).toContainText('Noch nie getragen')
 })
 
-test('Ohne bestätigte Tragetage zeigt Heute die neuesten statt vergessener Stücke', async ({
+test('Ohne bestätigte Tragetage zeigt das Journal die neuesten statt vergessener Stücke', async ({
   page,
 }) => {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'plain.json',
     mimeType: 'application/json',
@@ -136,6 +131,10 @@ test('Ohne bestätigte Tragetage zeigt Heute die neuesten statt vergessener Stü
       .locator('.outfit-piece')
       .first(),
   ).toBeVisible()
+  await expect(
+    page.getByRole('region', { name: 'Lange nicht getragen' }),
+  ).toHaveCount(0)
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await expect(
     page.getByRole('region', { name: 'Lange nicht getragen' }),
   ).toHaveCount(0)

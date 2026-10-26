@@ -19,7 +19,9 @@ async function mockProviders(context: BrowserContext) {
   })
 }
 async function activate(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page
     .getByRole('checkbox', { name: /Ich erlaube, neue Kleidungsfotos/ })
     .check()
@@ -96,7 +98,9 @@ async function seed(page: Page, chat = false) {
         }
       : {}),
   }
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'sync.json',
     mimeType: 'application/json',
@@ -115,7 +119,9 @@ test('Geöffnete KI-Einstellungen folgen anderem Fenster und erhalten ungespeich
 }) => {
   await mockProviders(context)
   await page.goto('/')
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await serverFields(page)
   const other = await context.newPage()
   await other.goto('/')
@@ -224,7 +230,9 @@ test('Ein externer Verbindungswechsel verhindert die späte eigene Aktivierung u
   })
   try {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+    await page
+      .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+      .click()
     await serverFields(page)
     await page
       .getByRole('checkbox', {
@@ -263,39 +271,4 @@ test('Ein externer Verbindungswechsel verhindert die späte eigene Aktivierung u
   } finally {
     release()
   }
-})
-
-test('Geöffneter Online-Stylist übernimmt Freigaben ohne Bereichswechsel und ohne automatische Anfrage', async ({
-  page,
-  context,
-}) => {
-  await mockProviders(context)
-  let comparisons = 0
-  context.on('request', (request) => {
-    if (request.url() === `${host}/gradio_api/call/run_router`) comparisons++
-  })
-  await page.goto('/')
-  await seed(page)
-  await page.getByRole('button', { name: 'Heute', exact: true }).click()
-  const compare = page
-    .getByRole('region', { name: 'Online-Stylist' })
-    .getByRole('button', { name: 'Looks online vergleichen', exact: true })
-  await expect(compare).toBeDisabled()
-  const other = await context.newPage()
-  await other.goto('/')
-  await activate(other)
-  await expect(compare).toBeEnabled()
-  // One switch also unlocks chat and shopping ideas, and turns them off again.
-  const consents = () =>
-    other.evaluate(() => [
-      localStorage.getItem('mystyle-chat-consent'),
-      localStorage.getItem('mystyle-shopping-consent'),
-    ])
-  expect(await consents()).toEqual(['enabled-v1', 'enabled-v1'])
-  await other
-    .getByRole('button', { name: 'Community-KI ausschalten', exact: true })
-    .click()
-  await expect(compare).toBeDisabled()
-  expect(await consents()).toEqual([null, null])
-  expect(comparisons).toBe(0)
 })

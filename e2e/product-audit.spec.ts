@@ -15,7 +15,9 @@ const base = ['Oberteile', 'Hosen', 'Schuhe', 'Jacken'].map((category, i) => ({
   updatedAt: stamp,
 }))
 async function importItems(page: Page, alternative = true) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'audit.json',
     mimeType: 'application/json',
@@ -47,7 +49,9 @@ async function importItems(page: Page, alternative = true) {
   ).toBeVisible()
 }
 async function exportData(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const pending = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   return JSON.parse(await readFile((await (await pending).path())!, 'utf8'))
@@ -98,22 +102,12 @@ for (const width of [375, 390, 430])
     })
   })
 
-test('Anderer Tageslook bleibt nach Neustart erhalten; Gefällt mir lässt sich zurücknehmen', async ({
+test('Gefällt mir auf dem Tageslook lässt sich zurücknehmen, ohne den Tag zu verändern', async ({
   page,
 }) => {
   await page.goto('/')
   await importItems(page)
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
-  const before = await look.locator('.outfit-piece').allTextContents()
-  await look.getByRole('button', { name: 'Anderer Look', exact: true }).click()
-  await expect
-    .poll(() => look.locator('.outfit-piece').allTextContents())
-    .not.toEqual(before)
-  const after = await look.locator('.outfit-piece').allTextContents()
-  await page.reload()
-  await expect
-    .poll(() => look.locator('.outfit-piece').allTextContents())
-    .toEqual(after)
   const like = look.getByRole('button', {
     name: 'Tageslook: Gefällt mir',
     exact: true,
@@ -130,28 +124,6 @@ test('Anderer Tageslook bleibt nach Neustart erhalten; Gefällt mir lässt sich 
   expect(undone.feedback).toHaveLength(0)
   expect(undone.calendar).toHaveLength(0)
   expect(undone.outfits).toHaveLength(0)
-  expect(undone.preferences.dailySelection).toEqual(
-    liked.preferences.dailySelection,
-  )
-})
-
-test('Ohne Alternative bleibt der Tageslook erhalten und wird nicht als abgelehnt gespeichert', async ({
-  page,
-}) => {
-  await page.goto('/')
-  await importItems(page, false)
-  const look = page.getByRole('region', { name: 'Dein Tageslook' })
-  const before = await look.locator('.outfit-piece').allTextContents()
-  await look.getByRole('button', { name: 'Anderer Look', exact: true }).click()
-  await expect(
-    page.getByText(
-      /Für diese Auswahl gibt es gerade keinen anderen vollständigen Look/,
-    ),
-  ).toBeVisible()
-  expect(await look.locator('.outfit-piece').allTextContents()).toEqual(before)
-  const data = await exportData(page)
-  expect(data.feedback).toHaveLength(0)
-  expect(data.preferences.dailySelection).toBeUndefined()
 })
 
 test('Blockierter Gerätespeicher zeigt Hilfe und erneutes Laden statt endloser Ladeanzeige', async ({

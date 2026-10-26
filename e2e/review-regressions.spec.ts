@@ -36,7 +36,9 @@ const legacy = {
   preferences: null,
 }
 async function previewImport(page: Page, data: unknown) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'review.json',
     mimeType: 'application/json',
@@ -45,15 +47,10 @@ async function previewImport(page: Page, data: unknown) {
   await expect(page.getByRole('dialog')).toBeVisible()
 }
 async function savedEditor(page: Page) {
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Gespeichert (1)', exact: true })
-    .click()
-  await page
-    .getByRole('button', {
-      name: 'Name ändern oder Outfit löschen',
-      exact: true,
-    })
+    .locator('.saved-look')
+    .getByRole('button', { name: /bearbeiten$/ })
     .click()
 }
 

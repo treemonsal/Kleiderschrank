@@ -66,6 +66,8 @@ async function providers(
   return calls
 }
 
+// Network mocks use page.route, which a controlling service worker bypasses.
+test.use({ serviceWorkers: 'block' })
 test('Mehrere Fotos auf einmal: jedes wird analysiert, freigestellt und gemeinsam gespeichert', async ({
   page,
 }) => {
@@ -104,9 +106,7 @@ test('Mehrere Fotos auf einmal: jedes wird analysiert, freigestellt und gemeinsa
     .fill('Mein Lieblingshemd')
   await save.click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect(page.locator('.garment-card')).toHaveCount(3)
   await expect(
     page.getByRole('button', { name: 'Mein Lieblingshemd öffnen' }),

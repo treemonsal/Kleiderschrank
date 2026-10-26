@@ -39,7 +39,9 @@ const garments = [
   updatedAt: stamp,
 }))
 async function importData(page: Page, data?: unknown) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'personal.json',
     mimeType: 'application/json',
@@ -66,7 +68,9 @@ async function importData(page: Page, data?: unknown) {
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
 }
 async function exported(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const stream = await (await download).createReadStream()
@@ -184,7 +188,9 @@ test('Später verschwindet dauerhaft und lässt den Stilcheck unter Mehr erreich
   await expect(invite).not.toBeVisible()
   await page.reload()
   await expect(invite).not.toBeVisible()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await expect(
     page
       .getByRole('region', { name: 'Dein Stilprofil', exact: true })

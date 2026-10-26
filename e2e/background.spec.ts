@@ -42,7 +42,9 @@ async function editor(page: Page) {
   await page.getByText('Hintergrund mit KI entfernen', { exact: false }).click()
 }
 async function exportData(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const waiting = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   return JSON.parse(await readFile((await (await waiting).path())!, 'utf8'))
@@ -101,9 +103,7 @@ test('Echtes KI-Modell erzeugt lokal eine Maske, erhält das Original und funkti
     contentType: 'application/json',
   })
   await page.getByRole('button', { name: 'Freistellung übernehmen' }).click()
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   const backup = await exportData(page)
   expect(backup.version).toBe(8)
@@ -124,9 +124,7 @@ test('Echtes KI-Modell erzeugt lokal eine Maske, erhält das Original und funkti
     })
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'KI-Testhemd öffnen' }).click()
   const restoredAlpha = await page
     .getByRole('dialog')
@@ -160,18 +158,6 @@ test('Echtes KI-Modell erzeugt lokal eine Maske, erhält das Original und funkti
   const restored = await exportData(page)
   expect(restored.garments[0].photo).toBe(backup.garments[0].photo)
   expect(restored.garments[0].cutout).toBeUndefined()
-  await page
-    .getByText('Lokale Freistellung & KI-Speicher', { exact: true })
-    .click()
-  await page
-    .getByRole('button', { name: 'KI-Dateien vom Gerät entfernen' })
-    .click()
-  await expect(
-    page.getByText('Die zwischengespeicherten KI-Dateien wurden entfernt.', {
-      exact: false,
-    }),
-  ).toBeVisible()
-  expect(await page.evaluate(() => caches.has('mystyle-ai-v1'))).toBe(false)
   expect(external).toEqual([])
   expect(errors).toEqual([])
 })
@@ -191,9 +177,7 @@ test('Beschädigte KI-Dateien werden abgewiesen und das Original bleibt speicher
   await expect(
     page.getByAltText('Vorschau mit entferntem Hintergrund'),
   ).toHaveCount(0)
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   const data = await exportData(page)
   expect(data.garments[0].photo).toBeTruthy()
@@ -210,9 +194,7 @@ test('Beschädigte KI-Dateien werden abgewiesen und das Original bleibt speicher
     'Foto in der Sicherung ist beschädigt',
   )
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect(
     page.getByRole('button', { name: 'KI-Testhemd öffnen' }),
   ).toBeVisible()
@@ -270,6 +252,6 @@ test('Noch nicht geladene KI-Dateien ergeben offline eine verständliche Meldung
     page.getByAltText('Vorschau mit entferntem Hintergrund'),
   ).toHaveCount(0)
   await expect(
-    page.getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' }),
+    page.getByRole('button', { name: 'In die Garderobe legen' }),
   ).toBeEnabled()
 })

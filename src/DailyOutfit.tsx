@@ -1,21 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
-  Bookmark,
   Check,
   ArrowRight,
-  RefreshCw,
   Plus,
-  ChevronLeft,
-  ChevronRight,
-  CalendarDays,
   CloudSun,
   CloudOff,
   Leaf,
   Tag,
 } from 'lucide-react'
 import type { Garment } from './model'
-import { db, saveOutfit, storageError } from './db'
+import { db, storageError } from './db'
 import { OutfitRating } from './OutfitRating'
 import { StyleProfileCard } from './StyleProfile'
 import {
@@ -24,16 +19,9 @@ import {
   outfitKey,
 } from './outfit-model'
 import { chooseDailyOutfit } from './daily-outfit'
-import {
-  isDay,
-  localDay,
-  shiftDay,
-  weekDays,
-  wornCounts,
-  type CalendarEntry,
-} from './calendar'
+import { localDay, weekDays, type CalendarEntry } from './calendar'
 import { dayColors } from './calendar-colors'
-import { DayCalendar, DayNumber, calendarDayDescription } from './DayCalendar'
+import { DayNumber, calendarDayDescription } from './DayCalendar'
 import { PlanEditor } from './CalendarView'
 import { recordWornOutfit } from './calendar-db'
 import { weatherFresh, weatherLabel } from './weather'
@@ -41,15 +29,12 @@ import { useClock } from './useWeather'
 import { WeatherPanel } from './WeatherPanel'
 import { DailyRefinement } from './DailyRefinement'
 import { OutfitSwap } from './OutfitSwap'
-import { anotherDailyLook } from './daily-choice'
-import { applyStylistLook } from './daily-choice'
-import { OnlineStylist } from './OnlineStylist'
-import { generateOutfits } from './generator'
 import { WeatherSymbol } from './WeatherSymbol'
 import { recentWear } from './wear-history'
 import { OutfitPieces } from './OutfitPieces'
 import { EmptyIllustration } from './EmptyIllustration'
 import { ErrorMessage, Sheet } from './ui'
+import { figureOrder } from './swatch'
 
 export function DailyOutfit({
   items,
@@ -141,47 +126,18 @@ export function DailyOutfit({
       ),
     ) &&
     look.garmentIds.every((id) => items.some((item) => item.id === id))
-  const stylistCandidates = useMemo(() => {
-    if (!automatic || !state || !isToday || entry) return []
-    const alternatives = generateOutfits(
-      items,
-      automatic.options,
-      state.preferences,
-      state.feedback,
-      Number(day.replaceAll('-', '')),
-      state.preferences.useWeather !== false && fresh ? forecast : undefined,
-      wornCounts(state.calendar, state.outfits, day),
-      recentWear(state.calendar, state.outfits, day),
-    )
-    return [
-      {
-        key: outfitKey(automatic.garmentIds),
-        garmentIds: automatic.garmentIds,
-        reasons: automatic.reasons,
-        score: 0,
-      },
-      ...alternatives,
-    ]
-  }, [automatic, state, items, day, isToday, entry, fresh, forecast])
   const [weatherOpen, setWeatherOpen] = useState(false)
-  const [calendarOpen, setCalendarOpen] = useState(false)
   const [editing, setEditing] = useState<{
     day: string
     entry?: CalendarEntry
   } | null>(null)
-  const [refining, setRefining] = useState(false)
+  const [previewIds, setPreviewIds] = useState<string[]>()
   const [swapping, setSwapping] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   useEffect(() => {
     setError('')
-    setRefining(false)
   }, [day])
-  const saved =
-    !!look?.garmentIds.length &&
-    state?.outfits.some(
-      (outfit) => outfitKey(outfit.garmentIds) === outfitKey(look.garmentIds),
-    )
   const date = new Intl.DateTimeFormat('de-CH', {
     weekday: 'long',
     day: 'numeric',
@@ -191,14 +147,19 @@ export function DailyOutfit({
       : {}),
   }).format(new Date(`${day}T12:00:00`))
   const worn = entry?.status === 'worn' && day <= today
-  function move(offset: number) {
-    const next = shiftDay(day, offset)
-    if (next && !busy) onSelectDay(next)
-  }
+  const weekday = new Intl.DateTimeFormat('de-CH', { weekday: 'long' }).format(
+    new Date(`${day}T12:00:00`),
+  )
+  const shortDate = new Intl.DateTimeFormat('de-CH', {
+    day: 'numeric',
+    month: 'long',
+    ...(day.slice(0, 4) !== today.slice(0, 4)
+      ? { year: 'numeric' as const }
+      : {}),
+  }).format(new Date(`${day}T12:00:00`))
   function select(next: string) {
     if (!busy) {
       onSelectDay(next)
-      setCalendarOpen(false)
     }
   }
   function editDay() {
@@ -206,6 +167,20 @@ export function DailyOutfit({
     // window must not remount this form and replace its unsaved draft.
     setEditing({ day, entry })
   }
+  // Name today's suggestion after its two leading colours, like a plate title.
+  const leadColors = [
+    ...new Set(
+      figureOrder(
+        (look?.garmentIds ?? []).flatMap(
+          (id) => items.find((item) => item.id === id) ?? [],
+        ),
+      )
+        .map((item) => item.color)
+        .filter(Boolean),
+    ),
+  ]
+  const colorTitle =
+    leadColors.length >= 2 ? `${leadColors[0]} & ${leadColors[1]}` : undefined
   const badge = entry
     ? worn
       ? 'Bestätigt getragen'
@@ -221,6 +196,61 @@ export function DailyOutfit({
         : 'Planung'
   return (
     <>
+      <div className="home-greeting home-day-summary journal-day-head">
+        <div className="journal-date">
+          <span className="kicker">
+            {weekday}
+            {isToday ? ' · heute' : ''}
+          </span>
+          <span className="home-date">{shortDate}</span>
+        </div>
+        {!isToday ? (
+          <button
+            className="text-button return-today"
+            disabled={busy}
+            onClick={() => select(today)}
+          >
+            Zu heute
+          </button>
+        ) : (
+          <button
+            className="home-weather"
+            onClick={() => setWeatherOpen(true)}
+            aria-label="Wetter anzeigen und Ort ändern"
+          >
+            {state?.weather && forecast ? (
+              <>
+                <span className="home-weather-line">
+                  <WeatherSymbol code={forecast.code} size={20} />
+                  <span className="weather-range">
+                    {Math.round(forecast.min)}°–{Math.round(forecast.max)}°
+                  </span>
+                </span>
+                <small>
+                  {weatherLabel(forecast.code)} ·{' '}
+                  {fresh
+                    ? state.weather.location.name
+                    : 'Gespeichert · veraltet'}
+                </small>
+              </>
+            ) : (
+              <>
+                <span className="home-weather-line">
+                  <WeatherSymbol code={forecast?.code} size={20} />
+                  <span className="weather-range">Wetter</span>
+                </span>
+                <small>
+                  {state?.weather
+                    ? isToday
+                      ? 'Vorhersage nicht aktuell'
+                      : 'Keine Vorhersage für diesen Tag'
+                    : 'Ort auswählen'}
+                </small>
+              </>
+            )}
+          </button>
+        )}
+      </div>
       <section
         className="home-timeline"
         aria-label="Deine Tage"
@@ -229,42 +259,6 @@ export function DailyOutfit({
         <span className="sr-only" role="status">
           {date}
         </span>
-        <div className="day-navigation">
-          <button
-            className="icon-button"
-            aria-label="Vorheriger Tag"
-            disabled={busy || !shiftDay(day, -1)}
-            onClick={() => move(-1)}
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <button
-            className="day-calendar-trigger"
-            aria-label="Tageskalender öffnen"
-            disabled={busy}
-            onClick={() => setCalendarOpen(true)}
-          >
-            <CalendarDays size={17} />
-            {isToday
-              ? 'Heute'
-              : day === shiftDay(today, -1)
-                ? 'Gestern'
-                : day === shiftDay(today, 1)
-                  ? 'Morgen'
-                  : new Date(`${day}T12:00:00`).toLocaleDateString('de-CH', {
-                      day: 'numeric',
-                      month: 'long',
-                    })}
-          </button>
-          <button
-            className="icon-button"
-            aria-label="Nächster Tag"
-            disabled={busy || !shiftDay(day, 1)}
-            onClick={() => move(1)}
-          >
-            <ChevronRight size={20} />
-          </button>
-        </div>
         <div
           className="home-week-strip"
           role="group"
@@ -304,52 +298,17 @@ export function DailyOutfit({
             )
           })}
         </div>
-        {!isToday && (
-          <button
-            className="text-button return-today"
-            disabled={busy}
-            onClick={() => select(today)}
-          >
-            Zu heute
-          </button>
-        )}
+        <p className="calendar-ring-legend week-legend" aria-hidden="true">
+          <span>
+            <i className="legend-worn" />
+            getragen, in seinen Farben
+          </span>
+          <span>
+            <i className="legend-plan" />
+            geplant
+          </span>
+        </p>
       </section>
-      <div className="home-greeting home-day-summary">
-        {past ? (
-          <div className="home-history-date">
-            <span className="home-date">{date}</span>
-            <span>Dein Outfit-Rückblick</span>
-          </div>
-        ) : (
-          <button
-            className="home-weather"
-            onClick={() => setWeatherOpen(true)}
-            aria-label="Wetter anzeigen und Ort ändern"
-          >
-            <span className="home-date">{date}</span>
-            <span className="home-weather-line">
-              <WeatherSymbol code={forecast?.code} size={20} />
-              {state?.weather ? (
-                <span>
-                  {forecast
-                    ? `${Math.round(forecast.min)}–${Math.round(forecast.max)} °C · ${weatherLabel(forecast.code)}`
-                    : isToday
-                      ? 'Vorhersage nicht aktuell'
-                      : 'Keine Vorhersage für diesen Tag'}
-                  <small>
-                    {state.weather.location.name} ·{' '}
-                    {fresh ? 'Tagesvorhersage' : 'Gespeichert · veraltet'}
-                  </small>
-                </span>
-              ) : (
-                <span>
-                  Dein Wetter<small>Ort auswählen</small>
-                </span>
-              )}
-            </span>
-          </button>
-        )}
-      </div>
       <div className="day-slide-viewport">
         <section
           className="daily-look day-slide"
@@ -358,11 +317,19 @@ export function DailyOutfit({
           data-day-busy={busy ? 'true' : undefined}
         >
           <header>
-            <p className="eyebrow">{badge}</p>
+            <p className="eyebrow">
+              <span>{badge}</span>
+              {!!look?.garmentIds.length && (
+                <span className="look-count">
+                  {look.garmentIds.length}{' '}
+                  {look.garmentIds.length === 1 ? 'Teil' : 'Teile'}
+                </span>
+              )}
+            </p>
             <h1>
               {recorded?.name ??
                 (isToday
-                  ? 'Dein Look für heute'
+                  ? (colorTitle ?? 'Dein Look für heute')
                   : past
                     ? 'Vergangener Tag'
                     : 'Geplanter Look')}
@@ -446,55 +413,46 @@ export function DailyOutfit({
                         : 'Als getragen bestätigen'}
                   </button>
                 )}
-                {isToday && !entry && complete && (
-                  <button
-                    className="text-button"
-                    data-motion="turn"
-                    disabled={busy}
-                    onClick={async () => {
-                      setBusy(true)
-                      setError('')
-                      try {
-                        const changed = await anotherDailyLook({
-                          day,
-                          expectedIds: look.garmentIds,
-                          expectedSelection:
-                            state.preferences.dailySelection?.day === day
-                              ? state.preferences.dailySelection.updatedAt
-                              : null,
-                        })
-                        notify(
-                          changed
-                            ? 'Ein anderer Look ist für heute ausgewählt.'
-                            : 'Für diese Auswahl gibt es gerade keinen anderen vollständigen Look. Ergänze Stücke oder passe die Auswahl an.',
-                        )
-                      } catch (error) {
-                        setError(storageError(error))
-                      } finally {
-                        setBusy(false)
-                      }
-                    }}
-                  >
-                    <RefreshCw size={16} /> Anderer Look
-                  </button>
-                )}
               </div>
-              {isToday && !worn && complete && (
-                <button
-                  type="button"
-                  className="button secondary full daily-refine-button"
-                  disabled={busy}
-                  onClick={() => setRefining(true)}
-                >
-                  Tageslook verfeinern
-                </button>
-              )}
               <OutfitPieces
-                ids={look.garmentIds}
+                ids={previewIds ?? look.garmentIds}
+                changedIds={
+                  previewIds?.filter((id) => !look.garmentIds.includes(id)) ??
+                  []
+                }
+                figure
                 items={items}
                 onOpen={onOpen}
                 onSwap={isToday && !worn ? setSwapping : undefined}
               />
+              {!!look.reasons.length && (
+                <details className="outfit-reasons">
+                  <summary>Warum diese Kombination?</summary>
+                  <p>{look.reasons.join(' ')}</p>
+                </details>
+              )}
+              {isToday && !worn && complete && (
+                <DailyRefinement
+                  key={`${day}:${outfitKey(look.garmentIds)}`}
+                  items={items}
+                  ids={look.garmentIds}
+                  options={look.options}
+                  preferences={state.preferences}
+                  feedback={state.feedback}
+                  outfits={state.outfits}
+                  calendar={state.calendar}
+                  day={day}
+                  expectedEntry={entry?.updatedAt ?? null}
+                  weather={
+                    state.preferences.useWeather !== false && fresh
+                      ? forecast
+                      : undefined
+                  }
+                  disabled={busy}
+                  onPreview={setPreviewIds}
+                  notify={notify}
+                />
+              )}
               {isToday &&
                 !worn &&
                 look.garmentIds.some(
@@ -507,16 +465,6 @@ export function DailyOutfit({
                 </p>
               )}
               {entry?.note && <p className="calendar-note">{entry.note}</p>}
-              {!!look.reasons.length && (
-                <details className="outfit-reasons">
-                  <summary>Warum diese Kombination?</summary>
-                  <ul>
-                    {look.reasons.map((reason) => (
-                      <li key={reason}>{reason}</li>
-                    ))}
-                  </ul>
-                </details>
-              )}
               {day <= today && complete && (
                 <OutfitRating
                   key={outfitKey(look.garmentIds)}
@@ -528,72 +476,6 @@ export function DailyOutfit({
                   )}
                   disabled={busy}
                   notify={notify}
-                />
-              )}
-              <div className="daily-look-actions">
-                {!entry && (
-                  <button
-                    className="button secondary"
-                    disabled={saved || busy || !complete}
-                    onClick={async () => {
-                      setBusy(true)
-                      setError('')
-                      try {
-                        await saveOutfit(look.garmentIds, look.options)
-                        notify('Dein Tageslook ist gespeichert.')
-                      } catch (error) {
-                        setError(storageError(error))
-                      } finally {
-                        setBusy(false)
-                      }
-                    }}
-                  >
-                    {saved ? <Check size={16} /> : <Bookmark size={16} />}{' '}
-                    {saved ? 'Gespeichert' : 'Look speichern'}
-                  </button>
-                )}
-                <button
-                  className="text-button"
-                  disabled={busy}
-                  onClick={() => (entry ? editDay() : onOutfits())}
-                >
-                  {entry ? 'Tag bearbeiten' : 'Looks anpassen'}{' '}
-                  <ArrowRight size={16} />
-                </button>
-              </div>
-              {isToday && !entry && complete && (
-                <OnlineStylist
-                  input={{
-                    items,
-                    candidates: stylistCandidates,
-                    options: look.options,
-                    preferences: state.preferences,
-                    feedback: state.feedback,
-                    weather:
-                      state.preferences.useWeather !== false && fresh
-                        ? forecast
-                        : undefined,
-                  }}
-                  onOpen={onOpen}
-                  applyLabel="Für heute übernehmen"
-                  onApply={async (candidate) => {
-                    await applyStylistLook({
-                      day,
-                      expectedIds: look.garmentIds,
-                      expectedSelection:
-                        state.preferences.dailySelection?.day === day
-                          ? state.preferences.dailySelection.updatedAt
-                          : null,
-                      expectedPreferences: state.preferences.updatedAt,
-                      garmentIds: candidate.garmentIds,
-                      versions: items.map((item) => ({
-                        id: item.id,
-                        updatedAt: item.updatedAt,
-                      })),
-                      options: look.options,
-                    })
-                    notify('Die KI-Auswahl ist für heute gespeichert.')
-                  }}
                 />
               )}
             </>
@@ -640,26 +522,6 @@ export function DailyOutfit({
         </section>
       </div>
       {isToday && <StyleProfileCard items={items} notify={notify} invitation />}
-      {refining && state && look && isToday && (
-        <DailyRefinement
-          items={items}
-          ids={look.garmentIds}
-          options={look.options}
-          preferences={state.preferences}
-          feedback={state.feedback}
-          outfits={state.outfits}
-          calendar={state.calendar}
-          day={day}
-          expectedEntry={entry?.updatedAt ?? null}
-          weather={
-            state.preferences.useWeather !== false && fresh
-              ? forecast
-              : undefined
-          }
-          onClose={() => setRefining(false)}
-          notify={notify}
-        />
-      )}
       {swapping && state && look && isToday && !worn && (
         <OutfitSwap
           items={items}
@@ -687,32 +549,6 @@ export function DailyOutfit({
             notify={notify}
             onClose={() => setWeatherOpen(false)}
           />
-        </Sheet>
-      )}
-      {calendarOpen && state && (
-        <Sheet title="Kalender" onClose={() => setCalendarOpen(false)}>
-          <div className="home-calendar-picker">
-            <DayCalendar
-              day={day}
-              today={today}
-              entries={state.calendar}
-              outfits={state.outfits}
-              items={items}
-              onSelect={select}
-            />
-            <label className="field">
-              Direkt zu einem Tag
-              <input
-                type="date"
-                min="1900-01-01"
-                max="2200-12-31"
-                value={day}
-                onChange={(event) => {
-                  if (isDay(event.target.value)) select(event.target.value)
-                }}
-              />
-            </label>
-          </div>
         </Sheet>
       )}
       {editing && state && (

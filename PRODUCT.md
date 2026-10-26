@@ -2,6 +2,12 @@
 
 Die Versionsabschnitte dokumentieren die Entwicklung. Massgeblich für den aktuellen Umfang sind Version 0.20.0 und die aktuelle README; ältere Abschnitte halten die damaligen Anforderungen und Grenzen fest.
 
+## Version 0.28.0 – Garderobenjournal
+
+- Neues, ausdrücklich gewünschtes Design aus Claude Design („MyStyle, ein Garderobenjournal“, Classical-System): Cormorant Garamond über Lora, beide selbst gehostet (OFL), Haarlinien statt gefüllter Karten, umrandete Buttons, ein Goldakzent `#b68235`, Überzeilen in Kapitälchen-Optik. Ersetzt das Store-Design 0.27.0; Rückweg über den Import in main.tsx.
+- Navigation I Heute · II Garderobe · III Looks · IV Journal; Einstellungen (früher „Mehr“) über das Zahnrad. Kalender wandert aus Outfits in das neue Journal, zusammen mit Monatsstatistik, lange nicht getragenen Stücken, Shopping-Fortschritt und Sicherung.
+- Tageslook als nummerierte Abbildungstafel, Tragebestätigung bleibt ohne Scrollen erreichbar. Stücke ohne Foto als Stoffmuster in ihrer erfassten Farbe. Keine neuen Daten, keine Datenbank- oder Sicherungsänderung.
+
 ## Version 0.20.0 – gezielter und zuverlässiger verfeinern
 
 - Fehlgeschlagene Foto-Schritte separat, manuell wiederholen; nur betreffenden Community-Anbieter kontaktieren und gelungene Ergebnisse behalten. Eigene Server über expliziten Health-Vertrag absichern; keine stillschweigend doppelte Modellarbeit auf älteren Servern.
