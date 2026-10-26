@@ -1,154 +1,38 @@
-import { PackingSheet } from './PackingSheet'
-import { ShoppingCard } from './Shopping'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import {
-  Bookmark,
-  CalendarDays,
-  Check,
-  Heart,
-  Plus,
-  RefreshCw,
-  Settings2,
-  Luggage,
-  ArrowUpRight,
-  Trash2,
-} from 'lucide-react'
-import { COLORS, SEASONS, STYLES, type Garment } from './model'
-import { CalendarView } from './CalendarView'
-import {
-  db,
-  saveOutfit,
-  savePreferences,
-  styleProfileRevision,
-  saveOutfitOptions,
-  storageError,
-  updateOutfit,
-} from './db'
+import { Heart, Trash2 } from 'lucide-react'
+import type { Garment } from './model'
+import { db, saveOutfit, storageError, updateOutfit } from './db'
 import { generateOutfits, missingOutfitMessage } from './generator'
-import { OnlineStylist } from './OnlineStylist'
 import {
   DEFAULT_PREFERENCES,
   DEFAULT_OUTFIT_OPTIONS,
-  isCompleteOutfit,
   OCCASIONS,
   outfitKey,
   type OutfitOptions,
-  type Preferences,
   type SavedOutfit,
 } from './outfit-model'
 import { ErrorMessage, Sheet } from './ui'
-import { WeatherPanel } from './WeatherPanel'
 import { recentWear } from './wear-history'
 import { localDay, wornCounts } from './calendar'
 import { deleteOutfit } from './calendar-db'
-import { weatherFresh, type WeatherDay } from './weather'
+import { weatherFresh } from './weather'
 import { useClock, weatherForToday } from './useWeather'
-import { OutfitPieces } from './OutfitPieces'
 import { LookBands } from './LookBands'
-import { OutfitRating } from './OutfitRating'
 import { useViewState } from './view-memory'
+import { chooseLookForToday } from './daily-choice'
+import { figureOrder } from './swatch'
 
-function PreferenceEditor({
-  current,
-  onClose,
-  notify,
-}: {
-  current: Preferences
-  onClose: () => void
-  notify: (message: string) => void
-}) {
-  const [snapshot] = useState(() => ({
-    styles: [...current.styles],
-    colors: [...current.colors],
-    revision: styleProfileRevision(current),
-  }))
-  const [styles, setStyles] = useState(snapshot.styles)
-  const [colors, setColors] = useState(snapshot.colors)
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState('')
-  return (
-    <Sheet
-      title="Stilvorlieben"
-      closeDisabled={busy}
-      dirty={
-        !busy &&
-        (JSON.stringify(styles) !== JSON.stringify(snapshot.styles) ||
-          JSON.stringify(colors) !== JSON.stringify(snapshot.colors))
-      }
-      eyebrow="Vorlieben"
-      onClose={() => {
-        if (!busy) onClose()
-      }}
-    >
-      <form
-        className="preference-form"
-        onSubmit={async (event) => {
-          event.preventDefault()
-          setBusy(true)
-          try {
-            await savePreferences(styles, colors, db, snapshot.revision)
-            notify('Deine Stilvorlieben sind gespeichert.')
-            onClose()
-          } catch (error) {
-            setError(storageError(error))
-          } finally {
-            setBusy(false)
-          }
-        }}
-      >
-        <p className="muted">Was magst du besonders?</p>
-        <fieldset disabled={busy}>
-          <legend>Bevorzugte Stilrichtungen</legend>
-          <div className="chips wrap">
-            {STYLES.map((style) => (
-              <button
-                key={style}
-                type="button"
-                className={`chip ${styles.includes(style) ? 'active' : ''}`}
-                aria-pressed={styles.includes(style)}
-                onClick={() =>
-                  setStyles(
-                    styles.includes(style)
-                      ? styles.filter((item) => item !== style)
-                      : [...styles, style],
-                  )
-                }
-              >
-                {style}
-              </button>
-            ))}
-          </div>
-          <p className="preference-label">Lieblingsfarben</p>
-          <div className="color-options">
-            {COLORS.map((color) => (
-              <button
-                type="button"
-                key={color.name}
-                className={`color-option ${colors.includes(color.name) ? 'selected' : ''}`}
-                aria-label={color.name}
-                aria-pressed={colors.includes(color.name)}
-                onClick={() =>
-                  setColors(
-                    colors.includes(color.name)
-                      ? colors.filter((item) => item !== color.name)
-                      : [...colors, color.name],
-                  )
-                }
-              >
-                <span style={{ background: color.hex }} />
-                <span>{color.name}</span>
-              </button>
-            ))}
-          </div>
-        </fieldset>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-        <button className="button primary full" disabled={busy}>
-          {busy ? 'Wird gespeichert …' : 'Vorlieben speichern'}
-        </button>
-      </form>
-    </Sheet>
-  )
+/** Names a look after its two leading colours, like a plate title. */
+function colorTitle(ids: string[], items: Garment[]) {
+  const colors = [
+    ...new Set(
+      figureOrder(ids.flatMap((id) => items.find((i) => i.id === id) ?? []))
+        .map((item) => item.color)
+        .filter(Boolean),
+    ),
+  ]
+  return colors.length >= 2 ? `${colors[0]} & ${colors[1]}` : 'Neuer Look'
 }
 
 function SavedEditor({
@@ -260,13 +144,13 @@ function SavedEditor({
 
 export function OutfitView({
   items,
-  onOpen,
   onAdd,
+  onToday,
   notify,
 }: {
   items: Garment[]
-  onOpen: (id: string) => void
   onAdd: () => void
+  onToday: () => void
   notify: (message: string) => void
 }) {
   const state = useLiveQuery(
@@ -294,61 +178,48 @@ export function OutfitView({
     [],
     null,
   )
-  const [tab, setTab] = useViewState<'discover' | 'saved' | 'calendar'>(
-    'outfits.tab',
-    'discover',
-  )
-  const [weatherDay, setWeatherDay] = useState<WeatherDay>()
-  const [options, setOptions] = useState(DEFAULT_OUTFIT_OPTIONS)
-  const pendingOptions = useRef<Partial<OutfitOptions>>({})
-  useEffect(() => {
-    if (state)
-      setOptions({
-        ...(state.preferences.outfitOptions ?? DEFAULT_OUTFIT_OPTIONS),
-        ...pendingOptions.current,
-      })
-  }, [state?.preferences.outfitOptions])
   const now = useClock()
-  const todayWeather = weatherForToday(state?.weather, now)
-  const weatherContext =
+  const today = localDay(new Date(now))
+  const weather =
     state?.preferences.useWeather !== false &&
     state?.weather &&
     weatherFresh(state.weather.report, now)
-      ? (state.weather.report.days.find(
-          (item) => item.day === weatherDay?.day,
-        ) ?? todayWeather)
+      ? weatherForToday(state.weather, now)
       : undefined
-  const historyDay = weatherContext?.day ?? localDay(new Date(now))
-  const [seed, setSeed] = useViewState('outfits.seed', 0)
-  const [requested, setRequested] = useViewState('outfits.requested', false)
-  const [preferencesOpen, setPreferencesOpen] = useState(false)
-  const [packingOpen, setPackingOpen] = useState(false)
+  const [occasion, setOccasion] = useViewState<OutfitOptions['occasion']>(
+    'outfits.occasion',
+    'Alltag',
+  )
+  // Each press shows the next candidate of a fresh shuffle.
+  const [seed, setSeed] = useViewState<number | null>('outfits.seed', null)
   const [editing, setEditing] = useState<SavedOutfit | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [onlyFavorites, setOnlyFavorites] = useViewState(
-    'outfits.favorites',
-    false,
-  )
-  const [confirmReset, setConfirmReset] = useState(false)
-  const candidates = useMemo(
+  const options: OutfitOptions = {
+    ...DEFAULT_OUTFIT_OPTIONS,
+    includeAccessory:
+      state?.preferences.outfitOptions?.includeAccessory ??
+      DEFAULT_OUTFIT_OPTIONS.includeAccessory,
+    occasion,
+  }
+  const candidate = useMemo(
     () =>
-      requested && state
+      seed !== null && state
         ? generateOutfits(
             items,
             options,
             state.preferences,
             state.feedback,
             seed,
-            weatherContext,
+            weather,
             wornCounts(state.calendar, state.outfits),
-            recentWear(state.calendar, state.outfits, historyDay),
-          )
-        : [],
-    [items, options, requested, state, seed, weatherContext, historyDay],
+            recentWear(state.calendar, state.outfits, today),
+          )[0]
+        : undefined,
+    // options is derived from occasion and the saved preferences.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [items, occasion, seed, state, weather, today],
   )
-  const rejectedCount =
-    state?.feedback.filter((item) => item.verdict === 'rejected').length ?? 0
   async function action(callback: () => Promise<unknown>) {
     setBusy(true)
     setError('')
@@ -360,455 +231,212 @@ export function OutfitView({
       setBusy(false)
     }
   }
-  function changeOption<K extends keyof OutfitOptions>(
-    key: K,
-    value: OutfitOptions[K],
-  ) {
-    pendingOptions.current = { ...pendingOptions.current, [key]: value }
-    setOptions((previous) => ({ ...previous, [key]: value }))
-    void action(async () => {
-      try {
-        await saveOutfitOptions({ [key]: value })
-      } catch (error) {
-        setOptions((previous) => ({ ...previous, [key]: options[key] }))
-        throw error
-      } finally {
-        if (pendingOptions.current[key] === value)
-          delete pendingOptions.current[key]
-      }
+  const pickForToday = (garmentIds: string[], lookOptions: OutfitOptions) =>
+    action(async () => {
+      await chooseLookForToday({
+        garmentIds,
+        options: lookOptions,
+        versions: items.map((item) => ({
+          id: item.id,
+          updatedAt: item.updatedAt,
+        })),
+      })
+      notify('Ist jetzt dein Tageslook.')
+      onToday()
     })
-    setRequested(false)
-    setError('')
-  }
+  const name = (id: string) => items.find((item) => item.id === id)?.name
+  const candidateSaved =
+    !!candidate &&
+    !!state?.outfits.some(
+      (outfit) => outfitKey(outfit.garmentIds) === candidate.key,
+    )
   return (
     <div className="view outfits-view">
-      <header className="page-heading">
-        <div className="heading-row">
-          <h1>Looks</h1>
-          <div className="heading-actions">
-            <button
-              className="icon-button soft"
-              aria-label="Packliste für eine Reise"
-              onClick={() => setPackingOpen(true)}
-            >
-              <Luggage size={20} />
-            </button>
-            <button
-              className="icon-button soft"
-              aria-label="Stilvorlieben bearbeiten"
-              onClick={() => setPreferencesOpen(true)}
-            >
-              <Settings2 size={21} />
-            </button>
-          </div>
-        </div>
+      <header className="page-heading journal-heading">
+        <h1>Looks</h1>
         <p className="page-sub">
           {state?.outfits.length ?? 0} gespeichert ·{' '}
           {state?.outfits.filter((outfit) => outfit.favorite).length ?? 0}{' '}
           Favoriten
         </p>
       </header>
-      <div className="outfit-tabs" role="group" aria-label="Outfit-Ansicht">
-        <button
-          className={tab === 'discover' ? 'active' : ''}
-          aria-pressed={tab === 'discover'}
-          onClick={() => setTab('discover')}
-        >
-          <ArrowUpRight size={16} />
-          Entdecken
-        </button>
-        <button
-          className={tab === 'saved' ? 'active' : ''}
-          aria-pressed={tab === 'saved'}
-          onClick={() => setTab('saved')}
-        >
-          <Bookmark size={16} />
-          Gespeichert ({state?.outfits.length ?? 0})
-        </button>
-        <button
-          className={tab === 'calendar' ? 'active' : ''}
-          aria-pressed={tab === 'calendar'}
-          onClick={() => setTab('calendar')}
-        >
-          <CalendarDays size={16} />
-          Kalender
-        </button>
-      </div>
       {!state ? (
-        <p className="muted">Deine Outfits werden geladen …</p>
+        <p className="muted">Deine Looks werden geladen …</p>
       ) : (
         <>
-          {tab === 'discover' ? (
-            <>
-              <WeatherPanel onContext={setWeatherDay} notify={notify} />
-              <section
-                className="outfit-options"
-                aria-label="Dein Anlass und Stil"
-              >
-                <div className="field-row">
-                  <label className="field">
-                    Anlass
-                    <select
-                      value={options.occasion}
-                      onChange={(event) =>
-                        changeOption(
-                          'occasion',
-                          event.target.value as OutfitOptions['occasion'],
-                        )
-                      }
-                    >
-                      {OCCASIONS.map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="field">
-                    Saison
-                    <select
-                      value={options.season}
-                      onChange={(event) =>
-                        changeOption(
-                          'season',
-                          event.target.value as OutfitOptions['season'],
-                        )
-                      }
-                    >
-                      {['Alle', ...SEASONS].map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-                <label className="field">
-                  Gewünschter Stil
-                  <select
-                    value={options.style}
-                    onChange={(event) =>
-                      changeOption(
-                        'style',
-                        event.target.value as OutfitOptions['style'],
-                      )
-                    }
-                  >
-                    {['Alle', ...STYLES].map((item) => (
-                      <option key={item}>{item}</option>
-                    ))}
-                  </select>
-                </label>
-                <label className="accessory-option">
-                  <input
-                    type="checkbox"
-                    checked={options.includeAccessory}
-                    onChange={(event) =>
-                      changeOption('includeAccessory', event.target.checked)
-                    }
-                  />
-                  Ein Accessoire ergänzen, wenn eines passt
-                </label>
+          <section
+            className="card look-composer"
+            aria-label="Neu zusammenstellen"
+          >
+            <p className="card-kicker">Neu zusammenstellen</p>
+            <div className="outfit-tabs" role="group" aria-label="Anlass">
+              {OCCASIONS.map((item) => (
                 <button
-                  className="button primary full"
-                  disabled={busy}
+                  key={item}
+                  className={occasion === item ? 'active' : ''}
+                  aria-pressed={occasion === item}
                   onClick={() => {
-                    setRequested(true)
-                    setSeed(crypto.getRandomValues(new Uint32Array(1))[0])
-                    setError('')
+                    setOccasion(item)
+                    setSeed(null)
                   }}
                 >
-                  {requested ? (
-                    <RefreshCw size={17} />
-                  ) : (
-                    <ArrowUpRight size={17} />
-                  )}
-                  {requested ? 'Neu kombinieren' : 'Outfits zusammenstellen'}
+                  {item}
                 </button>
-              </section>
-              {requested && !candidates.length && (
-                <div className="outfit-empty" role="status">
-                  <ShirtNotice />
-                  <h2>Noch kein kompletter Look</h2>
-                  <p>{missingOutfitMessage(items, options, weatherContext)}</p>
-                  <button className="button secondary" onClick={onAdd}>
-                    <Plus size={17} />
-                    Garderobe ergänzen
-                  </button>
-                </div>
-              )}
-              {!requested && (
-                <p className="outfit-start-note">
-                  Für einen Look brauchst du Schuhe und entweder ein Kleid oder
-                  ein Oberteil mit Hose.
-                </p>
-              )}
-              {!!candidates.length && (
-                <OnlineStylist
-                  input={{
-                    items,
-                    candidates,
-                    options,
-                    preferences: state.preferences,
-                    feedback: state.feedback,
-                    weather: weatherContext,
-                  }}
-                  onOpen={onOpen}
-                  applyLabel="Empfohlenen Look speichern"
-                  onApply={async (candidate) => {
-                    await saveOutfit(candidate.garmentIds, options)
-                    notify('Die KI-Empfehlung ist als Outfit gespeichert.')
-                  }}
+              ))}
+            </div>
+            <button
+              className="button primary full"
+              disabled={busy}
+              onClick={() => {
+                setSeed(crypto.getRandomValues(new Uint32Array(1))[0])
+                setError('')
+              }}
+            >
+              Aus der Garderobe vorschlagen
+            </button>
+            {seed !== null && !candidate && (
+              <div className="look-result" role="status">
+                <p>{missingOutfitMessage(items, options, weather)}</p>
+                <button className="button secondary" onClick={onAdd}>
+                  Garderobe ergänzen
+                </button>
+              </div>
+            )}
+            {candidate && (
+              <article className="look-result" aria-label="Vorschlag">
+                <LookBands
+                  ids={candidate.garmentIds}
+                  items={items}
+                  height={64}
                 />
-              )}
-              <div className="outfit-results">
-                {candidates.map((candidate, index) => {
-                  const saved = state.outfits.some(
-                    (outfit) => outfitKey(outfit.garmentIds) === candidate.key,
-                  )
-                  return (
-                    <article
-                      key={candidate.key}
-                      className="outfit-card"
-                      aria-label={`Outfit-Vorschlag ${index + 1}`}
-                    >
-                      <LookBands
-                        ids={candidate.garmentIds}
-                        items={items}
-                        height={64}
-                      />
-                      <div className="outfit-card-heading">
-                        <p className="eyebrow">Look {index + 1}</p>
-                        <span>{options.occasion}</span>
-                      </div>
-                      <OutfitPieces
-                        ids={candidate.garmentIds}
-                        items={items}
-                        onOpen={onOpen}
-                      />
-                      <details className="outfit-reasons">
-                        <summary>Warum diese Kombination?</summary>
-                        <ul>
-                          {candidate.reasons.map((reason) => (
-                            <li key={reason}>{reason}</li>
-                          ))}
-                        </ul>
-                      </details>
-                      <div className="outfit-card-actions">
-                        <button
-                          className="button secondary"
-                          disabled={busy || saved}
-                          onClick={() =>
-                            void action(async () => {
-                              await saveOutfit(candidate.garmentIds, options)
-                              notify('Das Outfit ist gespeichert.')
-                            })
-                          }
-                        >
-                          {saved ? <Check size={16} /> : <Bookmark size={16} />}
-                          {saved ? 'Gespeichert' : 'Speichern'}
-                        </button>
-                        <OutfitRating
-                          ids={candidate.garmentIds}
-                          occasion={options.occasion}
-                          label={`Vorschlag ${index + 1}`}
-                          disabled={busy}
-                          notify={notify}
-                          rating={state.feedback.find(
-                            (item) => item.id === candidate.key,
-                          )}
-                        />
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-              {rejectedCount > 0 && (
-                <div className="reset-feedback">
-                  <p>
-                    {rejectedCount} abgelehnte{' '}
-                    {rejectedCount === 1 ? 'Kombination' : 'Kombinationen'}{' '}
-                    gemerkt.
-                  </p>
-                  {confirmReset ? (
-                    <>
-                      <p>
-                        Ablehnungen wirklich zurücksetzen? Gefallene und
-                        gespeicherte Outfits bleiben erhalten.
-                      </p>
-                      <div className="photo-actions">
-                        <button
-                          className="button secondary"
-                          onClick={() => setConfirmReset(false)}
-                        >
-                          Abbrechen
-                        </button>
-                        <button
-                          className="button secondary"
-                          disabled={busy}
-                          onClick={() =>
-                            void action(async () => {
-                              await db.feedback
-                                .filter((item) => item.verdict === 'rejected')
-                                .delete()
-                              setConfirmReset(false)
-                              notify('Die Ablehnungen wurden zurückgesetzt.')
-                            })
-                          }
-                        >
-                          Ja, zurücksetzen
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <button
-                      className="text-button"
-                      onClick={() => setConfirmReset(true)}
-                    >
-                      Ablehnungen zurücksetzen
-                    </button>
-                  )}
-                </div>
-              )}
-            </>
-          ) : tab === 'calendar' ? (
-            <CalendarView
-              items={items}
-              onOpen={onOpen}
-              onDiscover={() => setTab('discover')}
-              notify={notify}
-            />
-          ) : (
-            <>
-              <div className="collection-toolbar">
-                <span>{state.outfits.length} gespeicherte Looks</span>
-                <button
-                  className="text-button"
-                  aria-pressed={onlyFavorites}
-                  onClick={() => setOnlyFavorites(!onlyFavorites)}
-                >
-                  <Heart
-                    size={16}
-                    fill={onlyFavorites ? 'currentColor' : 'none'}
-                  />
-                  Nur Favoriten
-                </button>
-              </div>
-              {!state.outfits.filter(
-                (outfit) => !onlyFavorites || outfit.favorite,
-              ).length && (
-                <div className="outfit-empty">
-                  <Bookmark size={30} strokeWidth={1.2} />
-                  <h2>
-                    {onlyFavorites
-                      ? 'Noch keine Favoriten'
-                      : 'Noch keine Looks gespeichert'}
-                  </h2>
-                  <p>
-                    {onlyFavorites
-                      ? 'Markiere gespeicherte Looks mit einem Herz.'
-                      : 'Speichere eine Kombination unter Entdecken. Hier findest du sie später wieder.'}
-                  </p>
+                <h2>{colorTitle(candidate.garmentIds, items)}</h2>
+                <p className="look-pieces">
+                  {candidate.garmentIds.map(name).join(' · ')}
+                </p>
+                <div className="look-result-actions">
                   <button
                     className="button secondary"
+                    disabled={busy || candidateSaved}
                     onClick={() =>
-                      onlyFavorites
-                        ? setOnlyFavorites(false)
-                        : setTab('discover')
+                      void action(async () => {
+                        await saveOutfit(candidate.garmentIds, options)
+                        notify(
+                          `„${colorTitle(candidate.garmentIds, items)}“ gespeichert.`,
+                        )
+                      })
                     }
                   >
-                    {onlyFavorites ? 'Alle Looks anzeigen' : 'Looks entdecken'}
+                    {candidateSaved ? 'Gespeichert' : 'Speichern'}
+                  </button>
+                  <button
+                    className="button primary"
+                    disabled={busy}
+                    onClick={() =>
+                      void pickForToday(candidate.garmentIds, options)
+                    }
+                  >
+                    Für heute
                   </button>
                 </div>
-              )}
-              {state.outfits
-                .filter((outfit) => !onlyFavorites || outfit.favorite)
-                .map((outfit, index) => (
-                  <article className="outfit-card" key={outfit.id}>
-                    <LookBands ids={outfit.garmentIds} items={items} />
-                    <div className="saved-outfit-heading">
-                      <button
-                        onClick={() => setEditing(outfit)}
-                        aria-label={`${outfit.name} bearbeiten`}
-                      >
-                        <h2>
-                          <small className="look-number" aria-hidden="true">
-                            {String(index + 1).padStart(2, '0')}
-                          </small>{' '}
-                          {outfit.name}
-                        </h2>
-                        <span>
-                          {outfit.occasion}
-                          {outfit.season !== 'Alle'
-                            ? ` · ${outfit.season}`
-                            : ''}
-                        </span>
-                      </button>
-                      <button
-                        data-motion="heart"
-                        className={`icon-button ${outfit.favorite ? 'is-favorite' : ''}`}
-                        aria-label={`${outfit.name}: Outfit-Favorit`}
-                        aria-pressed={outfit.favorite}
-                        disabled={busy}
-                        onClick={() =>
-                          void action(async () => {
-                            await db.transaction('rw', db.outfits, async () => {
-                              const current = await db.outfits.get(outfit.id)
-                              if (current)
-                                await updateOutfit(outfit.id, {
-                                  favorite: !current.favorite,
-                                })
-                            })
-                          })
-                        }
-                      >
-                        <Heart
-                          size={20}
-                          fill={outfit.favorite ? 'currentColor' : 'none'}
-                        />
-                      </button>
-                    </div>
-                    <OutfitPieces
-                      ids={outfit.garmentIds}
-                      items={items}
-                      onOpen={onOpen}
-                    />
-                    <OutfitRating
-                      ids={outfit.garmentIds}
-                      occasion={outfit.occasion}
-                      label={outfit.name}
-                      disabled={busy}
-                      notify={notify}
-                      rating={state.feedback.find(
-                        (item) => item.id === outfitKey(outfit.garmentIds),
-                      )}
-                    />
-                    {!isCompleteOutfit(
-                      outfit.garmentIds.flatMap((id) =>
-                        items.filter((item) => item.id === id),
-                      ),
-                    ) && (
-                      <p className="generator-disclosure">
-                        Die Kategorien deiner Stücke haben sich geändert. Bitte
-                        prüfe diesen gespeicherten Look.
-                      </p>
-                    )}
+              </article>
+            )}
+          </section>
+          <div className="journal-section-heading">
+            <h2>Gespeichert</h2>
+            <span className="kicker-muted">Zuletzt getragen</span>
+          </div>
+          {!state.outfits.length && (
+            <p className="muted">
+              Speichere oben einen Vorschlag. Hier findest du ihn wieder.
+            </p>
+          )}
+          <div className="saved-looks">
+            {state.outfits.map((outfit, index) => {
+              const worn = state.calendar
+                .filter(
+                  (entry) =>
+                    entry.outfitId === outfit.id &&
+                    entry.status === 'worn' &&
+                    entry.day <= today,
+                )
+                .map((entry) => entry.day)
+                .sort()
+              const last = worn.at(-1)
+              return (
+                <article
+                  className="saved-look"
+                  key={outfit.id}
+                  aria-label={outfit.name}
+                >
+                  <LookBands ids={outfit.garmentIds} items={items} />
+                  <div className="saved-outfit-heading">
                     <button
-                      className="text-button"
                       onClick={() => setEditing(outfit)}
+                      aria-label={`${outfit.name} bearbeiten`}
                     >
-                      Name ändern oder Outfit löschen
+                      <h3>
+                        <small className="look-number" aria-hidden="true">
+                          {String(index + 1).padStart(2, '0')}
+                        </small>{' '}
+                        {outfit.name}
+                      </h3>
+                      <span>
+                        {outfit.occasion} · {worn.length}× · zuletzt{' '}
+                        {last
+                          ? new Date(`${last}T12:00:00`).toLocaleDateString(
+                              'de-CH',
+                              { day: 'numeric', month: 'short' },
+                            )
+                          : 'noch nie'}
+                      </span>
                     </button>
-                  </article>
-                ))}
-            </>
-          )}
-          {packingOpen && (
-            <PackingSheet items={items} onClose={() => setPackingOpen(false)} />
-          )}
-          {preferencesOpen && (
-            <PreferenceEditor
-              current={state.preferences}
-              onClose={() => setPreferencesOpen(false)}
-              notify={notify}
-            />
-          )}
+                    <button
+                      data-motion="heart"
+                      className={`icon-button ${outfit.favorite ? 'is-favorite' : ''}`}
+                      aria-label={`${outfit.name}: Outfit-Favorit`}
+                      aria-pressed={outfit.favorite}
+                      disabled={busy}
+                      onClick={() =>
+                        void action(async () => {
+                          await db.transaction('rw', db.outfits, async () => {
+                            const current = await db.outfits.get(outfit.id)
+                            if (current)
+                              await updateOutfit(outfit.id, {
+                                favorite: !current.favorite,
+                              })
+                          })
+                        })
+                      }
+                    >
+                      <Heart
+                        size={19}
+                        fill={outfit.favorite ? 'currentColor' : 'none'}
+                      />
+                    </button>
+                    <button
+                      className="button secondary"
+                      disabled={busy}
+                      onClick={() =>
+                        void pickForToday(outfit.garmentIds, {
+                          ...DEFAULT_OUTFIT_OPTIONS,
+                          occasion: outfit.occasion,
+                          season: outfit.season,
+                          style: outfit.style,
+                          includeAccessory: outfit.garmentIds.some(
+                            (id) =>
+                              items.find((item) => item.id === id)?.category ===
+                              'Accessoires',
+                          ),
+                        })
+                      }
+                    >
+                      Für heute
+                    </button>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
           {editing && (
             <SavedEditor
               outfit={editing}
@@ -818,12 +446,7 @@ export function OutfitView({
           )}
         </>
       )}
-      {tab === 'discover' && <ShoppingCard hideLocked />}
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </div>
   )
-}
-
-function ShirtNotice() {
-  return <ArrowUpRight size={30} strokeWidth={1.2} />
 }

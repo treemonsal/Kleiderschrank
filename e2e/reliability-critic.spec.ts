@@ -77,8 +77,9 @@ test('Ein offener Tagesplan behält seinen Entwurf bei Änderungen in einem zwei
   context,
 }) => {
   await seed(page)
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Tag bearbeiten', exact: true })
+    .getByRole('button', { name: 'Plan bearbeiten', exact: true })
     .click()
   const editor = page.getByRole('dialog')
   const note = editor.getByLabel('Notiz zum Tag')
@@ -86,8 +87,9 @@ test('Ein offener Tagesplan behält seinen Entwurf bei Änderungen in einem zwei
 
   const other = await context.newPage()
   await other.goto('/')
+  await other.getByRole('button', { name: 'Journal', exact: true }).click()
   await other
-    .getByRole('button', { name: 'Tag bearbeiten', exact: true })
+    .getByRole('button', { name: 'Plan bearbeiten', exact: true })
     .click()
   await other.getByLabel('Notiz zum Tag').fill('Neue Notiz aus Fenster zwei')
   await other
@@ -154,65 +156,6 @@ test('Entfernen eines geöffneten Stücks in einem zweiten Fenster gibt die Navi
   )
   await stylist.click()
   await expect(page.getByRole('dialog')).toBeVisible()
-})
-
-test('Stilvorlieben aus einem alten Fenster überschreiben keine neuere Auswahl', async ({
-  page,
-  context,
-}) => {
-  await seed(page)
-  await page.getByRole('button', { name: 'Looks', exact: true }).click()
-  await page
-    .getByRole('button', { name: 'Stilvorlieben bearbeiten', exact: true })
-    .click()
-  const editor = page.getByRole('dialog')
-  await editor.getByRole('button', { name: 'Elegant', exact: true }).click()
-  await editor.getByRole('button', { name: 'Weiss', exact: true }).click()
-
-  const other = await context.newPage()
-  await other.goto('/')
-  await other.getByRole('button', { name: 'Looks', exact: true }).click()
-  await other
-    .getByRole('button', { name: 'Stilvorlieben bearbeiten', exact: true })
-    .click()
-  await other
-    .getByRole('dialog')
-    .getByRole('button', { name: 'Sportlich', exact: true })
-    .click()
-  await other
-    .getByRole('dialog')
-    .getByRole('button', { name: 'Blau', exact: true })
-    .click()
-  await other
-    .getByRole('button', { name: 'Vorlieben speichern', exact: true })
-    .click()
-  await expect(other.getByRole('dialog')).not.toBeVisible()
-
-  await editor
-    .getByRole('button', { name: 'Vorlieben speichern', exact: true })
-    .click()
-  await expect(editor.getByRole('alert')).toContainText(
-    'Deine Stilvorlieben wurden inzwischen geändert',
-  )
-  await expect(
-    editor.getByRole('button', { name: 'Elegant', exact: true }),
-  ).toHaveAttribute('aria-pressed', 'true')
-  await expect(
-    editor.getByRole('button', { name: 'Weiss', exact: true }),
-  ).toHaveAttribute('aria-pressed', 'true')
-  await other
-    .getByRole('button', { name: 'Stilvorlieben bearbeiten', exact: true })
-    .click()
-  await expect(
-    other
-      .getByRole('dialog')
-      .getByRole('button', { name: 'Sportlich', exact: true }),
-  ).toHaveAttribute('aria-pressed', 'true')
-  await expect(
-    other
-      .getByRole('dialog')
-      .getByRole('button', { name: 'Blau', exact: true }),
-  ).toHaveAttribute('aria-pressed', 'true')
 })
 
 test('Ein laufender Stilcheck bleibt bei einer Profiländerung im anderen Fenster erhalten', async ({

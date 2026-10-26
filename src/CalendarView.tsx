@@ -1,13 +1,7 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { CalendarDays, Check, Pencil, Plus, Trash2 } from 'lucide-react'
-import {
-  dayLabel,
-  isDay,
-  localDay,
-  wornCounts,
-  type CalendarEntry,
-} from './calendar'
+import { dayLabel, isDay, localDay, type CalendarEntry } from './calendar'
 import { db, storageError } from './db'
 import { deleteCalendarEntry, saveCalendarEntry } from './calendar-db'
 import type { Garment } from './model'
@@ -164,10 +158,6 @@ export function CalendarView({
       items.filter((item) => item.id === id),
     ) ?? []
   const today = localDay(new Date(now))
-  const counts = wornCounts(data.entries, data.outfits, today)
-  const wornDays = data.entries.filter(
-    (entry) => entry.status === 'worn' && entry.day <= today,
-  ).length
   const weather =
     data.weather && weatherFresh(data.weather.report, now)
       ? data.weather.report.days.find((item) => item.day === day)
@@ -337,26 +327,6 @@ export function CalendarView({
         )}
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </div>
-      <section className="wear-summary">
-        <h3>Was du wirklich trägst</h3>
-        <p>
-          {wornDays} {wornDays === 1 ? 'Tag' : 'Tage'} als getragen vermerkt.
-          Nur bestätigte Tage bis heute zählen.
-        </p>
-        {[...counts.entries()]
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 5)
-          .map(([id, count]) => (
-            <div key={id}>
-              <span>{items.find((item) => item.id === id)?.name}</span>
-              <strong>{count}×</strong>
-            </div>
-          ))}
-        <small>
-          Die Häufigkeit wird aus dem Kalender berechnet. Entfernst du einen
-          Eintrag oder Look, passt sie sich an.
-        </small>
-      </section>
       {editing && (
         <PlanEditor
           key={`${editing.day}:${editing.entry?.updatedAt ?? 'new'}`}

@@ -85,11 +85,31 @@ async function mockWeather(page: Page, fail: () => boolean = () => false) {
   )
   return calls
 }
-async function manualWeather(page: Page) {
+/** Weather lives in a sheet behind the forecast on Heute. */
+async function openWeather(page: Page) {
   await page
-    .getByText('Wetter für deinen Look', { exact: false })
-    .first()
+    .locator('.bottom-nav')
+    .getByRole('button', { name: 'Heute', exact: true })
     .click()
+  await page
+    .getByRole('button', { name: 'Wetter anzeigen und Ort ändern' })
+    .click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+}
+async function suggest(page: Page) {
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Schliessen', exact: true })
+    .click()
+    .catch(() => {})
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
+    .click()
+  return page.getByRole('article', { name: 'Vorschlag' })
+}
+async function manualWeather(page: Page) {
+  await openWeather(page)
   await page
     .getByRole('textbox', { name: 'Ort manuell suchen', exact: true })
     .fill('Zürich')
@@ -102,11 +122,8 @@ async function manualWeather(page: Page) {
       exact: true,
     }),
   ).toBeVisible()
-  await expect(page.locator('.weather-panel')).not.toHaveAttribute('open', '')
-  await page
-    .getByText('Wetter für deinen Look', { exact: false })
-    .first()
-    .click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await openWeather(page)
   await expect(
     page.getByText('Regenwahrscheinlichkeit: 80 %', { exact: true }),
   ).toBeVisible()
@@ -120,7 +137,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
   await page.goto('/')
   await seed(page)
   await page
-    .getByRole('button', { name: 'Outfits zusammenstellen', exact: true })
+    .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
     .click()
   await page.getByRole('button', { name: 'Speichern', exact: true }).click()
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
@@ -149,9 +166,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
     .getByRole('button', { name: 'Tag speichern', exact: true })
     .click()
   await page.getByRole('button', { name: 'Getragen', exact: true }).click()
-  await expect(
-    page.getByText('1 Tag als getragen vermerkt.', { exact: false }),
-  ).toBeVisible()
+  await expect(page.locator('.journal-stats strong').first()).toHaveText('1')
   await page.screenshot({
     path: testInfo.outputPath('calendar-worn-390.png'),
     fullPage: true,
@@ -212,13 +227,8 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
   await expect(page.getByText('Besprechung', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Gespeichert (1)', exact: true })
-    .click()
-  await page
-    .getByRole('button', {
-      name: 'Name ändern oder Outfit löschen',
-      exact: true,
-    })
+    .locator('.saved-look')
+    .getByRole('button', { name: /bearbeiten$/ })
     .click()
   await page
     .getByRole('button', { name: 'Outfit löschen', exact: true })
@@ -230,9 +240,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
     .getByRole('button', { name: 'Outfit endgültig löschen', exact: true })
     .click()
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
-  await expect(
-    page.getByText('0 Tage als getragen vermerkt.', { exact: false }),
-  ).toBeVisible()
+  await expect(page.locator('.journal-stats strong').first()).toHaveText('0')
 })
 
 test('Wetter sendet ohne Ortswahl nichts, merkt sich die Verwendung und erhält Cache bei Fehler', async ({
@@ -255,27 +263,19 @@ test('Wetter sendet ohne Ortswahl nichts, merkt sich die Verwendung und erhält 
   })
   await expect(toggle).toBeChecked()
   await toggle.uncheck()
-  await page
-    .getByRole('button', { name: 'Outfits zusammenstellen', exact: true })
-    .click()
-  let result = page.getByRole('article', { name: 'Outfit-Vorschlag 1' })
-  await expect(
-    result.getByRole('button', { name: 'Jacke öffnen', exact: true }),
-  ).toHaveCount(0)
+  let result = await suggest(page)
+  await expect(result).toBeVisible()
+  await expect(result).not.toContainText('Jacke')
+  await openWeather(page)
   await toggle.check()
-  result = page.getByRole('article', { name: 'Outfit-Vorschlag 1' })
-  await expect(
-    result.getByRole('button', { name: 'Jacke öffnen', exact: true }),
-  ).toBeVisible()
-  await result.getByText('Warum diese Kombination?', { exact: true }).click()
-  await expect(
-    result.getByText('Regen ist möglich.', { exact: false }),
-  ).toBeVisible()
+  result = await suggest(page)
+  await expect(result).toContainText('Jacke')
   await page.screenshot({
     path: testInfo.outputPath('weather-styling-390.png'),
     fullPage: true,
   })
   fail = true
+  await openWeather(page)
   await page.getByRole('button', { name: 'Wetter laden', exact: true }).click()
   await expect(page.getByRole('alert')).toContainText('503')
   await expect(
@@ -287,11 +287,9 @@ test('Wetter sendet ohne Ortswahl nichts, merkt sich die Verwendung und erhält 
   await expect(
     page.getByText('Gespeicherte Vorhersage veraltet', { exact: false }),
   ).toBeVisible()
-  await expect(
-    page
-      .getByRole('article', { name: 'Outfit-Vorschlag 1' })
-      .getByRole('button', { name: 'Jacke öffnen', exact: true }),
-  ).toHaveCount(0)
+  result = await suggest(page)
+  await expect(result).toBeVisible()
+  await expect(result).not.toContainText('Jacke')
 })
 
 test('Wetterort bleibt offline verfügbar und kann ohne Netz vollständig vergessen werden', async ({
@@ -308,11 +306,7 @@ test('Wetterort bleibt offline verfügbar und kann ohne Netz vollständig verges
   })
   await context.setOffline(true)
   await page.reload()
-  await page.getByRole('button', { name: 'Looks', exact: true }).click()
-  await page
-    .getByText('Wetter für deinen Look', { exact: false })
-    .first()
-    .click()
+  await openWeather(page)
   await expect(
     page.getByText('Regenwahrscheinlichkeit: 80 %', { exact: true }),
   ).toBeVisible()
@@ -330,11 +324,7 @@ test('Wetterort bleibt offline verfügbar und kann ohne Netz vollständig verges
     page.getByText('Ort und Wetter entfernt.', { exact: true }),
   ).toBeVisible()
   await page.reload()
-  await page.getByRole('button', { name: 'Looks', exact: true }).click()
-  await page
-    .getByText('Wetter für deinen Look', { exact: false })
-    .first()
-    .click()
+  await openWeather(page)
   await expect(
     page.getByRole('button', { name: 'Wetter laden', exact: true }),
   ).toHaveCount(0)
@@ -367,10 +357,7 @@ test('Standort wird erst auf Wunsch angefragt; eine Ablehnung lässt die manuell
       () => (window as unknown as { __geoCalls: number }).__geoCalls,
     ),
   ).toBe(0)
-  await page
-    .getByText('Wetter für deinen Look', { exact: false })
-    .first()
-    .click()
+  await openWeather(page)
   await page
     .getByRole('button', { name: 'Standort verwenden', exact: true })
     .click()
@@ -417,11 +404,7 @@ test('Freigegebener Standort lädt gerundetes Wetter, bestätigt Speichern und s
   await context.setGeolocation({ latitude: 47.3769123, longitude: 8.5417821 })
   const calls = await mockWeather(page)
   await page.goto('/')
-  await page.getByRole('button', { name: 'Looks', exact: true }).click()
-  await page
-    .getByText('Wetter für deinen Look', { exact: false })
-    .first()
-    .click()
+  await openWeather(page)
   expect(calls).toEqual([])
   await page
     .getByRole('button', { name: 'Standort verwenden', exact: true })
@@ -429,7 +412,7 @@ test('Freigegebener Standort lädt gerundetes Wetter, bestätigt Speichern und s
   await expect(
     page.getByText('Wetter für Mein Standort gespeichert.', { exact: true }),
   ).toBeVisible()
-  await expect(page.locator('.weather-panel')).not.toHaveAttribute('open', '')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
   expect(calls).toHaveLength(1)
   expect(new URL(calls[0]).searchParams.get('latitude')).toBe('47.38')
   expect(new URL(calls[0]).searchParams.get('longitude')).toBe('8.54')
@@ -442,16 +425,13 @@ for (const width of [375, 390, 430]) {
     await page.clock.install({ time: fixedTime })
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
-    await page.getByRole('button', { name: 'Looks', exact: true }).click()
-    await page
-      .getByText('Wetter für deinen Look', { exact: false })
-      .first()
-      .click()
+    await openWeather(page)
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true)
+    await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
     await page.getByRole('button', { name: 'Journal', exact: true }).click()
     expect(
       await page.evaluate(

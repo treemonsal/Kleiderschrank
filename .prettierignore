@@ -8,3 +8,4 @@ package-lock.json
 .local/
 __pycache__/
 .pytest_cache/
+design/claude-design-handoff/

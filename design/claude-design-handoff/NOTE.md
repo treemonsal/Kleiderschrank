@@ -1,0 +1,1 @@
+Unveränderter Export aus Claude Design (übergeben am 26.10.2026), Vorgabe für das Journal-Design ab 0.28.0 und den Funktionsumfang ab 0.29.0. Nur Referenz, nicht Teil der App. `styles.css` lädt Schriften von Google; die App liefert Cormorant Garamond und Lora selbst aus `src/fonts` aus.

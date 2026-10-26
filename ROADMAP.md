@@ -1,5 +1,14 @@
 # Entwicklungsplan
 
+## Version 0.29.0 – Minimal nach Entwurf
+
+- [x] Stand mit allen Funktionen als Branch `backup/journal-0.28.0-full` sichern
+- [x] Claude-Design-Export (`MyStyle App.dc.html`, Classical) als Vorgabe: Schriften und Farben geprüft, identisch
+- [x] Heute: Verfeinern (Wärmer · Ruhiger · Ähnlich) als Vorschau direkt auf der Tafel mit „neu“-Markierung, Übernehmen/Verwerfen; Wetter rechts nur für heute, sonst „Zu heute“
+- [x] Looks als eine Seite: Anlass, „Aus der Garderobe vorschlagen“, Speichern / Für heute; gespeicherte Looks mit „Für heute“
+- [x] Entfernt: Suche, Sortierung, Auswertung, Packliste, Preisfeld, Online-Stylist, Anderer Look, Look speichern auf Heute, Tagespfeile und Tageskalender auf Heute, Vorlieben-Editor, Saison/Stil/Accessoire in Looks, Sicherungserinnerung, Speicherdetails, KI-Dateien-Verwaltung, „Was du wirklich trägst“, Regal und „Ein Stück ergänzen“ auf Heute, Kalender-Reiter in Looks
+- [x] Daten bleiben vollständig erhalten und gesichert; alte Saison-/Stilfilter wirken nicht mehr unsichtbar
+
 ## Version 0.28.0 – Garderobenjournal
 
 - [x] Stand 0.27.0 als Branch `backup/design-0.27.0` sichern

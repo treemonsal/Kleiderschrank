@@ -22,13 +22,15 @@ Quelle: Claude-Design-Entwurf „MyStyle, ein Garderobenjournal“ (Classical-De
 
 ## Bewusste Abweichungen vom Entwurf
 
-- „Heute getragen“ steht über der Abbildungstafel, weil die Tagesbestätigung auf dem iPhone ohne Scrollen erreichbar bleiben muss.
-- Teile tauschen über den Pfeil auf jeder Abbildung; Antippen öffnet das Stück (wie bisher).
-- Wärmer/Ruhiger/Ähnlich bleiben im bestehenden Dialog „Tageslook verfeinern“.
-- Der Titel des Tageslooks nennt die zwei führenden erfassten Farben („Beige & Blau“). Der Entwurf zeigte Fantasienamen, die App kennt nur die festen Farbnamen.
+Seit 0.29.0 folgt die App dem Entwurf auch im Funktionsumfang (siehe ROADMAP). Verbleibende Abweichungen:
+
+- Zahnrad neben der Sprechblase: KI-Freigabe, Stilprofil und Sicherung brauchen einen Ort; der Entwurf zeigt nur die Sprechblase.
+- „Heute getragen“ steht über der Abbildungstafel, damit die Tagesbestätigung ohne Scrollen erreichbar bleibt; nach dem Bestätigen erscheint „Getragen“ statt „Im Journal vermerkt · Rückgängig“ (Korrektur im Journal).
+- Teile tauschen über den Pfeil auf jeder Abbildung; Antippen öffnet das Stück.
+- Der Titel des Tageslooks und neuer Vorschläge nennt die zwei führenden erfassten Farben („Beige & Blau“); der Entwurf zeigte Fantasienamen.
+- Looks bietet vier Anlässe (Alltag, Büro, Abend, Freizeit), weil gespeicherte Looks „Freizeit“ verwenden können.
+- Die Einkaufsberatung zeigt ihren Fortschritt in einem aufklappbaren Bereich.
 - Stoffmuster sind ein Hinweis pro Kategorie, kein erfasster Stoff.
-- Funktionen von 0.27.0 bleiben am gewohnten Ort: „Lange nicht getragen“ (drei Stücke, nur mit Tragetagen) zusätzlich auf Heute, Reiter „Kalender“ zusätzlich in Looks. Beide nutzen dieselben Bausteine wie das Journal (`ForgottenShelf`, `CalendarView`). Abgleich per Bedienelement-Inventar aller Ansichten von 0.27.0 und 0.28.0.
-- „Warum diese Kombination?“ ist auf Heute zugeklappt, damit die Startseite textarm bleibt.
 
 ## Stylesheets
 

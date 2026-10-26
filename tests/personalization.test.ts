@@ -28,11 +28,6 @@ import {
 } from '../src/personalization'
 import { generateOutfits } from '../src/generator'
 import { chooseDailyOutfit } from '../src/daily-outfit'
-import {
-  stylistPrompt,
-  stylistRevision,
-  type StylistInput,
-} from '../src/stylist-model'
 import type { Garment } from '../src/model'
 import { replacementChoices } from '../src/outfit-customization'
 
@@ -494,24 +489,5 @@ describe('Dauerhafte, kontrollierbare Stilprofile und Rückmeldungen', () => {
       expect(await createDatabaseBackup(db)).toContain('"blue"')
       expect(await db.feedback.count()).toBe(1)
     }
-  })
-  it('gibt ausdrücklich gewählte Vorlieben und passende gelernte Hinweise auch an den Online-Stylisten', () => {
-    const input: StylistInput = {
-      items,
-      options: DEFAULT_OUTFIT_OPTIONS,
-      preferences: profile({ styles: ['Minimalistisch'] }),
-      candidates: [
-        { key: outfitKey(ids), garmentIds: ids, score: 1, reasons: [] },
-      ],
-      feedback: [rating()],
-    }
-    const prompt = stylistPrompt(input, '')
-    expect(prompt).toContain('styleProfile')
-    expect(prompt).toContain('Minimalistisch')
-    expect(prompt).toContain('"observations":1')
-    expect(prompt).toContain('weak, bounded hints')
-    expect(stylistRevision(input)).not.toEqual(
-      stylistRevision({ ...input, feedback: [] }),
-    )
   })
 })

@@ -12,7 +12,6 @@ export function ForgottenShelf({
   wear,
   today,
   onOpen,
-  onWardrobe,
   limit = 4,
   fallback = true,
 }: {
@@ -20,7 +19,6 @@ export function ForgottenShelf({
   wear: Map<string, WearStats>
   today: string
   onOpen: (id: string) => void
-  onWardrobe: (sort: 'least-worn' | 'newest') => void
   limit?: number
   fallback?: boolean
 }) {
@@ -44,12 +42,6 @@ export function ForgottenShelf({
     <section className="journal-forgotten" aria-label={title}>
       <div className="journal-section-heading">
         <h2>{title}</h2>
-        <button
-          className="text-button"
-          onClick={() => onWardrobe(forgottenMode ? 'least-worn' : 'newest')}
-        >
-          Alle
-        </button>
       </div>
       {shown.map((item) => (
         <button

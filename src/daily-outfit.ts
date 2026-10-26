@@ -29,9 +29,14 @@ export function chooseDailyOutfit(
   day: string,
   weather?: WeatherDay,
 ) {
+  // Season and style had their own pickers before 0.29.0; with those gone,
+  // stored values must not keep filtering silently. Occasion and accessory
+  // still come from the style check.
   const options: OutfitOptions = {
     ...DEFAULT_OUTFIT_OPTIONS,
     ...preferences.outfitOptions,
+    season: 'Alle',
+    style: 'Alle',
   }
   if (options.season === 'Alle' && !weather) {
     const month = Number(day.slice(5, 7))

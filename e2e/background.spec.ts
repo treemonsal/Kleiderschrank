@@ -158,18 +158,6 @@ test('Echtes KI-Modell erzeugt lokal eine Maske, erhält das Original und funkti
   const restored = await exportData(page)
   expect(restored.garments[0].photo).toBe(backup.garments[0].photo)
   expect(restored.garments[0].cutout).toBeUndefined()
-  await page
-    .getByText('Lokale Freistellung & KI-Speicher', { exact: true })
-    .click()
-  await page
-    .getByRole('button', { name: 'KI-Dateien vom Gerät entfernen' })
-    .click()
-  await expect(
-    page.getByText('Die zwischengespeicherten KI-Dateien wurden entfernt.', {
-      exact: false,
-    }),
-  ).toBeVisible()
-  expect(await page.evaluate(() => caches.has('mystyle-ai-v1'))).toBe(false)
   expect(external).toEqual([])
   expect(errors).toEqual([])
 })

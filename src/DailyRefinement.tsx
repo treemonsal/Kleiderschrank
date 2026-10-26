@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { Check, LockKeyhole } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import type { Garment } from './model'
 import type { CalendarEntry } from './calendar'
 import type {
@@ -10,12 +9,20 @@ import type {
   SavedOutfit,
 } from './outfit-model'
 import type { WeatherDay } from './weather'
-import { Sheet, GarmentPicture, ErrorMessage } from './ui'
+import { ErrorMessage } from './ui'
 import { storageError } from './db'
 import { refinementChoices, applyDailyRefinement } from './daily-refinement'
-import { REFINEMENT_LABELS, type OutfitRefinement } from './refinement-model'
+import type { OutfitRefinement } from './refinement-model'
 
-export function DailyRefinement(props: {
+type Intent = OutfitRefinement['intent']
+const SHORT: Record<Intent, string> = {
+  warmer: 'Wärmer',
+  quieter: 'Ruhiger',
+  similar: 'Ähnlich',
+}
+const ORDER: Intent[] = ['warmer', 'quieter', 'similar']
+
+export interface RefinementProps {
   day: string
   ids: string[]
   items: Garment[]
@@ -26,31 +33,41 @@ export function DailyRefinement(props: {
   calendar: CalendarEntry[]
   weather?: WeatherDay
   expectedEntry: string | null
-  onClose: () => void
+  disabled?: boolean
+  /** Shows the previewed look in the plate; undefined restores today's. */
+  onPreview: (ids: string[] | undefined) => void
   notify: (text: string) => void
-}) {
-  // Keep the view the person opened; live changes must never silently replace
-  // their draft. Applying revalidates the snapshot inside one transaction.
-  const [snapshot] = useState(() => props)
-  const [lockedIds, setLockedIds] = useState<string[]>([])
+}
+
+/**
+ * Wärmer · Ruhiger · Ähnlich as an inline preview under today's plate.
+ * Nothing is written until „Übernehmen“; applying revalidates the snapshot
+ * taken when the variant was requested.
+ */
+export function DailyRefinement(props: RefinementProps) {
   const [preview, setPreview] = useState<{
     candidate: OutfitCandidate
     request: OutfitRefinement
+    snapshot: RefinementProps
   }>()
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  const current = snapshot.ids.flatMap(
-    (id) => snapshot.items.find((item) => item.id === id) ?? [],
+  const { onPreview } = props
+  useEffect(
+    () => onPreview(preview?.candidate.garmentIds),
+    [preview, onPreview],
   )
-  const pieces = preview
-    ? preview.candidate.garmentIds.flatMap(
-        (id) => snapshot.items.find((item) => item.id === id) ?? [],
-      )
-    : []
-  function suggest(intent: OutfitRefinement['intent']) {
+  useEffect(() => () => onPreview(undefined), [onPreview])
+  function suggest(intent: Intent) {
     setError('')
-    const request = { intent, currentIds: snapshot.ids, lockedIds }
+    if (preview?.request.intent === intent) {
+      setPreview(undefined)
+      setMessage('')
+      return
+    }
+    const snapshot = props
+    const request = { intent, currentIds: snapshot.ids, lockedIds: [] }
     const candidate = refinementChoices(
       snapshot.items,
       snapshot.options,
@@ -62,159 +79,116 @@ export function DailyRefinement(props: {
       snapshot.day,
       snapshot.weather,
     )[0]
-    setPreview(candidate ? { candidate, request } : undefined)
+    setPreview(candidate ? { candidate, request, snapshot } : undefined)
     setMessage(
       candidate
         ? ''
         : intent === 'warmer'
-          ? 'Keine wärmere Variante mit diesen Vorgaben gefunden. Ergänze eine passende Jacke oder gib ein festgehaltenes Teil frei.'
+          ? 'Keine wärmere Variante gefunden. Ergänze eine passende Jacke.'
           : intent === 'quieter'
-            ? 'Keine Variante mit weniger bekannten Farbakzenten gefunden. Prüfe fehlende Farbangaben oder gib ein Teil frei.'
-            : 'Keine andere vollständige Variante mit diesen Vorgaben gefunden. Gib ein Teil frei oder ergänze deinen Kleiderschrank.',
+            ? 'Keine ruhigere Variante gefunden.'
+            : 'Keine andere vollständige Variante gefunden.',
     )
   }
+  const name = (id: string) =>
+    props.items.find((item) => item.id === id)?.name ?? ''
+  const added = preview
+    ? preview.candidate.garmentIds.filter(
+        (id) => !preview.snapshot.ids.includes(id),
+      )
+    : []
+  const removed = preview
+    ? preview.snapshot.ids.filter(
+        (id) => !preview.candidate.garmentIds.includes(id),
+      )
+    : []
   return (
-    <Sheet
-      title="Tageslook verfeinern"
-      eyebrow="Heute"
-      onClose={props.onClose}
-      closeDisabled={busy}
-    >
-      <p className="muted">
-        Halte Lieblingsteile fest. Wir suchen in deinem Kleiderschrank nach
-        einer Variante mit möglichst wenigen Änderungen. Übernommen wird erst
-        nach deiner Bestätigung.
-      </p>
-      <fieldset className="refinement-locks" disabled={busy}>
-        <legend>Für diese Anpassung behalten</legend>
-        {current.map((item) => (
-          <label key={item.id} className="refinement-lock">
-            <input
-              type="checkbox"
-              checked={lockedIds.includes(item.id)}
-              onChange={(event) => {
-                setLockedIds((previous) =>
-                  event.target.checked
-                    ? [...previous, item.id]
-                    : previous.filter((id) => id !== item.id),
-                )
+    <>
+      {preview && (
+        <section
+          className="card refinement-preview"
+          aria-label="Vorschau der Anpassung"
+          aria-live="polite"
+        >
+          <p className="card-kicker">
+            Vorschau · {SHORT[preview.request.intent]}
+          </p>
+          <p>
+            {added.map(name).join(', ') || 'Gleiche Teile'}
+            {removed.length ? ` statt ${removed.map(name).join(', ')}` : ''}.
+          </p>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          <div className="refinement-buttons">
+            <button
+              type="button"
+              className="button secondary"
+              disabled={busy}
+              onClick={() => {
                 setPreview(undefined)
-                setMessage('')
                 setError('')
               }}
-            />
-            <GarmentPicture item={item} />
-            <span>
-              <strong>{item.category} behalten</strong>
-              <small>{item.name}</small>
-            </span>
-            {lockedIds.includes(item.id) && (
-              <LockKeyhole size={16} aria-hidden="true" />
-            )}
-          </label>
-        ))}
-      </fieldset>
-      <div className="refinement-actions">
-        {Object.entries(REFINEMENT_LABELS).map(([intent, label]) => (
+            >
+              Verwerfen
+            </button>
+            <button
+              type="button"
+              className="button primary"
+              disabled={busy}
+              onClick={async () => {
+                const { snapshot, request, candidate } = preview
+                setBusy(true)
+                setError('')
+                try {
+                  await applyDailyRefinement({
+                    day: snapshot.day,
+                    options: snapshot.options,
+                    expectedPreferences: snapshot.preferences.updatedAt,
+                    expectedEntry: snapshot.expectedEntry,
+                    expectedSelection:
+                      snapshot.preferences.dailySelection?.day === snapshot.day
+                        ? snapshot.preferences.dailySelection.updatedAt
+                        : null,
+                    request,
+                    garmentIds: candidate.garmentIds,
+                    versions: snapshot.items.map((item) => ({
+                      id: item.id,
+                      updatedAt: item.updatedAt,
+                    })),
+                  })
+                  setPreview(undefined)
+                  props.notify('Look angepasst.')
+                } catch (error) {
+                  setError(storageError(error))
+                } finally {
+                  setBusy(false)
+                }
+              }}
+            >
+              Übernehmen
+            </button>
+          </div>
+        </section>
+      )}
+      <div className="refine-row" role="group" aria-label="Verfeinern">
+        <span aria-hidden="true">Verfeinern</span>
+        {ORDER.map((intent) => (
           <button
             type="button"
-            className="button secondary full"
             key={intent}
-            disabled={busy}
-            onClick={() => suggest(intent as OutfitRefinement['intent'])}
+            className="button secondary"
+            aria-pressed={preview?.request.intent === intent}
+            disabled={busy || props.disabled}
+            onClick={() => suggest(intent)}
           >
-            {label}
+            {SHORT[intent]}
           </button>
         ))}
       </div>
-      <p className="micro-copy">
-        Die Auswahl nutzt deine gespeicherten Angaben. „Wärmer“ bevorzugt eine
-        zusätzliche Jacke oder winterliche Saisonangaben; „ruhiger“ weniger
-        bekannte Farbakzente. Material, Muster und tatsächliche Wärme bleiben
-        ungeprüft.
-      </p>
       {message && (
         <p role="status" className="muted">
           {message}
         </p>
       )}
-      {preview && (
-        <section
-          className="refinement-preview"
-          aria-label="Vorschau der Anpassung"
-          aria-live="polite"
-        >
-          <h3>{REFINEMENT_LABELS[preview.request.intent]}</h3>
-          <div className="refinement-pieces">
-            {pieces.map((item) => (
-              <figure key={item.id}>
-                <GarmentPicture item={item} />
-                <figcaption>
-                  <strong>{item.name}</strong>
-                  <small>
-                    {snapshot.ids.includes(item.id)
-                      ? 'Bleibt erhalten'
-                      : 'Neu im Look'}
-                  </small>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-          {current.some(
-            (item) => !preview.candidate.garmentIds.includes(item.id),
-          ) && (
-            <p className="micro-copy">
-              Ersetzt:{' '}
-              {current
-                .filter(
-                  (item) => !preview.candidate.garmentIds.includes(item.id),
-                )
-                .map((item) => item.name)
-                .join(', ')}
-              .
-            </p>
-          )}
-          <button
-            type="button"
-            className="button primary full"
-            disabled={busy}
-            onClick={async () => {
-              setBusy(true)
-              setError('')
-              try {
-                await applyDailyRefinement({
-                  day: snapshot.day,
-                  options: snapshot.options,
-                  expectedPreferences: snapshot.preferences.updatedAt,
-                  expectedEntry: snapshot.expectedEntry,
-                  expectedSelection:
-                    snapshot.preferences.dailySelection?.day === snapshot.day
-                      ? snapshot.preferences.dailySelection.updatedAt
-                      : null,
-                  request: preview.request,
-                  garmentIds: preview.candidate.garmentIds,
-                  versions: snapshot.items.map((item) => ({
-                    id: item.id,
-                    updatedAt: item.updatedAt,
-                  })),
-                })
-                props.notify(
-                  'Dein Tageslook ist angepasst. Festgehaltene Teile bleiben erhalten.',
-                )
-                props.onClose()
-              } catch (error) {
-                setError(storageError(error))
-              } finally {
-                setBusy(false)
-              }
-            }}
-          >
-            <Check size={18} />
-            Für heute übernehmen
-          </button>
-        </section>
-      )}
-      {error && <ErrorMessage>{error}</ErrorMessage>}
-    </Sheet>
+    </>
   )
 }

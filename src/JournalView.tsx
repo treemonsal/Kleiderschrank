@@ -13,7 +13,6 @@ export function JournalView({
   wear,
   onOpen,
   onLooks,
-  onWardrobe,
   onBackup,
   notify,
 }: {
@@ -21,7 +20,6 @@ export function JournalView({
   wear: Map<string, WearStats>
   onOpen: (id: string) => void
   onLooks: () => void
-  onWardrobe: (sort: 'least-worn' | 'newest') => void
   onBackup: () => void
   notify: (message: string) => void
 }) {
@@ -77,13 +75,7 @@ export function JournalView({
           <span>verschiedene Stücke getragen</span>
         </div>
       </div>
-      <ForgottenShelf
-        items={items}
-        wear={wear}
-        today={today}
-        onOpen={onOpen}
-        onWardrobe={onWardrobe}
-      />
+      <ForgottenShelf items={items} wear={wear} today={today} onOpen={onOpen} />
       <ShoppingCard />
       <div className="journal-backup">
         <div>

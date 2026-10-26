@@ -1,5 +1,6 @@
 import { test, expect, type Page } from './fixtures'
 import { readFile } from 'node:fs/promises'
+import { stepDay } from './day-helpers'
 
 for (const width of [320, 375, 430])
   test(`Tages- und Kalenderziele bleiben bei ${width}px mindestens 44 Pixel gross`, async ({
@@ -16,19 +17,17 @@ for (const width of [320, 375, 430])
       expect(Number(box.width.toFixed(3))).toBeGreaterThanOrEqual(44)
       expect(Number(box.height.toFixed(3))).toBeGreaterThanOrEqual(44)
     }
-    await page
-      .getByRole('button', { name: 'Tageskalender öffnen', exact: true })
-      .click()
-    await expect(page.getByRole('dialog')).toBeVisible()
-    const sizes = await page
-      .getByRole('dialog')
+    await page.getByRole('button', { name: 'Journal', exact: true }).click()
+    const cells = page
+      .getByRole('region', { name: 'Outfit-Kalender' })
       .locator('.calendar-grid > button')
-      .evaluateAll((buttons) =>
-        buttons.map((button) => ({
-          width: button.getBoundingClientRect().width,
-          height: button.getBoundingClientRect().height,
-        })),
-      )
+    await expect(cells.first()).toBeVisible()
+    const sizes = await cells.evaluateAll((buttons) =>
+      buttons.map((button) => ({
+        width: button.getBoundingClientRect().width,
+        height: button.getBoundingClientRect().height,
+      })),
+    )
     expect(sizes.length).toBeGreaterThanOrEqual(28)
     for (const size of sizes) {
       expect(Number(size.width.toFixed(3))).toBeGreaterThanOrEqual(44)
@@ -106,37 +105,23 @@ async function seed(page: Page) {
   return { photo, cutout }
 }
 
-test('Bereichswechsel behalten Datum, Suchfilter, Sortierung, Reiter und Scrollposition; erneutes Tippen führt nach oben', async ({
+test('Bereichswechsel behalten Datum, Filter, Anlass und Scrollposition; erneutes Tippen führt nach oben', async ({
   page,
 }) => {
   await page.goto('/')
   await seed(page)
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
-  await page
-    .getByRole('button', { name: 'Vorheriger Tag', exact: true })
-    .click()
+  await stepDay(page, -1)
   const day = await page.locator('.daily-look').getAttribute('data-day')
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
-  await page
-    .getByRole('searchbox', { name: 'Kleidung suchen' })
-    .fill('Fotostück')
   await page.getByRole('button', { name: 'Oberteile', exact: true }).click()
-  await page.getByRole('button', { name: 'Sortierung ändern' }).click()
-  await page
-    .getByRole('combobox', { name: 'Sortierung', exact: true })
-    .selectOption('name')
   await page.evaluate(() => window.scrollTo({ top: 350, behavior: 'instant' }))
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(350)
   await page.getByRole('button', { name: 'Looks', exact: true }).click()
-  await page
-    .getByRole('button', { name: 'Gespeichert (1)', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Abend', exact: true }).click()
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
   await expect(page.locator('.daily-look')).toHaveAttribute('data-day', day!)
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
-  await expect(
-    page.getByRole('searchbox', { name: 'Kleidung suchen' }),
-  ).toHaveValue('Fotostück')
   await expect(
     page.getByRole('button', { name: 'Oberteile', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
@@ -145,17 +130,11 @@ test('Bereichswechsel behalten Datum, Suchfilter, Sortierung, Reiter und Scrollp
     .toBeLessThan(2)
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
-  await page.getByRole('button', { name: 'Sortierung ändern' }).click()
-  await expect(
-    page.getByRole('combobox', { name: 'Sortierung', exact: true }),
-  ).toHaveValue('name')
-  await page
-    .getByRole('button', { name: 'Filter zurücksetzen', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Alle', exact: true }).click()
   await expect(page.locator('.garment-card')).toHaveCount(10)
   await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await expect(
-    page.getByRole('button', { name: 'Gespeichert (1)', exact: true }),
+    page.getByRole('button', { name: 'Abend', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
 })
 
@@ -165,32 +144,34 @@ test('Gespeicherte Outfit-Favoriten und Wäschewechsel erhalten echte Fotos und 
   await page.goto('/')
   const originals = await seed(page)
   await page.getByRole('button', { name: 'Looks', exact: true }).click()
-  await page
-    .getByRole('button', { name: 'Gespeichert (1)', exact: true })
-    .click()
-  const card = page.locator('.outfit-card')
+  const look = page.locator('.saved-look')
   for (let i = 0; i < 3; i++) {
-    await card
+    await look
       .getByRole('button', { name: 'Alltagslook: Outfit-Favorit', exact: true })
       .click()
     await expect(
-      card.getByRole('button', {
+      look.getByRole('button', {
         name: 'Alltagslook: Outfit-Favorit',
         exact: true,
       }),
     ).toHaveAttribute('aria-pressed', String(i % 2 === 0))
-    await expect
-      .poll(() =>
-        card
-          .getByRole('img')
-          .evaluateAll((images) =>
+  }
+  // Favouring looks must not replace the photos shown in the wardrobe.
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
+  const card = page.locator('.garment-grid')
+  await expect
+    .poll(() =>
+      card
+        .getByRole('img')
+        .evaluateAll(
+          (images) =>
+            images.length > 0 &&
             images.every(
               (image) => (image as HTMLImageElement).naturalWidth === 192,
             ),
-          ),
-      )
-      .toBe(true)
-  }
+        ),
+    )
+    .toBe(true)
   await card
     .getByRole('button', { name: 'Fotostück 0 öffnen', exact: true })
     .click()
@@ -285,9 +266,6 @@ test('Look- und Kalenderentwürfe sind geschützt, der Schliessen-Knopf bleibt i
   await page.goto('/')
   await seed(page)
   await page.getByRole('button', { name: 'Looks', exact: true }).click()
-  await page
-    .getByRole('button', { name: 'Gespeichert (1)', exact: true })
-    .click()
   await page
     .getByRole('button', { name: 'Alltagslook bearbeiten', exact: true })
     .click()

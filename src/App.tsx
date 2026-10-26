@@ -11,13 +11,10 @@ import {
   MessageCircle,
   Pencil,
   Plus,
-  Search,
-  SlidersHorizontal,
   Trash2,
   WifiOff,
   X,
   Settings,
-  ChartColumn,
 } from 'lucide-react'
 import {
   db,
@@ -29,23 +26,14 @@ import {
 import { CATEGORIES, filterGarments, type Garment } from './model'
 import { colorHex } from './swatch'
 import { keepPhotoIdentity } from './photo-identity'
-import { BackupReminder } from './BackupReminder'
 import { PairingSuggestions } from './PairingSuggestions'
 import { EmptyIllustration } from './EmptyIllustration'
-import { ShoppingCard } from './Shopping'
 import { DailyOutfit } from './DailyOutfit'
 import { LaundryIcon, useTapMotion } from './motion'
 import { localDay, shiftDay } from './calendar'
-import {
-  costPerWear,
-  describeWear,
-  formatChf,
-  wearStats,
-  type WearStats,
-} from './wear-stats'
+import { describeWear, wearStats, type WearStats } from './wear-stats'
 import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
-import { ForgottenShelf } from './ForgottenShelf'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
 import { useStylistInbox } from './stylist-inbox'
 import {
@@ -70,11 +58,6 @@ const Editor = lazy(() =>
 const BatchImport = lazy(() =>
   import('./BatchImport').then((module) => ({ default: module.BatchImport })),
 )
-const InsightsSheet = lazy(() =>
-  import('./InsightsSheet').then((module) => ({
-    default: module.InsightsSheet,
-  })),
-)
 const JournalView = lazy(() =>
   import('./JournalView').then((module) => ({ default: module.JournalView })),
 )
@@ -92,21 +75,15 @@ function Loading() {
 
 function Home({
   items,
-  wear,
-  onWardrobe,
   onAdd,
   onOpen,
   onOutfits,
-  onBackup,
   notify,
 }: {
   items: Garment[]
-  wear: Map<string, WearStats>
-  onWardrobe: (sort: 'least-worn' | 'newest') => void
   onAdd: () => void
   onOpen: (id: string) => void
   onOutfits: () => void
-  onBackup: () => void
   notify: (message: string) => void
 }) {
   const today = localDay(new Date(useClock()))
@@ -133,26 +110,6 @@ function Home({
           notify={notify}
         />
       </div>
-      <ShoppingCard hideLocked />
-      <BackupReminder onBackup={onBackup} />
-      <ForgottenShelf
-        items={items}
-        wear={wear}
-        today={today}
-        onOpen={onOpen}
-        onWardrobe={onWardrobe}
-        limit={3}
-        fallback={false}
-      />
-      {items.length > 0 && (
-        <button className="add-row" onClick={onAdd}>
-          <span>
-            <strong>Ein Stück ergänzen</strong>
-            <small>Foto aufnehmen oder aus der Mediathek wählen.</small>
-          </span>
-          <Plus size={20} strokeWidth={1.5} aria-hidden="true" />
-        </button>
-      )}
     </div>
   )
 }
@@ -170,29 +127,13 @@ function Wardrobe({
   onOpen: (id: string) => void
   onFavorite: (item: Garment) => void
 }) {
-  const [query, setQuery] = useViewState('wardrobe.query', '')
   const [category, setCategory] = useViewState('wardrobe.category', 'Alle')
   const [favorites, setFavorites] = useViewState('wardrobe.favorites', false)
   const [laundryOnly, setLaundryOnly] = useViewState('wardrobe.laundry', false)
-  const [sort, setSort] = useViewState('wardrobe.sort', 'newest')
-  const [showSort, setShowSort] = useState(false)
-  const [insightsOpen, setInsightsOpen] = useState(false)
-  const filtered = filterGarments(items, query, category, favorites)
+  const filtered = filterGarments(items, '', category, favorites)
     .filter((item) => !laundryOnly || item.inLaundry)
-    .sort((a, b) =>
-      sort === 'name'
-        ? a.name.localeCompare(b.name, 'de')
-        : sort === 'least-worn'
-          ? (wear.get(a.id)?.count ?? 0) - (wear.get(b.id)?.count ?? 0) ||
-            (wear.get(a.id)?.lastWorn ?? '').localeCompare(
-              wear.get(b.id)?.lastWorn ?? '',
-            ) ||
-            a.name.localeCompare(b.name, 'de')
-          : sort === 'oldest'
-            ? a.createdAt.localeCompare(b.createdAt)
-            : b.createdAt.localeCompare(a.createdAt),
-    )
-  const hasFilters = !!query || category !== 'Alle' || favorites || laundryOnly
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+  const hasFilters = category !== 'Alle' || favorites || laundryOnly
   return (
     <div className="view wardrobe-view">
       <header className="page-heading journal-heading">
@@ -205,13 +146,6 @@ function Wardrobe({
             </p>
           </div>
           <div className="heading-actions">
-            <button
-              className="icon-button soft"
-              aria-label="Auswertung öffnen"
-              onClick={() => setInsightsOpen(true)}
-            >
-              <ChartColumn size={20} strokeWidth={1.5} />
-            </button>
             <button
               className="icon-button primary-add"
               aria-label="Stück hinzufügen"
@@ -291,68 +225,6 @@ function Wardrobe({
           <figcaption>Farbbilanz, gewichtet nach Tragehäufigkeit</figcaption>
         </figure>
       )}
-      <div className="search-row">
-        <label className="search-field">
-          <Search size={17} strokeWidth={1.5} />
-          <input
-            type="search"
-            aria-label="Kleidung suchen"
-            placeholder="Deine Stücke durchsuchen"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          {query && (
-            <button aria-label="Suche leeren" onClick={() => setQuery('')}>
-              <X size={17} />
-            </button>
-          )}
-        </label>
-      </div>
-      <div className="collection-toolbar">
-        <span>
-          {filtered.length} {filtered.length === 1 ? 'Stück' : 'Stücke'}
-          {hasFilters ? ' gefunden' : ' in deiner Garderobe'}
-        </span>
-        {hasFilters && (
-          <button
-            className="text-button"
-            onClick={() => {
-              setQuery('')
-              setCategory('Alle')
-              setFavorites(false)
-              setLaundryOnly(false)
-            }}
-          >
-            Filter zurücksetzen
-          </button>
-        )}
-        <button
-          className="text-button"
-          aria-label="Sortierung ändern"
-          aria-expanded={showSort}
-          onClick={() => setShowSort(!showSort)}
-        >
-          <SlidersHorizontal size={15} />
-          Sortieren
-        </button>
-      </div>
-      {showSort && (
-        <label className="field sort-field">
-          Sortierung
-          <select
-            value={sort}
-            onChange={(e) => {
-              setSort(e.target.value)
-              setShowSort(false)
-            }}
-          >
-            <option value="newest">Zuletzt hinzugefügt</option>
-            <option value="oldest">Zuerst hinzugefügt</option>
-            <option value="name">Name A–Z</option>
-            <option value="least-worn">Selten getragen zuerst</option>
-          </select>
-        </label>
-      )}
       {filtered.length ? (
         <div className="garment-grid">
           {filtered.map((item) => (
@@ -369,9 +241,7 @@ function Wardrobe({
           {!hasFilters && <EmptyIllustration />}
           <h2>{hasFilters ? 'Hier liegt gerade nichts.' : 'Noch leer'}</h2>
           <p>
-            {hasFilters
-              ? 'Anderer Suchbegriff oder Filter?'
-              : 'Füge dein erstes Stück hinzu.'}
+            {hasFilters ? 'Anderer Filter?' : 'Füge dein erstes Stück hinzu.'}
           </p>
           {!hasFilters && (
             <button className="button primary" onClick={onAdd}>
@@ -379,15 +249,6 @@ function Wardrobe({
             </button>
           )}
         </div>
-      )}
-      {insightsOpen && (
-        <Suspense fallback={null}>
-          <InsightsSheet
-            items={items}
-            onOpen={onOpen}
-            onClose={() => setInsightsOpen(false)}
-          />
-        </Suspense>
       )}
     </div>
   )
@@ -470,17 +331,6 @@ function Detail({
             <dt>Stil</dt>
             <dd>{item.styles.join(', ') || 'Nicht angegeben'}</dd>
           </div>
-          {item.price !== undefined && (
-            <div>
-              <dt>Preis</dt>
-              <dd>
-                {formatChf(item.price)}
-                <small className="cost-per-wear">
-                  {formatChf(costPerWear(item.price, wear?.count)!)} pro Tragen
-                </small>
-              </dd>
-            </div>
-          )}
         </dl>
         <button
           className="button secondary full laundry-toggle"
@@ -671,14 +521,6 @@ export default function App() {
     cancelScroll.current = restorePageScroll(top)
     after?.()
   }
-  function openWardrobeSorted(sort: 'least-worn' | 'newest') {
-    presetView('wardrobe.sort', sort)
-    presetView('wardrobe.category', 'Alle')
-    presetView('wardrobe.query', '')
-    presetView('wardrobe.favorites', false)
-    presetView('wardrobe.laundry', false)
-    navigate('wardrobe', () => undefined)
-  }
   async function favorite(item: Garment) {
     try {
       await toggleFavorite(item)
@@ -796,16 +638,9 @@ export default function App() {
         ) : view === 'home' ? (
           <Home
             items={items}
-            wear={wear}
-            onWardrobe={openWardrobeSorted}
             onAdd={() => setEditor('new')}
             onOpen={setSelectedId}
             onOutfits={() => navigate('outfits')}
-            onBackup={() => {
-              navigate('settings', () => {
-                cancelScroll.current = scrollSectionIntoView('backup-section')
-              })
-            }}
             notify={notify}
           />
         ) : view === 'wardrobe' ? (
@@ -820,8 +655,11 @@ export default function App() {
           <Suspense fallback={<Loading />}>
             <OutfitView
               items={items}
-              onOpen={setSelectedId}
               onAdd={() => setEditor('new')}
+              onToday={() => {
+                presetView('home.day', null)
+                navigate('home')
+              }}
               notify={notify}
             />
           </Suspense>
@@ -832,7 +670,6 @@ export default function App() {
               wear={wear}
               onOpen={setSelectedId}
               onLooks={() => navigate('outfits')}
-              onWardrobe={openWardrobeSorted}
               onBackup={() =>
                 navigate('settings', () => {
                   cancelScroll.current = scrollSectionIntoView('backup-section')

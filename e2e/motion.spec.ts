@@ -180,10 +180,10 @@ test('Schnelle Tabwechsel behalten die letzte Auswahl, auch beim sofortigen Zur√
     page.getByRole('heading', { name: 'Looks', exact: true }),
   ).toBeVisible()
   await page
-    .getByRole('button', { name: 'Outfits zusammenstellen', exact: true })
+    .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
     .click()
   await expect(
-    page.getByText('Noch kein kompletter Look', { exact: true }),
+    page.getByRole('button', { name: 'Garderobe erg√§nzen', exact: true }),
   ).toBeVisible()
   expect(errors).toEqual([])
 })

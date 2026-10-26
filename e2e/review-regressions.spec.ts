@@ -49,13 +49,8 @@ async function previewImport(page: Page, data: unknown) {
 async function savedEditor(page: Page) {
   await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Gespeichert (1)', exact: true })
-    .click()
-  await page
-    .getByRole('button', {
-      name: 'Name ändern oder Outfit löschen',
-      exact: true,
-    })
+    .locator('.saved-look')
+    .getByRole('button', { name: /bearbeiten$/ })
     .click()
 }
 

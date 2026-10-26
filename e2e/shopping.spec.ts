@@ -27,7 +27,7 @@ async function seed(page: Page) {
     .getByRole('button', { name: 'Sicherung importieren', exact: true })
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  await page.getByRole('button', { name: 'Heute', exact: true }).click()
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await page
     .getByRole('button', { name: 'Mit KI günstig shoppen', exact: true })
     .click()
@@ -115,9 +115,7 @@ test('Neue Nutzer sehen Fortschritt und erhalten keine verfrühte Shopping-Auffo
   await expect(
     page.getByRole('button', { name: 'Mit KI günstig shoppen', exact: true }),
   ).toHaveCount(0)
-  await page
-    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   const card = page.getByRole('region', {
     name: 'Persönliche Shopping-Beratung',
     exact: true,
@@ -217,6 +215,7 @@ test('Persönliche Kaufideen starten erst nach Freigabe, passen zu echten Stück
     .scrollIntoViewIfNeeded()
   await page.screenshot({ path: '/tmp/mystyle-shopping-dialog.png' })
   await page.reload()
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await page
     .getByRole('button', { name: 'Mit KI günstig shoppen', exact: true })
     .click()
@@ -272,6 +271,7 @@ test('Fensterübergreifender Widerruf stoppt wartende Beratung; späte Antworten
     ).toBeVisible()
     const other = await context.newPage()
     await other.goto('/')
+    await other.getByRole('button', { name: 'Journal', exact: true }).click()
     await other
       .getByRole('button', { name: 'Mit KI günstig shoppen', exact: true })
       .click()

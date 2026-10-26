@@ -2,7 +2,7 @@ import 'fake-indexeddb/auto'
 import { afterEach, describe, expect, it } from 'vitest'
 import { generateOutfits } from '../src/generator'
 import { createCompatibilityScorer } from '../src/outfit-compatibility'
-import { anotherDailyLook } from '../src/daily-choice'
+import { chooseLookForToday } from '../src/daily-choice'
 import { chooseDailyOutfit } from '../src/daily-outfit'
 import { localDay } from '../src/calendar'
 import { WardrobeDatabase, toggleOutfitLike } from '../src/db'
@@ -204,85 +204,101 @@ describe('Empfehlungen mit nachvollziehbarer Gewichtung', () => {
 })
 
 describe('Direkte Tagesauswahl und kontrollierbares Feedback', () => {
-  it('wechselt den ganzen Look, merkt ihn und wertet Überspringen nicht als Ablehnung', async () => {
+  it('wendet alte Saison- und Stilfilter ohne Auswahl nicht mehr an', () => {
+    const daily = chooseDailyOutfit(
+      base.map((piece) => ({ ...piece, seasons: ['Sommer'] as const })),
+      {
+        ...preferences,
+        outfitOptions: {
+          ...options,
+          occasion: 'Büro',
+          season: 'Winter',
+          style: 'Elegant',
+          includeAccessory: true,
+        },
+      },
+      [],
+      [],
+      [],
+      '2026-07-15',
+    )
+    expect(daily.garmentIds).toHaveLength(3)
+    expect(daily.options).toMatchObject({
+      occasion: 'Büro',
+      season: 'Sommer',
+      style: 'Alle',
+      includeAccessory: true,
+    })
+  })
+  it('„Für heute“ übernimmt einen Look mit eigenem Anlass dauerhaft und gesichert', async () => {
     const db = await database(),
-      day = localDay()
-    const current = chooseDailyOutfit(
+      day = localDay(),
+      chosen = ['alternative', 'pants', 'shoes'],
+      lookOptions = { ...options, occasion: 'Büro' as const }
+    await chooseLookForToday(
+      {
+        garmentIds: chosen,
+        options: lookOptions,
+        versions: (await db.garments.toArray()).map((piece) => ({
+          id: piece.id,
+          updatedAt: piece.updatedAt,
+        })),
+      },
+      db,
+    )
+    const selected = (await db.preferences.get('personal'))!.dailySelection!
+    expect(selected).toMatchObject({ day, garmentIds: chosen })
+    expect(selected.options.occasion).toBe('Büro')
+    const daily = chooseDailyOutfit(
       await db.garments.toArray(),
-      preferences,
+      (await db.preferences.get('personal'))!,
       [],
       [],
       [],
       day,
     )
-    expect(
-      await anotherDailyLook(
-        { day, expectedIds: current.garmentIds, expectedSelection: null },
-        db,
-      ),
-    ).toBe(true)
-    const selected = (await db.preferences.get('personal'))!.dailySelection!
-    expect(outfitKey(selected.garmentIds)).not.toBe(
-      outfitKey(current.garmentIds),
-    )
+    expect(outfitKey(daily.garmentIds)).toBe(outfitKey(chosen))
     expect(await db.feedback.count()).toBe(0)
     expect(await db.calendar.count()).toBe(0)
-    expect(await db.outfits.count()).toBe(0)
     expect(
       parseFullBackup(await createDatabaseBackup(db)).preferences
         ?.dailySelection,
     ).toEqual(selected)
   })
-  it('behält bei fehlenden Alternativen den aktuellen Stand ohne leeren Look oder falsche Bewertung', async () => {
-    const db = await database(false)
-    expect(
-      await anotherDailyLook(
-        { day: localDay(), expectedIds: ids, expectedSelection: null },
-        db,
-      ),
-    ).toBe(false)
-    expect(await db.preferences.count()).toBe(0)
-    expect(await db.feedback.count()).toBe(0)
-  })
-  it('verhindert doppelte parallele Wechsel und schützt heutige Pläne', async () => {
-    const db = await database(),
-      day = localDay(),
-      current = chooseDailyOutfit(
-        await db.garments.toArray(),
-        preferences,
-        [],
-        [],
-        [],
-        day,
-      )
-    const input = {
-      day,
-      expectedIds: current.garmentIds,
-      expectedSelection: null,
-    }
-    const results = await Promise.allSettled([
-      anotherDailyLook(input, db),
-      anotherDailyLook(input, db),
-    ])
-    expect(
-      results.filter((result) => result.status === 'fulfilled'),
-    ).toHaveLength(1)
-    expect(
-      results.filter((result) => result.status === 'rejected'),
-    ).toHaveLength(1)
-    await db.calendar.put({
-      id: day,
-      day,
-      outfitId: 'planned',
-      status: 'planned',
-      note: '',
-      createdAt: stamp,
-      updatedAt: stamp,
-    })
-    const before = await db.preferences.get('personal')
-    await expect(anotherDailyLook(input, db)).rejects.toThrow('bereits geplant')
-    expect(await db.preferences.get('personal')).toEqual(before)
-  })
+  it.each(['laundry', 'edited', 'deleted', 'incomplete', 'planned'] as const)(
+    '„Für heute“ verweigert veraltete oder unvollständige Looks ohne Schreibvorgang: %s',
+    async (change) => {
+      const db = await database(),
+        day = localDay()
+      const versions = (await db.garments.toArray()).map((piece) => ({
+        id: piece.id,
+        updatedAt: piece.updatedAt,
+      }))
+      let chosen = ids
+      if (change === 'laundry')
+        await db.garments.update('top', { inLaundry: true })
+      if (change === 'edited')
+        await db.garments.update('top', {
+          updatedAt: '2026-02-01T00:00:00.000Z',
+        })
+      if (change === 'deleted') await db.garments.delete('top')
+      if (change === 'incomplete') chosen = ['top', 'pants']
+      if (change === 'planned')
+        await db.calendar.put({
+          id: day,
+          day,
+          outfitId: 'planned',
+          status: 'planned',
+          note: '',
+          createdAt: stamp,
+          updatedAt: stamp,
+        })
+      await expect(
+        chooseLookForToday({ garmentIds: chosen, options, versions }, db),
+      ).rejects.toThrow()
+      expect(await db.preferences.count()).toBe(0)
+    },
+  )
   it('lässt positive Bewertungen zurücknehmen ohne daraus eine Ablehnung zu machen', async () => {
     const db = await database()
     expect(await toggleOutfitLike(ids, db)).toBe(true)

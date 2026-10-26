@@ -31,7 +31,7 @@ async function addGarment(page: Page, name: string, photo = false) {
   ).toBeVisible()
 }
 
-test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Suchen, Favorisieren und Löschen funktionieren', async ({
+test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Filtern, Favorisieren und Löschen funktionieren', async ({
   page,
 }) => {
   const errors: string[] = []
@@ -70,13 +70,9 @@ test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Suchen, Favorisieren un
   await expect(
     page.getByRole('button', { name: 'Sommerhemd: Favorit entfernen' }),
   ).toHaveAttribute('aria-pressed', 'true')
-  await page.getByRole('searchbox', { name: 'Kleidung suchen' }).fill('arket')
-  await expect(
-    page.getByRole('button', { name: 'Sommerhemd öffnen' }),
-  ).toBeVisible()
   await page.getByRole('button', { name: 'Schuhe', exact: true }).click()
   await expect(page.getByText('Hier liegt gerade nichts.')).toBeVisible()
-  await page.getByRole('button', { name: 'Filter zurücksetzen' }).click()
+  await page.getByRole('button', { name: 'Alle', exact: true }).click()
   await page.getByRole('button', { name: 'Nur Favoriten' }).click()
   await expect(
     page.getByRole('button', { name: 'Sommerhemd öffnen' }),

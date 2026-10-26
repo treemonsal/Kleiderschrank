@@ -41,7 +41,7 @@ const worn = (day: string) => ({
   updatedAt: stamp,
 })
 
-test('Tragestatistik sortiert selten getragene Stücke nach vorne und Skizzen zeigen die Farbe', async ({
+test('Journal zeigt selten getragene Stücke zuerst und Skizzen zeigen die Farbe', async ({
   page,
 }) => {
   await page.clock.install({ time: new Date(now) })
@@ -70,13 +70,6 @@ test('Tragestatistik sortiert selten getragene Stücke nach vorne und Skizzen ze
     .getByRole('button', { name: 'Sicherung importieren', exact: true })
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  // Today keeps the shelf from earlier versions, limited to three rows.
-  await page.getByRole('button', { name: 'Heute', exact: true }).click()
-  const todayShelf = page.getByRole('region', { name: 'Lange nicht getragen' })
-  await expect(todayShelf.locator('.journal-row strong').first()).toHaveText(
-    'Grüner Pulli',
-  )
-  await expect(todayShelf.locator('.journal-row')).toHaveCount(3)
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
   const shelf = page.getByRole('region', { name: 'Lange nicht getragen' })
   await expect(shelf.locator('.journal-row strong').first()).toHaveText(
@@ -89,13 +82,6 @@ test('Tragestatistik sortiert selten getragene Stücke nach vorne und Skizzen ze
     ),
   ).toBe(true)
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
-  await page.getByRole('button', { name: 'Sortierung ändern' }).click()
-  await page
-    .getByRole('combobox', { name: 'Sortierung' })
-    .selectOption('least-worn')
-  await expect(
-    page.locator('.garment-grid .garment-card h3').first(),
-  ).toHaveText('Grüner Pulli')
   await expect(
     page.locator('.garment-card .photo-placeholder[data-color="Grün"]'),
   ).toHaveCount(1)

@@ -18,6 +18,7 @@ export function OutfitPieces({
   onOpen,
   onSwap,
   figure = false,
+  changedIds = [],
 }: {
   ids: string[]
   items: Garment[]
@@ -25,6 +26,8 @@ export function OutfitPieces({
   onOpen: (id: string) => void
   /** Lay the look out as a numbered book plate (Abb. 1–n). */
   figure?: boolean
+  /** Pieces a refinement preview would add; marked „neu“ on the plate. */
+  changedIds?: string[]
 }) {
   const found = ids.flatMap((id) => {
     const item = items.find((item) => item.id === id)
@@ -36,7 +39,10 @@ export function OutfitPieces({
       <figure className="figure-plate-wrap">
         <div className={`figure-plate pieces-${pieces.length}`}>
           {pieces.map((item, index) => (
-            <div className="figure-tile" key={item.id}>
+            <div
+              className={`figure-tile${changedIds.includes(item.id) ? ' is-new' : ''}`}
+              key={item.id}
+            >
               <button
                 className="outfit-piece"
                 aria-label={`${item.name} öffnen`}
@@ -52,8 +58,11 @@ export function OutfitPieces({
                 {item.inLaundry && (
                   <span className="laundry-badge">In der Wäsche</span>
                 )}
+                {changedIds.includes(item.id) && (
+                  <span className="new-badge">neu</span>
+                )}
               </button>
-              {onSwap && (
+              {onSwap && !changedIds.length && (
                 <button
                   className="piece-swap"
                   data-motion="turn"

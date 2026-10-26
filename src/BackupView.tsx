@@ -5,7 +5,6 @@ import {
   ArrowUpFromLine,
   ChevronRight,
   Database,
-  HardDrive,
   ShieldCheck,
   Smartphone,
 } from 'lucide-react'
@@ -20,12 +19,9 @@ import { validateBackupPhotos } from './photos'
 import type { Garment } from './model'
 import { storageError } from './db'
 import { ErrorMessage, Sheet } from './ui'
-import { AI_CACHE } from './background-model'
-import { BackupReminderSettings } from './BackupReminder'
 import { updateBackupReminder } from './backup-reminder'
 import { AISettings } from './AISettings'
 import { StyleProfileCard } from './StyleProfile'
-import { ShoppingCard } from './Shopping'
 import { version } from '../package.json'
 
 export function BackupView({
@@ -41,25 +37,11 @@ export function BackupView({
   const [error, setError] = useState('')
   const [pending, setPending] = useState<BackupData | null>(null)
   const [mode, setMode] = useState<'merge' | 'replace'>('merge')
-  const [usage, setUsage] = useState<number>()
-  const [persistent, setPersistent] = useState<boolean>()
-  const [storageMessage, setStorageMessage] = useState('')
   const [exportLink, setExportLink] = useState<{
     url: string
     filename: string
   } | null>(null)
   const [help, setHelp] = useState(false)
-  const [aiMessage, setAiMessage] = useState('')
-  useEffect(() => {
-    void navigator.storage
-      ?.estimate?.()
-      .then((result) => setUsage(result.usage))
-      .catch(() => {})
-    void navigator.storage
-      ?.persisted?.()
-      .then(setPersistent)
-      .catch(() => {})
-  }, [items.length])
   useEffect(
     () => () => {
       if (download.current) URL.revokeObjectURL(download.current.url)
@@ -117,39 +99,6 @@ export function BackupView({
       <AISettings />
       <StyleProfileCard items={items} notify={notify} />
       <EverydaySettings />
-      <details className="settings-section settings-advanced">
-        <summary>Lokale Freistellung &amp; KI-Speicher</summary>
-        <div className="section-heading">
-          <h2>Lokale Freistellung als Alternative</h2>
-        </div>
-        <p className="muted section-intro">
-          Freistellung direkt auf dem Gerät, wenn die Online-KI nicht verfügbar
-          ist. Etwa 19 MB.
-        </p>
-        <button
-          type="button"
-          className="button secondary full"
-          onClick={async () => {
-            try {
-              await caches.delete(AI_CACHE)
-              setAiMessage(
-                'Die zwischengespeicherten KI-Dateien wurden entfernt. Beim nächsten Start ist eine Internetverbindung nötig.',
-              )
-            } catch {
-              setAiMessage(
-                'Der KI-Zwischenspeicher konnte nicht geöffnet werden. Deine Fotos sind unverändert.',
-              )
-            }
-          }}
-        >
-          KI-Dateien vom Gerät entfernen
-        </button>
-        {aiMessage && (
-          <p className="muted section-intro" role="status">
-            {aiMessage}
-          </p>
-        )}
-      </details>
       <section className="settings-section" id="backup-section" tabIndex={-1}>
         <div className="section-heading">
           <h2>Sicherung</h2>
@@ -192,7 +141,6 @@ export function BackupView({
             <ChevronRight size={18} />
           </button>
         </div>
-        <BackupReminderSettings />
         <input
           ref={input}
           type="file"
@@ -238,56 +186,6 @@ export function BackupView({
           <p>
             iOS kann Website-Daten löschen. Sichere regelmässig in „Dateien“.
           </p>
-        </div>
-      </section>
-      <ShoppingCard />
-      <section className="settings-section">
-        <div className="section-heading">
-          <h2>Auf deinem Gerät</h2>
-          <HardDrive size={18} />
-        </div>
-        <div className="settings-card storage-details">
-          <p>
-            <span>Lokaler Speicherbedarf</span>
-            <strong>
-              {usage === undefined
-                ? 'Nicht verfügbar'
-                : `${(usage / 1024 / 1024).toLocaleString('de-CH', { maximumFractionDigits: 1 })} MB`}
-            </strong>
-          </p>
-          <p>
-            <span>Beständiger Speicher</span>
-            <strong>
-              {persistent === true ? 'Vom Browser gewährt' : 'Nicht garantiert'}
-            </strong>
-          </p>
-          {navigator.storage?.persist && (
-            <button
-              className="text-button"
-              onClick={async () => {
-                try {
-                  const granted = await navigator.storage.persist()
-                  setPersistent(granted)
-                  setStorageMessage(
-                    granted
-                      ? 'Der Browser hat beständigen Speicher gewährt. Bitte trotzdem regelmässig sichern.'
-                      : 'Der Browser hat die Anfrage nicht gewährt. Backups bleiben der zuverlässigste Schutz.',
-                  )
-                } catch {
-                  setStorageMessage(
-                    'Dieser Browser unterstützt die Speicheranfrage hier nicht.',
-                  )
-                }
-              }}
-            >
-              Speicherschutz anfragen <ChevronRight size={15} />
-            </button>
-          )}
-          {storageMessage && (
-            <p className="muted" role="status">
-              {storageMessage}
-            </p>
-          )}
         </div>
       </section>
       <button className="install-help" onClick={() => setHelp(true)}>

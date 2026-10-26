@@ -32,7 +32,7 @@ async function exported(page: Page) {
   return JSON.parse(await readFile((await (await download).path())!, 'utf8'))
 }
 for (const width of [320, 390]) {
-  test(`Tageslook ${width}px hält Schuhe fest, zeigt eine wärmere Vorschau und übernimmt erst bewusst`, async ({
+  test(`Tageslook ${width}px zeigt „Wärmer“ als Vorschau auf der Tafel und übernimmt erst bewusst`, async ({
     page,
   }, info) => {
     await page.setViewportSize({ width, height: 844 })
@@ -46,36 +46,43 @@ for (const width of [320, 390]) {
       exact: true,
     })
     await expect(daily.locator('.outfit-piece')).toHaveCount(3)
-    await page
-      .getByRole('button', { name: 'Tageslook verfeinern', exact: true })
-      .click()
-    const dialog = page.getByRole('dialog')
-    await dialog.getByRole('checkbox', { name: /Schuhe behalten/ }).check()
-    await dialog
-      .getByRole('button', { name: 'Ähnlich, aber wärmer', exact: true })
-      .click()
-    const preview = dialog.getByRole('region', {
+    const before = (await exported(page)).preferences.dailySelection
+    await page.getByRole('button', { name: 'Heute', exact: true }).click()
+    await daily.getByRole('button', { name: 'Wärmer', exact: true }).click()
+    const preview = daily.getByRole('region', {
       name: 'Vorschau der Anpassung',
     })
     await expect(preview).toContainText('Beige Jacke')
-    await expect(preview).toContainText('Weisse Sneaker')
-    await expect(daily.locator('.outfit-piece')).toHaveCount(3)
+    // The plate previews the variant and marks the new piece.
+    await expect(daily.locator('.outfit-piece')).toHaveCount(4)
+    await expect(daily.locator('.figure-tile.is-new')).toHaveCount(1)
     expect(
-      await dialog.evaluate((node) => node.scrollWidth <= node.clientWidth),
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
     ).toBe(true)
     await preview.screenshot({
       path: info.outputPath(`refinement-${width}.png`),
     })
-    await dialog
-      .getByRole('button', { name: 'Für heute übernehmen', exact: true })
+    // Verwerfen restores today's look without writing anything.
+    await preview
+      .getByRole('button', { name: 'Verwerfen', exact: true })
       .click()
-    await expect(dialog).toHaveCount(0)
+    await expect(daily.locator('.outfit-piece')).toHaveCount(3)
+    expect((await exported(page)).preferences.dailySelection).toEqual(before)
+    await page.getByRole('button', { name: 'Heute', exact: true }).click()
+    await daily.getByRole('button', { name: 'Wärmer', exact: true }).click()
+    await preview
+      .getByRole('button', { name: 'Übernehmen', exact: true })
+      .click()
+    await expect(preview).toHaveCount(0)
     await expect(daily.locator('.outfit-piece')).toHaveCount(4)
+    await expect(daily.locator('.figure-tile.is-new')).toHaveCount(0)
     await page.reload()
     await expect(daily.locator('.outfit-piece')).toHaveCount(4)
     const saved = await exported(page)
     expect(saved.preferences.dailySelection.garmentIds).toEqual(
-      expect.arrayContaining(['top-red', 'pants', 'shoes', 'jacket']),
+      expect.arrayContaining(['jacket']),
     )
     expect(saved.feedback).toEqual([])
     expect(external).toEqual([])
@@ -120,13 +127,11 @@ test('Eine inzwischen in die Wäsche gelegte Alternative überschreibt die Vorsc
   context,
 }) => {
   await seed(page)
-  await page
-    .getByRole('button', { name: 'Tageslook verfeinern', exact: true })
-    .click()
-  const dialog = page.getByRole('dialog')
-  await dialog
-    .getByRole('button', { name: 'Ähnlich, aber wärmer', exact: true })
-    .click()
+  const dialog = page.getByRole('region', {
+    name: 'Dein Tageslook',
+    exact: true,
+  })
+  await dialog.getByRole('button', { name: 'Wärmer', exact: true }).click()
   const other = await context.newPage()
   await other.goto('/')
   await other.getByRole('button', { name: 'Garderobe', exact: true }).click()
@@ -136,19 +141,13 @@ test('Eine inzwischen in die Wäsche gelegte Alternative überschreibt die Vorsc
   await other
     .getByRole('button', { name: 'In die Wäsche legen', exact: true })
     .click()
-  await dialog
-    .getByRole('button', { name: 'Für heute übernehmen', exact: true })
-    .click()
+  await dialog.getByRole('button', { name: 'Übernehmen', exact: true }).click()
   await expect(dialog.getByRole('alert')).toContainText('inzwischen geändert')
   await expect(
     dialog.getByRole('region', { name: 'Vorschau der Anpassung' }),
   ).toContainText('Beige Jacke')
-  await dialog.getByRole('button', { name: 'Schliessen', exact: true }).click()
-  await expect(
-    page
-      .getByRole('region', { name: 'Dein Tageslook', exact: true })
-      .locator('.outfit-piece'),
-  ).toHaveCount(3)
+  await dialog.getByRole('button', { name: 'Verwerfen', exact: true }).click()
+  await expect(dialog.locator('.outfit-piece')).toHaveCount(3)
   await other.close()
 })
 
@@ -157,13 +156,11 @@ test('Ein inzwischen bestätigter Tragetag lässt sich aus einer alten Vorschau 
   context,
 }) => {
   await seed(page)
-  await page
-    .getByRole('button', { name: 'Tageslook verfeinern', exact: true })
-    .click()
-  const dialog = page.getByRole('dialog')
-  await dialog
-    .getByRole('button', { name: 'Ähnlich, aber wärmer', exact: true })
-    .click()
+  const dialog = page.getByRole('region', {
+    name: 'Dein Tageslook',
+    exact: true,
+  })
+  await dialog.getByRole('button', { name: 'Wärmer', exact: true }).click()
   const other = await context.newPage()
   await other.goto('/')
   await other
@@ -172,11 +169,13 @@ test('Ein inzwischen bestätigter Tragetag lässt sich aus einer alten Vorschau 
   await expect(
     other.getByRole('button', { name: 'Getragen', exact: true }),
   ).toBeVisible()
-  await dialog
-    .getByRole('button', { name: 'Für heute übernehmen', exact: true })
-    .click()
-  await expect(dialog.getByRole('alert')).toContainText('inzwischen geändert')
-  await dialog.getByRole('button', { name: 'Schliessen', exact: true }).click()
+  // The confirmed day closes the preview here; nothing can be applied.
+  await expect(
+    dialog.getByRole('region', { name: 'Vorschau der Anpassung' }),
+  ).toHaveCount(0)
+  await expect(dialog.getByRole('button', { name: 'Übernehmen' })).toHaveCount(
+    0,
+  )
   const saved = await exported(page)
   expect(saved.calendar[0].status).toBe('worn')
   const recorded = saved.outfits.find(
