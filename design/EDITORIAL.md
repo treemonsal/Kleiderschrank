@@ -1,5 +1,7 @@
 # MyStyle / Garderobenjournal
 
+> Archiv: Seit 0.28.0 sind die Dateien dieses Designs entfernt. Sie liegen im Branch `backup/design-0.27.0`; aktuelles Design in [JOURNAL.md](JOURNAL.md).
+
 Die neue Gestaltung ab 0.15.0 folgt einem gedruckten Garderobenjournal:
 Papier, dunkle Schrift, fotografische Flächen, feine Trennlinien und sparsame
 rostrote Markierungen. Eine erkennbare typografische Hierarchie ersetzt die

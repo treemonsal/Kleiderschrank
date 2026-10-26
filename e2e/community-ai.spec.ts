@@ -77,7 +77,9 @@ async function mock(
   return calls
 }
 async function activate(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page
     .getByRole('checkbox', { name: /Ich erlaube, neue Kleidungsfotos/ })
     .check()
@@ -90,6 +92,8 @@ async function activate(page: Page) {
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
 }
 
+// Network mocks use page.route, which a controlling service worker bypasses.
+test.use({ serviceWorkers: 'block' })
 test('Widerruf in einem anderen Fenster stoppt eine laufende Fotoanalyse und erhält den Entwurf', async ({
   page,
   context,
@@ -120,7 +124,9 @@ test('Widerruf in einem anderen Fenster stoppt eine laufende Fotoanalyse und erh
     ).toBeVisible()
     const other = await context.newPage()
     await other.goto('/')
-    await other.getByRole('button', { name: 'Mehr', exact: true }).click()
+    await other
+      .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+      .click()
     await other
       .getByRole('button', { name: 'Community-KI ausschalten', exact: true })
       .click()
@@ -139,13 +145,13 @@ test('Widerruf in einem anderen Fenster stoppt eine laufende Fotoanalyse und erh
     ).toBeVisible()
     await expect(
       page.getByRole('button', {
-        name: 'Zum Kleiderschrank hinzufügen',
+        name: 'In die Garderobe legen',
         exact: true,
       }),
     ).toBeEnabled()
     await page
       .getByRole('button', {
-        name: 'Zum Kleiderschrank hinzufügen',
+        name: 'In die Garderobe legen',
         exact: true,
       })
       .click()
@@ -175,9 +181,7 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
   await expect(
     page.getByRole('button', { name: 'Original verwenden', exact: true }),
   ).toBeVisible()
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   const before = calls.length
   await page.getByRole('button', { name: attributes.name + ' öffnen' }).click()
   await page.getByRole('button', { name: 'Bearbeiten', exact: true }).click()
@@ -186,7 +190,9 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
   )
   expect(calls).toHaveLength(before)
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await expect(
     page.getByRole('button', { name: 'Kostenlose KI aktivieren', exact: true }),
   ).toHaveCount(0)
@@ -194,7 +200,9 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
     page.getByText('Anbieter, Datenschutz und Freigabe', { exact: true }),
   ).toBeVisible()
   await page.reload()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await expect(
     page.getByRole('button', { name: 'Kostenlose KI aktivieren', exact: true }),
   ).toHaveCount(0)
@@ -238,9 +246,7 @@ test('Ausgeschöpftes Erkennungslimit behält Freistellung und Original und lös
   await page
     .getByRole('button', { name: 'Original verwenden', exact: true })
     .click()
-  await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen' })
-    .click()
+  await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
   await expect(
     page.getByRole('button', { name: 'Mein Stück öffnen' }),
   ).toBeVisible()
@@ -262,7 +268,9 @@ test('Widerruf während Verbindungsprüfung kann durch späte Antworten nicht r�
       .catch(() => {})
   })
   await page.goto('/')
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const consent = page.getByRole('checkbox', {
     name: /Ich erlaube, neue Kleidungsfotos/,
   })

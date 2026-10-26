@@ -2,23 +2,24 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: Tageslooks, Fotos, Kalender und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand – ohne Anmeldung oder laufende Software-/API-Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.27.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.28.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Spätere Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät. Fotos verlassen es nur für ausdrücklich freigegebene Online-Funktionen; der Chat hat eine eigene Freigabe.
 
 ## Was du wo findest
 
-- **Heute:** Wetter, automatisch gewählter Tageslook, Alternativen und Tragebestätigung. Im Tagesbereich links/rechts wischen; Datum oder Kalender öffnen für Rückblick und Planung.
-- **Kleiderschrank:** Stücke aufnehmen, suchen, filtern, bearbeiten, favorisieren und in die Wäsche legen. Der Wäschefilter zeigt Stücke in der Wäsche; **Als sauber markieren** gibt sie wieder für Vorschläge frei.
-- **Outfits:** Kombinationen erstellen, bewerten, speichern und im Kalender planen. Accessoire- und Wettervorlieben bleiben gespeichert.
-- **Stylist ↗:** Fragen stellen oder das freiwillige vertiefte Stilgespräch öffnen. Ein kleiner Punkt kennzeichnet eine Einladung oder eine vorhandene ungelesene Antwort.
-- **Mehr:** Stilprofil, Shopping-Fortschritt, Online-Foto-KI, persönliche Sicherung, Speicher- und Installationshilfe. Ein Export sichert den eigenen Bestand; ein Projektbackup ersetzt diesen Export nicht.
+- **I Heute:** Datum, Wetter, Wochenleiste mit Farbringen, automatisch gewählter Tageslook als Abbildungstafel (Abb. 1–n), Alternativen und Tragebestätigung. Im Tagesbereich links/rechts wischen; Datum oder Kalender öffnen für Rückblick und Planung.
+- **II Garderobe:** Stücke aufnehmen, suchen, filtern, bearbeiten, favorisieren und in die Wäsche legen. Die Farbbilanz zeigt deine Farben gewichtet nach Tragehäufigkeit. **Als sauber markieren** gibt Stücke wieder für Vorschläge frei.
+- **III Looks:** Kombinationen erstellen, bewerten und speichern. Gespeicherte Looks erscheinen als Farbstreifen. Accessoire- und Wettervorlieben bleiben gespeichert.
+- **IV Journal:** Monatskalender mit Farbringen, Tag planen oder bestätigen, Tragetage im Monat, lange nicht getragene Stücke, Shopping-Fortschritt und Sicherung.
+- **Sprechblase:** Stylist und freiwilliges vertieftes Stilgespräch. Ein kleiner Punkt kennzeichnet eine Einladung oder eine ungelesene Antwort.
+- **Zahnrad (Einstellungen):** Stilprofil, Online-Foto-KI, Alltag, persönliche Sicherung, Speicher- und Installationshilfe. Ein Export sichert den eigenen Bestand; ein Projektbackup ersetzt diesen Export nicht.
 
-Die Gestaltung ist hell und ruhig: warmes Elfenbein, Systemschrift, weisse Karten, schwarze Pill-Buttons und eine Navigationsleiste aus durchsichtigem Liquid Glass knapp über dem Home-Balken. Die App bleibt auch im Dunkelmodus des iPhones hell. Das Homescreen-Icon bleibt schwarz-weiss. Bereichswechsel merken Datum, Filter und Scrollposition während der laufenden Sitzung. Erneutes Tippen auf den aktiven Bereich führt nach oben. Neue Versionen können auf dem iPhone erst nach Übernahme des Updates erscheinen; vorhandene Icons unterliegen zusätzlich dem iOS-Cache.
+Die Gestaltung liest sich wie ein gedrucktes Garderobenjournal: Cormorant Garamond und Lora (lokal mitgeliefert), Haarlinien statt Karten, umrandete Buttons und ein einziger Goldakzent. Stücke ohne Foto erscheinen als Stoffmuster in ihrer erfassten Farbe. Die App bleibt auch im Dunkelmodus des iPhones hell. Das Homescreen-Icon bleibt schwarz-weiss. Bereichswechsel merken Datum, Filter und Scrollposition während der laufenden Sitzung. Erneutes Tippen auf den aktiven Bereich führt nach oben. Neue Versionen können auf dem iPhone erst nach Übernahme des Updates erscheinen; vorhandene Icons unterliegen zusätzlich dem iOS-Cache.
 
 ## Personalisierung und Beratung
 
-Der freiwillige Stilcheck stellt drei kurze Fragen. Danach kannst du im Stylisten acht vertiefte Fragen beantworten, überspringen, pausieren und später ändern. Jede Antwort wird ausdrücklich gespeichert. Unter **Mehr → Dein Stilprofil** sind auch die Bewertungen erreichbar. Daumen hoch stärkt passende Vorschläge; Daumen runter fragt nach einem Grund. **Anderer Look** ist eine Alternative und keine negative Bewertung.
+Der freiwillige Stilcheck stellt drei kurze Fragen. Danach kannst du im Stylisten acht vertiefte Fragen beantworten, überspringen, pausieren und später ändern. Jede Antwort wird ausdrücklich gespeichert. Unter **Einstellungen → Dein Stilprofil** sind auch die Bewertungen erreichbar. Daumen hoch stärkt passende Vorschläge; Daumen runter fragt nach einem Grund. **Anderer Look** ist eine Alternative und keine negative Bewertung.
 
 Lokale Vorschläge nutzen vorhandene Stücke, deine Angaben und Bewertungen sowie Wäsche, Saison, bestätigte Tragetage und freigegebenes Wetter. Die Regeln gewichten Vorlieben nachvollziehbar; es wird kein eigenes Modell auf dich trainiert. Ein kleiner Bestand kann Wiederholungen nötig machen.
 
@@ -29,6 +30,10 @@ Der **Chat** nutzt nach eigener Freigabe Qwen3-VL-8B: deine Frage, höchstens se
 **Nachricht diktieren** und **Vorlesen** sind optionale Browserfunktionen. Erkannten Text zuerst prüfen und selbst senden. Browser-Sprachdienste können Audio/Text an ihren Anbieter übertragen; MyStyle speichert keine Audiodateien. Tippen bleibt immer möglich.
 
 Die öffentlichen KI-Dienste sind kostenlos, können aber Limits, Wartezeiten oder Ausfälle haben. Bei Limit oder Ausfall springen automatisch kostenlose Ersatzdienste ein (siehe 0.26.0), nie kostenpflichtige. Anbieter-Speicherung und Löschfristen sind nicht garantiert. Stilurteile sind subjektiv; Passform, Material, Wärme und Schutzwirkung bleiben ohne passende Nachweise unbekannt.
+
+## Neu in 0.28.0
+
+Neues Design „MyStyle, ein Garderobenjournal“ aus Claude Design: Navigation I Heute · II Garderobe · III Looks · IV Journal, Einstellungen über das Zahnrad. Tageslook als Abbildungstafel, Wochen- und Monatsringe in den getragenen Farben, Farbbilanz in der Garderobe, Looks als Farbstreifen und ein eigenes Journal mit Monatsstatistik. Neue Stücke landen nach dem Speichern direkt in der Garderobe. Favorit oder Wäsche setzen lädt Fotos nicht mehr neu, damit kein Bild mehr verschwindet. Details in [design/JOURNAL.md](design/JOURNAL.md).
 
 ## Neu in 0.27.0
 

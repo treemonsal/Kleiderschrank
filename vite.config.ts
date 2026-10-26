@@ -46,7 +46,7 @@ export default defineConfig({
       },
       workbox: {
         // Models/WASM are fetched only after explicit opt-in by the user.
-        globPatterns: ['**/*.{js,css,html,png,svg,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,png,svg,webmanifest,woff2}'],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
       },

@@ -35,14 +35,15 @@ test('Mit ersten Stücken bleibt die Anpassung einer unvollständigen Auswahl er
     .click()
   await page.getByLabel('Name', { exact: false }).fill('Mein Leinenhemd')
   await page
-    .getByRole('button', { name: 'Zum Kleiderschrank hinzufügen', exact: true })
+    .getByRole('button', { name: 'In die Garderobe legen', exact: true })
     .click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Heute', exact: true }).click()
   await page
     .getByRole('button', { name: 'Auswahl anpassen', exact: true })
     .click()
   await expect(
-    page.getByRole('heading', { name: 'Outfits', exact: true }),
+    page.getByRole('heading', { name: 'Looks', exact: true }),
   ).toBeVisible()
   await expect(
     page.getByText(

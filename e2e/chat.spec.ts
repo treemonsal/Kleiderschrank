@@ -20,7 +20,9 @@ const garments = (['Oberteile', 'Hosen', 'Schuhe', 'Oberteile'] as const).map(
   }),
 )
 async function importData(page: Page, data?: unknown) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const photo = `data:image/png;base64,${(await readFile('public/icon-192.png')).toString('base64')}`
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'chat.json',
@@ -65,7 +67,9 @@ async function open(page: Page, activate = true) {
   return dialog
 }
 async function exportData(page: Page) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   return JSON.parse(await readFile((await (await download).path())!, 'utf8'))
@@ -137,6 +141,8 @@ async function send(page: Page, text: string) {
   await dialog.getByRole('button', { name: 'Senden', exact: true }).click()
 }
 
+// Network mocks use page.route, which a controlling service worker bypasses.
+test.use({ serviceWorkers: 'block' })
 test('Chat fragt einmal nach Freigabe, beantwortet Folgefragen, speichert echten Look erst auf Aktion und sichert Verlauf', async ({
   page,
 }) => {

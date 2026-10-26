@@ -18,7 +18,9 @@ const garments = ['Oberteile', 'Hosen', 'Schuhe', 'Jacken', 'Accessoires'].map(
   }),
 )
 async function importData(page: Page, extra: Record<string, unknown> = {}) {
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'daily.json',
     mimeType: 'application/json',
@@ -133,6 +135,8 @@ async function swipe(target: Locator, dx: number, dy = 0, startX = 195) {
   )
 }
 test.use({ timezoneId: 'Europe/Zurich' })
+// Network mocks use page.route, which a controlling service worker bypasses.
+test.use({ serviceWorkers: 'block' })
 test('Tageslook erscheint ohne Klick, bleibt beim Neustart stabil und ist speicherbar', async ({
   page,
 }, info) => {
@@ -173,7 +177,7 @@ test('Anlass, Saison, Stil und Accessoire bleiben nach Navigation, Neustart und 
 }) => {
   await page.goto('/')
   await importData(page)
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('combobox', { name: 'Anlass', exact: true })
     .selectOption('Büro')
@@ -190,7 +194,7 @@ test('Anlass, Saison, Stil und Accessoire bleiben nach Navigation, Neustart und 
     .check()
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
   await page.reload()
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await expect(
     page.getByRole('combobox', { name: 'Anlass', exact: true }),
   ).toHaveValue('Büro')
@@ -216,7 +220,9 @@ test('Anlass, Saison, Stil und Accessoire bleiben nach Navigation, Neustart und 
       name: 'Ein Accessoire ergänzen, wenn eines passt',
     }),
   ).toBeChecked()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const data = JSON.parse(
@@ -239,7 +245,8 @@ test('Wetterauswahl auf der Startseite speichert und schliesst, Einstellung blei
   await importData(page)
   expect(calls).toEqual([])
   await pickWeather(page)
-  await expect(page.locator('.home-weather')).toContainText('5–9 °C · Regen')
+  await expect(page.locator('.home-weather')).toContainText('5°–9°')
+  await expect(page.locator('.home-weather')).toContainText('Regen')
   await expect(page.locator('.home-weather .lucide-cloud-rain')).toBeVisible()
   await expect(page.locator('.daily-context')).toContainText(
     'Wetter berücksichtigt',
@@ -324,12 +331,10 @@ test('Wischen wechselt Tage auf Heute und lässt Tabs, vertikales Scrollen, Eing
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
   await swipe(page.locator('.daily-look header'), 120, 0, 8)
   await expect(look).toHaveAttribute('data-day', '2026-10-15')
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await swipe(page.locator('.page-heading'), -120)
   await expect(
-    page.getByRole('button', { name: 'Kleiderschrank', exact: true }),
+    page.getByRole('button', { name: 'Garderobe', exact: true }),
   ).toHaveAttribute('aria-current', 'page')
 })
 
@@ -565,8 +570,8 @@ for (const width of [375, 390, 430]) {
       path: info.outputPath(`day-rings-${width}.png`),
       fullPage: true,
     })
-    await page.getByRole('button', { name: 'Outfits', exact: true }).click()
-    await page.getByRole('button', { name: 'Kalender', exact: true }).click()
+    await page.getByRole('button', { name: 'Looks', exact: true }).click()
+    await page.getByRole('button', { name: 'Journal', exact: true }).click()
     await expect(
       page
         .getByRole('button', { name: /15. Oktober 2026.*Getragen/ })
@@ -639,10 +644,8 @@ test('Ein Teil tauschen bleibt nach Neustart erhalten, der Rest bleibt gleich un
     garments: [...garments, { ...extraTop, photo, cutout: photo }],
   })
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
-  const before = await look
-    .locator('.outfit-piece > span:first-of-type')
-    .allTextContents()
-  const oldTop = before[0],
+  const before = await look.locator('.figure-caption > span').allTextContents()
+  const oldTop = before.find((name) => name === 'Hemd' || name === 'Pullover')!,
     newTop = oldTop === 'Hemd' ? 'Pullover' : 'Hemd'
   await look
     .getByRole('button', { name: `${oldTop} austauschen`, exact: true })
@@ -663,13 +666,15 @@ test('Ein Teil tauschen bleibt nach Neustart erhalten, der Rest bleibt gleich un
     look.getByRole('button', { name: `${newTop} öffnen`, exact: true }),
   ).toBeVisible()
   expect(
-    await look.locator('.outfit-piece > span:first-of-type').allTextContents(),
-  ).toEqual([newTop, ...before.slice(1)])
+    await look.locator('.figure-caption > span').allTextContents(),
+  ).toEqual(before.map((name) => (name === oldTop ? newTop : name)))
   await page.reload()
   await expect(
     look.getByRole('button', { name: `${newTop} öffnen`, exact: true }),
   ).toBeVisible()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const data = JSON.parse(
@@ -720,9 +725,7 @@ test('Wäsche-Status übersteht Neustart und Bearbeitung, filtert Vorschläge un
       .getByRole('button', { name: 'Hemd öffnen', exact: true }),
   ).toHaveCount(0)
   await page.reload()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'Nur Wäsche', exact: true }).click()
   await expect(page.locator('.garment-card')).toHaveCount(1)
   await expect(page.locator('.garment-card')).toContainText('Hemd')
@@ -806,7 +809,9 @@ test('Sicherungserinnerung lässt sich pausieren und dauerhaft ausschalten; unve
   await setting.uncheck()
   await expect(setting).toBeEnabled()
   await page.reload()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await expect(setting).not.toBeChecked()
   await setting.check()
   await expect(setting).toBeChecked()

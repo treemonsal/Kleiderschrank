@@ -15,6 +15,12 @@ export function ViewMemoryProvider({ children }: { children: ReactNode }) {
   return <ViewMemory.Provider value={memory}>{children}</ViewMemory.Provider>
 }
 
+/** Preset another area's remembered state before navigating there. */
+export function usePresetView() {
+  const memory = useContext(ViewMemory)
+  return (key: string, value: unknown) => memory?.set(key, value)
+}
+
 export function useViewState<T>(key: string, initial: T | (() => T)) {
   const memory = useContext(ViewMemory)
   const [value, setValue] = useState<T>(() =>

@@ -2,6 +2,8 @@ import { test, expect } from './fixtures'
 
 // Controlled provider response: verifies honest metadata-only presentation,
 // not availability or recommendation quality of the public community service.
+// Network mocks use page.route, which a controlling service worker bypasses.
+test.use({ serviceWorkers: 'block' })
 test('Online-Beratung ohne Kleidungsfotos behauptet im Ergebnis keine visuelle Analyse', async ({
   page,
 }) => {
@@ -57,7 +59,9 @@ test('Online-Beratung ohne Kleidungsfotos behauptet im Ergebnis keine visuelle A
     }),
   )
   await page.goto('/')
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'metadata.json',
     mimeType: 'application/json',

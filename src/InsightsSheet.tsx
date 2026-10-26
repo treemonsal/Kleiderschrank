@@ -51,7 +51,7 @@ export function InsightsSheet({
   }
   const maxColor = Math.max(1, ...(insights?.colors.map((c) => c.count) ?? []))
   return (
-    <Sheet title="Auswertung" eyebrow="Kleiderschrank" onClose={onClose}>
+    <Sheet title="Auswertung" eyebrow="Garderobe" onClose={onClose}>
       {!insights ? (
         <p role="status">Wird berechnet …</p>
       ) : (

@@ -31,7 +31,7 @@ test('Men체leiste bleibt auch w채hrend der Seitenanimation vor dem Inhalt sichtb
     }
   })
   const nav = page.getByRole('navigation', { name: 'Hauptnavigation' })
-  for (const label of ['Kleiderschrank', 'Outfits', 'Heute']) {
+  for (const label of ['Garderobe', 'Looks', 'Heute']) {
     await nav.getByRole('button', { name: label, exact: true }).click()
     await expect(
       nav.getByRole('button', { name: label, exact: true }),
@@ -75,9 +75,7 @@ test('W채schetrommel dreht und startet bei erneutem Tippen neu, w채hrend der Fil
   page,
 }) => {
   await page.goto('/')
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   const laundry = page.getByRole('button', { name: 'Nur W채sche', exact: true })
   await laundry.click()
   await expect(laundry).toHaveAttribute('aria-pressed', 'true')
@@ -110,9 +108,7 @@ test('Herz reagiert auf Tippen; Bewegung reduzieren stoppt laufendes Feedback un
   page,
 }) => {
   await page.goto('/')
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   const heart = page.getByRole('button', { name: 'Nur Favoriten', exact: true })
   await heart.click()
   await expect(heart).toHaveAttribute('aria-pressed', 'true')
@@ -178,10 +174,10 @@ test('Schnelle Tabwechsel behalten die letzte Auswahl, auch beim sofortigen Zur�
     buttons[2].click()
   })
   await expect(
-    nav.getByRole('button', { name: 'Outfits', exact: true }),
+    nav.getByRole('button', { name: 'Looks', exact: true }),
   ).toHaveAttribute('aria-current', 'page')
   await expect(
-    page.getByRole('heading', { name: 'Outfits', exact: true }),
+    page.getByRole('heading', { name: 'Looks', exact: true }),
   ).toBeVisible()
   await page
     .getByRole('button', { name: 'Outfits zusammenstellen', exact: true })
@@ -210,9 +206,7 @@ test('Ohne optionale Animations- und Resize-APIs bleiben Filter, Navigation und 
     })
   })
   await page.goto('/')
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   const laundry = page.getByRole('button', { name: 'Nur W채sche', exact: true })
   await laundry.click()
   await expect(laundry).toHaveAttribute('aria-pressed', 'true')
@@ -244,9 +238,7 @@ test('Reduzierte Bewegung l채sst Seiten und Fenster ohne Einfedern erscheinen', 
     await dialog.evaluate((node) => getComputedStyle(node).transform),
   ).toBe('none')
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   expect(
     await page
       .locator('.view')

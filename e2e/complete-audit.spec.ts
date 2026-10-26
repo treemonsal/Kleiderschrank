@@ -79,7 +79,9 @@ async function seed(page: Page) {
     createdAt: stamp,
     updatedAt: stamp,
   }
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'audit.json',
     mimeType: 'application/json',
@@ -114,9 +116,7 @@ test('Bereichswechsel behalten Datum, Suchfilter, Sortierung, Reiter und Scrollp
     .getByRole('button', { name: 'Vorheriger Tag', exact: true })
     .click()
   const day = await page.locator('.daily-look').getAttribute('data-day')
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page
     .getByRole('searchbox', { name: 'Kleidung suchen' })
     .fill('Fotostück')
@@ -127,15 +127,13 @@ test('Bereichswechsel behalten Datum, Suchfilter, Sortierung, Reiter und Scrollp
     .selectOption('name')
   await page.evaluate(() => window.scrollTo({ top: 350, behavior: 'instant' }))
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(350)
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('button', { name: 'Gespeichert (1)', exact: true })
     .click()
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
   await expect(page.locator('.daily-look')).toHaveAttribute('data-day', day!)
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect(
     page.getByRole('searchbox', { name: 'Kleidung suchen' }),
   ).toHaveValue('Fotostück')
@@ -145,9 +143,7 @@ test('Bereichswechsel behalten Datum, Suchfilter, Sortierung, Reiter und Scrollp
   await expect
     .poll(() => page.evaluate(() => Math.abs(window.scrollY - 350)))
     .toBeLessThan(2)
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
   await page.getByRole('button', { name: 'Sortierung ändern' }).click()
   await expect(
@@ -157,7 +153,7 @@ test('Bereichswechsel behalten Datum, Suchfilter, Sortierung, Reiter und Scrollp
     .getByRole('button', { name: 'Filter zurücksetzen', exact: true })
     .click()
   await expect(page.locator('.garment-card')).toHaveCount(10)
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await expect(
     page.getByRole('button', { name: 'Gespeichert (1)', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
@@ -168,7 +164,7 @@ test('Gespeicherte Outfit-Favoriten und Wäschewechsel erhalten echte Fotos und 
 }) => {
   await page.goto('/')
   const originals = await seed(page)
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('button', { name: 'Gespeichert (1)', exact: true })
     .click()
@@ -218,7 +214,9 @@ test('Gespeicherte Outfit-Favoriten und Wäschewechsel erhalten echte Fotos und 
     )
     .toBe(true)
   await expect(card.getByText('In der Wäsche', { exact: true })).toBeVisible()
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const downloading = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const backup = JSON.parse(
@@ -240,9 +238,7 @@ test('Fehlgeschlagene Freistellungsanzeige versucht erneut und fällt ohne Daten
 }) => {
   await page.goto('/')
   await seed(page)
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await expect
     .poll(() =>
       page
@@ -288,7 +284,7 @@ test('Look- und Kalenderentwürfe sind geschützt, der Schliessen-Knopf bleibt i
 }) => {
   await page.goto('/')
   await seed(page)
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('button', { name: 'Gespeichert (1)', exact: true })
     .click()
@@ -312,7 +308,7 @@ test('Look- und Kalenderentwürfe sind geschützt, der Schliessen-Knopf bleibt i
   await expect(
     page.getByRole('button', { name: 'Alltagslook bearbeiten', exact: true }),
   ).toBeVisible()
-  await page.getByRole('button', { name: 'Kalender', exact: true }).click()
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await page
     .getByRole('button', { name: 'Look einplanen', exact: true })
     .click()
@@ -332,9 +328,7 @@ test('Look- und Kalenderentwürfe sind geschützt, der Schliessen-Knopf bleibt i
   await expect(
     page.getByText('Unbestätigter Entwurf', { exact: true }),
   ).toBeVisible()
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page
     .getByRole('button', { name: 'Stück hinzufügen', exact: true })
     .click()
@@ -364,7 +358,9 @@ test('Eigener Server deaktiviert keine Community-Freigabe; gesperrter Speicher z
     ),
   )
   await page.goto('/')
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await expect(
     page.getByText('Für die Nacht gemacht', { exact: true }),
   ).toHaveCount(0)
