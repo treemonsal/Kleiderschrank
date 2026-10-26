@@ -1,5 +1,7 @@
 # Store-Design (ab 0.27.0)
 
+> Archiv: Seit 0.28.0 sind die Dateien dieses Designs entfernt. Sie liegen im Branch `backup/design-0.27.0`; aktuelles Design in [JOURNAL.md](JOURNAL.md).
+
 Auf Wunsch übernimmt MyStyle seit 0.27.0 die Gestaltung des Apple Store (apple.com/ch-de/store, am 25.10.2026 vermessen). Mobbin war als Quelle vorgesehen, verlangt für den Connector aber ein bezahltes Abo und wurde deshalb nicht genutzt.
 
 Farben und Schrift kommen auf Wunsch nicht von Apple: nur zwei Hauptfarben, warmes Off-White und das Burgund des neuen iPhone. Titel in einer Serifenschrift wie bei Claude.

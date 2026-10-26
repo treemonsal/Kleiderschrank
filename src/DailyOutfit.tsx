@@ -50,6 +50,7 @@ import { recentWear } from './wear-history'
 import { OutfitPieces } from './OutfitPieces'
 import { EmptyIllustration } from './EmptyIllustration'
 import { ErrorMessage, Sheet } from './ui'
+import { figureOrder } from './swatch'
 
 export function DailyOutfit({
   items,
@@ -191,6 +192,16 @@ export function DailyOutfit({
       : {}),
   }).format(new Date(`${day}T12:00:00`))
   const worn = entry?.status === 'worn' && day <= today
+  const weekday = new Intl.DateTimeFormat('de-CH', { weekday: 'long' }).format(
+    new Date(`${day}T12:00:00`),
+  )
+  const shortDate = new Intl.DateTimeFormat('de-CH', {
+    day: 'numeric',
+    month: 'long',
+    ...(day.slice(0, 4) !== today.slice(0, 4)
+      ? { year: 'numeric' as const }
+      : {}),
+  }).format(new Date(`${day}T12:00:00`))
   function move(offset: number) {
     const next = shiftDay(day, offset)
     if (next && !busy) onSelectDay(next)
@@ -206,6 +217,20 @@ export function DailyOutfit({
     // window must not remount this form and replace its unsaved draft.
     setEditing({ day, entry })
   }
+  // Name today's suggestion after its two leading colours, like a plate title.
+  const leadColors = [
+    ...new Set(
+      figureOrder(
+        (look?.garmentIds ?? []).flatMap(
+          (id) => items.find((item) => item.id === id) ?? [],
+        ),
+      )
+        .map((item) => item.color)
+        .filter(Boolean),
+    ),
+  ]
+  const colorTitle =
+    leadColors.length >= 2 ? `${leadColors[0]} & ${leadColors[1]}` : undefined
   const badge = entry
     ? worn
       ? 'Bestätigt getragen'
@@ -221,6 +246,55 @@ export function DailyOutfit({
         : 'Planung'
   return (
     <>
+      <div className="home-greeting home-day-summary journal-day-head">
+        <div className="journal-date">
+          <span className="kicker">
+            {weekday}
+            {isToday ? ' · heute' : ''}
+          </span>
+          <span className="home-date">{shortDate}</span>
+        </div>
+        {past ? (
+          <span className="home-history-date">Rückblick</span>
+        ) : (
+          <button
+            className="home-weather"
+            onClick={() => setWeatherOpen(true)}
+            aria-label="Wetter anzeigen und Ort ändern"
+          >
+            {state?.weather && forecast ? (
+              <>
+                <span className="home-weather-line">
+                  <WeatherSymbol code={forecast.code} size={20} />
+                  <span className="weather-range">
+                    {Math.round(forecast.min)}°–{Math.round(forecast.max)}°
+                  </span>
+                </span>
+                <small>
+                  {weatherLabel(forecast.code)} ·{' '}
+                  {fresh
+                    ? state.weather.location.name
+                    : 'Gespeichert · veraltet'}
+                </small>
+              </>
+            ) : (
+              <>
+                <span className="home-weather-line">
+                  <WeatherSymbol code={forecast?.code} size={20} />
+                  <span className="weather-range">Wetter</span>
+                </span>
+                <small>
+                  {state?.weather
+                    ? isToday
+                      ? 'Vorhersage nicht aktuell'
+                      : 'Keine Vorhersage für diesen Tag'
+                    : 'Ort auswählen'}
+                </small>
+              </>
+            )}
+          </button>
+        )}
+      </div>
       <section
         className="home-timeline"
         aria-label="Deine Tage"
@@ -304,6 +378,16 @@ export function DailyOutfit({
             )
           })}
         </div>
+        <p className="calendar-ring-legend week-legend" aria-hidden="true">
+          <span>
+            <i className="legend-worn" />
+            getragen, in seinen Farben
+          </span>
+          <span>
+            <i className="legend-plan" />
+            geplant
+          </span>
+        </p>
         {!isToday && (
           <button
             className="text-button return-today"
@@ -314,42 +398,6 @@ export function DailyOutfit({
           </button>
         )}
       </section>
-      <div className="home-greeting home-day-summary">
-        {past ? (
-          <div className="home-history-date">
-            <span className="home-date">{date}</span>
-            <span>Dein Outfit-Rückblick</span>
-          </div>
-        ) : (
-          <button
-            className="home-weather"
-            onClick={() => setWeatherOpen(true)}
-            aria-label="Wetter anzeigen und Ort ändern"
-          >
-            <span className="home-date">{date}</span>
-            <span className="home-weather-line">
-              <WeatherSymbol code={forecast?.code} size={20} />
-              {state?.weather ? (
-                <span>
-                  {forecast
-                    ? `${Math.round(forecast.min)}–${Math.round(forecast.max)} °C · ${weatherLabel(forecast.code)}`
-                    : isToday
-                      ? 'Vorhersage nicht aktuell'
-                      : 'Keine Vorhersage für diesen Tag'}
-                  <small>
-                    {state.weather.location.name} ·{' '}
-                    {fresh ? 'Tagesvorhersage' : 'Gespeichert · veraltet'}
-                  </small>
-                </span>
-              ) : (
-                <span>
-                  Dein Wetter<small>Ort auswählen</small>
-                </span>
-              )}
-            </span>
-          </button>
-        )}
-      </div>
       <div className="day-slide-viewport">
         <section
           className="daily-look day-slide"
@@ -358,11 +406,19 @@ export function DailyOutfit({
           data-day-busy={busy ? 'true' : undefined}
         >
           <header>
-            <p className="eyebrow">{badge}</p>
+            <p className="eyebrow">
+              <span>{badge}</span>
+              {!!look?.garmentIds.length && (
+                <span className="look-count">
+                  {look.garmentIds.length}{' '}
+                  {look.garmentIds.length === 1 ? 'Teil' : 'Teile'}
+                </span>
+              )}
+            </p>
             <h1>
               {recorded?.name ??
                 (isToday
-                  ? 'Dein Look für heute'
+                  ? (colorTitle ?? 'Dein Look für heute')
                   : past
                     ? 'Vergangener Tag'
                     : 'Geplanter Look')}
@@ -479,22 +535,33 @@ export function DailyOutfit({
                   </button>
                 )}
               </div>
-              {isToday && !worn && complete && (
-                <button
-                  type="button"
-                  className="button secondary full daily-refine-button"
-                  disabled={busy}
-                  onClick={() => setRefining(true)}
-                >
-                  Tageslook verfeinern
-                </button>
-              )}
               <OutfitPieces
                 ids={look.garmentIds}
+                figure
                 items={items}
                 onOpen={onOpen}
                 onSwap={isToday && !worn ? setSwapping : undefined}
               />
+              {!!look.reasons.length && (
+                <details className="outfit-reasons" open>
+                  <summary>Warum diese Kombination?</summary>
+                  <p>{look.reasons.join(' ')}</p>
+                </details>
+              )}
+              {isToday && !worn && complete && (
+                <div className="refine-row">
+                  <span>Verfeinern</span>
+                  <button
+                    type="button"
+                    className="button secondary daily-refine-button"
+                    disabled={busy}
+                    onClick={() => setRefining(true)}
+                  >
+                    Tageslook verfeinern
+                  </button>
+                </div>
+              )}
+
               {isToday &&
                 !worn &&
                 look.garmentIds.some(
@@ -507,16 +574,6 @@ export function DailyOutfit({
                 </p>
               )}
               {entry?.note && <p className="calendar-note">{entry.note}</p>}
-              {!!look.reasons.length && (
-                <details className="outfit-reasons">
-                  <summary>Warum diese Kombination?</summary>
-                  <ul>
-                    {look.reasons.map((reason) => (
-                      <li key={reason}>{reason}</li>
-                    ))}
-                  </ul>
-                </details>
-              )}
               {day <= today && complete && (
                 <OutfitRating
                   key={outfitKey(look.garmentIds)}

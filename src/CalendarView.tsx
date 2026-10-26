@@ -14,6 +14,7 @@ import type { Garment } from './model'
 import type { SavedOutfit } from './outfit-model'
 import { ErrorMessage, GarmentPicture, Sheet } from './ui'
 import { DayCalendar } from './DayCalendar'
+import { LookBands } from './LookBands'
 import { weatherFresh, weatherLabel } from './weather'
 import { useClock } from './useWeather'
 import { useViewState } from './view-memory'
@@ -213,6 +214,7 @@ export function CalendarView({
                 {entry.status === 'worn' ? 'Getragen' : 'Geplant'}
               </span>
             </div>
+            <LookBands ids={outfit.garmentIds} items={items} height={40} />
             <div className="outfit-pieces">
               {pieces.map((item) => (
                 <button

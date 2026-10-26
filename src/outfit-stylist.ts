@@ -30,7 +30,7 @@ export async function askStylist(
 ) {
   if (!stylistEnabled())
     throw new Error(
-      'Aktiviere zuerst die kostenlose Community-KI unter Mehr → Online-Foto-KI.',
+      'Aktiviere zuerst die kostenlose Community-KI unter Einstellungen → Online-Foto-KI.',
     )
   const candidates = stylistLooks(input)
   if (!candidates.length)

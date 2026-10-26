@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
   Bookmark,
-  CalendarDays,
   Check,
   Heart,
   Plus,
@@ -37,7 +36,6 @@ import {
   type SavedOutfit,
 } from './outfit-model'
 import { ErrorMessage, Sheet } from './ui'
-import { CalendarView } from './CalendarView'
 import { WeatherPanel } from './WeatherPanel'
 import { recentWear } from './wear-history'
 import { localDay, wornCounts } from './calendar'
@@ -45,6 +43,7 @@ import { deleteOutfit } from './calendar-db'
 import { weatherFresh, type WeatherDay } from './weather'
 import { useClock, weatherForToday } from './useWeather'
 import { OutfitPieces } from './OutfitPieces'
+import { LookBands } from './LookBands'
 import { OutfitRating } from './OutfitRating'
 import { useViewState } from './view-memory'
 
@@ -293,7 +292,7 @@ export function OutfitView({
     [],
     null,
   )
-  const [tab, setTab] = useViewState<'discover' | 'saved' | 'calendar'>(
+  const [tab, setTab] = useViewState<'discover' | 'saved'>(
     'outfits.tab',
     'discover',
   )
@@ -383,7 +382,7 @@ export function OutfitView({
     <div className="view outfits-view">
       <header className="page-heading">
         <div className="heading-row">
-          <h1>Outfits</h1>
+          <h1>Looks</h1>
           <div className="heading-actions">
             <button
               className="icon-button soft"
@@ -401,7 +400,11 @@ export function OutfitView({
             </button>
           </div>
         </div>
-        <p>Kombinationen aus deinen Stücken.</p>
+        <p className="page-sub">
+          {state?.outfits.length ?? 0} gespeichert ·{' '}
+          {state?.outfits.filter((outfit) => outfit.favorite).length ?? 0}{' '}
+          Favoriten
+        </p>
       </header>
       <div className="outfit-tabs" role="group" aria-label="Outfit-Ansicht">
         <button
@@ -419,14 +422,6 @@ export function OutfitView({
         >
           <Bookmark size={16} />
           Gespeichert ({state?.outfits.length ?? 0})
-        </button>
-        <button
-          className={tab === 'calendar' ? 'active' : ''}
-          aria-pressed={tab === 'calendar'}
-          onClick={() => setTab('calendar')}
-        >
-          <CalendarDays size={16} />
-          Kalender
         </button>
       </div>
       {!state ? (
@@ -524,7 +519,7 @@ export function OutfitView({
                   <p>{missingOutfitMessage(items, options, weatherContext)}</p>
                   <button className="button secondary" onClick={onAdd}>
                     <Plus size={17} />
-                    Kleiderschrank ergänzen
+                    Garderobe ergänzen
                   </button>
                 </div>
               )}
@@ -563,6 +558,11 @@ export function OutfitView({
                       className="outfit-card"
                       aria-label={`Outfit-Vorschlag ${index + 1}`}
                     >
+                      <LookBands
+                        ids={candidate.garmentIds}
+                        items={items}
+                        height={64}
+                      />
                       <div className="outfit-card-heading">
                         <p className="eyebrow">Look {index + 1}</p>
                         <span>{options.occasion}</span>
@@ -657,13 +657,6 @@ export function OutfitView({
                 </div>
               )}
             </>
-          ) : tab === 'calendar' ? (
-            <CalendarView
-              items={items}
-              onOpen={onOpen}
-              onDiscover={() => setTab('discover')}
-              notify={notify}
-            />
           ) : (
             <>
               <div className="collection-toolbar">
@@ -709,14 +702,20 @@ export function OutfitView({
               )}
               {state.outfits
                 .filter((outfit) => !onlyFavorites || outfit.favorite)
-                .map((outfit) => (
+                .map((outfit, index) => (
                   <article className="outfit-card" key={outfit.id}>
+                    <LookBands ids={outfit.garmentIds} items={items} />
                     <div className="saved-outfit-heading">
                       <button
                         onClick={() => setEditing(outfit)}
                         aria-label={`${outfit.name} bearbeiten`}
                       >
-                        <h2>{outfit.name}</h2>
+                        <h2>
+                          <small className="look-number" aria-hidden="true">
+                            {String(index + 1).padStart(2, '0')}
+                          </small>{' '}
+                          {outfit.name}
+                        </h2>
                         <span>
                           {outfit.occasion}
                           {outfit.season !== 'Alle'

@@ -111,8 +111,8 @@ export function BackupView({
   return (
     <div className="view settings-view">
       <header className="page-heading">
-        <h1>Mehr</h1>
-        <p>Profil, KI und Sicherung.</p>
+        <h1>Einstellungen</h1>
+        <p className="page-sub">Profil, KI und Sicherung.</p>
       </header>
       <AISettings />
       <StyleProfileCard items={items} notify={notify} />

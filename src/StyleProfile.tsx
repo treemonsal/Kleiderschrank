@@ -73,7 +73,7 @@ function StyleCheck({
       )
       notify(
         skip
-          ? 'Du kannst den Stilcheck jederzeit unter Mehr starten.'
+          ? 'Du kannst den Stilcheck jederzeit in den Einstellungen starten.'
           : 'Dein Stilprofil ist gespeichert. Neue Vorschläge berücksichtigen deine Antworten.',
       )
       onClose()
@@ -370,7 +370,9 @@ export function StyleProfileCard({
                     state.preferences.colors,
                     styleProfileRevision(state.preferences),
                   )
-                  notify('Den Stilcheck findest du später unter Mehr.')
+                  notify(
+                    'Den Stilcheck findest du später in den Einstellungen.',
+                  )
                 })
               }
             >

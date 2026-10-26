@@ -35,7 +35,9 @@ async function seed(page: Page) {
     createdAt: stamp,
     updatedAt: stamp,
   }
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'reliability.json',
     mimeType: 'application/json',
@@ -120,18 +122,14 @@ test('Entfernen eines geöffneten Stücks in einem zweiten Fenster gibt die Navi
   context,
 }) => {
   await seed(page)
-  await page
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page
     .getByRole('button', { name: 'Review-Hemd öffnen', exact: true })
     .click()
 
   const other = await context.newPage()
   await other.goto('/')
-  await other
-    .getByRole('button', { name: 'Kleiderschrank', exact: true })
-    .click()
+  await other.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await other
     .getByRole('button', { name: 'Review-Hemd öffnen', exact: true })
     .click()
@@ -163,7 +161,7 @@ test('Stilvorlieben aus einem alten Fenster überschreiben keine neuere Auswahl'
   context,
 }) => {
   await seed(page)
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('button', { name: 'Stilvorlieben bearbeiten', exact: true })
     .click()
@@ -173,7 +171,7 @@ test('Stilvorlieben aus einem alten Fenster überschreiben keine neuere Auswahl'
 
   const other = await context.newPage()
   await other.goto('/')
-  await other.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await other.getByRole('button', { name: 'Looks', exact: true }).click()
   await other
     .getByRole('button', { name: 'Stilvorlieben bearbeiten', exact: true })
     .click()

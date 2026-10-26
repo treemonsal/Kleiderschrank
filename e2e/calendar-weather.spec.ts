@@ -19,7 +19,9 @@ async function seed(page: Page) {
       updatedAt: '2026-01-01T00:00:00.000Z',
     }),
   )
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
     name: 'test-wardrobe.json',
     mimeType: 'application/json',
@@ -32,7 +34,7 @@ async function seed(page: Page) {
     .getByRole('button', { name: 'Sicherung importieren', exact: true })
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
 }
 async function mockWeather(page: Page, fail: () => boolean = () => false) {
   const calls: string[] = []
@@ -121,7 +123,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
     .getByRole('button', { name: 'Outfits zusammenstellen', exact: true })
     .click()
   await page.getByRole('button', { name: 'Speichern', exact: true }).click()
-  await page.getByRole('button', { name: 'Kalender', exact: true }).click()
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await page.getByLabel('Tag auswählen', { exact: true }).fill('2026-10-16')
   await page
     .getByRole('button', { name: 'Look einplanen', exact: true })
@@ -154,7 +156,9 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
     path: testInfo.outputPath('calendar-worn-390.png'),
     fullPage: true,
   })
-  await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: /Sicherung exportieren/ }).click()
   const download = await downloadPromise
@@ -201,11 +205,12 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
   })
   await context.setOffline(true)
   await page.reload()
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
-  await page.getByRole('button', { name: 'Kalender', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await expect(page.getByText('Getragen', { exact: true })).toBeVisible()
   await page.getByLabel('Tag auswählen', { exact: true }).fill('2026-10-16')
   await expect(page.getByText('Besprechung', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByRole('button', { name: 'Gespeichert (1)', exact: true })
     .click()
@@ -224,7 +229,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
   await page
     .getByRole('button', { name: 'Outfit endgültig löschen', exact: true })
     .click()
-  await page.getByRole('button', { name: 'Kalender', exact: true }).click()
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await expect(
     page.getByText('0 Tage als getragen vermerkt.', { exact: false }),
   ).toBeVisible()
@@ -296,14 +301,14 @@ test('Wetterort bleibt offline verfügbar und kann ohne Netz vollständig verges
   await page.clock.install({ time: fixedTime })
   const calls = await mockWeather(page)
   await page.goto('/')
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await manualWeather(page)
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready
   })
   await context.setOffline(true)
   await page.reload()
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByText('Wetter für deinen Look', { exact: false })
     .first()
@@ -325,7 +330,7 @@ test('Wetterort bleibt offline verfügbar und kann ohne Netz vollständig verges
     page.getByText('Ort und Wetter entfernt.', { exact: true }),
   ).toBeVisible()
   await page.reload()
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByText('Wetter für deinen Look', { exact: false })
     .first()
@@ -356,7 +361,7 @@ test('Standort wird erst auf Wunsch angefragt; eine Ablehnung lässt die manuell
     })
   })
   await page.goto('/')
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   expect(
     await page.evaluate(
       () => (window as unknown as { __geoCalls: number }).__geoCalls,
@@ -390,8 +395,8 @@ test('Kalender verwendet den lokalen iPhone-Tag statt des UTC-Datums', async ({
 }) => {
   await page.clock.install({ time: new Date('2026-03-28T23:30:00Z') })
   await page.goto('/')
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
-  await page.getByRole('button', { name: 'Kalender', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
+  await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await expect(page.getByLabel('Tag auswählen', { exact: true })).toHaveValue(
     '2026-03-29',
   )
@@ -412,7 +417,7 @@ test('Freigegebener Standort lädt gerundetes Wetter, bestätigt Speichern und s
   await context.setGeolocation({ latitude: 47.3769123, longitude: 8.5417821 })
   const calls = await mockWeather(page)
   await page.goto('/')
-  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
     .getByText('Wetter für deinen Look', { exact: false })
     .first()
@@ -437,7 +442,7 @@ for (const width of [375, 390, 430]) {
     await page.clock.install({ time: fixedTime })
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
-    await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+    await page.getByRole('button', { name: 'Looks', exact: true }).click()
     await page
       .getByText('Wetter für deinen Look', { exact: false })
       .first()
@@ -447,7 +452,7 @@ for (const width of [375, 390, 430]) {
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true)
-    await page.getByRole('button', { name: 'Kalender', exact: true }).click()
+    await page.getByRole('button', { name: 'Journal', exact: true }).click()
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -457,10 +462,12 @@ for (const width of [375, 390, 430]) {
       path: testInfo.outputPath(`calendar-${width}.png`),
       fullPage: true,
     })
-    await page.getByRole('button', { name: 'Mehr', exact: true }).click()
+    await page
+      .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+      .click()
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
-    await page.getByRole('button', { name: 'Outfits', exact: true }).click()
-    await page.getByRole('button', { name: 'Kalender', exact: true }).click()
+    await page.getByRole('button', { name: 'Looks', exact: true }).click()
+    await page.getByRole('button', { name: 'Journal', exact: true }).click()
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

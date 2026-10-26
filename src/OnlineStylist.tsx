@@ -113,7 +113,7 @@ export function OnlineStylist({
             : active.signal.aborted
               ? ''
               : !stylistEnabled()
-                ? 'Aktiviere die kostenlose Community-KI unter Mehr → Online-Foto-KI.'
+                ? 'Aktiviere die kostenlose Community-KI unter Einstellungen → Online-Foto-KI.'
                 : describeAIProblem('Outfit-Beratung', error),
         )
       }
@@ -160,7 +160,7 @@ export function OnlineStylist({
           </label>
         </>
       ) : (
-        <p className="muted">KI unter Mehr aktivieren.</p>
+        <p className="muted">KI in den Einstellungen aktivieren.</p>
       )}
       <div className="stylist-actions">
         <button
