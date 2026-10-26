@@ -27,3 +27,7 @@ Quelle: Claude-Design-Entwurf „MyStyle, ein Garderobenjournal“ (Classical-De
 - Wärmer/Ruhiger/Ähnlich bleiben im bestehenden Dialog „Tageslook verfeinern“.
 - Der Titel des Tageslooks nennt die zwei führenden erfassten Farben („Beige & Blau“). Der Entwurf zeigte Fantasienamen, die App kennt nur die festen Farbnamen.
 - Stoffmuster sind ein Hinweis pro Kategorie, kein erfasster Stoff.
+
+## Stylesheets
+
+Seit 0.28.0 gibt es nur noch `src/styles.css` (Grundlage) und `src/journal.css` (Design). Die drei früheren Design-Schichten (editorial, luxe, store) wurden entfernt; aus ihnen blieben nur die Layout-Regeln, die die App noch sichtbar verändern, als Abschnitt „Layout base“ oben in `journal.css`. Geprüft wurde das, indem die berechneten Styles aller Elemente in 108 Ansichten, Sheets und leeren Zuständen bei 320, 390 und 820 px vor und nach dem Umbau verglichen wurden (0 Abweichungen). Die alten Dateien liegen im Branch `backup/design-0.27.0`.

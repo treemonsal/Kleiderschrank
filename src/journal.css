@@ -5,7 +5,9 @@
  * body, hairline rules instead of filled cards, outlined buttons, one gold
  * accent applied as stroke. Pieces without a photo are cloth swatches in
  * their recorded colour. Fonts are self-hosted (OFL, src/fonts).
- * Remove the import in main.tsx to return to the 0.27.0 store look.
+ *
+ * Together with styles.css this is the only stylesheet. Earlier designs
+ * (editorial, luxe, store) live on the branch backup/design-0.27.0.
  */
 @font-face {
   font-family: 'Cormorant Garamond';
@@ -57,6 +59,1250 @@
   src: url('./fonts/lora-latin-600-normal.woff2') format('woff2');
 }
 
+/* ── Layout base ────────────────────────────────────────────────────
+ * Layout rules carried over from the earlier designs (0.15–0.27). Only
+ * declarations that still change the rendered app are kept; this was
+ * checked by comparing the computed styles of every element in 108 view,
+ * sheet and empty states at 320, 390 and 820 px before and after.
+ */
+.inbox-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: -3px;
+  right: -3px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--background);
+}
+.style-interview {
+  border-left: 2px solid var(--accent);
+  padding: 4px 0 4px 16px;
+  scroll-margin-top: 115px;
+}
+.interview-start {
+  scroll-margin-top: 115px;
+}
+.style-interview > h3 {
+  font: 400 27px/1.15 var(--display-font);
+  margin: 9px 0 12px;
+}
+.style-interview > .muted {
+  font-size: 13px;
+}
+.interview-disclosure {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 12px 0;
+}
+.interview-conversation {
+  margin-top: 18px;
+}
+.interview-question {
+  background: var(--surface);
+  padding: 16px;
+  border-radius: 4px;
+  margin: 14px 0;
+}
+.interview-question h4 {
+  font: 400 24px/1.2 var(--display-font);
+  margin-bottom: 12px;
+  scroll-margin-top: 115px;
+}
+.interview-question .muted {
+  font-size: 12px;
+}
+.interview-choices {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+.interview-choices .chip {
+  white-space: normal;
+  text-align: left;
+  min-height: 48px;
+}
+.interview-question .style-check-actions .button {
+  font-size: 13px;
+  padding: 11px 14px;
+}
+@media (min-width: 375px) {
+  .interview-choices {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.interview-question .field {
+  margin-top: 16px;
+}
+.interview-answers > summary {
+  min-height: 44px;
+  padding: 12px 0;
+  cursor: pointer;
+  font-size: 12px;
+}
+.interview-answer {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.interview-answer strong {
+  display: block;
+  font-weight: 500;
+  margin-top: 6px;
+}
+.interview-answer > p {
+  color: var(--muted);
+}
+.interview-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 16px;
+}
+.app-shell {
+  max-width: 900px;
+  padding-bottom: calc(94px + env(safe-area-inset-bottom));
+}
+.wordmark > span:first-child {
+  font-weight: 400;
+}
+.profile-button {
+  border-radius: 4px;
+}
+.stylist-link {
+  justify-content: center;
+  gap: 4px;
+  font:
+    500 13px -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+}
+.section-heading h2,
+.closet-empty h2,
+.outfit-empty h2,
+.sheet-header h2 {
+  font-family: var(--display-font);
+  font-weight: 400;
+}
+.button {
+  border-radius: 5px;
+}
+.round-button,
+.icon-button.soft,
+.filter-button,
+.primary-add {
+  border-radius: 4px;
+}
+.day-navigation {
+  gap: 8px;
+}
+.home-week-strip {
+  margin-top: 5px;
+}
+.home-week-strip > button {
+  border-radius: 3px;
+}
+.home-greeting {
+  margin: 10px 0 16px;
+}
+.home-weather {
+  justify-content: space-between;
+}
+.home-date {
+  max-width: 44%;
+  margin: 0;
+}
+.home-weather-line {
+  font-size: 12px;
+  min-width: 0;
+  max-width: 57%;
+}
+.home-weather-line > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.home-weather-line small {
+  font-size: 10px;
+}
+.daily-look {
+  border-radius: 0;
+}
+.daily-look header > .muted {
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.daily-context {
+  letter-spacing: 0.2px;
+}
+.daily-quick-actions {
+  margin-top: 14px;
+}
+.daily-look .outfit-pieces {
+  gap: 16px 12px;
+}
+.daily-look .outfit-pieces:has(> :nth-child(3):last-child) > :first-child {
+  grid-row: span 2;
+}
+.daily-look
+  .outfit-pieces:has(> :nth-child(3):last-child)
+  > :first-child
+  .garment-picture {
+  aspect-ratio: auto;
+  height: 100%;
+  min-height: 255px;
+}
+.daily-look
+  .outfit-pieces:has(> :nth-child(3):last-child)
+  > :not(:first-child)
+  .garment-picture {
+  aspect-ratio: 5 / 3;
+}
+.daily-look-empty {
+  font-size: 13px;
+}
+.daily-look-empty .daily-add {
+  margin-bottom: 14px;
+}
+.garment-picture,
+.outfit-piece > .garment-picture {
+  border-radius: 3px;
+}
+.garment-picture {
+  background: var(--soft);
+}
+.garment-picture img {
+  background: transparent;
+}
+.favorite-button {
+  border-radius: 3px;
+}
+.photo-placeholder {
+  width: 100%;
+  height: 100%;
+  gap: 9px;
+}
+.garment-sketch {
+  width: 64%;
+  height: 64%;
+  color: #8a8979;
+}
+.outfit-piece .photo-placeholder > .garment-sketch {
+  width: 64%;
+  height: 64%;
+}
+.search-field {
+  border-radius: 4px;
+}
+.category-tabs .chip {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 12px 0;
+  font-size: 12px;
+  background: transparent;
+  color: var(--muted);
+}
+.category-tabs .chip.active {
+  border-bottom-color: var(--accent);
+  color: var(--ink);
+}
+.collection-toolbar {
+  margin: 8px 0 15px;
+  flex-wrap: wrap;
+}
+.text-button,
+.category-tabs .chip {
+  min-width: 44px;
+}
+.category-tabs .chip {
+  text-align: center;
+}
+.toast > button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.settings-advanced > summary,
+.settings-help > summary {
+  min-height: 48px;
+  padding: 12px 0;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.photo-unavailable {
+  display: grid;
+  place-content: center;
+  min-height: 120px;
+  padding: 16px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+.chip {
+  border-radius: 4px;
+}
+.outfit-tabs {
+  border-radius: 0;
+}
+.outfit-tabs > button {
+  border-radius: 0;
+  gap: 5px;
+}
+.outfit-tabs > button.active {
+  border-bottom-color: var(--accent);
+}
+.outfit-options,
+.outfit-card,
+.outfit-empty,
+.settings-card,
+.privacy-banner,
+.style-profile-card,
+.online-stylist,
+.backup-reminder,
+.swap-choice,
+.weather-panel {
+  border-radius: 4px;
+}
+.outfit-card-heading > span {
+  border-radius: 3px;
+}
+.section-intro {
+  font-size: 13px;
+}
+.style-invitation h2 > svg {
+  display: none;
+}
+.sheet {
+  border-radius: 12px 12px 0 0;
+}
+.sheet-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  padding: 12px 0;
+}
+summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.sheet-handle {
+  margin-bottom: 18px;
+}
+.field input,
+.field select,
+.field textarea,
+.photo-picker,
+.import-choice,
+.chat-message {
+  border-radius: 4px;
+}
+.chat-message {
+  background: var(--surface);
+  border: 0;
+  border-left: 2px solid var(--line);
+}
+.chat-message.user {
+  background: var(--hero);
+  border: 0;
+  border-radius: 4px 4px 0 4px;
+}
+.chat-author {
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+.chat-starters .chip {
+  background: var(--surface);
+}
+.chat-composer {
+  padding-top: 12px;
+}
+.chat-sheet .sheet-header {
+  border-bottom: 1px solid var(--line);
+}
+.toast {
+  border-radius: 5px;
+}
+.toast.toast-error {
+  border-left: 3px solid var(--danger);
+}
+button:disabled {
+  cursor: default;
+}
+@media (min-width: 600px) {
+  .app-header {
+    height: 106px;
+  }
+  .wordmark {
+    font-size: 44px;
+  }
+  .daily-look {
+    padding: 32px;
+  }
+  .daily-look h1 {
+    font-size: 52px;
+  }
+  .daily-look .outfit-pieces {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .daily-look .outfit-pieces:has(> :nth-child(3):last-child) > :first-child {
+    grid-row: auto;
+  }
+  .daily-look
+    .outfit-pieces:has(> :nth-child(3):last-child)
+    > .outfit-piece-slot
+    .garment-picture {
+    aspect-ratio: 4 / 5;
+    height: auto;
+    min-height: 0;
+  }
+  .section-heading h2 {
+    font-size: 32px;
+  }
+  .sheet {
+    border-radius: 8px;
+  }
+  .home-weather {
+    min-height: 64px;
+  }
+  .home-date {
+    font-size: 13px;
+  }
+  .home-weather-line {
+    font-size: 14px;
+  }
+}
+@media (min-width: 600px) {
+  .daily-look .outfit-pieces:has(> :nth-child(3):last-child) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .daily-look .outfit-pieces:has(> :nth-child(4):last-child) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (max-width: 374px) {
+  .home-week-strip,
+  .calendar-grid,
+  .calendar-weekdays {
+    margin-left: -13px;
+    margin-right: -13px;
+    gap: 0;
+  }
+  .home-week-strip > button,
+  .calendar-grid > button {
+    min-width: 44px;
+  }
+  .header-right {
+    gap: 4px;
+  }
+  .wordmark {
+    font-size: 32px;
+  }
+  .stylist-link {
+    padding: 0 6px;
+  }
+  .daily-look {
+    padding: 20px 14px;
+  }
+  .outfit-tabs > button {
+    font-size: 10px;
+  }
+}
+:root {
+  --display-font:
+    -apple-system, 'SF Pro Display', BlinkMacSystemFont, 'Helvetica Neue',
+    'Segoe UI', sans-serif;
+  --background: #f6f4ef;
+  --surface: #fffefb;
+  --soft: #efece5;
+  --ink: #141414;
+  --muted: #69655e;
+  --line: #e4e0d7;
+  --accent: #141414;
+  --action: #141414;
+  --accent-ink: #fffefb;
+  --hero: #efece5;
+  --rose: #c8233f;
+  --danger: #b3261e;
+  --hairline: rgb(20 20 20 / 0.06);
+  --radius-card: 24px;
+  --radius-control: 14px;
+  --shadow: 0 1px 2px rgb(40 32 20 / 0.05), 0 16px 40px rgb(40 32 20 / 0.08);
+  --card-shadow:
+    0 0 0 1px var(--hairline), 0 1px 2px rgb(40 32 20 / 0.03),
+    0 8px 24px rgb(40 32 20 / 0.04);
+  color-scheme: light;
+  letter-spacing: -0.01em;
+}
+body {
+  background: var(--background);
+}
+.section-heading h2,
+.closet-empty h2,
+.outfit-empty h2,
+.sheet-header h2,
+.wardrobe-summary h2,
+.style-invitation h2,
+.style-interview > h3,
+.interview-question h4,
+.chat-welcome h3,
+.chat-empty h3 {
+  font-family: var(--display-font);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.style-invitation h2 {
+  font-size: 20px;
+}
+.style-interview > h3 {
+  font-size: 22px;
+}
+.interview-question h4 {
+  font-size: 19px;
+}
+.chat-welcome h3,
+.chat-empty h3 {
+  font-size: 24px;
+}
+.daily-look header .eyebrow {
+  color: var(--muted);
+}
+.item-category {
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.garment-caption h3 {
+  letter-spacing: -0.01em;
+}
+.app-header {
+  margin: 0;
+  box-sizing: content-box;
+  border-bottom: 0;
+}
+.app-shell {
+  padding-top: 0;
+}
+.profile-button {
+  border-radius: 999px;
+}
+.stylist-link {
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.inbox-dot {
+  background: var(--rose);
+  box-shadow: 0 0 0 2px var(--soft);
+}
+.view {
+  padding: 0 20px;
+}
+.bottom-nav {
+  border-radius: 999px;
+}
+.nav-selection {
+  border-radius: 999px;
+}
+.bottom-nav > button {
+  border-radius: 999px;
+}
+.bottom-nav > button > span:last-child {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nav-icon {
+  display: inline-flex;
+  font: inherit;
+}
+.bottom-nav > button.active .nav-icon {
+  color: var(--ink);
+}
+.app-shell {
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+}
+.button {
+  border-radius: 999px;
+}
+.round-button,
+.icon-button.soft,
+.filter-button,
+.primary-add {
+  border-radius: 999px;
+}
+.search-field {
+  border-radius: var(--radius-control);
+}
+.field input:not([type='radio']),
+.field select,
+.field textarea,
+.photo-picker,
+.import-choice {
+  border-radius: var(--radius-control);
+}
+.chip {
+  border-radius: 999px;
+}
+.category-tabs .chip {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--soft);
+  color: var(--ink);
+}
+.category-tabs .chip.active {
+  background: var(--action);
+  color: var(--accent-ink);
+}
+.outfit-tabs {
+  gap: 4px;
+  border-radius: 999px;
+}
+.outfit-tabs > button {
+  border-radius: 999px;
+}
+.daily-look,
+.outfit-options,
+.outfit-card,
+.outfit-empty,
+.settings-card,
+.privacy-banner,
+.style-profile-card,
+.online-stylist,
+.backup-reminder,
+.swap-choice,
+.weather-panel {
+  border-radius: var(--radius-card);
+}
+.settings-action {
+  padding: 18px 18px;
+}
+.settings-action strong {
+  font-size: 16px;
+  font-weight: 600;
+}
+.settings-action small {
+  font-size: 13px;
+}
+.wardrobe-summary {
+  border-radius: var(--radius-card);
+}
+.add-banner {
+  border-radius: var(--radius-card);
+}
+.garment-picture,
+.outfit-piece > .garment-picture {
+  border-radius: 20px;
+  background: var(--soft);
+}
+.garment-sketch {
+  color: var(--muted);
+}
+.photo-placeholder > span {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+.favorite-button {
+  border-radius: 999px;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.home-week-strip > button {
+  border-radius: 16px;
+}
+.home-weather-line small {
+  font-size: 12px;
+}
+.sheet {
+  border-radius: 28px 28px 0 0;
+}
+.sheet::backdrop {
+  background: rgb(0 0 0 / 0.4);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.sheet-handle {
+  border-radius: 999px;
+}
+@media (min-width: 600px) {
+  .sheet {
+    border-radius: 28px;
+  }
+  .daily-look {
+    padding: 32px;
+  }
+}
+.chat-message {
+  border: 0;
+  border-radius: 20px;
+  background: var(--surface);
+}
+.chat-message.user {
+  border-radius: 20px 20px 6px 20px;
+  background: var(--action);
+  color: var(--accent-ink);
+}
+.chat-message.user .chat-author {
+  color: inherit;
+  opacity: 0.75;
+}
+.toast {
+  border-radius: 18px;
+}
+.toast.toast-error {
+  border-left: 0;
+  background: var(--danger);
+  color: #fff;
+}
+summary:focus-visible,
+:focus-visible {
+  outline-color: var(--ink);
+}
+.style-interview {
+  border-left-color: var(--line);
+}
+.interview-question {
+  border-radius: 20px;
+}
+.update-banner,
+.offline-banner {
+  border-radius: 999px;
+}
+@media (max-width: 374px) {
+  .view {
+    padding: 0 14px;
+  }
+  .app-header {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .wordmark {
+    font-size: 20px;
+  }
+}
+.wardrobe-summary .eyebrow,
+.section-heading .eyebrow,
+.sheet-header .eyebrow,
+.calendar-day-card > .eyebrow {
+  font-size: 13px;
+  letter-spacing: 0;
+  margin-bottom: 2px;
+}
+.style-invitation {
+  margin: 16px 0 0;
+  padding: 20px;
+  border-radius: var(--radius-card);
+}
+.daily-look .online-stylist,
+.daily-look .outfit-reasons {
+  box-shadow: none;
+  background: var(--soft);
+}
+.daily-look .outfit-reasons {
+  border-top: 0;
+  border-radius: 16px;
+  padding: 4px 16px;
+}
+.outfit-piece-slot {
+  position: relative;
+}
+.piece-swap {
+  justify-content: center;
+  border-radius: 999px;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.outfit-piece > span {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 8px;
+}
+.forgotten-row::-webkit-scrollbar {
+  display: none;
+}
+@media (min-width: 600px) {
+  .forgotten-piece {
+    flex-basis: 22%;
+  }
+}
+.everyday-card {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+}
+.everyday-card .micro-copy {
+  justify-content: flex-start;
+  text-align: left;
+  margin: 0 0 6px;
+}
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.check-row input {
+  width: 22px;
+  height: 22px;
+}
+.cost-per-wear {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.heading-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.insights {
+  display: grid;
+  gap: 22px;
+  padding-bottom: 24px;
+}
+.insight-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.insight-tiles > div {
+  display: grid;
+  gap: 4px;
+  padding: 14px 12px;
+  border-radius: 18px;
+}
+.insight-tiles strong {
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.insight-tiles span {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+.insight-hint {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--soft);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.insights section h3 {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+}
+.insights section .muted {
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+.insight-list {
+  border-radius: 18px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.insight-list li + li {
+  border-top: 1px solid var(--line);
+}
+.insight-list button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 15px;
+}
+.insight-list span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.insight-list small {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.color-bars {
+  display: grid;
+  gap: 8px;
+}
+.color-bars li {
+  display: grid;
+  grid-template-columns: 18px 72px 1fr 24px;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.color-swatch {
+  height: 18px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+.color-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--soft);
+  overflow: hidden;
+}
+.color-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ink);
+}
+.color-count {
+  text-align: right;
+  color: var(--muted);
+}
+.pairings {
+  display: grid;
+  gap: 14px;
+  margin: 8px 0 4px;
+}
+.pairings h4 {
+  font-size: 17px;
+  font-weight: 650;
+}
+.pairing-look {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--surface);
+}
+.pairing-look .outfit-pieces {
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+}
+.packing {
+  display: grid;
+  gap: 18px;
+  padding-bottom: 24px;
+}
+.packing h3 {
+  font-size: 17px;
+  font-weight: 650;
+  margin: 0 0 8px;
+}
+.packing-summary {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--soft);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.packing-list {
+  padding: 0 16px;
+  border-radius: 18px;
+  background: var(--surface);
+}
+.packing-list li + li {
+  border-top: 1px solid var(--line);
+}
+.packing-list .check-row span {
+  flex: 1;
+  min-width: 0;
+}
+.packing-list .check-row small {
+  font-weight: 400;
+  color: var(--muted);
+}
+.packing-list input:checked + span {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.packing-days {
+  display: grid;
+  gap: 8px;
+}
+.packing-days li {
+  display: grid;
+  gap: 2px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--surface);
+  font-size: 14px;
+}
+.packing-days strong {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.batch {
+  display: grid;
+  gap: 14px;
+  padding-bottom: 24px;
+}
+.batch-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--soft);
+  overflow: hidden;
+}
+.batch-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+  border-radius: inherit;
+  transition: width 300ms ease;
+}
+.batch-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.batch-item {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 44px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.batch-thumb {
+  position: relative;
+  width: 72px;
+  height: 88px;
+  border-radius: 14px;
+  background: var(--soft);
+  overflow: hidden;
+}
+.batch-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.batch-status {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+}
+.batch-item.done .batch-status {
+  color: var(--ink);
+}
+.batch-item.failed .batch-status {
+  color: var(--danger);
+}
+.batch-fields {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.batch-fields input,
+.batch-fields select {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--background);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+}
+.empty-illustration {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 4px;
+  margin: 8px auto 16px;
+}
+.empty-illustration > span {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 96px;
+  border-radius: 22px;
+  background: var(--soft);
+}
+.empty-illustration .garment-sketch {
+  width: 70%;
+  height: 70%;
+}
+.empty-illustration .tilt-left {
+  transform: rotate(-6deg) translateY(-6px);
+}
+.empty-illustration .tilt-right {
+  transform: rotate(6deg) translateY(-6px);
+}
+.context-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+}
+:root {
+  --serif-font:
+    ui-serif, 'New York', 'Iowan Old Style', 'Charter', Georgia, serif;
+  --background: #f7f3f2;
+  --surface: #fffdfc;
+  --soft: #efe6e6;
+  --ink: #2b171b;
+  --muted: #7a5c61;
+  --line: #e4d7d8;
+  --accent: #6b2433;
+  --action: #6b2433;
+  --accent-ink: #fffdfc;
+  --hero: #fffdfc;
+  --rose: #6b2433;
+  --danger: #8f1d2c;
+  --hairline: rgb(107 36 51 / 0.06);
+  --radius-card: 18px;
+  --radius-control: 12px;
+  --shadow: 0 4px 24px rgb(43 23 27 / 0.1);
+  --card-shadow: 2px 4px 12px rgb(43 23 27 / 0.07);
+  letter-spacing: -0.022em;
+}
+body {
+  background: var(--background);
+  color: var(--ink);
+}
+.page-heading h1,
+.heading-row h1,
+.outfits-view .heading-row h1,
+.settings-view .page-heading h1,
+.daily-look h1 {
+  letter-spacing: -0.01em;
+}
+.page-heading > p:last-child {
+  line-height: 1.25;
+}
+.section-heading h2,
+.two-tone,
+.sheet-header h2,
+.daily-look h1,
+.wardrobe-summary h2,
+.style-invitation h2,
+.chat-welcome h3,
+.chat-empty h3,
+.outfit-empty h2,
+.closet-empty h2,
+.style-interview > h3,
+.interview-question h4 {
+  font-family: var(--serif-font);
+  font-weight: 500;
+}
+.section-heading h2 {
+  letter-spacing: -0.01em;
+}
+.text-button,
+.section-heading .text-button,
+summary {
+  color: var(--accent);
+}
+.text-button:hover {
+  text-decoration: underline;
+}
+.button.primary:hover:not(:disabled) {
+  background: #5a1d2a;
+}
+.button.primary:disabled {
+  background: #c4a5ab;
+  opacity: 1;
+}
+.daily-look,
+.outfit-options,
+.outfit-card,
+.outfit-empty,
+.settings-card,
+.style-profile-card,
+.online-stylist,
+.backup-reminder,
+.swap-choice,
+.weather-panel,
+.wardrobe-summary,
+.add-banner,
+.style-invitation,
+.insight-tiles > div {
+  border-radius: var(--radius-card);
+}
+.daily-look .online-stylist,
+.daily-look .outfit-reasons {
+  background: var(--background);
+}
+.garment-picture,
+.outfit-piece > .garment-picture {
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.daily-look .garment-picture,
+.outfit-card .garment-picture {
+  background: var(--background);
+}
+.garment-sketch {
+  color: var(--muted);
+}
+.category-tabs {
+  scroll-padding-inline: 20px;
+}
+.category-tabs .chip {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 76px;
+  min-height: 44px;
+  padding: 4px 6px 6px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 400;
+}
+.category-art {
+  border-radius: 16px;
+}
+.category-tabs .chip.active {
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600;
+}
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: 0;
+  border-color: var(--action);
+  box-shadow: 0 0 0 3px rgb(107 36 51 / 0.22);
+}
+:focus-visible,
+summary:focus-visible {
+  outline-color: var(--action);
+}
+.chat-message.user {
+  background: var(--action);
+  color: #fff;
+}
+
+/* ── Journal theme ─────────────────────────────────────────────────── */
 :root {
   /* Classical tokens */
   --font-heading: 'Cormorant Garamond', ui-serif, Georgia, serif;
@@ -1441,6 +2687,11 @@ details.outfit-reasons p {
   .journal-nav .nav-selection,
   .day-color-ring.has-colors {
     transition: none;
+  }
+  /* Filter chips change colour on tap; with reduced motion that is instant. */
+  .chip,
+  .chip svg {
+    transition: none !important;
   }
 }
 

@@ -3,9 +3,6 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 import { ViewMemoryProvider } from './view-memory'
 import './styles.css'
-import './editorial.css'
-import './luxe.css'
-import './store.css'
 import './journal.css'
 
 class StorageBoundary extends Component<

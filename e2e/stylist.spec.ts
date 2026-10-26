@@ -269,6 +269,9 @@ for (const [mode, message] of [
     await page.goto('/')
     await importPieces(page)
     await activate(page)
+    await expect(
+      page.locator('.figure-plate .outfit-piece').first(),
+    ).toBeVisible()
     const before = await mainNames(page)
     const stylist = page.getByRole('region', { name: 'Online-Stylist' })
     await stylist
