@@ -34,6 +34,7 @@ export function useSheetMotion(
   const position = useRef(0)
   const animation = useRef<SpringAnimation | null>(null)
   const closing = useRef(false)
+  const mounted = useRef(true)
   const latest = useRef(options)
   latest.current = options
 
@@ -81,9 +82,19 @@ export function useSheetMotion(
     if (closing.current) return
     closing.current = true
     const dialog = ref.current
-    if (dialog) leaveAsGhost(dialog, position.current, velocity)
+    const ghost = dialog
+      ? leaveAsGhost(dialog, position.current, velocity)
+      : undefined
     halt()
     latest.current.onDismissed()
+    // A parent may keep the sheet (e.g. while it saves): then the copy goes
+    // and the sheet springs back, still closable afterwards.
+    window.setTimeout(() => {
+      if (!mounted.current) return
+      ghost?.()
+      closing.current = false
+      if (!reduced()) springTo(0, velocity, SPRING_SHEET)
+    }, 0)
   }
 
   // Arrive from below (or fade in with reduced motion).
@@ -99,7 +110,11 @@ export function useSheetMotion(
       apply(height())
       springTo(0, 0, ENTER)
     }
-    return () => void halt()
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      halt()
+    }
   }, [])
 
   // Pulling down: grabber/header with any pointer, content by touch at the top.
@@ -250,14 +265,17 @@ export function useSheetMotion(
   }
 }
 
-/** An inert visual copy of a closing sheet that springs out of view. */
+/**
+ * An inert visual copy of a closing sheet that springs out of view.
+ * Returns a function that removes it at once.
+ */
 function leaveAsGhost(
   dialog: HTMLDialogElement,
   from: number,
   velocity: number,
-) {
+): (() => void) | undefined {
   const rect = dialog.getBoundingClientRect()
-  if (!rect.height) return
+  if (!rect.height) return undefined
   const scrim = document.createElement('div')
   scrim.className = 'sheet-ghost-scrim'
   const ghost = document.createElement('div')
@@ -295,10 +313,10 @@ function leaveAsGhost(
     const animation = ghost.animate?.(fadeOut, timing)
     if (animation) animation.onfinish = remove
     else remove()
-    return
+    return remove
   }
   const distance = rect.height + 24
-  animateSpring({
+  const spring = animateSpring({
     from: { value: from, velocity: Math.max(velocity, 0) },
     to: distance,
     config: EXIT,
@@ -309,6 +327,10 @@ function leaveAsGhost(
     },
     onComplete: remove,
   })
+  return () => {
+    spring.stop()
+    remove()
+  }
 }
 
 /** The copy must not be found as a second form: no labels, names or ids. */

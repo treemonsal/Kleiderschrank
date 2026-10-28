@@ -55,6 +55,10 @@ async function open(page: Page, activate = true) {
     .click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
+  // The sheet rises on a spring; measure once it has arrived.
+  await expect
+    .poll(() => dialog.evaluate((node) => node.style.transform))
+    .toBe('')
   if (
     activate &&
     (await dialog
