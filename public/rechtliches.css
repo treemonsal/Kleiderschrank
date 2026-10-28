@@ -1,0 +1,72 @@
+/* Static legal pages; Classical tokens without web fonts (system serif). */
+:root {
+  color-scheme: light;
+  --bg: #f3f2f2;
+  --text: #201f1d;
+  --muted: #605d5d;
+  --accent: #b68235;
+  --divider: color-mix(in srgb, #201f1d 16%, transparent);
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font:
+    16px/1.6 ui-serif,
+    Georgia,
+    'Times New Roman',
+    serif;
+}
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: max(32px, env(safe-area-inset-top)) 16px
+    max(48px, env(safe-area-inset-bottom));
+}
+.eyebrow {
+  margin: 0;
+  color: var(--accent);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 4px 0 0;
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+.stand {
+  margin: 4px 0 24px;
+  color: var(--muted);
+  font-size: 14px;
+}
+h2 {
+  margin: 28px 0 6px;
+  padding-top: 18px;
+  border-top: 1px solid var(--divider);
+  font-size: 21px;
+  font-weight: 500;
+}
+p,
+li {
+  margin: 0 0 10px;
+}
+ul {
+  padding-left: 20px;
+}
+a {
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+code {
+  font-size: 14px;
+}
+.back {
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid var(--divider);
+}

@@ -1007,6 +1007,21 @@ fieldset {
   font-size: 9px;
   letter-spacing: 0.5px;
 }
+.legal-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.legal-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 8px;
+  color: inherit;
+}
 .sheet {
   padding: 0;
   border: 0;

@@ -1,5 +1,10 @@
 # Entwicklungsplan
 
+## Version 0.34.1 – Datenschutz und Nutzungsbedingungen
+
+- [x] Öffentliche Seiten `datenschutz.html` und `nutzungsbedingungen.html` für den Google-Zustimmungsbildschirm, verlinkt in den Einstellungen.
+- [ ] Google-App veröffentlichen (Branding ohne Logo, damit keine Prüfung nötig ist) und echte Anmeldung auf iPhone und zweitem Gerät testen.
+
 ## Version 0.34.0 – bessere Outfitauswahl
 
 - [x] Kleiderordnung pro Anlass: Büro und Abend bevorzugen elegante Teile und werten Sportliches ab, Freizeit lockere; Alltag lässt jeden Stil zu, damit eigene Stilvorlieben gelten

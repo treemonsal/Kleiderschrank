@@ -22,7 +22,8 @@ Dauer: etwa 10 Minuten. Kosten: keine (keine Kreditkarte nötig).
 2. App-Name `MyStyle`, Support-E-Mail: deine Adresse.
 3. Zielgruppe: **Extern**. Kontaktdaten: deine Adresse. Bedingungen akzeptieren → **Erstellen**.
 4. **Datenzugriff** → **Bereiche hinzufügen**: `.../auth/drive.appdata`, `openid`, `.../auth/userinfo.email` → **Speichern**.
-5. **Zielgruppe** → **App veröffentlichen**, damit sich auch deine Kollegen anmelden können.
+5. **Branding**: Startseite `https://treemonsal.github.io/Kleiderschrank/`, Datenschutzerklärung `https://treemonsal.github.io/Kleiderschrank/datenschutz.html`, Nutzungsbedingungen `https://treemonsal.github.io/Kleiderschrank/nutzungsbedingungen.html`, autorisierte Domain `treemonsal.github.io`, Kontakt-E-Mail des Entwicklers ausfüllen. **Kein Logo hochladen**: ein Logo verlangt eine Prüfung durch Google.
+6. **Zielgruppe** → **App veröffentlichen**, damit sich auch deine Kollegen anmelden können.
    Falls Google stattdessen eine Prüfung verlangt: im Testmodus bleiben und unter **Testnutzer** die Gmail-Adressen deiner Kollegen eintragen (bis 100 Personen).
 
 ## 4. Client-ID erstellen
