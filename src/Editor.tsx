@@ -10,6 +10,7 @@ import { imagesFromClipboard } from './image-drop'
 import {
   CATEGORIES,
   COLORS,
+  MAX_SECONDARY_COLORS,
   SEASONS,
   STYLES,
   type Garment,
@@ -83,6 +84,15 @@ export function Editor({
   useEffect(() => {
     if (incoming?.files.length) receiveLatest.current(incoming.files)
   }, [incoming?.key, incoming?.files])
+  const secondary = draft.secondaryColors ?? []
+  function chooseMain(color: string) {
+    update('color', color)
+    // The main colour is never also a second colour; without one, none.
+    update(
+      'secondaryColors',
+      color ? secondary.filter((name) => name !== color) : [],
+    )
+  }
   async function upload(file?: File) {
     if (!file) return
     setProcessing(true)
@@ -317,7 +327,7 @@ export function Editor({
               <PhotoColorPicker
                 key={photoRevision}
                 photo={draft.photo}
-                onChoose={(color) => update('color', color)}
+                onChoose={(color) => chooseMain(color)}
               />
             )}
             <div className="color-options">
@@ -329,7 +339,7 @@ export function Editor({
                   aria-label={c.name}
                   aria-pressed={draft.color === c.name}
                   onClick={() =>
-                    update('color', draft.color === c.name ? '' : c.name)
+                    chooseMain(draft.color === c.name ? '' : c.name)
                   }
                 >
                   <span style={{ background: c.hex }} />
@@ -338,6 +348,50 @@ export function Editor({
               ))}
             </div>
           </div>
+          {draft.color && (
+            <div
+              className="field secondary-colors"
+              role="group"
+              aria-label="Zweitfarben"
+            >
+              <span>
+                Zweitfarben{' '}
+                <span className="optional">
+                  {secondary.length
+                    ? secondary.join(', ')
+                    : `optional, bis zu ${MAX_SECONDARY_COLORS}`}
+                </span>
+              </span>
+              <div className="color-options compact">
+                {COLORS.filter((c) => c.name !== draft.color).map((c) => {
+                  const selected = secondary.includes(c.name)
+                  return (
+                    <button
+                      type="button"
+                      key={c.name}
+                      className={`color-option ${selected ? 'selected' : ''}`}
+                      aria-label={`Zweitfarbe ${c.name}`}
+                      aria-pressed={selected}
+                      disabled={
+                        !selected && secondary.length >= MAX_SECONDARY_COLORS
+                      }
+                      onClick={() =>
+                        update(
+                          'secondaryColors',
+                          selected
+                            ? secondary.filter((name) => name !== c.name)
+                            : [...secondary, c.name],
+                        )
+                      }
+                    >
+                      <span style={{ background: c.hex }} />
+                      <span>{c.name}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
           <div className="field">
             <span>
               Jahreszeiten <span className="optional">optional</span>

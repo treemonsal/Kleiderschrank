@@ -1,3 +1,12 @@
+import { localDay } from './calendar'
+import {
+  occasionItemScore,
+  occasionLookScore,
+  patternHarmony,
+  seasonFor,
+  seasonScore,
+  wornTogetherScore,
+} from './styling-rules'
 import {
   acceptsRefinement,
   refinementChanges,
@@ -129,6 +138,7 @@ export function generateOutfits(
     for (const id of entry.garmentIds)
       likedItems.set(id, Math.min(1.5, (likedItems.get(id) || 0) + 0.3))
   }
+  const season = seasonFor(history?.day ?? weather?.day ?? localDay(), weather)
   const suitabilityCache = new Map<string, number>()
   function suitability(item: Garment): number {
     const cached = suitabilityCache.get(item.id)
@@ -142,10 +152,8 @@ export function generateOutfits(
       (options.style !== 'Alle' && item.styles.includes(options.style)
         ? 3
         : 0) +
-      ((options.occasion === 'Büro' || options.occasion === 'Abend') &&
-      item.styles.includes('Elegant')
-        ? 3
-        : 0) +
+      occasionItemScore(item, options.occasion) +
+      seasonScore(item, season) +
       (likedItems.get(item.id) || 0) +
       personal.itemScore(item) +
       Math.min(1, (wearCounts.get(item.id) ?? 0) * 0.2) -
@@ -221,6 +229,9 @@ export function generateOutfits(
         selected.length
       score += compatibility(selected).score
       score += personal.lookScore(selected)
+      score += occasionLookScore(selected, options.occasion).score
+      score += patternHarmony(selected).score
+      score += wornTogetherScore(selected, history?.together)
       if (liked.has(key)) score += 4
       score +=
         noise(key, seed) * (variety === 'explore' ? 0.8 : 0.35) -
@@ -293,6 +304,14 @@ export function generateOutfits(
         'Mehrere Farbakzente machen diesen Vorschlag bewusst lebhafter.',
       )
     const fit = compatibility(selected)
+    const dressCode = occasionLookScore(selected, options.occasion)
+    if (dressCode.note) reasons.push(dressCode.note)
+    const pattern = patternHarmony(selected)
+    if (pattern.note) reasons.push(pattern.note)
+    if (selected.some((item) => seasonScore(item, season) > 0))
+      reasons.push(`Stücke für ${season} sind bevorzugt.`)
+    if (wornTogetherScore(selected, history?.together) > 0)
+      reasons.push('Einige dieser Stücke hast du schon zusammen getragen.')
     if (fit.colorNote) reasons.push(fit.colorNote)
     if (fit.styleNote) reasons.push(fit.styleNote)
     if (options.style !== 'Alle') {

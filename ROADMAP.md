@@ -1,5 +1,19 @@
 # Entwicklungsplan
 
+## Version 0.34.0 – bessere Outfitauswahl
+
+- [x] Kleiderordnung pro Anlass: Büro und Abend bevorzugen elegante Teile und werten Sportliches ab, Freizeit lockere; Alltag lässt jeden Stil zu, damit eigene Stilvorlieben gelten
+- [x] Jahreszeit aus Wetter oder Datum: passend markierte Teile bevorzugt, unpassende leicht abgewertet
+- [x] Zweitfarben: ein Teil, das eine Farbe aus einem Muster aufgreift, wird belohnt; zwei gemusterte Teile zusammen abgewertet
+- [x] In den letzten 180 Tagen zusammen getragene Paare gelten als bewährt (schwächer als ein Daumen hoch)
+- [x] Gründe unter „Warum diese Kombination?“ nennen die neuen Regeln
+
+## Version 0.33.0 – Zweitfarben und Google eingerichtet
+
+- [x] Hauptfarbe plus bis zu drei Zweitfarben pro Stück; im Detail sichtbar, im Chat als Hinweis, in Sicherung und Abgleich (Format 8, optional validiert). Vorschläge richten sich weiter nach der Hauptfarbe
+- [x] Öffentliche Google-Client-ID eingetragen: „Mit Google anmelden“ ist sichtbar (das Client-Secret wird nicht gebraucht und nicht gespeichert)
+- [ ] Echter Test mit Google-Konto auf iPhone und zweitem Gerät
+
 ## Version 0.32.0 – Auf allen Geräten mit Google
 
 - [x] Entscheidung: Google Drive (App-Ordner) für alle; jede Person mit eigenem Konto
@@ -7,7 +21,6 @@
 - [x] Drei-Wege-Abgleich (Gerät, Drive, letzter gemeinsamer Stand): neuere Änderungen gewinnen, Löschungen kommen nicht zurück, Änderungen nach fremden Löschungen bleiben erhalten
 - [x] Fotos einzeln per Prüfsumme, nur einmal hochgeladen; noch fehlende Fotos werden abgewartet statt Stücke zu verlieren
 - [x] Automatisch beim Start, beim Zurückkehren, alle 5 Minuten und nach Änderungen; abgelaufene Anmeldung wird nur beim App-Start erneuert
-- [ ] Client-ID in Google Cloud anlegen (docs/GOOGLE_SYNC.md) und eintragen; danach echter Test auf iPhone und zweitem Gerät
 
 ## Version 0.31.0 – Bilder ziehen und einsetzen
 

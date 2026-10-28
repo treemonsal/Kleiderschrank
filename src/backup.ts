@@ -1,5 +1,12 @@
 import { parseShoppingPreferences } from './shopping-model'
-import { CATEGORIES, COLORS, SEASONS, STYLES, type Garment } from './model'
+import {
+  CATEGORIES,
+  COLORS,
+  MAX_SECONDARY_COLORS,
+  SEASONS,
+  STYLES,
+  type Garment,
+} from './model'
 import { backupRevision } from './backup-reminder'
 import { parseStyleProfile } from './personalization'
 import { parseStyleInterview } from './style-interview'
@@ -170,6 +177,18 @@ function photo(value: unknown): Blob | undefined {
     throw invalid()
   return new Blob([bytes], { type: match[1] })
 }
+function secondaryColors(value: unknown, main: unknown): string[] {
+  const colors = choices(
+    value,
+    COLORS.map((c) => c.name),
+  )
+  if (
+    colors.length > MAX_SECONDARY_COLORS ||
+    (colors as string[]).includes(main as string)
+  )
+    throw invalid()
+  return colors
+}
 function price(value: unknown): number {
   if (
     typeof value !== 'number' ||
@@ -310,6 +329,14 @@ export function parseFullBackup(
         name,
         category: choice(item.category, CATEGORIES),
         color: choice(item.color, [...COLORS.map((c) => c.name), '']),
+        ...(item.secondaryColors === undefined
+          ? {}
+          : {
+              secondaryColors: secondaryColors(
+                item.secondaryColors,
+                item.color,
+              ),
+            }),
         brand: text(item.brand, 100),
         seasons: choices(item.seasons, SEASONS),
         styles: choices(item.styles, STYLES),

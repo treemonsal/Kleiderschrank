@@ -192,6 +192,9 @@ export function buildChatContext(
       name: item.name.slice(0, 80),
       category: item.category,
       color: item.color,
+      ...(item.secondaryColors?.length
+        ? { secondaryColors: item.secondaryColors }
+        : {}),
       brand: item.brand.slice(0, 60),
       styles: item.styles,
       seasons: item.seasons,
