@@ -4,7 +4,7 @@ Quelle: Claude-Design-Entwurf „MyStyle, ein Garderobenjournal“ (Classical-De
 
 ## Grundlagen
 
-- Schrift: Cormorant Garamond (Titel, Zahlen, Buttons) über Lora (Fliesstext), beide unter der SIL Open Font License in `src/fonts` mitgeliefert. Keine externen Fonts.
+- Schrift: Cormorant Garamond (Titel, Zahlen, Buttons) über Lora (Fliesstext), beide unter der SIL Open Font License mitgeliefert (seit 0.35.0 nur noch im Branch `backup/design-0.34.1-journal`). Keine externen Fonts.
 - Farben: Papier `#f3f2f2`, Fläche `#eae9e9`, Tinte `#201f1d`, ein Akzent `#b68235`. Text im Akzent immer in der dunklen Stufe `#7d5411`.
 - Haarlinien statt gefüllter Karten, umrandete Buttons statt Flächen, Radius 4 px, Schatten nur bei Sheets und Hinweisen.
 - Überzeilen in Grossbuchstaben mit weiter Laufweite (10.5 px, 0.16 em).

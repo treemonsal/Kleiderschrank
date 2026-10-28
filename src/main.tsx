@@ -4,6 +4,7 @@ import App from './App'
 import { ViewMemoryProvider } from './view-memory'
 import './styles.css'
 import './journal.css'
+import './theme.css'
 
 class StorageBoundary extends Component<
   { children: ReactNode },
@@ -37,6 +38,14 @@ class StorageBoundary extends Component<
     return this.props.children
   }
 }
+
+// iOS Safari shows :active press feedback only once a touch listener exists.
+document.addEventListener('touchstart', () => {}, { passive: true })
+// Bars turn into material once content scrolls beneath them.
+const markScrolled = () =>
+  document.documentElement.toggleAttribute('data-scrolled', scrollY > 2)
+addEventListener('scroll', markScrolled, { passive: true })
+markScrolled()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

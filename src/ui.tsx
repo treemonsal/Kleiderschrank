@@ -3,6 +3,7 @@ import { Heart, X } from 'lucide-react'
 import type { Garment } from './model'
 import { GarmentSketch } from './GarmentSketch'
 import { swatch } from './swatch'
+import { useSheetMotion } from './useSheetMotion'
 
 function usePhotoUrl(photo?: Blob) {
   const [url, setUrl] = useState<string>()
@@ -228,11 +229,8 @@ export function Sheet({
       discard.current?.focus({ preventScroll: true })
     }
   }, [confirmClose])
-  function close() {
-    if (closeDisabled) return
-    if (dirty) setConfirmClose(true)
-    else onClose()
-  }
+  const latest = useRef({ dirty, closeDisabled, onClose })
+  latest.current = { dirty, closeDisabled, onClose }
   const id = useId()
   useEffect(() => {
     const dialog = ref.current!
@@ -250,6 +248,23 @@ export function Sheet({
         opener.focus({ preventScroll: true })
     }
   }, [])
+  const motion = useSheetMotion(ref, {
+    request: () => {
+      if (latest.current.closeDisabled) return false
+      if (latest.current.dirty) {
+        setConfirmClose(true)
+        return false
+      }
+      return true
+    },
+    movable: () => !latest.current.closeDisabled,
+    onDismissed: () => latest.current.onClose(),
+  })
+  function close() {
+    if (closeDisabled) return
+    if (dirty) setConfirmClose(true)
+    else motion.dismiss()
+  }
   return (
     <dialog
       className={`sheet ${className}`}
@@ -301,7 +316,7 @@ export function Sheet({
                 className="button danger"
                 disabled={closeDisabled}
                 onClick={() => {
-                  if (!closeDisabled) onClose()
+                  if (!closeDisabled) motion.dismiss()
                 }}
               >
                 Verwerfen

@@ -4,14 +4,18 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import {
   ArrowRight,
+  BookOpen,
   CircleAlert,
   Check,
   Heart,
   ImagePlus,
+  Layers,
   LoaderCircle,
   MessageCircle,
   Pencil,
   Plus,
+  Shirt,
+  Sun,
   Trash2,
   WifiOff,
   X,
@@ -754,35 +758,28 @@ export default function App() {
           </Suspense>
         )}
       </main>
-      <nav className="bottom-nav journal-nav" aria-label="Hauptnavigation">
-        {view !== 'settings' && (
-          <span
-            className="nav-selection"
-            aria-hidden="true"
-            style={{
-              transform: `translateX(${{ home: 0, wardrobe: 1, outfits: 2, journal: 3 }[view] * 100}%)`,
-            }}
-          />
-        )}
+      <nav className="bottom-nav tab-bar" aria-label="Hauptnavigation">
         {(
           [
-            { key: 'home', label: 'Heute', numeral: 'I' },
-            { key: 'wardrobe', label: 'Garderobe', numeral: 'II' },
-            { key: 'outfits', label: 'Looks', numeral: 'III' },
-            { key: 'journal', label: 'Journal', numeral: 'IV' },
+            { key: 'home', label: 'Heute', Icon: Sun },
+            { key: 'wardrobe', label: 'Garderobe', Icon: Shirt },
+            { key: 'outfits', label: 'Looks', Icon: Layers },
+            { key: 'journal', label: 'Journal', Icon: BookOpen },
           ] as const
-        ).map(({ key, label, numeral }) => (
+        ).map(({ key, label, Icon }) => (
           <button
             key={key}
-            data-motion="nav"
             className={view === key ? 'active' : ''}
             aria-current={view === key ? 'page' : undefined}
             aria-label={label}
             onClick={() => navigate(key)}
           >
-            <span className="nav-numeral" aria-hidden="true">
-              {numeral}
-            </span>
+            <Icon
+              className="nav-icon"
+              size={24}
+              strokeWidth={view === key ? 2.1 : 1.7}
+              aria-hidden="true"
+            />
             <span aria-hidden="true">{label}</span>
           </button>
         ))}

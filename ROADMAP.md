@@ -1,5 +1,17 @@
 # Entwicklungsplan
 
+## Version 0.35.0 – Claude-Look mit Apple-Aufbau
+
+- [x] Backup des Journal-Designs im Branch `backup/design-0.34.1-journal`
+- [x] Nur Hellmodus; Anthropics Markenfarben (Dark, Light, Orange nur für Flächen, Light/Mid Gray)
+- [x] Lucide-Symbole mit dünnen runden Strichen wie im Claude-Design-System; Systemschrift mit Dynamic Type
+- [x] Apple-Aufbau: Materialleisten, Tab-Leiste mit Symbolen und oranger Kapsel, Segmente, Schalter, gruppierte Karten, sofortiges Feedback beim Drücken
+- [x] Chat wie bei Claude: eigene Nachrichten als graue Blase, Antworten ohne Blase
+- [x] Sheets auf Federn (`src/spring.ts`): folgen dem Finger, übernehmen den Schwung, Gummiband, gleicher Weg hinaus; Schliessen wirkt sofort; ungespeicherte Änderungen geschützt; abgelehntes Schliessen federt zurück
+- [x] Tageswischen federt mit Wurf-Projektion und Gummiband
+- [x] Kontrolle: Datum passt sich jeder Schrift an (auch der breiteren auf GitHub), Foto-Buttons und Verfeinern-Reihe brechen auf kleinen Bildschirmen um, Kategorie-Reihe ohne Überlauf bei 320 px, Chips mit 44-px-Tippfläche, Mindestgrösse 11,5 px, Links im Text unterstrichen, Aufklapp-Pfeile sichtbar, leerer Chat ohne Lücke, ungenutzte Schriften (≈ 160 KB) entfernt, Endlosschleife des Datums bei „Bewegung reduzieren“ behoben
+- [ ] Echter Test auf dem iPhone (Gefühl der Federn, Dynamic Type)
+
 ## Version 0.34.1 – Datenschutz und Nutzungsbedingungen
 
 - [x] Öffentliche Seiten `datenschutz.html` und `nutzungsbedingungen.html` für den Google-Zustimmungsbildschirm, verlinkt in den Einstellungen.

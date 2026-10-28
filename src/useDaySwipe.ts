@@ -5,6 +5,14 @@ import {
   type MouseEvent,
 } from 'react'
 import { shiftDay } from './calendar'
+import {
+  animateSpring,
+  project,
+  releaseVelocity,
+  rubberband,
+  SPRING_SHEET,
+  type SpringAnimation,
+} from './spring'
 
 export function useDaySwipe(move: (offset: number) => void, day: string) {
   const root = useRef<HTMLDivElement>(null)
@@ -14,7 +22,10 @@ export function useDaySwipe(move: (offset: number) => void, day: string) {
     time: number
     id: number
     dragged: boolean
+    samples: { value: number; time: number }[]
   } | null>(null)
+  const settle = useRef<SpringAnimation | null>(null)
+  const offsetX = useRef(0)
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const frame = useRef<number | undefined>(undefined)
   const arriving = useRef(0)
@@ -24,28 +35,49 @@ export function useDaySwipe(move: (offset: number) => void, day: string) {
   callback.current = move
   const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches
   const card = () => root.current?.querySelector<HTMLElement>('.day-slide')
-  function reset(animate = true) {
+  function place(x: number) {
+    offsetX.current = x
     const node = card()
     if (node) {
-      node.style.transition =
-        animate && !reduced() ? 'transform 180ms ease-out' : ''
-      node.style.transform = ''
+      node.style.transition = 'none'
+      node.style.transform = x ? `translateX(${x}px)` : ''
     }
+  }
+  /** Springs the card home, keeping the finger's velocity. */
+  function reset(animate = true, velocity = 0) {
+    settle.current?.stop()
+    settle.current = null
+    const node = card()
+    if (!node) return
+    if (!animate || reduced() || !offsetX.current) {
+      node.style.transition = ''
+      node.style.transform = ''
+      offsetX.current = 0
+      return
+    }
+    settle.current = animateSpring({
+      from: { value: offsetX.current, velocity },
+      to: 0,
+      config: SPRING_SHEET,
+      onUpdate: place,
+      onComplete: () => (settle.current = null),
+    })
   }
   // Manual navigation cancels an unfinished swipe. A completed swipe brings the new day in.
   useLayoutEffect(() => {
     clearTimeout(timer.current)
     if (frame.current !== undefined) cancelAnimationFrame(frame.current)
+    settle.current?.stop()
+    settle.current = null
+    offsetX.current = 0
     start.current = null
     moving.current = false
     const direction = arriving.current
     arriving.current = 0
     const node = card()
     if (node && direction && !reduced()) {
-      node.style.transition = 'none'
-      node.style.transform = `translateX(${direction * 40}px)`
-      // Commit the starting position before animating the incoming content.
-      node.getBoundingClientRect()
+      // The new day arrives from the side the finger pushed towards.
+      place(direction * 40)
       frame.current = requestAnimationFrame(() => reset())
     } else reset(false)
     return () => {
@@ -98,7 +130,11 @@ export function useDaySwipe(move: (offset: number) => void, day: string) {
     },
     onTouchStart(event: TouchEvent<HTMLElement>) {
       if (moving.current) return
-      reset(false)
+      // Grabbing the card mid-spring continues from where it is.
+      const live = settle.current ? offsetX.current : 0
+      settle.current?.stop()
+      settle.current = null
+      if (!live) reset(false)
       start.current = null
       if (
         event.touches.length !== 1 ||
@@ -109,11 +145,12 @@ export function useDaySwipe(move: (offset: number) => void, day: string) {
       // Leave screen edges to the browser's back/forward gestures.
       if (touch.clientX < 24 || touch.clientX > innerWidth - 24) return
       start.current = {
-        x: touch.clientX,
+        x: touch.clientX - live,
         y: touch.clientY,
         time: Date.now(),
         id: touch.identifier,
         dragged: false,
+        samples: [{ value: touch.clientX, time: performance.now() }],
       }
     },
     onTouchMove(event: TouchEvent<HTMLElement>) {
@@ -135,13 +172,17 @@ export function useDaySwipe(move: (offset: number) => void, day: string) {
         reset()
         return
       }
+      first.samples.push({ value: touch.clientX, time: performance.now() })
+      if (first.samples.length > 8) first.samples.shift()
       if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.8) {
         first.dragged = true
-        const node = card()
-        if (node && !reduced()) {
-          node.style.transition = 'none'
-          node.style.transform = `translateX(${Math.max(-innerWidth * 0.7, Math.min(innerWidth * 0.7, dx))}px)`
-        }
+        if (!reduced())
+          // No neighbouring day: the card resists like a boundary.
+          place(
+            shiftDay(day, dx < 0 ? 1 : -1)
+              ? Math.max(-innerWidth * 0.7, Math.min(innerWidth * 0.7, dx))
+              : rubberband(dx, innerWidth),
+          )
       }
     },
     onTouchCancel() {
@@ -165,13 +206,21 @@ export function useDaySwipe(move: (offset: number) => void, day: string) {
       const dx = touch.clientX - first.x,
         dy = touch.clientY - first.y
       const offset = dx < 0 ? 1 : -1
+      const velocity = releaseVelocity(
+        [...first.samples, { value: touch.clientX, time: performance.now() }],
+        performance.now(),
+      )
+      // Far enough, or thrown far enough; a flick back cancels.
+      const thrown =
+        Math.abs(dx) >= 48 &&
+        Math.abs(dx + project(velocity)) > innerWidth * 0.5
       if (
-        Math.abs(dx) < 80 ||
+        !(Math.abs(dx) >= 80 || thrown) ||
+        velocity * dx < -40000 ||
         Math.abs(dx) < Math.abs(dy) * 1.8 ||
-        Date.now() - first.time > 800 ||
         !shiftDay(day, offset)
       ) {
-        reset()
+        reset(true, velocity)
         return
       }
       if (reduced()) {

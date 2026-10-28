@@ -4,60 +4,12 @@
  * printed almanac of your own clothes: Cormorant Garamond headings over Lora
  * body, hairline rules instead of filled cards, outlined buttons, one gold
  * accent applied as stroke. Pieces without a photo are cloth swatches in
- * their recorded colour. Fonts are self-hosted (OFL, src/fonts).
+ * their recorded colour. Since 0.35.0 the fonts are unused: theme.css sets
+ * the system font, and the font files live on backup/design-0.34.1-journal.
  *
  * Together with styles.css this is the only stylesheet. Earlier designs
  * (editorial, luxe, store) live on the branch backup/design-0.27.0.
  */
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  src: url('./fonts/cormorant-garamond-latin-400-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-  src: url('./fonts/cormorant-garamond-latin-400-italic.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-  src: url('./fonts/cormorant-garamond-latin-600-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-weight: 600;
-  font-style: italic;
-  font-display: swap;
-  src: url('./fonts/cormorant-garamond-latin-600-italic.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Lora';
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  src: url('./fonts/lora-latin-400-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Lora';
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-  src: url('./fonts/lora-latin-400-italic.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Lora';
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-  src: url('./fonts/lora-latin-600-normal.woff2') format('woff2');
-}
 
 /* ── Layout base ────────────────────────────────────────────────────
  * Layout rules carried over from the earlier designs (0.15–0.27). Only

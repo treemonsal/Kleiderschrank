@@ -91,18 +91,6 @@ export function useTapMotion() {
           420,
         )
         break
-      case 'nav':
-        animate(
-          icon,
-          [
-            { transform: 'translateY(0) scale(1)' },
-            { transform: 'translateY(-3px) scale(1.12)', offset: 0.4 },
-            { transform: 'translateY(1px) scale(.98)', offset: 0.75 },
-            { transform: 'translateY(0) scale(1)' },
-          ],
-          390,
-        )
-        break
       case 'turn':
         animate(
           icon,

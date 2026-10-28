@@ -9,3 +9,6 @@ package-lock.json
 __pycache__/
 .pytest_cache/
 design/claude-design-handoff/
+
+# Unverändert übernommene Skills
+.claude/skills/

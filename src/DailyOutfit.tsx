@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
   Check,
@@ -27,6 +27,7 @@ import { markWorn, undoWorn, type WornUndo } from './calendar-db'
 import { weatherFresh, weatherLabel } from './weather'
 import { useClock } from './useWeather'
 import { WeatherPanel } from './WeatherPanel'
+import { useFitText } from './useFitText'
 import { DailyRefinement } from './DailyRefinement'
 import { OutfitSwap } from './OutfitSwap'
 import { WeatherSymbol } from './WeatherSymbol'
@@ -160,6 +161,8 @@ export function DailyOutfit({
       ? { year: 'numeric' as const }
       : {}),
   }).format(new Date(`${day}T12:00:00`))
+  const dateRef = useRef<HTMLSpanElement>(null)
+  useFitText(dateRef, shortDate)
   function select(next: string) {
     if (!busy) {
       onSelectDay(next)
@@ -193,15 +196,12 @@ export function DailyOutfit({
     <>
       <div className="home-greeting home-day-summary journal-day-head">
         <div className="journal-date">
-          <span className="kicker">
+          <span className={`kicker${isToday ? ' is-today' : ''}`}>
             {weekday}
             {isToday ? ' · heute' : ''}
           </span>
-          <span
-            className="home-date"
-            // The date shrinks only when a long month would reach the weather.
-            style={{ '--date-chars': shortDate.length } as CSSProperties}
-          >
+          {/* Shrinks only when a long month would reach the weather. */}
+          <span className="home-date" ref={dateRef}>
             {shortDate}
           </span>
         </div>
