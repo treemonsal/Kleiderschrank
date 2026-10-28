@@ -4,7 +4,7 @@ import App from './App'
 import { ViewMemoryProvider } from './view-memory'
 import './styles.css'
 import './journal.css'
-import './apple.css'
+import './theme.css'
 
 class StorageBoundary extends Component<
   { children: ReactNode },

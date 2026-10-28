@@ -1,53 +1,88 @@
 /*
- * Apple design (0.35.0), after the apple-design skill (.claude/skills):
- * system font with Dynamic Type, iOS grouped surfaces in light and dark,
- * translucent bars that content scrolls under, filled and tinted capsule
- * buttons, instant press feedback and spring-driven sheets (src/spring.ts,
- * Sheet in src/ui.tsx). Loaded after journal.css and overrides it; the
- * previous Classical journal design lives on backup/design-0.34.1-journal.
- * Removing the import in src/main.tsx brings the journal look back.
+ * Sketchbook theme (0.35.0): Apple's structure and motion (apple-design
+ * skill: grouped surfaces, material bars, springs in src/spring.ts and
+ * src/useSheetMotion.ts) drawn in the manner of Claude: warm paper, ink and
+ * one terracotta accent, handwritten type (Caveat for headings, Patrick Hand
+ * for text, both OFL and self-hosted) and icons with a slight hand-drawn
+ * wobble. Light only. Loaded after journal.css and overrides it; the
+ * Classical journal design lives on backup/design-0.34.1-journal.
  */
+@font-face {
+  font-family: 'Caveat';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/caveat-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Caveat';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/caveat-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Patrick Hand';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/patrick-hand-latin-400-normal.woff2') format('woff2');
+}
 
-/* ── Tokens ────────────────────────────────────────────────────────── */
+/* ── Tokens: paper, ink and terracotta ─────────────────────────────── */
 :root {
-  --sys-bg: #f2f2f7;
-  --sys-surface: #ffffff;
-  --sys-surface-2: #f2f2f7;
-  --sys-elevated: #ffffff;
-  --sys-fill: rgb(120 120 128 / 0.12);
-  --sys-fill-strong: rgb(120 120 128 / 0.2);
-  --sys-label: #1d1d1f;
-  --sys-label-2: #6a6a6f;
-  --sys-label-3: #8e8e93;
-  --sys-separator: rgb(60 60 67 / 0.18);
-  --sys-separator-opaque: #d1d1d6;
-  --sys-tint: #0071e3;
-  --sys-tint-text: #0066cc;
-  --sys-tint-fill: rgb(0 113 227 / 0.12);
-  --sys-danger: #d70015;
-  --sys-danger-fill: rgb(255 59 48 / 0.12);
-  --sys-success: #248a3d;
-  --sys-heart: #ff2d55;
-  --sys-material: rgb(249 249 249 / 0.78);
-  --sys-material-thick: rgb(246 246 248 / 0.9);
-  --sys-scrim: rgb(0 0 0 / 0.32);
-  --sys-shadow-sheet: 0 -1px 0 rgb(0 0 0 / 0.04), 0 -8px 40px rgb(0 0 0 / 0.12);
-  --sys-shadow-float: 0 8px 30px rgb(0 0 0 / 0.12), 0 1px 3px rgb(0 0 0 / 0.08);
-  --sys-hairline: 0.5px;
+  --paper: #f5f4ed;
+  --paper-light: #faf9f5;
+  --ink: #1f1e1d;
+  --ink-soft: #66635c;
+  --terracotta: #c15f3c;
+  /* The accent as text needs a darker shade to stay readable (5.1:1). */
+  --terracotta-text: #a64d2c;
+
+  --sys-bg: var(--paper);
+  --sys-surface: var(--paper-light);
+  --sys-surface-2: #efede4;
+  --sys-elevated: var(--paper-light);
+  --sys-fill: rgb(31 30 29 / 0.06);
+  --sys-fill-strong: rgb(31 30 29 / 0.11);
+  --sys-label: var(--ink);
+  --sys-label-2: var(--ink-soft);
+  --sys-label-3: #9a968c;
+  --sys-separator: rgb(31 30 29 / 0.14);
+  --sys-separator-opaque: #dcd9cf;
+  --sys-tint: var(--ink);
+  --sys-tint-text: var(--terracotta-text);
+  --sys-tint-fill: rgb(193 95 60 / 0.12);
+  --sys-accent: var(--terracotta);
+  --sys-danger: var(--terracotta-text);
+  --sys-danger-fill: rgb(193 95 60 / 0.12);
+  --sys-success: var(--ink);
+  --sys-heart: var(--terracotta);
+  --sys-material: rgb(245 244 237 / 0.82);
+  --sys-material-thick: rgb(250 249 245 / 0.92);
+  --sys-scrim: rgb(31 30 29 / 0.28);
+  --sys-shadow-sheet: 0 -8px 40px rgb(31 30 29 / 0.1);
+  --sys-shadow-float:
+    0 8px 28px rgb(31 30 29 / 0.1), 0 1px 3px rgb(31 30 29 / 0.06);
+  --sys-hairline: 1px;
   --sys-font:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro',
-    'Helvetica Neue', 'Segoe UI', Roboto, system-ui, sans-serif;
+    'Patrick Hand', 'Segoe Print', 'Bradley Hand', -apple-system,
+    BlinkMacSystemFont, system-ui, sans-serif;
   --sys-font-display:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro',
-    'Helvetica Neue', 'Segoe UI', Roboto, system-ui, sans-serif;
-  --sys-font-rounded:
-    ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, system-ui,
+    'Caveat', 'Bradley Hand', 'Segoe Print', -apple-system, system-ui,
     sans-serif;
-  /* Critically damped feel for CSS transitions that are not gesture-driven. */
+  --sys-font-rounded: var(--sys-font-display);
   --sys-ease: cubic-bezier(0.25, 1, 0.5, 1);
-  --sys-radius-card: 16px;
+  --sys-radius-card: 18px;
   --sys-radius-control: 12px;
   --sys-radius-tile: 12px;
+  /* A wobbly, hand-cut outline for controls. */
+  --sketch-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  --sketch-radius-soft: 18px 9px 16px 8px / 8px 16px 9px 18px;
+  /* Hand-drawn marks (colours are fixed inside the drawings). */
+  --scribble-circle-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M54 7C80 6 95 24 93 51C91 78 70 94 46 93C21 92 5 73 7 47C9 22 29 6 60 10' fill='none' stroke='%231f1e1d' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --scribble-circle-accent: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M54 7C80 6 95 24 93 51C91 78 70 94 46 93C21 92 5 73 7 47C9 22 29 6 60 10' fill='none' stroke='%23c15f3c' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E");
+  --scribble-underline: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5C10 2 18 7 27 4S44 2 58 5' fill='none' stroke='%23c15f3c' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
 
   /* Classical tokens from journal.css, redirected */
   --font-heading: var(--sys-font-display);
@@ -55,7 +90,7 @@
   --color-bg: var(--sys-bg);
   --color-surface: var(--sys-surface-2);
   --color-text: var(--sys-label);
-  --color-accent: var(--sys-tint);
+  --color-accent: var(--sys-accent);
   --color-divider: var(--sys-separator);
   --color-neutral-100: var(--sys-surface-2);
   --color-neutral-200: var(--sys-fill);
@@ -81,12 +116,11 @@
   --background: var(--sys-bg);
   --surface: var(--sys-surface);
   --soft: var(--sys-surface-2);
-  --ink: var(--sys-label);
   --muted: var(--sys-label-2);
   --line: var(--sys-separator);
   --accent: var(--sys-tint-text);
   --action: var(--sys-tint);
-  --accent-ink: #fff;
+  --accent-ink: var(--paper-light);
   --hero: var(--sys-surface);
   --rose: var(--sys-heart);
   --danger: var(--sys-danger);
@@ -96,53 +130,18 @@
   --shadow: var(--sys-shadow-float);
   --card-shadow: none;
 
-  color-scheme: light dark;
+  color-scheme: light;
   font-family: var(--sys-font);
   letter-spacing: 0;
   font-variant-numeric: normal;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --sys-bg: #000000;
-    --sys-surface: #1c1c1e;
-    --sys-surface-2: #2c2c2e;
-    --sys-elevated: #1c1c1e;
-    --sys-fill: rgb(118 118 128 / 0.24);
-    --sys-fill-strong: rgb(118 118 128 / 0.36);
-    --sys-label: #f5f5f7;
-    --sys-label-2: #a1a1a6;
-    --sys-label-3: #8e8e93;
-    --sys-separator: rgb(84 84 88 / 0.6);
-    --sys-separator-opaque: #38383a;
-    --sys-tint-text: #2997ff;
-    --sys-tint-fill: rgb(10 132 255 / 0.2);
-    --sys-danger: #ff453a;
-    --sys-danger-fill: rgb(255 69 58 / 0.2);
-    --sys-success: #30d158;
-    --sys-heart: #ff375f;
-    --sys-material: rgb(28 28 30 / 0.78);
-    --sys-material-thick: rgb(28 28 30 / 0.92);
-    --sys-scrim: rgb(0 0 0 / 0.55);
-    --sys-shadow-sheet: 0 -8px 40px rgb(0 0 0 / 0.5);
-    --sys-shadow-float: 0 8px 30px rgb(0 0 0 / 0.5);
-  }
-}
 @media (prefers-contrast: more) {
   :root {
-    --sys-label-2: #3a3a3c;
-    --sys-separator: rgb(60 60 67 / 0.45);
-    --sys-tint: #0040dd;
-    --sys-tint-text: #0040dd;
-  }
-}
-@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
-  :root {
-    --sys-label-2: #ebebf5;
-    --sys-separator: rgb(235 235 245 / 0.45);
-    --sys-tint: #0071e3;
-    --sys-tint-text: #6eb4ff;
+    --sys-label-2: #3d3b37;
+    --sys-separator: rgb(31 30 29 / 0.4);
+    --terracotta-text: #8a3d20;
   }
 }
 /* Solid surfaces when transparency is reduced. */
@@ -195,7 +194,7 @@ h4 {
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.1;
-  letter-spacing: -0.022em;
+  letter-spacing: 0;
 }
 .page-heading > p:last-child,
 .page-sub {
@@ -214,7 +213,7 @@ h4 {
   font-weight: 700;
   font-style: normal;
   line-height: 1.2;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
 }
 .two-tone span {
   color: var(--sys-label-2);
@@ -285,7 +284,7 @@ h4 {
   font-style: normal;
   font-size: 1.06rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--sys-label);
 }
 .profile-button,
@@ -393,19 +392,19 @@ h4 {
   font-family: var(--sys-font);
   font-size: 1rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   box-shadow: none;
 }
 .button.primary {
   background: var(--sys-tint);
-  color: #fff;
+  color: var(--paper-light);
   border: 0;
 }
 .button.primary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--sys-tint) 90%, #000);
+  background: color-mix(in srgb, var(--sys-tint) 86%, var(--paper));
 }
 .button.primary:active:not(:disabled) {
-  background: color-mix(in srgb, var(--sys-tint) 82%, #000);
+  background: color-mix(in srgb, var(--sys-tint) 76%, var(--paper));
 }
 .button.primary:disabled {
   background: var(--sys-fill);
@@ -463,7 +462,7 @@ h4 {
   border: 0;
   border-radius: 50%;
   background: var(--sys-tint);
-  color: #fff;
+  color: var(--paper-light);
 }
 .chip,
 .chips button,
@@ -483,12 +482,12 @@ h4 {
 .chips .chip.active,
 .chip[aria-pressed='true'] {
   background: var(--sys-tint);
-  color: #fff;
+  color: var(--paper-light);
   border: 0;
 }
 .chip.active svg,
 .chip[aria-pressed='true'] svg {
-  color: #fff;
+  color: var(--paper-light);
 }
 
 /* Text inputs: filled, borderless, 17px so iOS never zooms. */
@@ -557,7 +556,7 @@ input[type='range'],
   width: 27px;
   height: 27px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--paper-light);
   box-shadow:
     0 3px 8px rgb(0 0 0 / 0.15),
     0 3px 1px rgb(0 0 0 / 0.06);
@@ -667,7 +666,7 @@ input[type='range'],
   place-items: center;
   border-radius: 8px;
   background: var(--sys-tint);
-  color: #fff;
+  color: var(--paper-light);
 }
 .action-icon svg {
   width: 18px;
@@ -728,21 +727,7 @@ input[type='range'],
 .sheet-handle {
   cursor: grab;
 }
-/* Sheets sit one level up: in dark mode on elevated grey. */
-@media (prefers-color-scheme: dark) {
-  .sheet {
-    --sys-bg: #1c1c1e;
-    --sys-surface: #2c2c2e;
-    --sys-surface-2: #3a3a3c;
-    --sys-elevated: #2c2c2e;
-    --background: #1c1c1e;
-    --color-bg: #1c1c1e;
-    --surface: #2c2c2e;
-    --hero: #2c2c2e;
-    --soft: #3a3a3c;
-    --color-surface: #3a3a3c;
-  }
-}
+
 .sheet[open]::backdrop {
   animation: none;
 }
@@ -762,7 +747,7 @@ input[type='range'],
   font-size: 1.3rem;
   font-weight: 700;
   font-style: normal;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
 }
 .sheet-header .icon-button,
 .sheet-header .icon-button.soft {
@@ -820,10 +805,10 @@ input[type='range'],
 }
 .toast.toast-error {
   background: var(--sys-danger);
-  color: #fff;
+  color: var(--paper-light);
 }
 .toast.toast-error > svg {
-  color: #fff;
+  color: var(--paper-light);
 }
 .error-message {
   color: var(--sys-danger);
@@ -849,7 +834,7 @@ input[type='range'],
 .journal-date .home-date {
   font-family: var(--sys-font-display);
   font-weight: 700;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
   font-variant-numeric: tabular-nums;
 }
 .journal-day-head .journal-date .home-date {
@@ -870,7 +855,7 @@ input[type='range'],
   font-family: var(--sys-font-rounded);
   font-size: 1.5rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 .journal-day-head .home-weather small {
   font-size: 0.72rem;
@@ -933,7 +918,7 @@ input[type='range'],
   .day-number
   > span:last-child {
   background: var(--sys-danger);
-  color: #fff;
+  color: var(--paper-light);
 }
 .calendar-grid > button.selected .day-number {
   outline: 0;
@@ -955,7 +940,7 @@ input[type='range'],
   font-size: 1.65rem;
   font-weight: 700;
   font-style: normal;
-  letter-spacing: -0.022em;
+  letter-spacing: 0;
   line-height: 1.15;
 }
 .look-count {
@@ -997,7 +982,7 @@ input[type='range'],
   font-family: var(--sys-font);
   font-size: 0.88rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 .figure-tile .piece-swap {
   top: 6px;
@@ -1025,7 +1010,7 @@ input[type='range'],
 }
 .new-badge {
   background: var(--sys-tint);
-  color: #fff;
+  color: var(--paper-light);
 }
 .laundry-badge {
   background: var(--sys-material-thick);
@@ -1065,7 +1050,7 @@ details.outfit-reasons li {
 }
 .refine-row .button[aria-pressed='true'] {
   background: var(--sys-tint);
-  color: #fff;
+  color: var(--paper-light);
 }
 .daily-look .daily-worn,
 .daily-quick-actions > .button {
@@ -1116,7 +1101,7 @@ details.outfit-reasons li {
 .outfit-rating .icon-button[aria-pressed='true'],
 .rating-buttons button[aria-pressed='true'] {
   background: var(--sys-tint);
-  color: #fff;
+  color: var(--paper-light);
 }
 .rating-reasons > p:first-child {
   font-size: 0.82rem;
@@ -1134,7 +1119,7 @@ details.outfit-reasons li {
   font-size: 4rem;
   font-weight: 700;
   color: var(--sys-label);
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
 }
 .day-empty p {
   font-size: 0.94rem;
@@ -1233,7 +1218,7 @@ details.outfit-reasons li {
   font-family: var(--sys-font);
   font-size: 0.94rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 .garment-name > svg {
   color: var(--sys-heart);
@@ -1260,7 +1245,7 @@ details.outfit-reasons li {
   font-family: var(--sys-font-rounded);
   font-size: 2.6rem;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
 }
 .detail-count > span {
   font-family: var(--sys-font);
@@ -1357,11 +1342,7 @@ details.outfit-reasons li {
     0 3px 8px rgb(0 0 0 / 0.12),
     0 3px 1px rgb(0 0 0 / 0.04);
 }
-@media (prefers-color-scheme: dark) {
-  .outfit-tabs > button.active {
-    background: #636366;
-  }
-}
+
 .look-composer {
   padding: 16px;
 }
@@ -1394,7 +1375,7 @@ details.outfit-reasons li {
   font-family: var(--sys-font);
   font-size: 1.06rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 .saved-outfit-heading span,
 .outfit-card-heading span {
@@ -1454,7 +1435,7 @@ details.outfit-reasons li {
   font-family: var(--sys-font);
   font-size: 1.06rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 .journal-day-row .calendar-status,
 .calendar-status {
@@ -1495,7 +1476,7 @@ details.outfit-reasons li {
   font-family: var(--sys-font-rounded);
   font-size: 2.3rem;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
 }
 .journal-stats span {
   font-size: 0.8rem;
@@ -1545,11 +1526,11 @@ details.outfit-reasons li {
   font-family: var(--sys-font-display);
   font-size: 1.2rem;
   font-weight: 700;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
 }
 .condition-ring {
   border: 1.5px solid var(--sys-label-3);
-  color: #fff;
+  color: var(--paper-light);
 }
 .done > .condition-ring {
   border-color: var(--sys-success);
@@ -1571,7 +1552,7 @@ details.outfit-reasons li {
   border: 0;
   border-radius: 20px 20px 6px 20px;
   background: var(--sys-tint);
-  color: #fff;
+  color: var(--paper-light);
 }
 .chat-message:not(.user) .chat-text {
   font-family: var(--sys-font);
@@ -1603,7 +1584,7 @@ details.outfit-reasons li {
   font-family: var(--sys-font-display);
   font-style: normal;
   font-weight: 650;
-  letter-spacing: -0.012em;
+  letter-spacing: 0;
 }
 .daily-quick-actions > .button.secondary:disabled,
 .calendar-empty h3 {
@@ -1757,4 +1738,366 @@ details.outfit-reasons li {
   .view {
     animation: none;
   }
+}
+
+/* ── Sketchbook: handwriting sizes ─────────────────────────────────── */
+/* Caveat runs small and narrow: headings are set larger, never tracked. */
+.wordmark {
+  font-size: 1.65rem;
+  font-weight: 700;
+}
+.page-heading h1,
+.heading-row h1,
+.outfits-view .heading-row h1,
+.settings-view .page-heading h1 {
+  font-size: 2.75rem;
+  line-height: 1;
+}
+.section-heading h2,
+.two-tone,
+.journal-forgotten h2,
+.journal-section-heading h2,
+.wear-summary h3,
+.sheet-header h2,
+.style-interview > h3,
+.interview-question h4,
+.chat-welcome h3,
+.chat-empty h3,
+.shopping-title,
+.calendar-month-heading h2,
+.journal-month {
+  font-size: 1.85rem;
+  font-weight: 700;
+  line-height: 1.05;
+}
+.daily-look h1,
+.day-empty h1,
+.look-result h2 {
+  font-size: 2.3rem;
+  line-height: 1.02;
+}
+.journal-day-head .journal-date .home-date {
+  font-size: min(2.9rem, calc(100cqi / (var(--date-chars, 11) * 0.44)));
+}
+.journal-day-head .weather-range {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.day-number {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.calendar-grid .day-number {
+  font-size: 1.25rem;
+}
+.detail-count {
+  font-size: 3.4rem;
+}
+.journal-stats strong {
+  font-size: 3.2rem;
+}
+.day-empty-number {
+  font-size: 5.2rem;
+}
+/* Patrick Hand has one weight: emphasis comes from size, not bold. */
+.micro-copy,
+.storage-note p,
+.required-hint,
+.optional,
+.photo-picker-empty span,
+.install-help small,
+.add-banner small,
+.editorial-note,
+.calendar-ring-legend,
+.offline-banner,
+.chat-message .outfit-piece > span,
+.garment-meta,
+.week-legend,
+.figure-plate-wrap figcaption,
+.color-balance figcaption {
+  font-size: 0.84rem;
+}
+.eyebrow,
+.kicker,
+.card-kicker,
+.kicker-muted,
+.figure-caption small,
+.look-number,
+.calendar-weekdays span,
+.home-week-strip small {
+  font-size: 0.84rem;
+}
+.home-week-strip small,
+.calendar-weekdays span {
+  text-transform: none;
+}
+.garment-name > span,
+.figure-caption > span,
+.figure-tile:nth-child(n + 4) .figure-caption > span {
+  font-size: 1rem;
+}
+input,
+select,
+textarea,
+button {
+  font-family: var(--sys-font);
+}
+
+/* ── Sketchbook: hand-drawn marks ──────────────────────────────────── */
+/* Every icon and sketch gets a slight hand-drawn wobble (filter in index.html). */
+.app-shell svg,
+.sheet svg,
+.sheet-ghost svg,
+.toast svg,
+.drop-overlay svg {
+  filter: url(#hand-drawn);
+}
+svg.lucide {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* Selected day: circled by hand in ink; today: in terracotta. */
+.home-week-strip .selected .day-number > span:last-child,
+.calendar-grid > button.selected .day-number > span:last-child {
+  background:
+    var(--scribble-circle-ink) center / 100% 100% no-repeat,
+    var(--sys-bg);
+  color: var(--ink);
+}
+[aria-current='date'] .day-number > span:last-child {
+  color: var(--terracotta-text);
+}
+.home-week-strip [aria-current='date'].selected .day-number > span:last-child,
+.calendar-grid
+  > button[aria-current='date'].selected
+  .day-number
+  > span:last-child {
+  background:
+    var(--scribble-circle-accent) center / 100% 100% no-repeat,
+    var(--sys-bg);
+  color: var(--terracotta-text);
+}
+/* Active tab: accent colour and a hand-drawn underline. */
+.tab-bar > button.active,
+.tab-bar > button.active .nav-icon {
+  color: var(--terracotta-text);
+}
+.bottom-nav.tab-bar > button > span:last-child {
+  position: relative;
+  overflow: visible;
+  padding-bottom: 2px;
+  font-size: 0.82rem;
+}
+.tab-bar > button.active > span::after {
+  content: '';
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  bottom: -5px;
+  height: 6px;
+  background: var(--scribble-underline) center / 100% 100% no-repeat;
+}
+
+/* ── Sketchbook: controls cut by hand ──────────────────────────────── */
+.button {
+  border-radius: var(--sketch-radius);
+  font-weight: 400;
+  font-size: 1.06rem;
+}
+.button.primary,
+.button.primary:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper-light);
+}
+.button.primary:active:not(:disabled) {
+  background: color-mix(in srgb, var(--ink) 80%, var(--paper));
+}
+.button.primary:disabled {
+  background: transparent;
+  color: var(--sys-label-3);
+  box-shadow: inset 0 0 0 1.5px var(--sys-separator);
+}
+.button.secondary,
+.button.secondary:hover:not(:disabled) {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px rgb(31 30 29 / 0.5);
+}
+.button.secondary:active:not(:disabled) {
+  background: var(--sys-fill);
+}
+.button.danger {
+  background: transparent;
+  color: var(--terracotta-text);
+  box-shadow: inset 0 0 0 1.5px var(--terracotta);
+}
+@media (hover: none) {
+  .button.primary:hover:not(:disabled):not(:active) {
+    background: var(--ink);
+  }
+  .button.secondary:hover:not(:disabled):not(:active) {
+    background: transparent;
+  }
+}
+.text-button,
+.link-button,
+.inline-link {
+  color: var(--terracotta-text);
+}
+.chip,
+.chips button,
+.chips .chip,
+.text-tabs > button,
+.refine-row .button,
+.rating-chips .button {
+  border-radius: var(--sketch-radius);
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px rgb(31 30 29 / 0.22);
+  font-weight: 400;
+}
+.chip.active,
+.chips .chip.active,
+.chip[aria-pressed='true'],
+.text-tabs > button.active,
+.refine-row .button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper-light);
+  box-shadow: none;
+}
+.outfit-tabs {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px rgb(31 30 29 / 0.22);
+  border-radius: var(--sketch-radius);
+}
+.outfit-tabs > button {
+  border-radius: var(--sketch-radius);
+  font-weight: 400;
+}
+.outfit-tabs > button.active {
+  background: var(--ink);
+  color: var(--paper-light);
+  box-shadow: none;
+  font-weight: 400;
+}
+input:not([type='checkbox']):not([type='radio']):not([type='file']):not(
+    [type='range']
+  ),
+select,
+textarea,
+.field input:not([type='radio']),
+.field select,
+.field textarea {
+  background: var(--paper-light);
+  border-radius: var(--sketch-radius-soft);
+  box-shadow: inset 0 0 0 1.5px rgb(31 30 29 / 0.2);
+}
+input[type='checkbox'],
+input[type='radio'],
+input[type='range'],
+.check-row input {
+  accent-color: var(--ink);
+}
+.check-row input[type='checkbox']:checked {
+  background: var(--terracotta);
+}
+.icon-button {
+  color: var(--ink);
+}
+.icon-button.primary-add {
+  background: var(--ink);
+  color: var(--paper-light);
+  border-radius: var(--sketch-radius);
+}
+.profile-button,
+.stylist-link {
+  color: var(--ink);
+}
+.profile-button.active {
+  color: var(--terracotta-text);
+  background: transparent;
+}
+.inbox-dot {
+  background: var(--terracotta);
+}
+/* Settings rows: plain ink icons instead of coloured tiles. */
+.action-icon {
+  background: transparent;
+  color: var(--ink);
+}
+.outfit-rating .icon-button,
+.rating-buttons button {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px rgb(31 30 29 / 0.22);
+  border-radius: var(--sketch-radius);
+}
+.outfit-rating .icon-button[aria-pressed='true'],
+.rating-buttons button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper-light);
+  box-shadow: none;
+}
+.new-badge {
+  background: var(--ink);
+}
+.toast > svg,
+.worn-line > span {
+  color: var(--ink);
+}
+.toast.toast-error {
+  background: var(--terracotta-text);
+}
+
+/* ── Sketchbook: fewer boxes ───────────────────────────────────────── */
+/* Calendar, week strip and figures sit on the paper itself. */
+.home-week-strip,
+.calendar-view,
+.journal-stats > div,
+.journal-stats > div:first-child,
+.journal-stats > div + div {
+  background: transparent;
+}
+.calendar-view {
+  padding: 0;
+}
+.journal-stats > div,
+.journal-stats > div:first-child,
+.journal-stats > div + div {
+  padding: 4px 0;
+}
+/* The inner disc masks the colour ring of worn days: it must be paper. */
+.day-number > span:last-child,
+.calendar-grid .day-number > span:last-child {
+  background-color: var(--sys-bg);
+}
+.figure-plate {
+  background: transparent;
+  padding: 0;
+  gap: 8px;
+}
+.figure-tile > .outfit-piece,
+.figure-tile > .outfit-piece > .garment-picture,
+.figure-tile .outfit-piece > .figure-caption {
+  background: var(--sys-surface);
+}
+.chat-message.user {
+  background: var(--ink);
+  color: var(--paper-light);
+}
+.condition-ring {
+  color: var(--paper-light);
+}
+.done > .condition-ring {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+.drop-overlay {
+  border-color: var(--terracotta);
+  color: var(--terracotta-text);
+}
+.journal-date .kicker.is-today {
+  color: var(--terracotta-text);
+}
+.batch-progress > span {
+  background: var(--terracotta);
 }

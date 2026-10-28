@@ -1,22 +1,12 @@
-/* Static legal pages in the app's Apple look: system font, light and dark. */
+/* Static legal pages in the app's colours: paper, ink, terracotta. */
 :root {
-  color-scheme: light dark;
-  --bg: #f2f2f7;
-  --surface: #ffffff;
-  --text: #1d1d1f;
-  --muted: #6a6a6f;
-  --tint: #0066cc;
-  --divider: rgb(60 60 67 / 0.18);
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #000000;
-    --surface: #1c1c1e;
-    --text: #f5f5f7;
-    --muted: #a1a1a6;
-    --tint: #2997ff;
-    --divider: rgb(84 84 88 / 0.6);
-  }
+  color-scheme: light;
+  --bg: #f5f4ed;
+  --surface: #faf9f5;
+  --text: #1f1e1d;
+  --muted: #66635c;
+  --tint: #a64d2c;
+  --divider: rgb(31 30 29 / 0.14);
 }
 * {
   box-sizing: border-box;

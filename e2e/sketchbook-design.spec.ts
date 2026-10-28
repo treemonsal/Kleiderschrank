@@ -109,7 +109,7 @@ test('Reduzierte Bewegung blendet Sheets nur ein und aus', async ({ page }) => {
   await expect(page.getByRole('dialog')).toHaveCount(0)
 })
 
-test('Dunkelmodus nutzt dunkle Flächen und eine Materialleiste', async ({
+test('Die App bleibt hell, auch wenn das Gerät dunkel eingestellt ist', async ({
   page,
 }) => {
   await page.emulateMedia({ colorScheme: 'dark' })
@@ -119,18 +119,23 @@ test('Dunkelmodus nutzt dunkle Flächen und eine Materialleiste', async ({
   ).toBeVisible()
   const look = await page.evaluate(() => {
     const nav = getComputedStyle(document.querySelector('.tab-bar')!)
+    const heading = document.querySelector('h1')!
     return {
       body: getComputedStyle(document.body).backgroundColor,
       text: getComputedStyle(document.body).color,
       blur:
         nav.backdropFilter || nav.getPropertyValue('-webkit-backdrop-filter'),
+      heading: getComputedStyle(heading).fontFamily,
+      icon: getComputedStyle(document.querySelector('.tab-bar svg')!).filter,
     }
   })
-  expect(look.body).toBe('rgb(0, 0, 0)')
-  expect(look.text).toBe('rgb(245, 245, 247)')
+  // Paper and ink, handwritten headings, icons with a hand-drawn wobble.
+  expect(look.body).toBe('rgb(245, 244, 237)')
+  expect(look.text).toBe('rgb(31, 30, 29)')
   expect(look.blur).toContain('blur')
-  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
-  await expect(
-    page.getByRole('button', { name: 'Garderobe', exact: true }),
-  ).toHaveAttribute('aria-current', 'page')
+  expect(look.heading).toContain('Caveat')
+  expect(look.icon).toContain('hand-drawn')
+  expect(
+    await page.evaluate(() => document.fonts.check('700 32px Caveat')),
+  ).toBe(true)
 })
