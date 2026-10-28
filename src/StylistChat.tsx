@@ -515,32 +515,6 @@ export function StylistChat({
                   )}
                   <div ref={bottom} />
                 </div>
-                {!enabled && (
-                  <section className="chat-welcome">
-                    <MessageCircle size={28} strokeWidth={1.4} />
-                    <h3>Was möchtest du heute tragen?</h3>
-                    <p className="muted">
-                      Gesendet werden deine Frage, bis zu zwölf Fotos und
-                      passende Angaben an kostenlose KI-Dienste.
-                    </p>
-                    <button
-                      className="button primary full"
-                      onClick={() => {
-                        try {
-                          setChatEnabled(true)
-                          setEnabled(true)
-                          setError('')
-                        } catch {
-                          setError(
-                            'Die Chat-Freigabe konnte nicht auf diesem Gerät gespeichert werden.',
-                          )
-                        }
-                      }}
-                    >
-                      Kostenlosen Chat aktivieren
-                    </button>
-                  </section>
-                )}
                 {enabled && (
                   <form
                     className="chat-composer"
@@ -649,6 +623,32 @@ export function StylistChat({
                   </form>
                 )}
               </>
+            )}
+            {!enabled && (
+              <section className="chat-welcome">
+                <MessageCircle size={28} strokeWidth={1.4} />
+                <h3>Was möchtest du heute tragen?</h3>
+                <p className="muted">
+                  Gesendet werden deine Frage, bis zu zwölf Fotos und passende
+                  Angaben an kostenlose KI-Dienste.
+                </p>
+                <button
+                  className="button primary full"
+                  onClick={() => {
+                    try {
+                      setChatEnabled(true)
+                      setEnabled(true)
+                      setError('')
+                    } catch {
+                      setError(
+                        'Die Chat-Freigabe konnte nicht auf diesem Gerät gespeichert werden.',
+                      )
+                    }
+                  }}
+                >
+                  Kostenlosen Chat aktivieren
+                </button>
+              </section>
             )}
             {error && (
               <div ref={errorNotice}>
