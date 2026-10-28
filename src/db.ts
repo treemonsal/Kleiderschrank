@@ -1,6 +1,6 @@
 import Dexie, { type Table } from 'dexie'
 import { parseStyleProfile } from './personalization'
-import { COLORS, STYLES } from './model'
+import { cleanSecondaryColors, COLORS, STYLES } from './model'
 import type { Garment, GarmentDraft } from './model'
 import { lookTitle } from './swatch'
 import type { SyncBase } from './sync-model'
@@ -433,6 +433,9 @@ export async function saveGarment(
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   }
+  const secondary = cleanSecondaryColors(draft.secondaryColors, draft.color)
+  if (secondary.length) garment.secondaryColors = secondary
+  else delete garment.secondaryColors
   if (!garment.name || garment.name.length > 100)
     throw new Error('Bitte gib einen Namen mit höchstens 100 Zeichen ein.')
   await database.transaction(

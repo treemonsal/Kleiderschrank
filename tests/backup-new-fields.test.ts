@@ -72,3 +72,22 @@ describe('Neue Sicherungsfelder 0.25.0', () => {
     ).toThrow()
   })
 })
+
+describe('Zweitfarben 0.33.0', () => {
+  it('übernimmt Zweitfarben und lehnt ungültige ab', () => {
+    expect(
+      parseFullBackup(backup({ secondaryColors: ['Blau', 'Rot'] })).garments[0]
+        .secondaryColors,
+    ).toEqual(['Blau', 'Rot'])
+    expect(
+      parseFullBackup(backup({})).garments[0].secondaryColors,
+    ).toBeUndefined()
+    for (const secondaryColors of [
+      ['Weiss'], // equals the main colour
+      ['Blau', 'Rot', 'Grün', 'Gelb'], // more than three
+      ['Türkis'],
+      'Blau',
+    ])
+      expect(() => parseFullBackup(backup({ secondaryColors }))).toThrow()
+  })
+})

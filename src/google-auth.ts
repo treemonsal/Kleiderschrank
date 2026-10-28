@@ -13,7 +13,8 @@ const STORE = 'mystyle-google-sync'
 const PENDING = 'mystyle-google-sync-pending'
 
 /** Public OAuth client ID of this app (not a secret). */
-export const GOOGLE_CLIENT_ID = ''
+export const GOOGLE_CLIENT_ID =
+  '187167128-430n11miigpor7m6je6ks7t683odvsup.apps.googleusercontent.com'
 
 export function googleClientId(): string {
   const override = (

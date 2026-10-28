@@ -97,6 +97,11 @@ async function signIn(page: Page) {
 test('Ohne eingerichtete Google-Anmeldung zeigt die App keinen Anmeldeknopf', async ({
   page,
 }) => {
+  await page.addInitScript(() => {
+    ;(
+      window as unknown as { __MYSTYLE_GOOGLE_CLIENT_ID__: string }
+    ).__MYSTYLE_GOOGLE_CLIENT_ID__ = ''
+  })
   await page.goto('/')
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })

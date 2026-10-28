@@ -308,7 +308,12 @@ function Detail({
         <dl className="detail-facts">
           {(
             [
-              ['Farbe', item.color],
+              [
+                'Farbe',
+                item.secondaryColors?.length
+                  ? `${item.color}, dazu ${item.secondaryColors.join(', ')}`
+                  : item.color,
+              ],
               ['Marke', item.brand],
               ['Saison', item.seasons.join(', ')],
               ['Stil', item.styles.join(', ')],

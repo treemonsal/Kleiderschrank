@@ -1,5 +1,7 @@
 # Google-Anmeldung einrichten (einmalig, kostenlos)
 
+Stand 0.33.0: erledigt, die Client-ID ist in `src/google-auth.ts` eingetragen. Diese Anleitung gilt für ein neues Projekt oder eine neue Client-ID.
+
 „Mit Google anmelden“ erscheint in den Einstellungen erst, wenn die App eine **Client-ID** von Google hat. Das ist eine öffentliche Kennung der App, kein Passwort. Jede Person meldet sich danach mit ihrem eigenen Google-Konto an; ihr Kleiderschrank liegt in ihrem eigenen Google Drive.
 
 Dauer: etwa 10 Minuten. Kosten: keine (keine Kreditkarte nötig).

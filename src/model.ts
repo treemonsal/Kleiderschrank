@@ -37,6 +37,8 @@ export interface Garment {
   name: string
   category: Category
   color: string
+  /** Further colours beside the main one, at most three. */
+  secondaryColors?: string[]
   brand: string
   seasons: Season[]
   styles: Style[]
@@ -77,4 +79,17 @@ export function filterGarments(
           .toLocaleLowerCase('de')
           .includes(search)),
   )
+}
+
+export const MAX_SECONDARY_COLORS = 3
+/** Valid, distinct further colours without the main colour. */
+export function cleanSecondaryColors(
+  colors: readonly string[] | undefined,
+  main: string,
+): string[] {
+  return [...new Set(colors ?? [])]
+    .filter(
+      (color) => color !== main && COLORS.some((item) => item.name === color),
+    )
+    .slice(0, MAX_SECONDARY_COLORS)
 }

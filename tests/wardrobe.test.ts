@@ -154,3 +154,46 @@ describe('Atomarer IndexedDB-Import', () => {
     expect(await db.garments.toArray()).toEqual([original])
   })
 })
+
+describe('Zweitfarben beim Speichern', () => {
+  it('speichert höchstens drei gültige Zweitfarben ohne die Hauptfarbe', async () => {
+    const { WardrobeDatabase: Db, saveGarment: save } =
+      await import('../src/db')
+    const database = new Db(`secondary-${crypto.randomUUID()}`)
+    try {
+      const draft = {
+        name: 'Streifenhemd',
+        category: 'Oberteile' as const,
+        color: 'Blau',
+        secondaryColors: [
+          'Weiss',
+          'Blau',
+          'Weiss',
+          'Rot',
+          'Türkis',
+          'Grün',
+          'Gelb',
+        ],
+        brand: '',
+        seasons: [],
+        styles: [],
+        notes: '',
+        favorite: false,
+      }
+      const id = await save(draft, undefined, database)
+      expect((await database.garments.get(id))?.secondaryColors).toEqual([
+        'Weiss',
+        'Rot',
+        'Grün',
+      ])
+      const stored = (await database.garments.get(id))!
+      await save({ ...stored, secondaryColors: [] }, stored, database)
+      expect('secondaryColors' in (await database.garments.get(id))!).toBe(
+        false,
+      )
+    } finally {
+      database.close()
+      await (await import('dexie')).default.delete(database.name)
+    }
+  })
+})
