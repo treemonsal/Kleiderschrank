@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: ein Tageslook aus deinen eigenen Stücken, ein Journal deiner getragenen Tage und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand, ohne Anmeldung oder laufende Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.34.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.34.1** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät.
 
@@ -67,7 +67,7 @@ Bei einem App-Update erst Eingaben speichern, dann den eingeblendeten Updatehinw
 
 ## Auf allen Geräten
 
-Unter **Einstellungen → Auf allen Geräten → Mit Google anmelden** liegt der Kleiderschrank zusätzlich im versteckten App-Ordner des eigenen Google Drive. Auf jedem Gerät, auf dem man sich mit demselben Konto anmeldet, wird automatisch abgeglichen: beim Start, beim Zurückkehren in die App, alle paar Minuten und kurz nach Änderungen. Neuere Änderungen gewinnen; Gelöschtes kommt nicht zurück. Fotos werden einzeln und nur einmal hochgeladen. Jede Person nutzt ihr eigenes Konto. Die Anmeldung gilt eine Stunde und erneuert sich beim nächsten App-Start mit einer kurzen Weiterleitung. Die Google-Einrichtung ist erledigt ([docs/GOOGLE_SYNC.md](docs/GOOGLE_SYNC.md)). Sicherungen per Export bleiben trotzdem sinnvoll.
+Unter **Einstellungen → Auf allen Geräten → Mit Google anmelden** liegt der Kleiderschrank zusätzlich im versteckten App-Ordner des eigenen Google Drive. Auf jedem Gerät, auf dem man sich mit demselben Konto anmeldet, wird automatisch abgeglichen: beim Start, beim Zurückkehren in die App, alle paar Minuten und kurz nach Änderungen. Neuere Änderungen gewinnen; Gelöschtes kommt nicht zurück. Fotos werden einzeln und nur einmal hochgeladen. Jede Person nutzt ihr eigenes Konto. Die Anmeldung gilt eine Stunde und erneuert sich beim nächsten App-Start mit einer kurzen Weiterleitung. Die Google-Einrichtung ist erledigt ([docs/GOOGLE_SYNC.md](docs/GOOGLE_SYNC.md)). Sicherungen per Export bleiben trotzdem sinnvoll. [Datenschutzerklärung](https://treemonsal.github.io/Kleiderschrank/datenschutz.html) und [Nutzungsbedingungen](https://treemonsal.github.io/Kleiderschrank/nutzungsbedingungen.html) sind in den Einstellungen verlinkt.
 
 ## Tests
 

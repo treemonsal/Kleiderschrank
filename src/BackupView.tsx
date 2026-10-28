@@ -201,6 +201,13 @@ export function BackupView({
       <p className="app-signature">
         MyStyle <span>·</span> Version {version}
       </p>
+      <p className="legal-links">
+        <a href={`${import.meta.env.BASE_URL}datenschutz.html`}>Datenschutz</a>
+        <span aria-hidden="true">·</span>
+        <a href={`${import.meta.env.BASE_URL}nutzungsbedingungen.html`}>
+          Nutzungsbedingungen
+        </a>
+      </p>
       {pending && (
         <Sheet
           title="Sicherung prüfen"
