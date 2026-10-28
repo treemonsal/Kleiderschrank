@@ -3524,3 +3524,34 @@ details.outfit-reasons p {
 .chat-messages:empty {
   display: none;
 }
+
+/* Date and weather share one row and never overlap: the weather keeps two
+   short lines, the date shrinks only for long months (e.g. September). */
+.journal-day-head .journal-date {
+  container-type: inline-size;
+}
+.journal-day-head .journal-date .home-date {
+  max-width: none;
+  font-size: min(46px, calc(100cqi / (var(--date-chars, 11) * 0.45)));
+}
+.journal-day-head .home-weather {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 42%;
+}
+.journal-day-head .home-weather-line {
+  max-width: none;
+}
+.journal-day-head .home-weather small {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: 100%;
+  line-height: 1.4;
+}
+.journal-day-head .home-weather small > span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
