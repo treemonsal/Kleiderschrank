@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
   Check,
@@ -197,7 +197,13 @@ export function DailyOutfit({
             {weekday}
             {isToday ? ' · heute' : ''}
           </span>
-          <span className="home-date">{shortDate}</span>
+          <span
+            className="home-date"
+            // The date shrinks only when a long month would reach the weather.
+            style={{ '--date-chars': shortDate.length } as CSSProperties}
+          >
+            {shortDate}
+          </span>
         </div>
         {!isToday ? (
           <button
@@ -222,10 +228,10 @@ export function DailyOutfit({
                   </span>
                 </span>
                 <small>
-                  {weatherLabel(forecast.code)} ·{' '}
-                  {fresh
-                    ? state.weather.location.name
-                    : 'Gespeichert · veraltet'}
+                  <span>{weatherLabel(forecast.code)}</span>
+                  <span>
+                    {fresh ? state.weather.location.name : 'Stand veraltet'}
+                  </span>
                 </small>
               </>
             ) : (
@@ -235,11 +241,14 @@ export function DailyOutfit({
                   <span className="weather-range">Wetter</span>
                 </span>
                 <small>
-                  {state?.weather
-                    ? isToday
-                      ? 'Vorhersage nicht aktuell'
-                      : 'Keine Vorhersage für diesen Tag'
-                    : 'Ort auswählen'}
+                  {state?.weather ? (
+                    <>
+                      <span>Vorhersage</span>
+                      <span>nicht aktuell</span>
+                    </>
+                  ) : (
+                    <span>Ort auswählen</span>
+                  )}
                 </small>
               </>
             )}

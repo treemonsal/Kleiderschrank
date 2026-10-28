@@ -225,9 +225,7 @@ test('Wetterauswahl auf der Startseite speichert und schliesst, Einstellung blei
   fail = true
   await page.clock.fastForward(7 * 3600000)
   await expect.poll(() => calls.length).toBe(2)
-  await expect(page.locator('.home-weather')).toContainText(
-    'Gespeichert · veraltet',
-  )
+  await expect(page.locator('.home-weather')).toContainText('Stand veraltet')
   await page.clock.fastForward(5 * 60000)
   expect(calls).toHaveLength(2) // no automatic retry loop
 })

@@ -1,5 +1,9 @@
 # Entwicklungsplan
 
+## Version 0.30.1 – Wetter im Kopf von Heute
+
+- [x] Lange Wetterwörter und Orte („Regenschauer · Mein Standort“) liefen ins Datum: Wetter jetzt in zwei kurzen Zeilen, das Datum wird nur bei langen Monaten etwas kleiner; Regressionstest bei 320 bis 430 px
+
 ## Version 0.30.0 – Fehlerprüfung von A bis Z
 
 - [x] Stand 0.29.0 als Branch `backup/before-0.30.0` sichern
