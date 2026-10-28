@@ -1,5 +1,12 @@
-import { useRef, useState } from 'react'
-import { Camera, ImagePlus, LoaderCircle, Trash2 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import {
+  Camera,
+  ClipboardPaste,
+  ImagePlus,
+  LoaderCircle,
+  Trash2,
+} from 'lucide-react'
+import { imagesFromClipboard } from './image-drop'
 import {
   CATEGORIES,
   COLORS,
@@ -21,12 +28,15 @@ export function Editor({
   onClose,
   onSaved,
   onBatch,
+  incoming,
 }: {
   item?: Garment
   onClose: () => void
   onSaved: () => void
   /** Several library photos at once go to the batch import. */
   onBatch?: (files: File[]) => void
+  /** Images dragged in from another window or pasted. */
+  incoming?: { files: File[]; key: number }
 }) {
   const [draft, setDraft] = useState<GarmentDraft>(() =>
     item
@@ -56,6 +66,7 @@ export function Editor({
   const camera = useRef<HTMLInputElement>(null)
   const name = useRef<HTMLInputElement>(null)
   const photo = draft.cutout ?? draft.photo
+  const canPaste = typeof navigator.clipboard?.read === 'function'
   function update<K extends keyof GarmentDraft>(
     key: K,
     value: GarmentDraft[K],
@@ -63,6 +74,15 @@ export function Editor({
     setDraft((previous) => ({ ...previous, [key]: value }))
     setDirty(true)
   }
+  function receive(files: File[]) {
+    if (files.length > 1 && onBatch && !item) onBatch(files)
+    else void upload(files[0])
+  }
+  const receiveLatest = useRef(receive)
+  receiveLatest.current = receive
+  useEffect(() => {
+    if (incoming?.files.length) receiveLatest.current(incoming.files)
+  }, [incoming?.key, incoming?.files])
   async function upload(file?: File) {
     if (!file) return
     setProcessing(true)
@@ -123,7 +143,7 @@ export function Editor({
               <div className="photo-picker-empty">
                 <ImagePlus size={32} strokeWidth={1.3} />
                 <p>Foto hinzufügen</p>
-                <span>Mehrere Fotos auf einmal möglich.</span>
+                <span>Mehrere auf einmal, auch per Ziehen oder Einsetzen.</span>
               </div>
             )}
             {processing && (
@@ -149,6 +169,25 @@ export function Editor({
               <ImagePlus size={18} />
               Fotomediathek
             </button>
+            {canPaste && (
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="Bild aus der Zwischenablage einsetzen"
+                disabled={processing}
+                onClick={() =>
+                  imagesFromClipboard().then(receive, (err: unknown) =>
+                    setError(
+                      err instanceof Error
+                        ? err.message
+                        : 'Das Bild konnte nicht eingesetzt werden.',
+                    ),
+                  )
+                }
+              >
+                <ClipboardPaste size={19} />
+              </button>
+            )}
             {draft.photo && (
               <button
                 type="button"

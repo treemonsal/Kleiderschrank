@@ -7,6 +7,7 @@ import {
   CircleAlert,
   Check,
   Heart,
+  ImagePlus,
   LoaderCircle,
   MessageCircle,
   Pencil,
@@ -36,6 +37,7 @@ import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
 import { useStylistInbox } from './stylist-inbox'
+import { carriesImage, imagesFromDrop, imagesFromPaste } from './image-drop'
 import {
   restorePageScroll,
   scrollSectionIntoView,
@@ -470,6 +472,9 @@ export default function App() {
   const tapMotion = useTapMotion()
   const [editor, setEditor] = useState<Garment | 'new' | null>(null)
   const [batch, setBatch] = useState<File[] | null>(null)
+  // Images dragged in from another window or pasted; key restarts handling.
+  const [incoming, setIncoming] = useState<{ files: File[]; key: number }>()
+  const [dragging, setDragging] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [toast, setToast] = useState<{
     message: string
@@ -491,6 +496,69 @@ export default function App() {
       ),
   })
   const notify = useCallback((message: string) => setToast({ message }), [])
+  const receiving = useRef({ editor, batch })
+  receiving.current = { editor, batch }
+  useEffect(() => {
+    const fail = (error: unknown) =>
+      setToast({
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Das Bild konnte nicht übernommen werden.',
+        error: true,
+      })
+    function receive(files: File[]) {
+      if (!files.length) return
+      const { editor, batch } = receiving.current
+      const open = document.querySelector('dialog[open]')
+      if (batch || (open && !editor)) {
+        fail(new Error('Schliesse zuerst das offene Fenster.'))
+        return
+      }
+      if (!editor && files.length > 1) {
+        setBatch(files)
+        return
+      }
+      setIncoming({ files, key: Date.now() })
+      if (!editor) setEditor('new')
+    }
+    const over = (event: DragEvent) => {
+      if (!carriesImage(event.dataTransfer)) return
+      // Never let the browser leave the app to show a dropped image.
+      event.preventDefault()
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy'
+      setDragging(true)
+    }
+    const leave = (event: DragEvent) => {
+      if (!event.relatedTarget) setDragging(false)
+    }
+    const drop = (event: DragEvent) => {
+      setDragging(false)
+      if (!event.dataTransfer || !carriesImage(event.dataTransfer)) return
+      const target = event.target as HTMLElement | null
+      if (target?.closest('input, textarea, [contenteditable]')) return
+      event.preventDefault()
+      imagesFromDrop(event.dataTransfer).then(receive, fail)
+    }
+    const paste = (event: ClipboardEvent) => {
+      const files = imagesFromPaste(event.clipboardData)
+      if (!files.length) return
+      event.preventDefault()
+      receive(files)
+    }
+    window.addEventListener('dragenter', over)
+    window.addEventListener('dragover', over)
+    window.addEventListener('dragleave', leave)
+    window.addEventListener('drop', drop)
+    window.addEventListener('paste', paste)
+    return () => {
+      window.removeEventListener('dragenter', over)
+      window.removeEventListener('dragover', over)
+      window.removeEventListener('dragleave', leave)
+      window.removeEventListener('drop', drop)
+      window.removeEventListener('paste', paste)
+    }
+  }, [])
   useEffect(() => {
     if (!toast) return
     const timer = window.setTimeout(() => setToast(null), 4500)
@@ -731,9 +799,14 @@ export default function App() {
           <Editor
             key={editor === 'new' ? 'new' : editor.id}
             item={editor === 'new' ? undefined : editor}
-            onClose={() => setEditor(null)}
+            incoming={incoming}
+            onClose={() => {
+              setEditor(null)
+              setIncoming(undefined)
+            }}
             onSaved={() => {
               setEditor(null)
+              setIncoming(undefined)
               // New pieces land where they are shown: in the wardrobe.
               if (editor === 'new' && view !== 'wardrobe') navigate('wardrobe')
               notify(
@@ -744,6 +817,7 @@ export default function App() {
             }}
             onBatch={(files) => {
               setEditor(null)
+              setIncoming(undefined)
               setBatch(files)
             }}
           />
@@ -777,6 +851,12 @@ export default function App() {
             notify={notify}
           />
         </Suspense>
+      )}
+      {dragging && !editor && !batch && (
+        <div className="drop-overlay" aria-hidden="true">
+          <ImagePlus size={34} strokeWidth={1.3} />
+          <span>Bild hier ablegen</span>
+        </div>
       )}
       <div
         className="toast-region"

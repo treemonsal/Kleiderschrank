@@ -1,5 +1,12 @@
 # Entwicklungsplan
 
+## Version 0.31.0 – Bilder ziehen und einsetzen
+
+- [x] Bild aus einem anderen Browserfenster in die App ziehen: ein Bild öffnet „Neues Stück“, mehrere den Stapel, im offenen Editor ersetzt es nur das Foto; nichts wird vorher heruntergeladen
+- [x] Gesperrte Webbilder (ohne Freigabe der Seite) werden verständlich erklärt, mit Ausweg „Bild kopieren“ und Einsetzen (Cmd/Strg+V oder Knopf im Editor, auch auf dem iPhone)
+- [x] Ein daneben fallendes Bild kann die App nie verlassen oder ungespeicherte Eingaben verwerfen
+- [ ] Geräteübergreifendes Speichern mit Konto: wartet auf Entscheidung und Zugangsdaten
+
 ## Version 0.30.1 – Wetter im Kopf von Heute
 
 - [x] Lange Wetterwörter und Orte („Regenschauer · Mein Standort“) liefen ins Datum: Wetter jetzt in zwei kurzen Zeilen, das Datum wird nur bei langen Monaten etwas kleiner; Regressionstest bei 320 bis 430 px
