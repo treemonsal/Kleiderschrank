@@ -3,6 +3,7 @@ import { parseStyleProfile } from './personalization'
 import { COLORS, STYLES } from './model'
 import type { Garment, GarmentDraft } from './model'
 import { lookTitle } from './swatch'
+import type { SyncBase } from './sync-model'
 import type { CalendarEntry } from './calendar'
 import type { WeatherState } from './weather'
 import type { ChatSession } from './chat-model'
@@ -24,6 +25,13 @@ import {
   type StyleProfile,
 } from './outfit-model'
 
+export interface SyncState {
+  /** Google account id („sub“). */
+  id: string
+  base: SyncBase
+  lastSyncedAt: string
+}
+
 export class WardrobeDatabase extends Dexie {
   garments!: Table<Garment, string>
   outfits!: Table<SavedOutfit, string>
@@ -32,6 +40,8 @@ export class WardrobeDatabase extends Dexie {
   calendar!: Table<CalendarEntry, string>
   weather!: Table<WeatherState, string>
   chat!: Table<ChatSession, string>
+  /** Device-local sync bookkeeping per Google account; never backed up. */
+  syncState!: Table<SyncState, string>
   constructor(name = 'mystyle-private-wardrobe') {
     super(name)
     this.version(1).stores({ garments: 'id, category, updatedAt' })
@@ -46,6 +56,7 @@ export class WardrobeDatabase extends Dexie {
     })
     this.version(4).stores({ garments: 'id, category, updatedAt' })
     this.version(5).stores({ chat: 'id, updatedAt' })
+    this.version(6).stores({ syncState: 'id' })
   }
 }
 export async function deleteGarment(id: string, database = db): Promise<void> {

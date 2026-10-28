@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: ein Tageslook aus deinen eigenen Stücken, ein Journal deiner getragenen Tage und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand, ohne Anmeldung oder laufende Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.31.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.32.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät.
 
@@ -63,7 +63,11 @@ Browserdaten können von iOS entfernt werden. Privates Surfen, Safari-Daten lös
 
 Damit der Bestand sicherbar bleibt, werden Schreibvorgänge und zusammengeführte Importe oberhalb von 1000 Stücken oder etwa 90 MB Foto-/Kleidungsdaten im Sicherungsformat vollständig abgelehnt. Der übrige Platz ist für bis zu 1000 gespeicherte Outfits und die Vorlieben reserviert. Die App erklärt den Fehler; vorhandene Daten bleiben erhalten. Ein zwischenzeitlich gelöschtes oder geändertes Stück wird beim Speichern eines alten Bearbeitungsdialogs nicht stillschweigend überschrieben.
 
-Bei einem App-Update erst Eingaben speichern, dann den eingeblendeten Updatehinweis verwenden. Ein Update löscht den Kleiderschrank nicht. Es gibt keinen automatischen Geräteabgleich.
+Bei einem App-Update erst Eingaben speichern, dann den eingeblendeten Updatehinweis verwenden. Ein Update löscht den Kleiderschrank nicht.
+
+## Auf allen Geräten
+
+Unter **Einstellungen → Auf allen Geräten → Mit Google anmelden** liegt der Kleiderschrank zusätzlich im versteckten App-Ordner des eigenen Google Drive. Auf jedem Gerät, auf dem man sich mit demselben Konto anmeldet, wird automatisch abgeglichen: beim Start, beim Zurückkehren in die App, alle paar Minuten und kurz nach Änderungen. Neuere Änderungen gewinnen; Gelöschtes kommt nicht zurück. Fotos werden einzeln und nur einmal hochgeladen. Jede Person nutzt ihr eigenes Konto. Die Anmeldung gilt eine Stunde und erneuert sich beim nächsten App-Start mit einer kurzen Weiterleitung. Erscheint der Knopf nicht, fehlt die einmalige Einrichtung: [docs/GOOGLE_SYNC.md](docs/GOOGLE_SYNC.md). Sicherungen per Export bleiben trotzdem sinnvoll.
 
 ## Tests
 

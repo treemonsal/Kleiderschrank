@@ -38,6 +38,7 @@ import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
 import { useStylistInbox } from './stylist-inbox'
 import { carriesImage, imagesFromDrop, imagesFromPaste } from './image-drop'
+import { useDriveSync } from './DriveSync'
 import {
   restorePageScroll,
   scrollSectionIntoView,
@@ -496,6 +497,12 @@ export default function App() {
       ),
   })
   const notify = useCallback((message: string) => setToast({ message }), [])
+  useDriveSync(
+    useCallback(
+      (message: string, error?: boolean) => setToast({ message, error }),
+      [],
+    ),
+  )
   const receiving = useRef({ editor, batch })
   receiving.current = { editor, batch }
   useEffect(() => {
