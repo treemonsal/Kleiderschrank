@@ -30,16 +30,18 @@ export function wearStats(
   return stats
 }
 
-export function describeWear(stats: WearStats | undefined, today = localDay()) {
-  if (!stats?.count) return 'Noch nie getragen'
+/** „heute“, „gestern“ or „vor N Tagen“ for a worn day. */
+export function lastWorn(day: string, today = localDay()) {
   const days = Math.round(
-    (Date.parse(`${today}T12:00:00Z`) -
-      Date.parse(`${stats.lastWorn}T12:00:00Z`)) /
+    (Date.parse(`${today}T12:00:00Z`) - Date.parse(`${day}T12:00:00Z`)) /
       86400000,
   )
-  const last =
-    days <= 0 ? 'heute' : days === 1 ? 'gestern' : `vor ${days} Tagen`
-  return `${stats.count}× getragen · zuletzt ${last}`
+  return days <= 0 ? 'heute' : days === 1 ? 'gestern' : `vor ${days} Tagen`
+}
+
+export function describeWear(stats: WearStats | undefined, today = localDay()) {
+  if (!stats?.count || !stats.lastWorn) return 'Noch nie getragen'
+  return `${stats.count}× getragen · zuletzt ${lastWorn(stats.lastWorn, today)}`
 }
 
 export const formatChf = (value: number) =>

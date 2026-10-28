@@ -86,15 +86,16 @@ test('Journal zeigt selten getragene Stücke zuerst und Skizzen zeigen die Farbe
     page.locator('.garment-card .photo-placeholder[data-color="Grün"]'),
   ).toHaveCount(1)
   await page.getByRole('button', { name: 'Jeans öffnen' }).click()
-  await expect(page.getByRole('dialog')).toContainText(
-    '2× getragen · zuletzt vor 2 Tagen',
+  await expect(page.getByRole('dialog').locator('.detail-count')).toHaveText(
+    '2× getragen',
   )
+  await expect(page.getByRole('dialog')).toContainText('zuletzt vor 2 Tagen')
   await page
     .getByRole('button', { name: /schliessen/i })
     .first()
     .click()
   await page.getByRole('button', { name: 'Grüner Pulli öffnen' }).click()
-  await expect(page.getByRole('dialog')).toContainText('Noch nie getragen')
+  await expect(page.getByRole('dialog')).toContainText('noch nie getragen')
 })
 
 test('Ohne bestätigte Tragetage zeigt das Journal die neuesten statt vergessener Stücke', async ({

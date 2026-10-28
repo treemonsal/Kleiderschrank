@@ -22,14 +22,15 @@ Quelle: Claude-Design-Entwurf „MyStyle, ein Garderobenjournal“ (Classical-De
 
 ## Bewusste Abweichungen vom Entwurf
 
-Seit 0.29.0 folgt die App dem Entwurf auch im Funktionsumfang (siehe ROADMAP). Verbleibende Abweichungen:
+Seit 0.29.0 folgt die App dem Entwurf auch im Funktionsumfang, seit 0.30.0 auch bei Detail, Bewertung, leerem Tag, „Im Journal vermerkt · Rückgängig“, Journal-Tag und Einkaufsberatung (siehe ROADMAP). Verbleibende Abweichungen:
 
 - Zahnrad neben der Sprechblase: KI-Freigabe, Stilprofil und Sicherung brauchen einen Ort; der Entwurf zeigt nur die Sprechblase.
-- „Heute getragen“ steht über der Abbildungstafel, damit die Tagesbestätigung ohne Scrollen erreichbar bleibt; nach dem Bestätigen erscheint „Getragen“ statt „Im Journal vermerkt · Rückgängig“ (Korrektur im Journal).
 - Teile tauschen über den Pfeil auf jeder Abbildung; Antippen öffnet das Stück.
 - Der Titel des Tageslooks und neuer Vorschläge nennt die zwei führenden erfassten Farben („Beige & Blau“); der Entwurf zeigte Fantasienamen.
 - Looks bietet vier Anlässe (Alltag, Büro, Abend, Freizeit), weil gespeicherte Looks „Freizeit“ verwenden können.
-- Die Einkaufsberatung zeigt ihren Fortschritt in einem aufklappbaren Bereich.
+- Journal: Pfeile für frühere Monate und Aktionen „Plan bearbeiten“, „Eintrag löschen“ unter dem Tagesdetail; die Monatsstatistik bezieht sich wie im Entwurf auf den aktuellen Monat.
+- Garderobe-Detail: Kategorie und Name stehen im Kopf des Fensters (mit Schliessen-Knopf), daneben Bearbeiten und Löschen; Notiz als eigene Zeile.
+- Grosse Zahlen (Tragetage, „× getragen“) nutzen Versalziffern, damit die Null nicht wie ein „o“ aussieht.
 - Stoffmuster sind ein Hinweis pro Kategorie, kein erfasster Stoff.
 
 ## Stylesheets

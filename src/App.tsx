@@ -31,7 +31,7 @@ import { EmptyIllustration } from './EmptyIllustration'
 import { DailyOutfit } from './DailyOutfit'
 import { LaundryIcon, useTapMotion } from './motion'
 import { localDay, shiftDay } from './calendar'
-import { describeWear, wearStats, type WearStats } from './wear-stats'
+import { lastWorn, wearStats, type WearStats } from './wear-stats'
 import { useClock, useSavedWeatherRefresh } from './useWeather'
 import { useDaySwipe } from './useDaySwipe'
 import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
@@ -119,13 +119,11 @@ function Wardrobe({
   wear,
   onAdd,
   onOpen,
-  onFavorite,
 }: {
   items: Garment[]
   wear: Map<string, WearStats>
   onAdd: () => void
   onOpen: (id: string) => void
-  onFavorite: (item: Garment) => void
 }) {
   const [category, setCategory] = useViewState('wardrobe.category', 'Alle')
   const [favorites, setFavorites] = useViewState('wardrobe.favorites', false)
@@ -231,8 +229,8 @@ function Wardrobe({
             <GarmentCard
               key={item.id}
               item={item}
+              worn={wear.get(item.id)?.count ?? 0}
               onOpen={() => onOpen(item.id)}
-              onFavorite={() => onFavorite(item)}
             />
           ))}
         </div>
@@ -285,15 +283,68 @@ function Detail({
       }}
     >
       <div className="detail-body">
-        <GarmentPicture item={item} large />
-        <div className="detail-title">
-          <div>
-            <p className="eyebrow">Marke</p>
-            <h3>{item.brand || 'Ohne Marke'}</h3>
+        <div className="detail-top">
+          <div className="detail-photo">
+            <GarmentPicture item={item} large />
+            {item.inLaundry && (
+              <span className="laundry-badge">In der Wäsche</span>
+            )}
           </div>
+          <div className="detail-wear">
+            <p className="detail-count">
+              {wear?.count ?? 0}
+              <span>× getragen</span>
+            </p>
+            <p className="muted">
+              {wear?.lastWorn
+                ? `zuletzt ${lastWorn(wear.lastWorn)}`
+                : 'noch nie getragen'}
+            </p>
+          </div>
+        </div>
+        <dl className="detail-facts">
+          {(
+            [
+              ['Farbe', item.color],
+              ['Marke', item.brand],
+              ['Saison', item.seasons.join(', ')],
+              ['Stil', item.styles.join(', ')],
+              ['Notiz', item.notes],
+            ] as const
+          )
+            .filter(([, value]) => value)
+            .map(([label, value]) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+        </dl>
+        <PairingSuggestions item={item} items={items} onOpen={onOpen} />
+        <div className="detail-toggles">
+          <button
+            className="button secondary laundry-toggle"
+            data-motion="laundry"
+            disabled={busy}
+            aria-pressed={!!item.inLaundry}
+            onClick={async () => {
+              setBusy(true)
+              setError('')
+              try {
+                await setLaundry(item.id, !item.inLaundry)
+              } catch (error) {
+                setError(storageError(error))
+              } finally {
+                setBusy(false)
+              }
+            }}
+          >
+            <LaundryIcon size={16} />
+            {item.inLaundry ? 'Aus der Wäsche nehmen' : 'In die Wäsche legen'}
+          </button>
           <button
             data-motion="heart"
-            className={`icon-button soft ${item.favorite ? 'is-favorite' : ''}`}
+            className={`icon-button detail-heart ${item.favorite ? 'is-favorite' : ''}`}
             aria-label={
               item.favorite ? 'Favorit entfernen' : 'Als Favorit markieren'
             }
@@ -311,66 +362,13 @@ function Detail({
               }
             }}
           >
-            <Heart size={22} fill={item.favorite ? 'currentColor' : 'none'} />
+            <Heart
+              size={18}
+              strokeWidth={1.5}
+              fill={item.favorite ? 'currentColor' : 'none'}
+            />
           </button>
         </div>
-        <dl className="detail-facts">
-          <div>
-            <dt>Kategorie</dt>
-            <dd>{item.category}</dd>
-          </div>
-          <div>
-            <dt>Farbe</dt>
-            <dd>{item.color || 'Nicht angegeben'}</dd>
-          </div>
-          <div>
-            <dt>Jahreszeit</dt>
-            <dd>{item.seasons.join(', ') || 'Nicht angegeben'}</dd>
-          </div>
-          <div>
-            <dt>Stil</dt>
-            <dd>{item.styles.join(', ') || 'Nicht angegeben'}</dd>
-          </div>
-        </dl>
-        <button
-          className="button secondary full laundry-toggle"
-          data-motion="laundry"
-          disabled={busy}
-          aria-pressed={!!item.inLaundry}
-          onClick={async () => {
-            setBusy(true)
-            setError('')
-            try {
-              await setLaundry(item.id, !item.inLaundry)
-            } catch (error) {
-              setError(storageError(error))
-            } finally {
-              setBusy(false)
-            }
-          }}
-        >
-          <LaundryIcon size={17} />
-          {item.inLaundry ? 'Als sauber markieren' : 'In die Wäsche legen'}
-        </button>
-        <p className="micro-copy" role="status">
-          {item.inLaundry
-            ? 'In der Wäsche: für neue automatische Vorschläge ausgeblendet.'
-            : 'Für neue Vorschläge verfügbar.'}
-        </p>
-        {item.notes && (
-          <div className="detail-notes">
-            <h4>Deine Notizen</h4>
-            <p>{item.notes}</p>
-          </div>
-        )}
-        <PairingSuggestions item={item} items={items} onOpen={onOpen} />
-        <p className="micro-copy wear-line">{describeWear(wear)}</p>
-        <p className="micro-copy">
-          Hinzugefügt am{' '}
-          {new Intl.DateTimeFormat('de-CH', { dateStyle: 'medium' }).format(
-            new Date(item.createdAt),
-          )}
-        </p>
         {error && <ErrorMessage>{error}</ErrorMessage>}
         {confirm ? (
           <div className="delete-confirm" role="alert">
@@ -521,13 +519,6 @@ export default function App() {
     cancelScroll.current = restorePageScroll(top)
     after?.()
   }
-  async function favorite(item: Garment) {
-    try {
-      await toggleFavorite(item)
-    } catch (err) {
-      setToast({ message: storageError(err), error: true })
-    }
-  }
   const selected = items?.find((i) => i.id === selectedId)
   useEffect(() => {
     if (items && selectedId && !items.some((item) => item.id === selectedId)) {
@@ -649,7 +640,6 @@ export default function App() {
             wear={wear}
             onAdd={() => setEditor('new')}
             onOpen={setSelectedId}
-            onFavorite={(item) => void favorite(item)}
           />
         ) : view === 'outfits' ? (
           <Suspense fallback={<Loading />}>

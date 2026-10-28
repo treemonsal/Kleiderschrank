@@ -58,7 +58,7 @@ async function exportData(page: Page) {
 }
 test.use({ timezoneId: 'Europe/Zurich' })
 for (const width of [375, 390, 430])
-  test(`Erster Schritt und Tagesbestätigung sind bei ${width}px ohne Scrollen erreichbar`, async ({
+  test(`Erster Schritt ohne Scrollen, Tagesbestätigung unter der Tafel bei ${width}px`, async ({
     page,
   }, info) => {
     await page.clock.install({ time: new Date('2026-10-16T10:00:00Z') })
@@ -86,9 +86,12 @@ for (const width of [375, 390, 430])
       name: 'Heute getragen',
       exact: true,
     })
-    await expect(worn).toBeVisible()
+    // As in the design, „Heute getragen“ follows the plate and refinements.
+    await worn.scrollIntoViewIfNeeded()
+    await expect(worn).toBeInViewport()
     const action = (await worn.boundingBox())!
-    expect(action.y + action.height).toBeLessThan(744)
+    const plate = (await page.locator('.figure-plate').boundingBox())!
+    expect(action.y).toBeGreaterThan(plate.y + plate.height)
     expect(Number(action.height.toFixed(3))).toBeGreaterThanOrEqual(44)
     await expect(page.locator('.daily-context')).toContainText('Ohne Wetter')
     expect(

@@ -89,12 +89,11 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
   return (
     <section className="settings-section ai-settings">
       <div className="section-heading">
-        <h2>Online-Foto-KI</h2>
-        <ArrowUpRight size={20} />
+        <h2>Kostenlose KI</h2>
       </div>
       {!communityActive && (
         <p className="muted section-intro">
-          Neue Fotos werden automatisch erkannt und freigestellt.
+          Fotos erkennen und freistellen, Chat und Kaufideen.
         </p>
       )}
       <div className="settings-card ai-connection community-settings">
@@ -155,8 +154,8 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
             />
             <span>
               Ich erlaube, neue Kleidungsfotos automatisch an diese kostenlosen
-              Dienste zu senden. Stylist, Chat und Kaufideen sind damit auch
-              frei.
+              Dienste zu senden. Chat und Kaufideen senden Angaben (im Chat bis
+              zu zwölf Fotos) nur, wenn ich frage.
             </span>
           </label>
         </Information>
@@ -188,7 +187,7 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
                 setShoppingEnabled(true)
                 setEnabled(false)
                 setMessage(
-                  'Kostenlose KI aktiviert. Fotoanalyse, Online-Stylist, Chat und Kaufideen sind bereit.',
+                  'Kostenlose KI aktiviert. Fotoanalyse, Chat und Kaufideen sind bereit.',
                 )
                 onConnected?.()
               } catch (e) {
@@ -233,7 +232,7 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
               setCommunityConsent(false)
               setEnabled(false)
               setMessage(
-                'Online-KI ausgeschaltet. Fotoanalyse, Stylist, Chat und Kaufideen senden nichts mehr.',
+                'Kostenlose KI ausgeschaltet. Fotoanalyse, Chat und Kaufideen senden nichts mehr.',
               )
             }}
           >

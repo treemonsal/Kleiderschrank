@@ -48,7 +48,7 @@ export const STYLE_QUESTIONS = [
   {
     id: 'patterns',
     title: 'Wie viel Muster darf es sein?',
-    hint: 'Der Online-Stylist berücksichtigt das, soweit deine Angaben oder ausgewählten Fotos es erlauben.',
+    hint: 'Der Chat berücksichtigt das, soweit deine Angaben oder Fotos es erlauben.',
     choices: [
       'Lieber unifarben',
       'Dezente Muster',

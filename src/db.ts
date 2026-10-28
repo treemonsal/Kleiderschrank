@@ -2,6 +2,7 @@ import Dexie, { type Table } from 'dexie'
 import { parseStyleProfile } from './personalization'
 import { COLORS, STYLES } from './model'
 import type { Garment, GarmentDraft } from './model'
+import { lookTitle } from './swatch'
 import type { CalendarEntry } from './calendar'
 import type { WeatherState } from './weather'
 import type { ChatSession } from './chat-model'
@@ -132,7 +133,7 @@ export async function saveOutfit(
         id = crypto.randomUUID()
       await database.outfits.put({
         id,
-        name: `${options.occasion} · ${ids.length} Stücke`,
+        name: lookTitle(garments as Garment[], `${options.occasion}-Look`),
         garmentIds: [...ids],
         occasion: options.occasion,
         season: options.season,

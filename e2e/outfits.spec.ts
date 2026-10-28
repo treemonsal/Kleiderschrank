@@ -237,3 +237,90 @@ for (const width of [375, 390, 430]) {
     }
   })
 }
+
+test('„Zuletzt getragen“ sortiert gespeicherte Looks nach dem letzten Tragetag', async ({
+  page,
+}) => {
+  await page.clock.install({ time: new Date('2026-10-20T10:00:00Z') })
+  await page.goto('/')
+  const stamp = '2026-01-01T00:00:00.000Z'
+  const garments = [
+    'Oberteile',
+    'Hosen',
+    'Schuhe',
+    'Oberteile',
+    'Oberteile',
+  ].map((category, index) => ({
+    id: `g${index}`,
+    name: ['Hemd', 'Hose', 'Schuh', 'Shirt', 'Bluse'][index],
+    category,
+    color: ['Weiss', 'Blau', 'Schwarz', 'Grau', 'Rosa'][index],
+    brand: '',
+    seasons: [],
+    styles: [],
+    notes: '',
+    favorite: false,
+    createdAt: stamp,
+    updatedAt: stamp,
+  }))
+  const look = (id: string, name: string, top: string, createdAt: string) => ({
+    id,
+    name,
+    garmentIds: [top, 'g1', 'g2'],
+    occasion: 'Alltag',
+    season: 'Alle',
+    style: 'Alle',
+    favorite: false,
+    createdAt,
+    updatedAt: createdAt,
+  })
+  const day = (value: string, outfitId: string) => ({
+    id: value,
+    day: value,
+    outfitId,
+    status: 'worn',
+    note: '',
+    createdAt: stamp,
+    updatedAt: stamp,
+  })
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
+  await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
+    name: 'looks.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(
+      JSON.stringify({
+        app: 'MyStyle',
+        version: 8,
+        garments,
+        outfits: [
+          look('neu', 'Neu angelegt', 'g0', '2026-10-10T00:00:00.000Z'),
+          look(
+            'alt',
+            'Alt, gestern getragen',
+            'g3',
+            '2026-09-01T00:00:00.000Z',
+          ),
+          look('nie', 'Nie getragen', 'g4', '2026-10-15T00:00:00.000Z'),
+        ],
+        feedback: [],
+        preferences: null,
+        calendar: [day('2026-10-12', 'neu'), day('2026-10-19', 'alt')],
+        weather: null,
+        chat: null,
+      }),
+    ),
+  })
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Sicherung importieren', exact: true })
+    .click()
+  await expect(page.getByRole('dialog')).not.toBeVisible()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
+  await expect(page.locator('.saved-look h3')).toHaveText([
+    /Alt, gestern getragen/,
+    /Neu angelegt/,
+    /Nie getragen/,
+  ])
+})

@@ -208,23 +208,20 @@ test('Tageslook lässt sich mit Grund ablehnen und die Bewertung gezielt zurück
   await look
     .getByRole('button', { name: 'Tageslook: Passt nicht', exact: true })
     .click()
-  await page
-    .getByRole('dialog')
-    .getByRole('button', { name: 'Schliessen', exact: true })
+  await expect(look.getByText('Grund angeben, freiwillig')).toBeVisible()
+  await look
+    .getByRole('button', { name: 'Tageslook: Passt nicht', exact: true })
     .click()
+  await expect(look.getByText('Grund angeben, freiwillig')).toHaveCount(0)
   expect((await exported(page)).feedback).toHaveLength(0)
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
   await look
     .getByRole('button', { name: 'Tageslook: Passt nicht', exact: true })
     .click()
-  await page
-    .getByRole('dialog')
-    .getByRole('button', {
-      name: 'Die Farben passen für mich nicht zusammen',
-      exact: true,
-    })
+  await look
+    .getByRole('button', { name: 'Farben passen nicht', exact: true })
     .click()
-  await expect(page.getByRole('dialog')).not.toBeVisible()
+  await expect(look.getByText('Grund angeben, freiwillig')).toHaveCount(0)
   await expect
     .poll(() => look.locator('.outfit-piece').allTextContents())
     .not.toEqual(before)

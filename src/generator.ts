@@ -78,11 +78,11 @@ export function missingOutfitMessage(
     eligible.some((item) => item.category === category)
   if (!has('Schuhe'))
     return items.some((item) => item.category === 'Schuhe' && item.inLaundry)
-      ? 'Passende Schuhe sind in der Wäsche oder fehlen in dieser Auswahl. Markiere ein sauberes Paar als verfügbar oder passe deine Auswahl an.'
-      : 'Für diese Auswahl fehlen passende Schuhe. Ergänze ein Paar oder ändere Saison und Anlass.'
+      ? 'Passende Schuhe liegen in der Wäsche. Nimm ein sauberes Paar aus der Wäsche oder ergänze eines.'
+      : 'Für diese Auswahl fehlen passende Schuhe. Ergänze ein Paar in der Garderobe.'
   if (!has('Kleider') && !(has('Oberteile') && has('Hosen')))
-    return 'Für diese Auswahl brauchst du ein Kleid oder ein Oberteil mit Hose. Ergänze Stücke oder passe deine Auswahl an.'
-  return 'In der aktuellen Auswahl gibt es keinen neuen Vorschlag. Du kannst neu kombinieren, Ablehnungen zurücksetzen oder deine Auswahl ändern.'
+    return 'Für diese Auswahl brauchst du ein Kleid oder ein Oberteil mit Hose. Ergänze Stücke in der Garderobe.'
+  return 'Gerade gibt es keinen neuen Vorschlag. Versuche einen anderen Anlass oder nimm Ablehnungen im Stilprofil zurück.'
 }
 
 export function generateOutfits(
@@ -333,7 +333,7 @@ export function generateOutfits(
       )
     if (weather) {
       reasons.push(
-        `Vorhersage für ${weather.day}: ${Math.round(weather.min)} bis ${Math.round(weather.max)} °C. Saisonangaben helfen bei der groben Auswahl; Material und Wärme bleiben ungeprüft.`,
+        `Vorhersage: ${Math.round(weather.min)} bis ${Math.round(weather.max)} °C. Saisonangaben helfen bei der groben Auswahl; Material und Wärme bleiben ungeprüft.`,
       )
       if (offset)
         reasons.push(
