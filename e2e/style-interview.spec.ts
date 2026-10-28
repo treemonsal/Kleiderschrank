@@ -96,6 +96,10 @@ test('Nach dem kurzen Stilcheck erscheint eine freiwillige Einladung; offline be
       exact: true,
     }),
   ).toBeVisible()
+  // The offline reload below needs the installed service worker.
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready
+  })
   await context.setOffline(true)
   await panel
     .getByRole('button', { name: 'Stilgespräch starten', exact: true })

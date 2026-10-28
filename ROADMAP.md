@@ -1,5 +1,13 @@
 # Entwicklungsplan
 
+## Version 0.34.0 – bessere Outfitauswahl
+
+- [x] Kleiderordnung pro Anlass: Büro und Abend bevorzugen elegante Teile und werten Sportliches ab, Freizeit lockere; Alltag lässt jeden Stil zu, damit eigene Stilvorlieben gelten
+- [x] Jahreszeit aus Wetter oder Datum: passend markierte Teile bevorzugt, unpassende leicht abgewertet
+- [x] Zweitfarben: ein Teil, das eine Farbe aus einem Muster aufgreift, wird belohnt; zwei gemusterte Teile zusammen abgewertet
+- [x] In den letzten 180 Tagen zusammen getragene Paare gelten als bewährt (schwächer als ein Daumen hoch)
+- [x] Gründe unter „Warum diese Kombination?“ nennen die neuen Regeln
+
 ## Version 0.33.0 – Zweitfarben und Google eingerichtet
 
 - [x] Hauptfarbe plus bis zu drei Zweitfarben pro Stück; im Detail sichtbar, im Chat als Hinweis, in Sicherung und Abgleich (Format 8, optional validiert). Vorschläge richten sich weiter nach der Hauptfarbe

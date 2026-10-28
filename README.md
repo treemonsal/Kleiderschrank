@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: ein Tageslook aus deinen eigenen Stücken, ein Journal deiner getragenen Tage und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand, ohne Anmeldung oder laufende Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.33.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.34.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät.
 
@@ -27,7 +27,7 @@ Eine Freigabe **Kostenlose KI aktivieren** schaltet Foto-KI, Chat und Einkaufsbe
 
 Die Dienste sind öffentliche Community-Angebote: [Qwen3-VL-Outpost](https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-Outpost), [BiRefNet](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo), [Qwen3-VL-HF-Demo](https://huggingface.co/spaces/prithivMLmods/Qwen3-VL-HF-Demo) und [Pollinations](https://pollinations.ai/). Sie können Dateien temporär speichern, Limits haben oder ausfallen. Fotos mit Personen oder privaten Hintergründen vermeiden. Ein eigener kompatibler Server bleibt in den Einstellungen unter **Eigenen Server verbinden** optional.
 
-Vorschläge kommen aus lokalen Regeln: vorhandene Stücke, deine Angaben und Bewertungen, Wäsche, Saison nach Datum oder Wetter, bestätigte Tragetage. Es wird kein Modell auf dich trainiert. Fehlende Stücke werden erklärt, nie erfunden. Passform, Material und Wärme bleiben ohne Nachweis unbekannt. Ohne Fotos ist keine visuelle Einschätzung möglich.
+Vorschläge kommen aus lokalen Regeln: vorhandene Stücke, deine Angaben und Bewertungen, Wäsche, Jahreszeit nach Datum oder Wetter, Kleiderordnung des Anlasses (Büro und Abend streng, Alltag frei), Farbharmonie inklusive Zweitfarben aus Mustern und Paare, die du wirklich zusammen getragen hast. Es wird kein Modell auf dich trainiert. Fehlende Stücke werden erklärt, nie erfunden. Passform, Material und Wärme bleiben ohne Nachweis unbekannt. Ohne Fotos ist keine visuelle Einschätzung möglich.
 
 ## Wetter
 

@@ -54,7 +54,7 @@ const NEUTRAL_PAIRS: Record<string, [number, string]> = {
 }
 
 // Rough dress code per recorded style: elegant pieces sit high, sporty low.
-const FORMALITY: Record<Style, number> = {
+export const FORMALITY: Record<Style, number> = {
   Elegant: 2,
   Minimalistisch: 1,
   Vintage: 0.5,
