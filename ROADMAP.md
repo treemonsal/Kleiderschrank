@@ -3,7 +3,7 @@
 ## Version 0.34.1 – Datenschutz und Nutzungsbedingungen
 
 - [x] Öffentliche Seiten `datenschutz.html` und `nutzungsbedingungen.html` für den Google-Zustimmungsbildschirm, verlinkt in den Einstellungen.
-- [ ] Google-App veröffentlichen (Branding ohne Logo, damit keine Prüfung nötig ist) und echte Anmeldung auf iPhone und zweitem Gerät testen.
+- [x] Google-App veröffentlicht; echter Test mit mehreren Geräten am 28.10.2026: Anmeldung klappt, Kleiderschrank überall gleich (Tim).
 
 ## Version 0.34.0 – bessere Outfitauswahl
 
@@ -17,7 +17,7 @@
 
 - [x] Hauptfarbe plus bis zu drei Zweitfarben pro Stück; im Detail sichtbar, im Chat als Hinweis, in Sicherung und Abgleich (Format 8, optional validiert). Vorschläge richten sich weiter nach der Hauptfarbe
 - [x] Öffentliche Google-Client-ID eingetragen: „Mit Google anmelden“ ist sichtbar (das Client-Secret wird nicht gebraucht und nicht gespeichert)
-- [ ] Echter Test mit Google-Konto auf iPhone und zweitem Gerät
+- [x] Echter Test mit Google-Konto auf mehreren Geräten (28.10.2026, siehe 0.34.1)
 
 ## Version 0.32.0 – Auf allen Geräten mit Google
 
