@@ -2,13 +2,13 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: ein Tageslook aus deinen eigenen Stücken, ein Journal deiner getragenen Tage und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand, ohne Anmeldung oder laufende Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.34.1** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.35.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät.
 
 ## Was du wo findest
 
-Seit 0.29.0 zeigt die App nur noch, was du täglich brauchst oder irgendwann wirklich vermisst. Gestaltung nach dem Claude-Design-Entwurf „Garderobenjournal“ ([design/JOURNAL.md](design/JOURNAL.md)).
+Seit 0.29.0 zeigt die App nur noch, was du täglich brauchst oder irgendwann wirklich vermisst. Seit 0.35.0 im Apple-Stil: Systemschrift, die deiner iPhone-Textgrösse folgt, Hell- und Dunkelmodus, durchscheinende Leisten und Sheets, die du mit dem Finger herunterziehen kannst ([design/APPLE.md](design/APPLE.md)). Das vorherige Journal-Design liegt im Branch `backup/design-0.34.1-journal`.
 
 | Bereich          | Inhalt                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

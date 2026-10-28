@@ -193,7 +193,7 @@ export function DailyOutfit({
     <>
       <div className="home-greeting home-day-summary journal-day-head">
         <div className="journal-date">
-          <span className="kicker">
+          <span className={`kicker${isToday ? ' is-today' : ''}`}>
             {weekday}
             {isToday ? ' · heute' : ''}
           </span>

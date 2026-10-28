@@ -260,7 +260,7 @@ for (const width of [375, 390, 430]) {
       page.getByRole('button', { name: 'Einstellungen öffnen', exact: true }),
     ).toHaveAttribute('aria-current', 'page')
     // Settings sit outside the four tabs, so no tab is marked.
-    await expect(page.locator('.nav-selection')).toHaveCount(0)
+    await expect(page.locator('.bottom-nav [aria-current]')).toHaveCount(0)
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
     expect(
       await page.evaluate(
@@ -337,7 +337,6 @@ test('Gedämpfte Beschriftungen und Aktionen bleiben auf Papierflächen lesbar',
     '.home-date',
     '.home-week-strip small',
     '.bottom-nav button',
-    '.bottom-nav .nav-numeral',
   ])
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await contrast(['.category-tabs button', '.collection-toolbar'])

@@ -1,5 +1,16 @@
 # Entwicklungsplan
 
+## Version 0.35.0 – Apple-Design
+
+- [x] Backup des Journal-Designs im Branch `backup/design-0.34.1-journal`
+- [x] Systemschrift mit Dynamic Type, grössenabhängige Laufweite, iOS-Farben in Hell und Dunkel, erhöhter Kontrast und reduzierte Transparenz
+- [x] Durchscheinende Kopfleiste (erst beim Scrollen) und Tab-Leiste mit Symbolen statt römischer Ziffern
+- [x] Gefüllte und getönte Kapsel-Buttons, Segmente, Schalter, gruppierte Listen und Karten, sofortiges Feedback beim Drücken
+- [x] Sheets auf Federn (`src/spring.ts`): steigen auf, folgen dem Finger 1:1, übernehmen die Wurfgeschwindigkeit, Gummiband nach oben, gehen den gleichen Weg zurück; ungespeicherte Änderungen bleiben geschützt
+- [x] Tageswischen auf Heute federt mit Wurf-Projektion und Gummiband am Ende des Zeitraums
+- [x] Reduzierte Bewegung: nur Überblendungen
+- [ ] Echter Test auf dem iPhone (Gefühl der Federn, Dynamic Type, Dunkelmodus)
+
 ## Version 0.34.1 – Datenschutz und Nutzungsbedingungen
 
 - [x] Öffentliche Seiten `datenschutz.html` und `nutzungsbedingungen.html` für den Google-Zustimmungsbildschirm, verlinkt in den Einstellungen.

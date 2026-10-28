@@ -25,7 +25,7 @@ export function OutfitPieces({
   items: Garment[]
   onSwap?: (id: string) => void
   onOpen: (id: string) => void
-  /** Lay the look out as a numbered book plate (Abb. 1–n). */
+  /** Lay the look out as one large plate: lead piece plus smaller tiles. */
   figure?: boolean
   /** Pieces a refinement preview would add; marked „neu“ on the plate. */
   changedIds?: string[]
@@ -60,9 +60,7 @@ export function OutfitPieces({
               >
                 <GarmentPicture item={item} />
                 <span className="figure-caption">
-                  <small>
-                    Abb. {index + 1} · {SINGULAR[item.category]}
-                  </small>
+                  <small>{SINGULAR[item.category]}</small>
                   <span>{item.name}</span>
                 </span>
                 {item.inLaundry && !worn && (
@@ -85,12 +83,11 @@ export function OutfitPieces({
             </div>
           ))}
         </div>
-        <figcaption>
-          Abb. 1–{pieces.length}.{' '}
-          {onSwap
-            ? 'Antippen öffnet ein Teil, der Pfeil tauscht es.'
-            : 'Aus dem Journal.'}
-        </figcaption>
+        {onSwap && (
+          <figcaption>
+            Antippen öffnet ein Teil, der Pfeil tauscht es.
+          </figcaption>
+        )}
       </figure>
     )
   }

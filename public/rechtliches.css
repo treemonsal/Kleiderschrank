@@ -1,24 +1,44 @@
-/* Static legal pages; Classical tokens without web fonts (system serif). */
+/* Static legal pages in the app's Apple look: system font, light and dark. */
 :root {
-  color-scheme: light;
-  --bg: #f3f2f2;
-  --text: #201f1d;
-  --muted: #605d5d;
-  --accent: #b68235;
-  --divider: color-mix(in srgb, #201f1d 16%, transparent);
+  color-scheme: light dark;
+  --bg: #f2f2f7;
+  --surface: #ffffff;
+  --text: #1d1d1f;
+  --muted: #6a6a6f;
+  --tint: #0066cc;
+  --divider: rgb(60 60 67 / 0.18);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --text: #f5f5f7;
+    --muted: #a1a1a6;
+    --tint: #2997ff;
+    --divider: rgb(84 84 88 / 0.6);
+  }
 }
 * {
   box-sizing: border-box;
+}
+html {
+  font-size: 17px;
+}
+@supports (font: -apple-system-body) and (-webkit-touch-callout: none) {
+  html {
+    font: -apple-system-body;
+  }
 }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font:
-    16px/1.6 ui-serif,
-    Georgia,
-    'Times New Roman',
-    serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Roboto,
+    system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
 }
 main {
   max-width: 640px;
@@ -28,28 +48,27 @@ main {
 }
 .eyebrow {
   margin: 0;
-  color: var(--accent);
-  font-size: 12px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 h1 {
-  margin: 4px 0 0;
-  font-size: 34px;
-  font-weight: 500;
-  line-height: 1.15;
+  margin: 2px 0 0;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.022em;
 }
 .stand {
-  margin: 4px 0 24px;
+  margin: 6px 0 24px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.82rem;
 }
 h2 {
-  margin: 28px 0 6px;
-  padding-top: 18px;
-  border-top: 1px solid var(--divider);
-  font-size: 21px;
-  font-weight: 500;
+  margin: 28px 0 8px;
+  font-size: 1.2rem;
+  font-weight: 650;
+  letter-spacing: -0.012em;
 }
 p,
 li {
@@ -59,14 +78,18 @@ ul {
   padding-left: 20px;
 }
 a {
-  color: var(--accent);
+  color: var(--tint);
+  text-decoration: none;
   overflow-wrap: anywhere;
 }
+a:hover {
+  text-decoration: underline;
+}
 code {
-  font-size: 14px;
+  font-size: 0.88em;
 }
 .back {
   margin-top: 32px;
   padding-top: 18px;
-  border-top: 1px solid var(--divider);
+  border-top: 0.5px solid var(--divider);
 }

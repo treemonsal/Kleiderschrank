@@ -1,0 +1,1760 @@
+/*
+ * Apple design (0.35.0), after the apple-design skill (.claude/skills):
+ * system font with Dynamic Type, iOS grouped surfaces in light and dark,
+ * translucent bars that content scrolls under, filled and tinted capsule
+ * buttons, instant press feedback and spring-driven sheets (src/spring.ts,
+ * Sheet in src/ui.tsx). Loaded after journal.css and overrides it; the
+ * previous Classical journal design lives on backup/design-0.34.1-journal.
+ * Removing the import in src/main.tsx brings the journal look back.
+ */
+
+/* ── Tokens ────────────────────────────────────────────────────────── */
+:root {
+  --sys-bg: #f2f2f7;
+  --sys-surface: #ffffff;
+  --sys-surface-2: #f2f2f7;
+  --sys-elevated: #ffffff;
+  --sys-fill: rgb(120 120 128 / 0.12);
+  --sys-fill-strong: rgb(120 120 128 / 0.2);
+  --sys-label: #1d1d1f;
+  --sys-label-2: #6a6a6f;
+  --sys-label-3: #8e8e93;
+  --sys-separator: rgb(60 60 67 / 0.18);
+  --sys-separator-opaque: #d1d1d6;
+  --sys-tint: #0071e3;
+  --sys-tint-text: #0066cc;
+  --sys-tint-fill: rgb(0 113 227 / 0.12);
+  --sys-danger: #d70015;
+  --sys-danger-fill: rgb(255 59 48 / 0.12);
+  --sys-success: #248a3d;
+  --sys-heart: #ff2d55;
+  --sys-material: rgb(249 249 249 / 0.78);
+  --sys-material-thick: rgb(246 246 248 / 0.9);
+  --sys-scrim: rgb(0 0 0 / 0.32);
+  --sys-shadow-sheet: 0 -1px 0 rgb(0 0 0 / 0.04), 0 -8px 40px rgb(0 0 0 / 0.12);
+  --sys-shadow-float: 0 8px 30px rgb(0 0 0 / 0.12), 0 1px 3px rgb(0 0 0 / 0.08);
+  --sys-hairline: 0.5px;
+  --sys-font:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro',
+    'Helvetica Neue', 'Segoe UI', Roboto, system-ui, sans-serif;
+  --sys-font-display:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro',
+    'Helvetica Neue', 'Segoe UI', Roboto, system-ui, sans-serif;
+  --sys-font-rounded:
+    ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, system-ui,
+    sans-serif;
+  /* Critically damped feel for CSS transitions that are not gesture-driven. */
+  --sys-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --sys-radius-card: 16px;
+  --sys-radius-control: 12px;
+  --sys-radius-tile: 12px;
+
+  /* Classical tokens from journal.css, redirected */
+  --font-heading: var(--sys-font-display);
+  --font-body: var(--sys-font);
+  --color-bg: var(--sys-bg);
+  --color-surface: var(--sys-surface-2);
+  --color-text: var(--sys-label);
+  --color-accent: var(--sys-tint);
+  --color-divider: var(--sys-separator);
+  --color-neutral-100: var(--sys-surface-2);
+  --color-neutral-200: var(--sys-fill);
+  --color-neutral-300: var(--sys-separator-opaque);
+  --color-neutral-400: var(--sys-label-3);
+  --color-neutral-500: var(--sys-label-3);
+  --color-neutral-600: var(--sys-label-2);
+  --color-neutral-700: var(--sys-label-2);
+  --color-neutral-800: var(--sys-label);
+  --color-neutral-900: var(--sys-label);
+  --color-accent-100: var(--sys-tint-fill);
+  --color-accent-600: var(--sys-tint-text);
+  --color-accent-700: var(--sys-tint-text);
+  --color-accent-800: var(--sys-tint-text);
+  --radius-md: var(--sys-radius-control);
+  --radius-lg: var(--sys-radius-card);
+  --shadow-md: var(--sys-shadow-float);
+  --shadow-lg: var(--sys-shadow-sheet);
+
+  /* The app's own variables */
+  --display-font: var(--sys-font-display);
+  --serif-font: var(--sys-font-display);
+  --background: var(--sys-bg);
+  --surface: var(--sys-surface);
+  --soft: var(--sys-surface-2);
+  --ink: var(--sys-label);
+  --muted: var(--sys-label-2);
+  --line: var(--sys-separator);
+  --accent: var(--sys-tint-text);
+  --action: var(--sys-tint);
+  --accent-ink: #fff;
+  --hero: var(--sys-surface);
+  --rose: var(--sys-heart);
+  --danger: var(--sys-danger);
+  --hairline: var(--sys-separator);
+  --radius-card: var(--sys-radius-card);
+  --radius-control: var(--sys-radius-control);
+  --shadow: var(--sys-shadow-float);
+  --card-shadow: none;
+
+  color-scheme: light dark;
+  font-family: var(--sys-font);
+  letter-spacing: 0;
+  font-variant-numeric: normal;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sys-bg: #000000;
+    --sys-surface: #1c1c1e;
+    --sys-surface-2: #2c2c2e;
+    --sys-elevated: #1c1c1e;
+    --sys-fill: rgb(118 118 128 / 0.24);
+    --sys-fill-strong: rgb(118 118 128 / 0.36);
+    --sys-label: #f5f5f7;
+    --sys-label-2: #a1a1a6;
+    --sys-label-3: #8e8e93;
+    --sys-separator: rgb(84 84 88 / 0.6);
+    --sys-separator-opaque: #38383a;
+    --sys-tint-text: #2997ff;
+    --sys-tint-fill: rgb(10 132 255 / 0.2);
+    --sys-danger: #ff453a;
+    --sys-danger-fill: rgb(255 69 58 / 0.2);
+    --sys-success: #30d158;
+    --sys-heart: #ff375f;
+    --sys-material: rgb(28 28 30 / 0.78);
+    --sys-material-thick: rgb(28 28 30 / 0.92);
+    --sys-scrim: rgb(0 0 0 / 0.55);
+    --sys-shadow-sheet: 0 -8px 40px rgb(0 0 0 / 0.5);
+    --sys-shadow-float: 0 8px 30px rgb(0 0 0 / 0.5);
+  }
+}
+@media (prefers-contrast: more) {
+  :root {
+    --sys-label-2: #3a3a3c;
+    --sys-separator: rgb(60 60 67 / 0.45);
+    --sys-tint: #0040dd;
+    --sys-tint-text: #0040dd;
+  }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root {
+    --sys-label-2: #ebebf5;
+    --sys-separator: rgb(235 235 245 / 0.45);
+    --sys-tint: #0071e3;
+    --sys-tint-text: #6eb4ff;
+  }
+}
+/* Solid surfaces when transparency is reduced. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --sys-material: var(--sys-bg);
+    --sys-material-thick: var(--sys-surface);
+  }
+}
+
+/* ── Type: system font, sized with Dynamic Type on iPhone ──────────── */
+html {
+  font-size: 17px;
+}
+/* iOS only (touch callout): the user's text size setting drives 1rem. */
+@supports (font: -apple-system-body) and (-webkit-touch-callout: none) {
+  html {
+    font: -apple-system-body;
+  }
+}
+body {
+  background: var(--sys-bg);
+  color: var(--sys-label);
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  line-height: 1.35;
+  -webkit-tap-highlight-color: transparent;
+}
+::selection {
+  background: color-mix(in srgb, var(--sys-tint) 28%, transparent);
+}
+:focus-visible,
+summary:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--sys-tint) 55%, transparent);
+  outline-offset: 2px;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--sys-font-display);
+  font-style: normal;
+}
+/* Size-specific tracking: tight for large text, neutral for body. */
+.page-heading h1,
+.heading-row h1,
+.outfits-view .heading-row h1,
+.settings-view .page-heading h1 {
+  font-family: var(--sys-font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.022em;
+}
+.page-heading > p:last-child,
+.page-sub {
+  margin: 4px 0 0;
+  font-family: var(--sys-font);
+  font-size: 0.88rem;
+  color: var(--sys-label-2);
+}
+.section-heading h2,
+.two-tone,
+.journal-forgotten h2,
+.journal-section-heading h2,
+.wear-summary h3 {
+  font-family: var(--sys-font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+.two-tone span {
+  color: var(--sys-label-2);
+}
+/* Eyebrows read as section labels: sentence case, no spaced capitals. */
+.eyebrow,
+.kicker,
+.card-kicker,
+.kicker-muted,
+.calendar-status,
+.journal-day-row .calendar-status,
+.calendar-note > .kicker,
+.figure-caption small,
+.look-number,
+.home-week-strip small,
+.calendar-weekdays span {
+  font-family: var(--sys-font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--sys-label-2);
+}
+.muted,
+.micro-copy {
+  color: var(--sys-label-2);
+}
+.micro-copy,
+.storage-note p,
+.required-hint,
+.optional,
+.photo-picker-empty span,
+.install-help small,
+.add-banner small,
+.editorial-note,
+.calendar-ring-legend,
+.offline-banner,
+.chat-message .outfit-piece > span {
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+/* ── Shell: translucent bars, content scrolls beneath ──────────────── */
+.app-shell {
+  padding-top: 0;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+}
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 44px;
+  padding: env(safe-area-inset-top) 8px 0 20px;
+  background: transparent;
+  transition:
+    background-color 200ms ease,
+    box-shadow 200ms ease;
+}
+/* Scroll edge effect: material only once content passes beneath. */
+[data-scrolled] .app-header {
+  background: var(--sys-material);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 var(--sys-hairline) 0 var(--sys-separator);
+}
+.wordmark {
+  font-family: var(--sys-font-display);
+  font-style: normal;
+  font-size: 1.06rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--sys-label);
+}
+.profile-button,
+.stylist-link {
+  border-radius: 50%;
+  color: var(--sys-tint-text);
+}
+.profile-button:hover:not(:disabled) {
+  background: var(--sys-fill);
+}
+.profile-button.active {
+  color: var(--sys-tint-text);
+  background: var(--sys-tint-fill);
+}
+.inbox-dot {
+  background: var(--sys-danger);
+  box-shadow: 0 0 0 2px var(--sys-bg);
+}
+.view {
+  padding: 0 20px;
+}
+@media (max-width: 374px) {
+  .view {
+    padding: 0 16px;
+  }
+}
+
+/* Tab bar: material layer, icon over label, tint marks the page. */
+.bottom-nav.tab-bar {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  display: flex;
+  justify-content: center;
+  padding: 0 max(8px, env(safe-area-inset-left))
+    max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-right));
+  border: 0;
+  border-radius: 0;
+  background: var(--sys-material);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 calc(var(--sys-hairline) * -1) 0 var(--sys-separator);
+}
+.tab-bar > button {
+  flex: 1;
+  max-width: 160px;
+  min-height: 50px;
+  gap: 2px;
+  padding: 6px 0 2px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--sys-label-2);
+  font-family: var(--sys-font);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: color 150ms ease;
+}
+.tab-bar > button.active,
+.tab-bar > button.active .nav-icon {
+  color: var(--sys-tint-text);
+}
+.tab-bar .nav-icon {
+  display: block;
+  transition: transform 160ms var(--sys-ease);
+}
+.tab-bar > button:active .nav-icon {
+  transform: scale(0.88);
+  transition-duration: 60ms;
+}
+.toast-region {
+  bottom: calc(66px + env(safe-area-inset-bottom));
+}
+
+/* Banners float as small capsules of material. */
+.offline-banner,
+.update-banner {
+  margin: 6px 16px 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--sys-surface);
+  color: var(--sys-label-2);
+  box-shadow: var(--sys-shadow-float);
+  font-size: 0.8rem;
+}
+.update-banner {
+  color: var(--sys-label);
+}
+.update-banner button {
+  color: var(--sys-tint-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ── Controls ──────────────────────────────────────────────────────── */
+.button {
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 999px;
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  box-shadow: none;
+}
+.button.primary {
+  background: var(--sys-tint);
+  color: #fff;
+  border: 0;
+}
+.button.primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--sys-tint) 90%, #000);
+}
+.button.primary:active:not(:disabled) {
+  background: color-mix(in srgb, var(--sys-tint) 82%, #000);
+}
+.button.primary:disabled {
+  background: var(--sys-fill);
+  color: var(--sys-label-3);
+  border: 0;
+  opacity: 1;
+}
+.button.secondary {
+  background: var(--sys-fill);
+  color: var(--sys-tint-text);
+  border: 0;
+}
+.button.secondary:hover:not(:disabled) {
+  background: var(--sys-fill-strong);
+}
+.button.secondary:disabled {
+  color: var(--sys-label-3);
+  opacity: 1;
+}
+.button.danger {
+  background: var(--sys-danger-fill);
+  color: var(--sys-danger);
+  border: 0;
+}
+@media (hover: none) {
+  .button.primary:hover:not(:disabled):not(:active) {
+    background: var(--sys-tint);
+  }
+  .button.secondary:hover:not(:disabled):not(:active) {
+    background: var(--sys-fill);
+  }
+}
+.text-button,
+.link-button {
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  font-weight: 400;
+  font-style: normal;
+  color: var(--sys-tint-text);
+}
+.icon-button {
+  border-radius: 50%;
+  background: transparent;
+  color: var(--sys-tint-text);
+  box-shadow: none;
+}
+.icon-button.soft {
+  background: var(--sys-fill);
+  border: 0;
+  color: var(--sys-label-2);
+}
+.icon-button.primary-add {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sys-tint);
+  color: #fff;
+}
+.chip,
+.chips button,
+.chips .chip {
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--sys-fill);
+  color: var(--sys-label);
+  font-family: var(--sys-font);
+  font-size: 0.88rem;
+  font-weight: 500;
+  box-shadow: none;
+}
+.chip.active,
+.chips .chip.active,
+.chip[aria-pressed='true'] {
+  background: var(--sys-tint);
+  color: #fff;
+  border: 0;
+}
+.chip.active svg,
+.chip[aria-pressed='true'] svg {
+  color: #fff;
+}
+
+/* Text inputs: filled, borderless, 17px so iOS never zooms. */
+.field,
+.field > label {
+  font-family: var(--sys-font);
+  font-size: 0.82rem;
+  color: var(--sys-label-2);
+}
+input:not([type='checkbox']):not([type='radio']):not([type='file']):not(
+    [type='range']
+  ),
+select,
+textarea,
+.field input:not([type='radio']),
+.field select,
+.field textarea {
+  min-height: 44px;
+  border: 0;
+  border-radius: var(--sys-radius-control);
+  background: var(--sys-fill);
+  color: var(--sys-label);
+  font-family: var(--sys-font);
+  font-size: max(16px, 1rem);
+  box-shadow: none;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--sys-label-3);
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--sys-tint) 45%, transparent);
+  outline-offset: 0;
+  box-shadow: none;
+}
+input[type='checkbox'],
+input[type='radio'],
+input[type='range'],
+.check-row input {
+  accent-color: var(--sys-tint);
+}
+/* Checkbox rows become switches: the familiar on/off control. */
+.check-row input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 51px;
+  height: 31px;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--sys-fill-strong);
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+.check-row input[type='checkbox']::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 3px 8px rgb(0 0 0 / 0.15),
+    0 3px 1px rgb(0 0 0 / 0.06);
+  transition: transform 260ms var(--sys-ease);
+}
+.check-row input[type='checkbox']:checked {
+  background: var(--sys-success);
+}
+.check-row input[type='checkbox']:checked::before {
+  transform: translateX(20px);
+}
+.check-row input[type='checkbox']:disabled {
+  opacity: 0.5;
+}
+.check-row {
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  font-weight: 400;
+}
+.check-row > span,
+.check-row > div {
+  flex: 1;
+}
+
+/* ── Surfaces: grouped, borderless cards on the grouped background ─── */
+.card,
+.settings-card,
+.style-profile-card,
+.online-stylist,
+.backup-reminder,
+.wardrobe-summary,
+.add-banner,
+.style-invitation,
+.insight-tiles > div,
+.swap-choice,
+.photo-picker,
+.import-choice,
+.outfit-empty,
+.outfit-options,
+.look-composer,
+.journal-view .shopping-card,
+.refinement-preview,
+.everyday-card,
+.weather-panel {
+  background: var(--sys-surface);
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  box-shadow: none;
+}
+.journal-view .shopping-card.is-ready {
+  box-shadow: inset 0 0 0 1.5px var(--sys-tint);
+}
+.settings-section .section-heading,
+.section-heading {
+  align-items: baseline;
+}
+.section-heading > svg {
+  color: var(--sys-label-3);
+}
+.section-intro {
+  color: var(--sys-label-2);
+}
+/* Inset grouped lists: rows separated by inset hairlines. */
+.settings-card {
+  overflow: hidden;
+}
+.settings-card:has(> .settings-action) {
+  padding: 0;
+}
+.settings-action {
+  min-height: 56px;
+  padding: 10px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--sys-label);
+  text-align: left;
+  transition: background-color 120ms ease;
+}
+.settings-action + .settings-action {
+  border-top: 0;
+  background-image: linear-gradient(var(--sys-separator), var(--sys-separator));
+  background-size: calc(100% - 52px) var(--sys-hairline);
+  background-position: 52px 0;
+  background-repeat: no-repeat;
+}
+.settings-action:active:not(:disabled) {
+  background-color: var(--sys-fill);
+}
+.settings-action strong {
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  font-weight: 400;
+}
+.settings-action small {
+  font-size: 0.8rem;
+  color: var(--sys-label-2);
+}
+.settings-action > svg:last-child {
+  color: var(--sys-label-3);
+}
+.action-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--sys-tint);
+  color: #fff;
+}
+.action-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.install-help {
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+  border: 0;
+  color: var(--sys-label);
+}
+.storage-note {
+  color: var(--sys-label-2);
+}
+
+/* Sheets: rounded material card from the bottom, scrim behind. */
+.sheet,
+.sheet-header {
+  background: var(--sys-bg);
+}
+.sheet {
+  border-radius: 14px 14px 0 0;
+  box-shadow: var(--sys-shadow-sheet);
+  color: var(--sys-label);
+}
+.sheet[open] {
+  animation: none;
+}
+.sheet::backdrop {
+  background: var(--sys-scrim);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  /* Follows the sheet while it is pulled (src/useSheetMotion.ts). */
+  opacity: var(--sheet-progress, 1);
+}
+/* A closed sheet's inert copy on its way out (src/useSheetMotion.ts). */
+.sheet-ghost {
+  position: fixed;
+  z-index: 1000;
+  margin: 0;
+  max-height: none;
+  overflow: hidden;
+  pointer-events: none;
+  will-change: transform;
+}
+.sheet-ghost-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: var(--sys-scrim);
+  pointer-events: none;
+}
+/* The grabber and header belong to the drag, not to page scrolling. */
+.sheet-handle,
+.sheet-header {
+  touch-action: none;
+}
+.sheet-handle {
+  cursor: grab;
+}
+/* Sheets sit one level up: in dark mode on elevated grey. */
+@media (prefers-color-scheme: dark) {
+  .sheet {
+    --sys-bg: #1c1c1e;
+    --sys-surface: #2c2c2e;
+    --sys-surface-2: #3a3a3c;
+    --sys-elevated: #2c2c2e;
+    --background: #1c1c1e;
+    --color-bg: #1c1c1e;
+    --surface: #2c2c2e;
+    --hero: #2c2c2e;
+    --soft: #3a3a3c;
+    --color-surface: #3a3a3c;
+  }
+}
+.sheet[open]::backdrop {
+  animation: none;
+}
+.sheet-handle {
+  width: 36px;
+  height: 5px;
+  margin: 6px auto 10px;
+  border-radius: 999px;
+  background: var(--sys-label-3);
+  opacity: 0.55;
+}
+.sheet-header {
+  margin-bottom: 18px;
+}
+.sheet-header h2 {
+  font-family: var(--sys-font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: -0.015em;
+}
+.sheet-header .icon-button,
+.sheet-header .icon-button.soft {
+  width: 44px;
+  height: 44px;
+  margin-right: -6px;
+  background: transparent;
+  color: var(--sys-label-2);
+  position: relative;
+}
+/* The close button is a small filled circle with a 44px touch area. */
+.sheet-header .icon-button::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: var(--sys-fill);
+  z-index: -1;
+}
+.sheet-header .icon-button svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.4;
+}
+@media (min-width: 600px) {
+  .sheet {
+    border-radius: 14px;
+    margin-bottom: auto;
+  }
+}
+.discard-notice {
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+
+/* Toast: a floating HUD of thick material. */
+.toast {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 10px 10px 18px;
+  background: var(--sys-material-thick);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  color: var(--sys-label);
+  box-shadow: var(--sys-shadow-float);
+  font-size: 0.88rem;
+}
+.toast > span {
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+.toast > svg {
+  color: var(--sys-success);
+}
+.toast.toast-error {
+  background: var(--sys-danger);
+  color: #fff;
+}
+.toast.toast-error > svg {
+  color: #fff;
+}
+.error-message {
+  color: var(--sys-danger);
+}
+
+/* ── Pictures: clean tiles, no paper filter ────────────────────────── */
+.garment-picture {
+  background: var(--sys-surface);
+  border-radius: var(--sys-radius-tile);
+  overflow: hidden;
+}
+.garment-picture img {
+  filter: none;
+}
+.photo-placeholder.is-swatch {
+  color: rgb(255 255 255 / 0.6);
+}
+.garment-sketch {
+  color: var(--sys-label-3);
+}
+
+/* ── Heute ─────────────────────────────────────────────────────────── */
+.journal-date .home-date {
+  font-family: var(--sys-font-display);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+}
+.journal-day-head .journal-date .home-date {
+  font-size: min(2.2rem, calc(100cqi / (var(--date-chars, 11) * 0.56)));
+}
+.journal-date .kicker {
+  color: var(--sys-label-2);
+  font-size: 0.82rem;
+}
+/* Red marks today only, as in Calendar. */
+.journal-date .kicker.is-today {
+  color: var(--sys-danger);
+}
+.journal-day-head .home-weather-line {
+  color: var(--sys-label-2);
+}
+.journal-day-head .weather-range {
+  font-family: var(--sys-font-rounded);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.journal-day-head .home-weather small {
+  font-size: 0.72rem;
+  color: var(--sys-label-2);
+}
+.journal-day-head .home-history-date {
+  font-family: var(--sys-font);
+  font-style: normal;
+  font-size: 1rem;
+}
+.day-calendar-trigger {
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  font-weight: 600;
+}
+.day-calendar-trigger svg,
+.day-navigation .icon-button {
+  color: var(--sys-tint-text);
+}
+.home-week-strip {
+  margin: 0 -4px;
+  padding: 8px 4px 6px;
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.home-week-strip > button::after {
+  display: none;
+}
+.home-week-strip small {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.day-number {
+  font-family: var(--sys-font-rounded);
+  font-size: 1.06rem;
+  font-weight: 500;
+}
+.day-number > span:last-child {
+  background: var(--sys-surface);
+}
+.calendar-grid .day-number > span:last-child {
+  background: var(--sys-bg);
+}
+.home-week-strip .selected .day-number > span:last-child,
+.calendar-grid > button.selected .day-number > span:last-child {
+  background: var(--sys-label);
+  color: var(--sys-bg);
+  font-weight: 700;
+}
+[aria-current='date'] .day-number > span:last-child {
+  color: var(--sys-danger);
+  font-weight: 700;
+}
+.home-week-strip [aria-current='date'].selected .day-number > span:last-child,
+.calendar-grid
+  > button[aria-current='date'].selected
+  .day-number
+  > span:last-child {
+  background: var(--sys-danger);
+  color: #fff;
+}
+.calendar-grid > button.selected .day-number {
+  outline: 0;
+}
+.week-legend {
+  font-size: 0.72rem;
+  color: var(--sys-label-2);
+}
+.daily-look > header {
+  margin-bottom: 12px;
+}
+.daily-look .eyebrow > span:first-child {
+  color: var(--sys-label-2);
+}
+.daily-look h1,
+.day-empty h1,
+.look-result h2 {
+  font-family: var(--sys-font-display);
+  font-size: 1.65rem;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: -0.022em;
+  line-height: 1.15;
+}
+.look-count {
+  font-size: 0.76rem;
+  font-weight: 400;
+}
+.context-chip {
+  font-size: 0.82rem;
+  color: var(--sys-label-2);
+}
+
+/* The look: one white plate of tiles. */
+.figure-plate {
+  gap: 6px;
+  padding: 6px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--sys-surface);
+}
+.figure-tile > .outfit-piece {
+  border-radius: var(--sys-radius-tile);
+  overflow: hidden;
+  background: var(--sys-surface-2);
+}
+.figure-tile > .outfit-piece > .garment-picture {
+  border-radius: 0;
+  background: var(--sys-surface-2);
+}
+.figure-tile .outfit-piece > .figure-caption {
+  padding: 7px 10px 8px;
+  background: var(--sys-surface-2);
+}
+.figure-caption small {
+  font-size: 0.68rem;
+  line-height: 1.3;
+}
+.figure-caption > span,
+.figure-tile:nth-child(n + 4) .figure-caption > span {
+  font-family: var(--sys-font);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.figure-tile .piece-swap {
+  top: 6px;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  background: var(--sys-material-thick);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--sys-label);
+}
+.figure-tile.is-new {
+  outline: 2px solid var(--sys-tint);
+  outline-offset: 1px;
+  border-radius: var(--sys-radius-tile);
+}
+.new-badge,
+.laundry-badge {
+  border-radius: 999px;
+  font-family: var(--sys-font);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.new-badge {
+  background: var(--sys-tint);
+  color: #fff;
+}
+.laundry-badge {
+  background: var(--sys-material-thick);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--sys-label);
+}
+.figure-plate-wrap figcaption {
+  margin: 8px 4px 0;
+  font-size: 0.76rem;
+  font-style: normal;
+  color: var(--sys-label-2);
+}
+details.outfit-reasons {
+  margin: 14px 0 16px;
+}
+details.outfit-reasons summary {
+  font-size: 0.88rem;
+  color: var(--sys-tint-text);
+}
+details.outfit-reasons p,
+details.outfit-reasons li {
+  font-size: 0.88rem;
+  text-align: left;
+  color: var(--sys-label);
+}
+.refine-row > span {
+  font-size: 0.82rem;
+  color: var(--sys-label-2);
+}
+.refine-row .button {
+  min-height: 34px;
+  padding: 6px 14px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--sys-label);
+}
+.refine-row .button[aria-pressed='true'] {
+  background: var(--sys-tint);
+  color: #fff;
+}
+.daily-look .daily-worn,
+.daily-quick-actions > .button {
+  min-height: 50px;
+  font-size: 1.06rem;
+}
+.worn-line {
+  margin-top: 14px;
+  padding: 8px 8px 8px 16px;
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.worn-line > span {
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--sys-success);
+}
+.calendar-note {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  font-style: normal;
+}
+.calendar-note > .kicker {
+  font-family: var(--sys-font);
+  font-size: 0.78rem;
+  color: var(--sys-label-2);
+}
+.rating-question {
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  font-weight: 600;
+}
+.outfit-rating .icon-button,
+.rating-buttons button {
+  border: 0;
+  border-radius: 50%;
+  background: var(--sys-fill);
+  color: var(--sys-label);
+}
+.outfit-rating .icon-button[aria-pressed='true'],
+.rating-buttons button[aria-pressed='true'] {
+  background: var(--sys-tint);
+  color: #fff;
+}
+.rating-reasons > p:first-child {
+  font-size: 0.82rem;
+  color: var(--sys-label-2);
+}
+.rating-chips .button {
+  min-height: 34px;
+  padding: 6px 14px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--sys-label);
+}
+.day-empty-number {
+  font-family: var(--sys-font-rounded);
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--sys-label);
+  letter-spacing: -0.03em;
+}
+.day-empty p {
+  font-size: 0.94rem;
+  color: var(--sys-label-2);
+}
+.add-row {
+  margin-top: 22px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.add-row strong,
+.journal-row-text strong {
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  font-weight: 600;
+}
+.add-row small,
+.journal-row-text small {
+  font-size: 0.8rem;
+  color: var(--sys-label-2);
+}
+.add-row > svg {
+  color: var(--sys-tint-text);
+}
+
+/* ── Garderobe ─────────────────────────────────────────────────────── */
+/* Category tabs as a scrolling row of capsules. */
+.text-tabs {
+  gap: 8px;
+  margin: 14px -20px 0;
+  padding: 0 20px 2px;
+  border: 0;
+}
+.text-tabs > button {
+  min-height: 34px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--sys-fill);
+  font-family: var(--sys-font);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--sys-label);
+  box-shadow: none;
+  position: relative;
+}
+.text-tabs > button::after {
+  content: '';
+  position: absolute;
+  inset: -5px -4px;
+}
+.text-tabs > button.active {
+  background: var(--sys-label);
+  color: var(--sys-bg);
+  font-weight: 600;
+  box-shadow: none;
+}
+.text-tabs small {
+  font-family: var(--sys-font);
+  font-size: 0.72rem;
+  color: inherit;
+  opacity: 0.7;
+}
+.filter-chips {
+  margin: 12px 0 14px;
+}
+.color-balance > div {
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--sys-fill);
+}
+.color-balance figcaption {
+  font-size: 0.72rem;
+  font-style: normal;
+  color: var(--sys-label-2);
+}
+.garment-grid {
+  gap: 18px 12px;
+}
+.garment-card .garment-picture {
+  border: 0;
+  outline: 0;
+  margin: 0;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.garment-card .garment-frame .laundry-badge {
+  left: 8px;
+  bottom: 8px;
+}
+.garment-name > span {
+  font-family: var(--sys-font);
+  font-size: 0.94rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.garment-name > svg {
+  color: var(--sys-heart);
+  fill: var(--sys-heart);
+}
+.garment-meta {
+  font-size: 0.76rem;
+  color: var(--sys-label-2);
+}
+.collection-toolbar {
+  color: var(--sys-label-2);
+}
+
+/* Detail sheet */
+.detail-photo {
+  width: 128px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  overflow: hidden;
+  background: var(--sys-surface);
+}
+.detail-count {
+  font-family: var(--sys-font-rounded);
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.detail-count > span {
+  font-family: var(--sys-font);
+  font-size: 0.82rem;
+  color: var(--sys-label-2);
+}
+.detail-wear .muted {
+  font-size: 0.82rem;
+}
+.detail-body .detail-facts {
+  margin: 18px 0 0;
+  padding: 0 16px;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.detail-body .detail-facts > div {
+  padding: 12px 0;
+  border-top: var(--sys-hairline) solid var(--sys-separator);
+  font-size: 0.94rem;
+}
+.detail-body .detail-facts > div:first-child {
+  border-top: 0;
+}
+.detail-body .detail-facts dt {
+  color: var(--sys-label-2);
+}
+.detail-pairs {
+  margin-top: 18px;
+  padding-top: 0;
+  border: 0;
+}
+.detail-pairs > p {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--sys-label-2);
+}
+.detail-pair .garment-picture {
+  height: 64px;
+  border: 0;
+  outline: 0;
+  border-radius: var(--sys-radius-tile);
+  background: var(--sys-surface);
+}
+.detail-pair > span {
+  font-size: 0.76rem;
+}
+.detail-heart {
+  border: 0;
+  border-radius: 50%;
+  background: var(--sys-fill);
+  color: var(--sys-label-2);
+}
+.detail-heart.is-favorite,
+.icon-button.is-favorite,
+.icon-button.soft.is-favorite,
+.favorite-button.is-favorite,
+.is-favorite {
+  color: var(--sys-heart);
+}
+.icon-button.is-favorite svg,
+.detail-heart.is-favorite svg {
+  fill: currentColor;
+}
+
+/* ── Looks ─────────────────────────────────────────────────────────── */
+/* Occasion picker as a segmented control. */
+.outfit-tabs {
+  gap: 0;
+  padding: 2px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--sys-fill);
+  overflow: visible;
+}
+.outfit-tabs > button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sys-label);
+  font-family: var(--sys-font);
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: background-color 200ms var(--sys-ease);
+}
+.outfit-tabs > button + button {
+  border-left: 0;
+}
+.outfit-tabs > button.active {
+  background: var(--sys-elevated);
+  color: var(--sys-label);
+  font-weight: 600;
+  box-shadow:
+    0 3px 8px rgb(0 0 0 / 0.12),
+    0 3px 1px rgb(0 0 0 / 0.04);
+}
+@media (prefers-color-scheme: dark) {
+  .outfit-tabs > button.active {
+    background: #636366;
+  }
+}
+.look-composer {
+  padding: 16px;
+}
+.look-result {
+  border-top: var(--sys-hairline) solid var(--sys-separator);
+}
+.look-result p {
+  font-size: 0.82rem;
+  color: var(--sys-label-2);
+}
+.look-bands {
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sys-radius-tile);
+  overflow: hidden;
+  background: var(--sys-surface);
+}
+.saved-look {
+  padding: 12px;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.saved-looks {
+  gap: 12px;
+}
+.saved-look h3,
+.saved-outfit-heading h2,
+.outfit-card h2 {
+  font-family: var(--sys-font);
+  font-size: 1.06rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.saved-outfit-heading span,
+.outfit-card-heading span {
+  font-size: 0.8rem;
+  color: var(--sys-label-2);
+}
+.outfit-piece > .garment-picture {
+  border: 0;
+  outline: 0;
+  background: var(--sys-surface-2);
+}
+.outfits-view .journal-section-heading {
+  margin-bottom: 10px;
+}
+
+/* ── Journal ───────────────────────────────────────────────────────── */
+.journal-section-heading,
+.journal-forgotten h2 {
+  border-bottom: 0;
+}
+.calendar-month-heading {
+  border: 0;
+}
+.calendar-month-heading h2,
+.journal-month {
+  font-family: var(--sys-font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-style: normal;
+}
+.calendar-view {
+  padding: 8px 8px 10px;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.calendar-weekdays span {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  color: var(--sys-label-3);
+}
+.calendar-grid .day-number {
+  font-size: 1rem;
+}
+.calendar-grid .day-number > span:last-child {
+  background: var(--sys-surface);
+}
+.journal-day {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.journal-day-row h3,
+.calendar-outfit-heading h3,
+.calendar-day-card .eyebrow {
+  font-family: var(--sys-font);
+  font-size: 1.06rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.journal-day-row .calendar-status,
+.calendar-status {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--sys-fill);
+  font-size: 0.72rem;
+  color: var(--sys-label-2);
+}
+.journal-day-text {
+  font-size: 0.88rem;
+  color: var(--sys-label-2);
+}
+.inline-link {
+  color: var(--sys-tint-text);
+  text-decoration: none;
+}
+.journal-day-none {
+  font-style: normal;
+  font-size: 0.88rem;
+}
+.journal-day-actions .muted-action {
+  color: var(--sys-danger);
+}
+.journal-stats {
+  gap: 10px;
+  margin: 18px 0 22px;
+}
+.journal-stats > div,
+.journal-stats > div:first-child,
+.journal-stats > div + div {
+  padding: 14px 16px;
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.journal-stats strong {
+  font-family: var(--sys-font-rounded);
+  font-size: 2.3rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.journal-stats span {
+  font-size: 0.8rem;
+  color: var(--sys-label-2);
+}
+/* Rows of forgotten pieces: an inset grouped list. */
+.journal-forgotten {
+  margin-top: 4px;
+}
+.journal-row {
+  min-height: 60px;
+  padding: 8px 16px;
+  border: 0;
+  background: var(--sys-surface);
+  transition: background-color 120ms ease;
+}
+.journal-row + .journal-row {
+  background-image: linear-gradient(var(--sys-separator), var(--sys-separator));
+  background-size: calc(100% - 70px) var(--sys-hairline);
+  background-position: 70px 0;
+  background-repeat: no-repeat;
+}
+.journal-row:first-of-type {
+  border-radius: var(--sys-radius-card) var(--sys-radius-card) 0 0;
+}
+.journal-row:last-of-type {
+  border-radius: 0 0 var(--sys-radius-card) var(--sys-radius-card);
+}
+.journal-row:only-of-type {
+  border-radius: var(--sys-radius-card);
+}
+.journal-row:active {
+  background-color: var(--sys-fill-strong);
+}
+.journal-row > svg {
+  color: var(--sys-label-3);
+}
+.journal-swatch {
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+}
+.shopping-head .card-kicker {
+  color: var(--sys-label-2);
+}
+.shopping-title {
+  font-family: var(--sys-font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.condition-ring {
+  border: 1.5px solid var(--sys-label-3);
+  color: #fff;
+}
+.done > .condition-ring {
+  border-color: var(--sys-success);
+  background: var(--sys-success);
+}
+.journal-backup {
+  padding: 12px 16px;
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+
+/* ── Chat ──────────────────────────────────────────────────────────── */
+.chat-message {
+  border-radius: 20px;
+  background: var(--sys-surface);
+}
+.chat-message.user {
+  border: 0;
+  border-radius: 20px 20px 6px 20px;
+  background: var(--sys-tint);
+  color: #fff;
+}
+.chat-message:not(.user) .chat-text {
+  font-family: var(--sys-font);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* ── Image drop ────────────────────────────────────────────────────── */
+.drop-overlay {
+  border: 2px dashed var(--sys-tint);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--sys-bg) 94%, transparent);
+  color: var(--sys-tint-text);
+}
+.drop-overlay > span {
+  font-family: var(--sys-font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* ── Remaining journal details ─────────────────────────────────────── */
+/* Headings in views and sheets: system display face, semibold, upright. */
+.view h2,
+.view h3,
+.sheet h2,
+.sheet h3,
+.sheet h4 {
+  font-family: var(--sys-font-display);
+  font-style: normal;
+  font-weight: 650;
+  letter-spacing: -0.012em;
+}
+.daily-quick-actions > .button.secondary:disabled,
+.calendar-empty h3 {
+  font-style: normal;
+}
+.install-help strong {
+  font-size: 1rem;
+  font-weight: 400;
+}
+.install-help small {
+  font-size: 0.8rem;
+  color: var(--sys-label-2);
+}
+.delete-button,
+.icon-button.delete-button {
+  border: 0;
+  border-radius: 50%;
+  background: var(--sys-danger-fill);
+  color: var(--sys-danger);
+}
+.weather-search > .icon-button {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sys-fill);
+}
+.batch-progress {
+  height: 4px;
+  background: var(--sys-fill);
+}
+.batch-progress > span {
+  background: var(--sys-tint);
+}
+/* Stylist chat: a sticky material title, no rules. */
+.chat-sheet .sheet-header {
+  margin: 0 -18px 12px;
+  padding: 10px 18px;
+  border: 0;
+  background: var(--sys-material-thick);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 var(--sys-hairline) 0 var(--sys-separator);
+}
+.style-interview {
+  padding: 16px;
+  border: 0;
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.style-interview > h3,
+.interview-question h4 {
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+.interview-question {
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface);
+}
+.interview-choices .chip {
+  border-radius: var(--sys-radius-control);
+  text-align: left;
+}
+.interview-disclosure {
+  font-size: 0.76rem;
+  color: var(--sys-label-2);
+}
+.chat-welcome h3,
+.chat-empty h3 {
+  font-size: 1.3rem;
+}
+
+/* ── Press feedback: instant on pointer-down, release springs back ─── */
+.button,
+.chip,
+.icon-button,
+.text-tabs > button,
+.garment-open,
+.figure-tile > .outfit-piece,
+.outfit-piece,
+.detail-pair,
+.add-row,
+.install-help,
+.home-week-strip > button,
+.calendar-grid > button,
+.profile-button,
+.wordmark {
+  transition:
+    transform 240ms var(--sys-ease),
+    background-color 160ms ease,
+    color 160ms ease;
+}
+.button:active:not(:disabled),
+.chip:active:not(:disabled),
+.icon-button:active:not(:disabled),
+.text-tabs > button:active,
+.garment-open:active,
+.figure-tile > .outfit-piece:active,
+.outfit-piece:active,
+.detail-pair:active,
+.add-row:active,
+.install-help:active,
+.home-week-strip > button:active,
+.calendar-grid > button:active,
+.profile-button:active:not(:disabled) {
+  transform: scale(0.97);
+  transition-duration: 80ms;
+}
+.garment-open:active .garment-picture,
+.figure-tile > .outfit-piece:active {
+  opacity: 0.88;
+}
+
+/* ── Reduced motion: no scaling or sliding, only quick fades ───────── */
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .chip,
+  .icon-button,
+  .text-tabs > button,
+  .garment-open,
+  .figure-tile > .outfit-piece,
+  .outfit-piece,
+  .detail-pair,
+  .add-row,
+  .install-help,
+  .home-week-strip > button,
+  .calendar-grid > button,
+  .profile-button,
+  .wordmark,
+  .tab-bar .nav-icon,
+  .check-row input[type='checkbox'],
+  .check-row input[type='checkbox']::before {
+    transition: none !important;
+  }
+  .button:active:not(:disabled),
+  .chip:active:not(:disabled),
+  .icon-button:active:not(:disabled),
+  .text-tabs > button:active,
+  .garment-open:active,
+  .figure-tile > .outfit-piece:active,
+  .outfit-piece:active,
+  .detail-pair:active,
+  .add-row:active,
+  .install-help:active,
+  .home-week-strip > button:active,
+  .calendar-grid > button:active,
+  .profile-button:active:not(:disabled),
+  .tab-bar > button:active .nav-icon {
+    transform: none;
+  }
+  .view {
+    animation: none;
+  }
+}
