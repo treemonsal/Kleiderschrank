@@ -237,22 +237,25 @@ test('Wischen wechselt Tage auf Heute und lässt Tabs, vertikales Scrollen, Eing
   await page.clock.install({ time: new Date(now) })
   await page.goto('/')
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
-  await swipe(page.locator('.daily-look header'), 120)
+  await swipe(page.locator('.daily-look'), 120)
   await expect(look).toHaveAttribute('data-day', '2026-10-14')
   await expect(
     page.getByRole('button', { name: 'Heute', exact: true }),
   ).toHaveAttribute('aria-current', 'page')
   await expect(
-    page.getByText('Für diesen Tag ist kein Look vermerkt.', { exact: true }),
+    page.getByText(
+      'Für diesen Tag gibt es keinen Eintrag. Nachträglich wird nichts erfunden.',
+      { exact: true },
+    ),
   ).toBeVisible()
-  await swipe(page.locator('.daily-look header'), -120, 180)
+  await swipe(page.locator('.daily-look'), -120, 180)
   await expect(look).toHaveAttribute('data-day', '2026-10-14')
-  await swipe(page.locator('.daily-look header'), -120)
+  await swipe(page.locator('.daily-look'), -120)
   await expect(look).toHaveAttribute('data-day', '2026-10-15')
-  await swipe(page.locator('.daily-look header'), -120)
+  await swipe(page.locator('.daily-look'), -120)
   await expect(look).toHaveAttribute('data-day', '2026-10-16')
   await expect(
-    page.getByText('Für diesen Tag ist noch kein Look eingeplant.', {
+    page.getByText('Für diesen Tag gibt es noch keinen Eintrag.', {
       exact: true,
     }),
   ).toBeVisible()
@@ -266,7 +269,7 @@ test('Wischen wechselt Tage auf Heute und lässt Tabs, vertikales Scrollen, Eing
   await swipe(page.getByRole('dialog').getByLabel('Ort manuell suchen'), 120)
   await expect(look).toHaveAttribute('data-day', '2026-10-15')
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
-  await swipe(page.locator('.daily-look header'), 120, 0, 8)
+  await swipe(page.locator('.daily-look'), 120, 0, 8)
   await expect(look).toHaveAttribute('data-day', '2026-10-15')
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await swipe(page.locator('.page-heading'), -120)
@@ -281,7 +284,7 @@ test('Native Touch-Geste im mobilen Chromium wechselt den Tag und behält die St
 }) => {
   await page.clock.install({ time: new Date(now) })
   await page.goto('/')
-  const bounds = await page.locator('.daily-look header').boundingBox()
+  const bounds = await page.locator('.daily-look').boundingBox()
   const y = bounds!.y + 20
   const session = await context.newCDPSession(page)
   await session.send('Input.dispatchTouchEvent', {
@@ -374,7 +377,8 @@ test('Schliessen während Standortfreigabe verhindert späten Wetterabruf und ir
     .getByRole('button', { name: 'Standort verwenden', exact: true })
     .click()
   await page
-    .getByRole('button', { name: 'Wetterauswahl schliessen', exact: true })
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Schliessen', exact: true })
     .click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   await page.evaluate(() =>
@@ -464,8 +468,8 @@ for (const width of [375, 390, 430]) {
       .getByRole('button', { name: 'Heute getragen', exact: true })
       .click()
     await expect(
-      look.getByRole('button', { name: 'Getragen', exact: true }),
-    ).toBeDisabled()
+      look.getByText('Im Journal vermerkt', { exact: true }),
+    ).toBeVisible()
     const ring = page
       .getByRole('group', { name: 'Tage auswählen' })
       .getByRole('button', {
@@ -475,18 +479,21 @@ for (const width of [375, 390, 430]) {
     await expect(ring.locator('.day-color-ring.has-colors')).toBeVisible()
     await page.reload()
     await expect(
-      look.getByRole('button', { name: 'Getragen', exact: true }),
-    ).toBeDisabled()
+      look.getByText('Im Journal vermerkt', { exact: true }),
+    ).toBeVisible()
     await stepDay(page, -1)
     await expect(
-      page.getByText('Für diesen Tag ist kein Look vermerkt.', { exact: true }),
+      page.getByText(
+        'Für diesen Tag gibt es keinen Eintrag. Nachträglich wird nichts erfunden.',
+        { exact: true },
+      ),
     ).toBeVisible()
     await expect(look.locator('.outfit-piece')).toHaveCount(0)
     await ring.click()
     await expect(look).toHaveAttribute('data-day', '2026-10-15')
     await expect(
-      look.getByRole('button', { name: 'Getragen', exact: true }),
-    ).toBeDisabled()
+      look.getByText('Im Journal vermerkt', { exact: true }),
+    ).toBeVisible()
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -534,7 +541,7 @@ test('Vergangene Pläne und zukünftige Looks bleiben klar von bestätigter Hist
     updatedAt: stamp,
   }))
   await importData(page, { outfits, calendar })
-  await swipe(page.locator('.daily-look header'), 120)
+  await swipe(page.locator('.daily-look'), 120)
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
   await expect(
     look.getByText('Geplant · nicht bestätigt', { exact: true }),
@@ -642,7 +649,7 @@ test('Wäsche-Status übersteht Neustart und Bearbeitung, filtert Vorschläge un
     .getByRole('button', { name: 'In die Wäsche legen', exact: true })
     .click()
   await expect(
-    page.getByRole('button', { name: 'Als sauber markieren', exact: true }),
+    page.getByRole('button', { name: 'Aus der Wäsche nehmen', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
   await expect(
@@ -678,7 +685,7 @@ test('Wäsche-Status übersteht Neustart und Bearbeitung, filtert Vorschläge un
   await expect(page.getByRole('dialog')).not.toBeVisible()
   await page.getByRole('button', { name: 'Hemd öffnen', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Als sauber markieren', exact: true })
+    .getByRole('button', { name: 'Aus der Wäsche nehmen', exact: true })
     .click()
   await expect(
     page.getByRole('button', { name: 'In die Wäsche legen', exact: true }),
@@ -703,7 +710,7 @@ test('Tageskarte folgt dem Finger, federt bei kurzer Geste zurück und manuelle 
   await stepDay(page, 1)
   const before = await look.getAttribute('data-day')
   async function touch(type: string, x: number) {
-    await page.locator('.daily-look header').evaluate(
+    await page.locator('.daily-look').evaluate(
       (node, { type, x }) => {
         const t = new Touch({
           identifier: 3,
@@ -740,7 +747,7 @@ test('Tageskarte folgt dem Finger, federt bei kurzer Geste zurück und manuelle 
   await touch('touchstart', 190)
   await touch('touchmove', 300)
   // End the gesture and navigate manually within the same event loop, before the settling timer.
-  await page.locator('.daily-look header').evaluate((node) => {
+  await page.locator('.daily-look').evaluate((node) => {
     const t = new Touch({
       identifier: 3,
       target: node,
@@ -767,7 +774,7 @@ test('Reduzierte Bewegung wechselt Tage ohne Verschieben der Karte', async ({
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.clock.install({ time: new Date(now) })
   await page.goto('/')
-  await swipe(page.locator('.daily-look header'), 120)
+  await swipe(page.locator('.daily-look'), 120)
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
   await expect(look).toHaveAttribute('data-day', '2026-10-14')
   expect(await look.evaluate((node) => getComputedStyle(node).transform)).toBe(

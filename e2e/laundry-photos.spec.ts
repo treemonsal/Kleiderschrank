@@ -110,7 +110,10 @@ test('Statuswechsel widerruft keine noch angezeigten Bildadressen und erhält be
       .getByRole('button', { name: 'In die Wäsche legen', exact: true })
       .click()
     await expect(
-      dialog.getByRole('button', { name: 'Als sauber markieren', exact: true }),
+      dialog.getByRole('button', {
+        name: 'Aus der Wäsche nehmen',
+        exact: true,
+      }),
     ).toBeVisible()
     await expect
       .poll(() =>
@@ -120,7 +123,7 @@ test('Statuswechsel widerruft keine noch angezeigten Bildadressen und erhält be
       )
       .toBe(192)
     await dialog
-      .getByRole('button', { name: 'Als sauber markieren', exact: true })
+      .getByRole('button', { name: 'Aus der Wäsche nehmen', exact: true })
       .click()
     await expect(
       dialog.getByRole('button', { name: 'In die Wäsche legen', exact: true }),
@@ -192,7 +195,7 @@ test('Im Kleiderschrank bleibt das Wäschefoto sichtbar und nach Saubermarkieren
     .click()
   await page
     .getByRole('dialog')
-    .getByRole('button', { name: 'Als sauber markieren', exact: true })
+    .getByRole('button', { name: 'Aus der Wäsche nehmen', exact: true })
     .click()
   await page
     .getByRole('dialog')
@@ -262,7 +265,7 @@ test('Verzögert decodiertes currentSrc bleibt bei Favoriten und Wäsche gültig
     .getByRole('button', { name: 'In die Wäsche legen', exact: true })
     .click()
   await expect(
-    dialog.getByRole('button', { name: 'Als sauber markieren', exact: true }),
+    dialog.getByRole('button', { name: 'Aus der Wäsche nehmen', exact: true }),
   ).toBeVisible()
   expect(
     await page.evaluate(
@@ -312,12 +315,20 @@ test('Favorit und Wäsche laden unveränderte Fotos nicht neu', async ({
       )
   const before = await sources()
   expect(before).toHaveLength(3)
+  await page.getByRole('button', { name: 'Fotohemd öffnen' }).click()
   await page
-    .getByRole('button', { name: 'Fotohemd: Als Favorit markieren' })
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Als Favorit markieren', exact: true })
     .click()
   await expect(
-    page.getByRole('button', { name: 'Fotohemd: Favorit entfernen' }),
+    page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Favorit entfernen', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Schliessen', exact: true })
+    .click()
   expect(await sources()).toEqual(before)
   await page.getByRole('button', { name: 'Hose öffnen' }).click()
   await page
@@ -327,7 +338,7 @@ test('Favorit und Wäsche laden unveränderte Fotos nicht neu', async ({
   await expect(
     page
       .getByRole('dialog')
-      .getByRole('button', { name: 'Als sauber markieren' }),
+      .getByRole('button', { name: 'Aus der Wäsche nehmen' }),
   ).toBeVisible()
   expect(await sources()).toEqual(before)
   for (const image of await page.locator('.garment-grid img').all())

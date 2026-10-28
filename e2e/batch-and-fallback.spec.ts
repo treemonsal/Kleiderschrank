@@ -133,3 +133,38 @@ test('Haupt-KI im Tageslimit: die Ersatz-KI übernimmt automatisch die Fotoanaly
     page.getByRole('button', { name: 'Original verwenden', exact: true }),
   ).toBeVisible()
 })
+
+test('Mehrere Fotos ohne KI-Freigabe: nichts wird gesendet oder lokal geladen, Speichern geht sofort', async ({
+  page,
+}) => {
+  const requests: string[] = []
+  page.on('request', (request) => {
+    const url = request.url()
+    if (/^https?:/.test(url) && !url.startsWith('http://127.0.0.1'))
+      requests.push(url)
+    // The on-device cut-out model must not load without a deliberate start.
+    if (/\.(onnx|wasm)(\?|$)|background-(worker|removal)/.test(url))
+      requests.push(url)
+  })
+  const png = await readFile('public/icon-192.png')
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
+  await page.getByLabel('Foto aus Mediathek').setInputFiles(
+    ['a', 'b'].map((name) => ({
+      name: `${name}.png`,
+      mimeType: 'image/png',
+      buffer: png,
+    })),
+  )
+  const sheet = page.getByRole('dialog')
+  const save = sheet.getByRole('button', { name: 'Alle speichern (2)' })
+  await expect(save).toBeEnabled()
+  await expect(
+    sheet.getByRole('button', { name: /KI überspringen/ }),
+  ).toHaveCount(0)
+  await save.click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
+  await expect(page.locator('.garment-card')).toHaveCount(2)
+  expect(requests).toEqual([])
+})

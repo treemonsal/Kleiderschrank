@@ -105,6 +105,7 @@ export function DayCalendar({
             <button
               key={value}
               className={day === value ? 'selected' : ''}
+              data-day={value}
               aria-label={calendarDayDescription(value, entry, colors, today)}
               aria-pressed={day === value}
               aria-current={value === today ? 'date' : undefined}

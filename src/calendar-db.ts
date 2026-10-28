@@ -53,7 +53,7 @@ export async function saveCalendarEntry(
         )
       if (!current && (await database.calendar.count()) >= MAX_CALENDAR_ENTRIES)
         throw new UserFacingError(
-          'Dein Kalender unterstützt bis zu 3000 Tage. Entferne zuerst einen älteren Eintrag.',
+          'Dein Journal unterstützt bis zu 3000 Tage. Entferne zuerst einen älteren Eintrag.',
         )
       const now = new Date(
         Math.max(Date.now(), Date.parse(current?.updatedAt ?? '') + 1 || 0),
@@ -103,6 +103,15 @@ export async function deleteCalendarEntry(
   })
 }
 
+/** What „Heute getragen“ changed, so the same session can undo it. */
+export interface WornUndo {
+  day: string
+  previous?: CalendarEntry
+  entryUpdatedAt: string
+  createdOutfitId?: string
+  washed: { id: string; updatedAt: string }[]
+}
+
 /**
  * Confirms a worn day. For today, pieces that reached their usual wear count
  * move to the laundry (unless disabled); their names are returned.
@@ -114,6 +123,16 @@ export async function recordWornOutfit(
   expectedUpdatedAt: string | null = null,
   database = db,
 ): Promise<string[]> {
+  return (await markWorn(ids, options, day, expectedUpdatedAt, database)).washed
+}
+
+export async function markWorn(
+  ids: string[],
+  options: OutfitOptions,
+  day: string,
+  expectedUpdatedAt: string | null = null,
+  database = db,
+): Promise<{ washed: string[]; undo: WornUndo }> {
   return database.transaction(
     'rw',
     [
@@ -123,6 +142,9 @@ export async function recordWornOutfit(
       database.preferences,
     ],
     async () => {
+      const known = new Set(
+        (await database.outfits.toCollection().primaryKeys()) as string[],
+      )
       const outfitId = await saveOutfit(ids, options, database)
       const current = await database.calendar.get(day)
       await saveCalendarEntry(
@@ -130,8 +152,16 @@ export async function recordWornOutfit(
         expectedUpdatedAt,
         database,
       )
+      const undo: WornUndo = {
+        day,
+        ...(current ? { previous: current } : {}),
+        entryUpdatedAt: (await database.calendar.get(day))!.updatedAt,
+        ...(known.has(outfitId) ? {} : { createdOutfitId: outfitId }),
+        washed: [],
+      }
       const preferences = await database.preferences.get('personal')
-      if (day !== localDay() || preferences?.autoLaundry === false) return []
+      if (day !== localDay() || preferences?.autoLaundry === false)
+        return { washed: [], undo }
       const [entries, outfits, pieces] = await Promise.all([
         database.calendar.toArray(),
         database.outfits.toArray(),
@@ -144,15 +174,57 @@ export async function recordWornOutfit(
           !dueForWash(piece, wearsSinceWash(piece, entries, outfits))
         )
           continue
-        await database.garments.update(piece.id, {
-          inLaundry: true,
-          updatedAt: new Date(
-            Math.max(Date.now(), Date.parse(piece.updatedAt) + 1),
-          ).toISOString(),
-        })
+        const updatedAt = new Date(
+          Math.max(Date.now(), Date.parse(piece.updatedAt) + 1),
+        ).toISOString()
+        await database.garments.update(piece.id, { inLaundry: true, updatedAt })
         washed.push(piece.name)
+        undo.washed.push({ id: piece.id, updatedAt })
       }
-      return washed
+      return { washed, undo }
+    },
+  )
+}
+
+/**
+ * Reverts „Heute getragen“: restores the previous day entry, takes back the
+ * pieces it moved to the laundry and removes a look it created on the way.
+ * Anything changed since then is left alone.
+ */
+export async function undoWorn(undo: WornUndo, database = db): Promise<void> {
+  await database.transaction(
+    'rw',
+    [database.garments, database.outfits, database.calendar],
+    async () => {
+      const entry = await database.calendar.get(undo.day)
+      if (entry?.updatedAt !== undo.entryUpdatedAt)
+        throw new UserFacingError(
+          'Der Tag wurde inzwischen geändert. Prüfe ihn im Journal.',
+        )
+      if (undo.previous) await database.calendar.put(undo.previous)
+      else await database.calendar.delete(undo.day)
+      for (const { id, updatedAt } of undo.washed) {
+        const piece = await database.garments.get(id)
+        if (piece?.inLaundry && piece.updatedAt === updatedAt)
+          await database.garments.update(id, {
+            inLaundry: false,
+            updatedAt: new Date(
+              Math.max(Date.now(), Date.parse(updatedAt) + 1),
+            ).toISOString(),
+          })
+      }
+      const created = undo.createdOutfitId
+        ? await database.outfits.get(undo.createdOutfitId)
+        : undefined
+      if (
+        created &&
+        created.updatedAt === created.createdAt &&
+        !created.favorite &&
+        !(await database.calendar
+          .filter((item) => item.outfitId === created.id)
+          .count())
+      )
+        await database.outfits.delete(created.id)
     },
   )
 }

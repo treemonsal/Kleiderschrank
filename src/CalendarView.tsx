@@ -1,15 +1,14 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { CalendarDays, Check, Pencil, Plus, Trash2 } from 'lucide-react'
-import { dayLabel, isDay, localDay, type CalendarEntry } from './calendar'
+import { Check, Pencil, Plus, Trash2 } from 'lucide-react'
+import { dayLabel, localDay, type CalendarEntry } from './calendar'
 import { db, storageError } from './db'
 import { deleteCalendarEntry, saveCalendarEntry } from './calendar-db'
 import type { Garment } from './model'
 import type { SavedOutfit } from './outfit-model'
-import { ErrorMessage, GarmentPicture, Sheet } from './ui'
+import { ErrorMessage, Sheet } from './ui'
 import { DayCalendar } from './DayCalendar'
 import { LookBands } from './LookBands'
-import { weatherFresh, weatherLabel } from './weather'
 import { useClock } from './useWeather'
 import { useViewState } from './view-memory'
 
@@ -59,7 +58,7 @@ export function PlanEditor({
               { day, outfitId, status, note },
               existing?.updatedAt ?? null,
             )
-            notify('Dein Kalender ist aktualisiert.')
+            notify('Im Journal gespeichert.')
             onClose()
           } catch (error) {
             setError(storageError(error))
@@ -142,15 +141,14 @@ export function CalendarView({
   const [error, setError] = useState('')
   const data = useLiveQuery(
     () =>
-      db.transaction('r', db.calendar, db.outfits, db.weather, async () => ({
+      db.transaction('r', db.calendar, db.outfits, async () => ({
         entries: await db.calendar.toArray(),
         outfits: await db.outfits.toArray(),
-        weather: await db.weather.get('local'),
       })),
     [],
     null,
   )
-  if (!data) return <p className="muted">Dein Kalender wird geladen …</p>
+  if (!data) return <p className="muted">Dein Journal wird geladen …</p>
   const entry = data.entries.find((entry) => entry.day === day)
   const outfit = data.outfits.find((outfit) => outfit.id === entry?.outfitId)
   const pieces =
@@ -158,10 +156,6 @@ export function CalendarView({
       items.filter((item) => item.id === id),
     ) ?? []
   const today = localDay(new Date(now))
-  const weather =
-    data.weather && weatherFresh(data.weather.report, now)
-      ? data.weather.report.days.find((item) => item.day === day)
-      : undefined
   function select(next: string) {
     setDay(next)
     setConfirm(false)
@@ -177,87 +171,59 @@ export function CalendarView({
         items={items}
         onSelect={select}
       />
-      <div className="calendar-day-picker">
-        <label className="field">
-          Tag auswählen
-          <input
-            type="date"
-            min="1900-01-01"
-            max="2200-12-31"
-            value={day}
-            onChange={(event) => {
-              if (isDay(event.target.value)) select(event.target.value)
-            }}
-          />
-        </label>
-        <button className="text-button" onClick={() => select(today)}>
-          Heute
-        </button>
-      </div>
-      <div className="calendar-day-card">
-        <p className="eyebrow">{dayLabel(day)}</p>
+      <div className="calendar-day-card journal-day">
+        <div className="journal-day-row">
+          <h3>
+            {new Intl.DateTimeFormat('de-CH', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              ...(day.slice(0, 4) !== today.slice(0, 4)
+                ? { year: 'numeric' as const }
+                : {}),
+            }).format(new Date(`${day}T12:00:00`))}
+          </h3>
+          {entry && outfit ? (
+            <span className={`calendar-status ${entry.status}`}>
+              {entry.status === 'worn' ? 'Getragen' : 'Geplant'}
+            </span>
+          ) : day === today ? (
+            <span className="calendar-status">Offen</span>
+          ) : (
+            <button className="text-button" onClick={() => select(today)}>
+              Zu heute
+            </button>
+          )}
+        </div>
         {outfit && entry ? (
           <>
-            <div className="calendar-outfit-heading">
-              <h3>{outfit.name}</h3>
-              <span className={`calendar-status ${entry.status}`}>
-                {entry.status === 'worn' ? 'Getragen' : 'Geplant'}
-              </span>
-            </div>
             <LookBands ids={outfit.garmentIds} items={items} height={40} />
-            <div className="outfit-pieces">
-              {pieces.map((item) => (
-                <button
-                  key={item.id}
-                  className="outfit-piece"
-                  aria-label={`${item.name} öffnen`}
-                  onClick={() => onOpen(item.id)}
-                >
-                  <GarmentPicture item={item} />
-                  <span>{item.name}</span>
-                </button>
+            <p className="journal-day-text">
+              {outfit.name} ·{' '}
+              {pieces.map((item, index) => (
+                <span key={item.id}>
+                  {index > 0 && ', '}
+                  <button
+                    className="inline-link"
+                    aria-label={`${item.name} öffnen`}
+                    onClick={() => onOpen(item.id)}
+                  >
+                    {item.name}
+                  </button>
+                </span>
               ))}
-            </div>
-            {entry.note && <p className="calendar-note">{entry.note}</p>}
-            <div className="calendar-entry-actions">
-              <button
-                className="button secondary"
-                disabled={busy}
-                onClick={() => setEditing({ day, entry })}
-              >
-                <Pencil size={16} />
-                Plan bearbeiten
-              </button>
-              {entry.status === 'planned' && day <= today && (
-                <button
-                  className="button primary"
-                  disabled={busy}
-                  onClick={async () => {
-                    setBusy(true)
-                    setError('')
-                    try {
-                      await saveCalendarEntry(
-                        { ...entry, status: 'worn' },
-                        entry.updatedAt,
-                      )
-                      notify('Als getragen im Kalender vermerkt.')
-                    } catch (error) {
-                      setError(storageError(error))
-                    } finally {
-                      setBusy(false)
-                    }
-                  }}
-                >
-                  <Check size={16} />
-                  Getragen
-                </button>
+              {entry.note && (
+                <>
+                  {' · '}
+                  <span className="journal-note">{entry.note}</span>
+                </>
               )}
-            </div>
+            </p>
             {confirm ? (
               <div className="delete-confirm" role="alert">
                 <p>
-                  Diesen Kalendereintrag entfernen? Der gespeicherte Look und
-                  deine Kleidung bleiben erhalten.
+                  Diesen Eintrag entfernen? Der gespeicherte Look und deine
+                  Kleidung bleiben erhalten.
                 </p>
                 <div className="photo-actions">
                   <button
@@ -275,7 +241,7 @@ export function CalendarView({
                       try {
                         await deleteCalendarEntry(day, entry.updatedAt)
                         setConfirm(false)
-                        notify('Der Kalendereintrag wurde entfernt.')
+                        notify('Der Eintrag wurde entfernt.')
                       } catch (error) {
                         setError(storageError(error))
                       } finally {
@@ -288,42 +254,83 @@ export function CalendarView({
                 </div>
               </div>
             ) : (
-              <button
-                className="text-button outfit-delete"
-                disabled={busy}
-                onClick={() => setConfirm(true)}
-              >
-                <Trash2 size={15} />
-                Kalendereintrag löschen
-              </button>
+              <div className="journal-day-actions">
+                <button
+                  className="text-button"
+                  disabled={busy}
+                  onClick={() => setEditing({ day, entry })}
+                >
+                  <Pencil size={15} />
+                  Plan bearbeiten
+                </button>
+                {entry.status === 'planned' && day <= today && (
+                  <button
+                    className="text-button"
+                    disabled={busy}
+                    onClick={async () => {
+                      setBusy(true)
+                      setError('')
+                      try {
+                        await saveCalendarEntry(
+                          { ...entry, status: 'worn' },
+                          entry.updatedAt,
+                        )
+                        notify('Als getragen vermerkt.')
+                      } catch (error) {
+                        setError(storageError(error))
+                      } finally {
+                        setBusy(false)
+                      }
+                    }}
+                  >
+                    <Check size={15} />
+                    Getragen
+                  </button>
+                )}
+                <button
+                  className="text-button muted-action"
+                  disabled={busy}
+                  onClick={() => setConfirm(true)}
+                >
+                  <Trash2 size={15} />
+                  Eintrag löschen
+                </button>
+              </div>
             )}
           </>
         ) : (
-          <div className="calendar-empty">
-            <CalendarDays size={27} strokeWidth={1.2} />
-            <h3>Noch nichts geplant</h3>
-            <p>
-              {data.outfits.length
-                ? 'Plane einen deiner gespeicherten Looks für diesen Tag.'
-                : 'Speichere zuerst einen Look unter Entdecken. Danach kannst du ihn hier einplanen.'}
+          <>
+            <p className="journal-day-none">
+              {entry
+                ? 'Der verknüpfte Look ist nicht mehr verfügbar.'
+                : day < today
+                  ? 'Kein Eintrag. Nachträglich wird nichts erfunden.'
+                  : 'Noch nichts geplant.'}
             </p>
-            <button
-              className="button primary"
-              onClick={() =>
-                data.outfits.length ? setEditing({ day, entry }) : onDiscover()
-              }
-            >
-              <Plus size={16} />
-              {data.outfits.length ? 'Look einplanen' : 'Looks entdecken'}
-            </button>
-          </div>
-        )}
-        {weather && data.weather && (
-          <p className="calendar-weather">
-            {data.weather.location.name}: {Math.round(weather.min)}–
-            {Math.round(weather.max)} °C · {weatherLabel(weather.code)}. Stand{' '}
-            {new Date(data.weather.report.fetchedAt).toLocaleString('de-CH')}.
-          </p>
+            <div className="journal-day-actions">
+              <button
+                className="text-button"
+                onClick={() =>
+                  data.outfits.length
+                    ? setEditing({ day, entry })
+                    : onDiscover()
+                }
+              >
+                {data.outfits.length ? (
+                  <>
+                    <Plus size={15} />
+                    {entry
+                      ? 'Tag bearbeiten'
+                      : day < today
+                        ? 'Getragenen Look eintragen'
+                        : 'Look einplanen'}
+                  </>
+                ) : (
+                  'Looks zusammenstellen'
+                )}
+              </button>
+            </div>
+          </>
         )}
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </div>

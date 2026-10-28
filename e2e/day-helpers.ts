@@ -45,3 +45,26 @@ export async function stepDay(page: Page, offset: -1 | 1) {
     before,
   )
 }
+
+/** Selects a day in the Journal calendar, paging months as needed. */
+export async function pickJournalDay(page: Page, day: string) {
+  const calendar = page.getByRole('region', { name: 'Outfit-Kalender' })
+  for (let step = 0; step < 36; step++) {
+    const cell = calendar.locator(`.calendar-grid button[data-day="${day}"]`)
+    if (await cell.count()) {
+      await cell.click()
+      return
+    }
+    const first = await calendar
+      .locator('.calendar-grid button[data-day]')
+      .first()
+      .getAttribute('data-day')
+    await calendar
+      .getByRole('button', {
+        name: day < first! ? 'Vorheriger Monat' : 'Nächster Monat',
+        exact: true,
+      })
+      .click()
+  }
+  throw new Error(`Tag ${day} nicht gefunden`)
+}

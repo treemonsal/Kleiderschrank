@@ -97,7 +97,7 @@ test('Ein offener Tagesplan behält seinen Entwurf bei Änderungen in einem zwei
     .click()
   await expect(other.getByRole('dialog')).not.toBeVisible()
   // Wait for the live data to arrive before inspecting the protected form.
-  await expect(page.locator('main .calendar-note')).toHaveText(
+  await expect(page.locator('main .journal-note')).toHaveText(
     'Neue Notiz aus Fenster zwei',
   )
   await expect(note).toHaveValue('Mein noch nicht gespeicherter Entwurf')
@@ -108,7 +108,7 @@ test('Ein offener Tagesplan behält seinen Entwurf bei Änderungen in einem zwei
     'Der Tag wurde inzwischen geändert',
   )
   await expect(note).toHaveValue('Mein noch nicht gespeicherter Entwurf')
-  await expect(page.locator('main .calendar-note')).toHaveText(
+  await expect(page.locator('main .journal-note')).toHaveText(
     'Neue Notiz aus Fenster zwei',
   )
   await editor.getByRole('button', { name: 'Schliessen', exact: true }).click()

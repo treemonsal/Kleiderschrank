@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { ArrowUpRight, LoaderCircle } from 'lucide-react'
+import { ArrowUpRight, Check, LoaderCircle } from 'lucide-react'
 import { readShoppingData, saveShoppingPreferences } from './shopping-db'
 import {
   shoppingEvidence,
@@ -178,17 +178,62 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
   return (
     <>
       <section
-        className="shopping-card"
+        className={`shopping-card${evidence.ready ? ' is-ready' : ''}`}
         aria-label="Persönliche Shopping-Beratung"
       >
-        <p className="eyebrow">Shopping</p>
-        <h2>{evidence.ready ? 'Kaufideen' : 'Shopping'}</h2>
-        <p className="muted">
+        <div className="shopping-head">
+          <h2 className="card-kicker">Einkaufsberatung</h2>
+          <span>{evidence.ready ? 'Bereit' : 'Noch gesperrt'}</span>
+        </div>
+        <p className="shopping-title">
           {evidence.ready
-            ? 'Kleine Ergänzungen, die zu deinen Lieblingslooks passen. Lieber unter 50 CHF, höchstens 100 CHF pro Stück.'
-            : 'Erst deinen Stil kennenlernen, dann passende Kaufideen anbieten.'}
+            ? 'Bereit: bis zu drei Kaufideen, die zu deinen Looks passen.'
+            : !evidence.profile
+              ? 'Zuerst deinen Stil kennenlernen, dann passende Kaufideen.'
+              : evidence.days < 7
+                ? `Noch ${7 - evidence.days} ${7 - evidence.days === 1 ? 'Tragetag' : 'Tragetage'} bestätigen, dann kann die Beratung starten.`
+                : evidence.span < 14
+                  ? `Noch ${14 - evidence.span} ${14 - evidence.span === 1 ? 'Tag' : 'Tage'} sammeln, dann kann die Beratung starten.`
+                  : evidence.ratings < 3
+                    ? `Noch ${3 - evidence.ratings} ${3 - evidence.ratings === 1 ? 'Look' : 'Looks'} bewerten, dann kann die Beratung starten.`
+                    : `Noch ${2 - evidence.likes} ${2 - evidence.likes === 1 ? 'Look' : 'Looks'} positiv bewerten, dann kann die Beratung starten.`}
         </p>
-        {evidence.ready ? (
+        <ul className="shopping-conditions">
+          {[
+            {
+              label: 'Stilprofil bestätigt',
+              value: '',
+              done: evidence.profile,
+            },
+            {
+              label: '7 Tragetage in zwei Wochen',
+              value: `${Math.min(7, evidence.days)} / 7`,
+              done: evidence.days >= 7 && evidence.span >= 14,
+            },
+            {
+              label: '3 Lookbewertungen, 2 positiv',
+              value: `${Math.min(3, evidence.ratings)} / 3`,
+              done: evidence.ratings >= 3 && evidence.likes >= 2,
+            },
+          ].map((condition) => (
+            <li
+              key={condition.label}
+              className={condition.done ? 'done' : undefined}
+            >
+              <span className="condition-ring" aria-hidden="true">
+                {condition.done && <Check size={11} strokeWidth={2.4} />}
+              </span>
+              <span>
+                {condition.label}
+                <span className="sr-only">
+                  {condition.done ? ': erfüllt' : ': offen'}
+                </span>
+              </span>
+              <span>{condition.value}</span>
+            </li>
+          ))}
+        </ul>
+        {evidence.ready && (
           <button
             className="button secondary"
             type="button"
@@ -196,40 +241,11 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
           >
             Mit KI günstig shoppen <ArrowUpRight size={18} />
           </button>
-        ) : (
-          <details className="shopping-progress">
-            <summary>Wann wird Shopping freigeschaltet?</summary>
-            <ul>
-              <li>
-                <span aria-hidden="true">{evidence.profile ? '✓' : '○'}</span>{' '}
-                Stilcheck oder drei vertiefte Antworten{' '}
-                {evidence.profile ? 'abgeschlossen' : 'noch offen'}
-              </li>
-              <li>
-                <span aria-hidden="true">{evidence.days >= 7 ? '✓' : '○'}</span>{' '}
-                {Math.min(7, evidence.days)} von 7 bestätigten Tragetagen in den
-                letzten 90 Tagen
-              </li>
-              <li>
-                <span aria-hidden="true">
-                  {evidence.span >= 14 ? '✓' : '○'}
-                </span>{' '}
-                {Math.min(14, evidence.span)} von 14 Tagen seit dem ersten
-                dieser Tragetage
-              </li>
-              <li>
-                <span aria-hidden="true">
-                  {evidence.ratings >= 3 && evidence.likes >= 2 ? '✓' : '○'}
-                </span>{' '}
-                {Math.min(3, evidence.ratings)} von 3 unterschiedlichen Looks
-                bewertet, davon {Math.min(2, evidence.likes)} von 2 positiv
-              </li>
-            </ul>
-            <p className="micro-copy">
-              Getragene Looks bestätigen und Looks bewerten.
-            </p>
-          </details>
         )}
+        <p className="shopping-budget">
+          Budget {config.maxPriceCHF} CHF pro Stück · keine automatischen
+          Bestellungen
+        </p>
         {!evidence.ready && enabled && (
           <button
             type="button"

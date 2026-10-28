@@ -48,3 +48,18 @@ export function figureOrder<T extends { category: Category }>(pieces: T[]) {
     (a, b) => ORDER.indexOf(a.category) - ORDER.indexOf(b.category),
   )
 }
+
+/** Names a look after its two leading colours, like a plate title. */
+export function lookTitle(
+  pieces: { category: Category; color?: string }[],
+  fallback: string,
+): string {
+  const colors = [
+    ...new Set(
+      figureOrder(pieces)
+        .map((item) => item.color)
+        .filter(Boolean),
+    ),
+  ]
+  return colors.length >= 2 ? `${colors[0]} & ${colors[1]}` : fallback
+}

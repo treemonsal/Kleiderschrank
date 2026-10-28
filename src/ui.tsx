@@ -151,12 +151,13 @@ export function GarmentPicture({
 
 export function GarmentCard({
   item,
+  worn = 0,
   onOpen,
-  onFavorite,
 }: {
   item: Garment
+  /** Confirmed wear days, shown as „N× getragen“. */
+  worn?: number
   onOpen: () => void
-  onFavorite: () => void
 }) {
   return (
     <article className="garment-card">
@@ -165,27 +166,28 @@ export function GarmentCard({
         onClick={onOpen}
         aria-label={`${item.name} öffnen`}
       >
-        <GarmentPicture item={item} />
-        <div className="garment-caption">
-          <span className="item-category">{item.category}</span>
+        <span className="garment-frame">
+          <GarmentPicture item={item} />
           {item.inLaundry && (
             <span className="laundry-badge">In der Wäsche</span>
           )}
-          <h3>{item.name}</h3>
-          <p>
-            {[item.brand, item.color].filter(Boolean).join(' · ') ||
-              'Dein persönliches Stück'}
-          </p>
-        </div>
-      </button>
-      <button
-        data-motion="heart"
-        className={`favorite-button ${item.favorite ? 'is-favorite' : ''}`}
-        onClick={onFavorite}
-        aria-label={`${item.name}: ${item.favorite ? 'Favorit entfernen' : 'Als Favorit markieren'}`}
-        aria-pressed={item.favorite}
-      >
-        <Heart size={18} fill={item.favorite ? 'currentColor' : 'none'} />
+        </span>
+        <span className="garment-caption">
+          <span className="garment-name">
+            <span>{item.name}</span>
+            {item.favorite && (
+              <Heart
+                size={13}
+                strokeWidth={1.8}
+                aria-label="Favorit"
+                role="img"
+              />
+            )}
+          </span>
+          <span className="garment-meta">
+            {[item.brand, `${worn}× getragen`].filter(Boolean).join(' · ')}
+          </span>
+        </span>
       </button>
     </article>
   )

@@ -68,7 +68,7 @@ export function chooseDailyOutfit(
             (item) => item.category === 'Accessoires',
           ),
         },
-        reasons: ['Diesen Look hast du für heute im Kalender ausgewählt.'],
+        reasons: ['Diesen Look hast du für heute im Journal eingetragen.'],
       }
   }
   const selection = preferences.dailySelection

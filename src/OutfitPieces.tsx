@@ -19,6 +19,7 @@ export function OutfitPieces({
   onSwap,
   figure = false,
   changedIds = [],
+  worn = false,
 }: {
   ids: string[]
   items: Garment[]
@@ -28,6 +29,8 @@ export function OutfitPieces({
   figure?: boolean
   /** Pieces a refinement preview would add; marked „neu“ on the plate. */
   changedIds?: string[]
+  /** Worn looks hide laundry badges: the pieces went there afterwards. */
+  worn?: boolean
 }) {
   const found = ids.flatMap((id) => {
     const item = items.find((item) => item.id === id)
@@ -40,7 +43,14 @@ export function OutfitPieces({
         <div className={`figure-plate pieces-${pieces.length}`}>
           {pieces.map((item, index) => (
             <div
-              className={`figure-tile${changedIds.includes(item.id) ? ' is-new' : ''}`}
+              className={`figure-tile${changedIds.includes(item.id) ? ' is-new' : ''}${
+                // An even count leaves the last piece alone in its row.
+                pieces.length >= 4 &&
+                pieces.length % 2 === 0 &&
+                index === pieces.length - 1
+                  ? ' is-wide'
+                  : ''
+              }`}
               key={item.id}
             >
               <button
@@ -55,7 +65,7 @@ export function OutfitPieces({
                   </small>
                   <span>{item.name}</span>
                 </span>
-                {item.inLaundry && (
+                {item.inLaundry && !worn && (
                   <span className="laundry-badge">In der Wäsche</span>
                 )}
                 {changedIds.includes(item.id) && (

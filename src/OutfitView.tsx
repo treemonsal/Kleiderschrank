@@ -21,18 +21,13 @@ import { useClock, weatherForToday } from './useWeather'
 import { LookBands } from './LookBands'
 import { useViewState } from './view-memory'
 import { chooseLookForToday } from './daily-choice'
-import { figureOrder } from './swatch'
+import { lookTitle } from './swatch'
 
-/** Names a look after its two leading colours, like a plate title. */
 function colorTitle(ids: string[], items: Garment[]) {
-  const colors = [
-    ...new Set(
-      figureOrder(ids.flatMap((id) => items.find((i) => i.id === id) ?? []))
-        .map((item) => item.color)
-        .filter(Boolean),
-    ),
-  ]
-  return colors.length >= 2 ? `${colors[0]} & ${colors[1]}` : 'Neuer Look'
+  return lookTitle(
+    ids.flatMap((id) => items.find((i) => i.id === id) ?? []),
+    'Neuer Look',
+  )
 }
 
 function SavedEditor({
@@ -245,6 +240,26 @@ export function OutfitView({
       onToday()
     })
   const name = (id: string) => items.find((item) => item.id === id)?.name
+  // „Zuletzt getragen“: most recently worn first, never worn after (newest).
+  const byLastWorn = (state?.outfits ?? [])
+    .map((outfit) => ({
+      outfit,
+      worn: state!.calendar
+        .filter(
+          (entry) =>
+            entry.outfitId === outfit.id &&
+            entry.status === 'worn' &&
+            entry.day <= today,
+        )
+        .map((entry) => entry.day)
+        .sort(),
+    }))
+    .sort(
+      (a, b) =>
+        (b.worn.at(-1) ?? '').localeCompare(a.worn.at(-1) ?? '') ||
+        b.outfit.createdAt.localeCompare(a.outfit.createdAt) ||
+        a.outfit.id.localeCompare(b.outfit.id),
+    )
   const candidateSaved =
     !!candidate &&
     !!state?.outfits.some(
@@ -351,16 +366,7 @@ export function OutfitView({
             </p>
           )}
           <div className="saved-looks">
-            {state.outfits.map((outfit, index) => {
-              const worn = state.calendar
-                .filter(
-                  (entry) =>
-                    entry.outfitId === outfit.id &&
-                    entry.status === 'worn' &&
-                    entry.day <= today,
-                )
-                .map((entry) => entry.day)
-                .sort()
+            {byLastWorn.map(({ outfit, worn }, index) => {
               const last = worn.at(-1)
               return (
                 <article

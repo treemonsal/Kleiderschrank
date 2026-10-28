@@ -278,44 +278,18 @@ export function StylistChat({
         )}
         {!interviewActive && (
           <>
-            {!enabled ? (
-              <section className="chat-welcome">
-                <MessageCircle size={28} strokeWidth={1.4} />
-                <h3>Was möchtest du heute tragen?</h3>
-                <p className="muted">
-                  Gesendet werden deine Frage, bis zu zwölf Fotos und passende
-                  Angaben an kostenlose KI-Dienste.
-                </p>
-                <button
-                  className="button primary full"
-                  onClick={() => {
-                    try {
-                      setChatEnabled(true)
-                      setEnabled(true)
-                      setError('')
-                    } catch {
-                      setError(
-                        'Die Chat-Freigabe konnte nicht auf diesem Gerät gespeichert werden.',
-                      )
-                    }
-                  }}
-                >
-                  Kostenlosen Chat aktivieren
-                </button>
-              </section>
-            ) : null}
             {enabled && (
               <details className="stylist-disclosure chat-context">
                 <summary>Dein Kontext &amp; Chat-Einstellungen</summary>
                 <p>
-                  Beratung anhand deiner Kleidungsangaben, Vorlieben,
-                  bestätigten Antworten aus dem Stilgespräch, Bewertungen und
-                  freigegebenen Wetterwerte. Fotos werden hier nicht
-                  ausgewertet. Bis zu 40 Stücke und sechs vorherige Nachrichten
-                  werden pro Frage übertragen. Der Verlauf bleibt auf diesem
-                  Gerät und wird in Sicherungen aufgenommen; beim Anbieter
-                  gelten dessen Speicherbedingungen. Vorschläge ändern deine
-                  Sammlung erst beim Speichern.
+                  Pro Frage gesendet: bis zu 40 Kleidungsangaben mit Notizen und
+                  Tragehäufigkeit, bis zu zwölf Fotos als beschriftete Collage,
+                  Vorlieben, Antworten aus dem Stilgespräch, Bewertungen,
+                  Temperaturempfinden, freigegebene Wetterwerte und die letzten
+                  sechs Nachrichten. Der Verlauf bleibt auf diesem Gerät und
+                  wird gesichert; beim Anbieter gelten dessen
+                  Speicherbedingungen. Vorschläge ändern deine Sammlung erst
+                  beim Speichern.
                 </p>
                 <button
                   className="text-button"
@@ -335,24 +309,26 @@ export function StylistChat({
                 </button>
               </details>
             )}
-            <div className="chat-toolbar">
-              <span className="micro-copy">
-                {messages.length
-                  ? `${messages.length / 2} Gesprächsrunden`
-                  : 'Dein Schrank. Dein Stil.'}
-              </span>
-              <button
-                className="text-button"
-                disabled={saving}
-                onClick={() => {
-                  cancel()
-                  speech.cancel()
-                  setConfirmClear(true)
-                }}
-              >
-                <Trash2 size={16} /> Neues Gespräch
-              </button>
-            </div>
+            {!!messages.length && (
+              <div className="chat-toolbar">
+                <span className="micro-copy">
+                  {Math.ceil(messages.length / 2) === 1
+                    ? '1 Gesprächsrunde'
+                    : `${Math.ceil(messages.length / 2)} Gesprächsrunden`}
+                </span>
+                <button
+                  className="text-button"
+                  disabled={saving}
+                  onClick={() => {
+                    cancel()
+                    speech.cancel()
+                    setConfirmClear(true)
+                  }}
+                >
+                  <Trash2 size={16} /> Neues Gespräch
+                </button>
+              </div>
+            )}
             {confirmClear && (
               <div className="delete-confirm">
                 <p>
@@ -539,6 +515,32 @@ export function StylistChat({
                   )}
                   <div ref={bottom} />
                 </div>
+                {!enabled && (
+                  <section className="chat-welcome">
+                    <MessageCircle size={28} strokeWidth={1.4} />
+                    <h3>Was möchtest du heute tragen?</h3>
+                    <p className="muted">
+                      Gesendet werden deine Frage, bis zu zwölf Fotos und
+                      passende Angaben an kostenlose KI-Dienste.
+                    </p>
+                    <button
+                      className="button primary full"
+                      onClick={() => {
+                        try {
+                          setChatEnabled(true)
+                          setEnabled(true)
+                          setError('')
+                        } catch {
+                          setError(
+                            'Die Chat-Freigabe konnte nicht auf diesem Gerät gespeichert werden.',
+                          )
+                        }
+                      }}
+                    >
+                      Kostenlosen Chat aktivieren
+                    </button>
+                  </section>
+                )}
                 {enabled && (
                   <form
                     className="chat-composer"

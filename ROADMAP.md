@@ -1,5 +1,19 @@
 # Entwicklungsplan
 
+## Version 0.30.0 – Fehlerprüfung von A bis Z
+
+- [x] Stand 0.29.0 als Branch `backup/before-0.30.0` sichern
+- [x] Ganze App mit Testdaten und leer bei 390 px durchgeklickt (jede Ansicht, jedes Fenster), Schriftgrössen, Überlappungen, Touch-Ziele und Texte gemessen
+- [x] Heute nach Entwurf: „Heute getragen“ unter der Tafel, danach „Im Journal vermerkt · Rückgängig“ (stellt Tag, Wäsche und neu angelegten Look exakt wieder her); Bewertung „Wie gefällt dir der Look?“ mit Gründen direkt darunter statt eigenem Fenster; leerer Tag mit grossem Datum
+- [x] Tafel: einzelnes letztes Teil in breiter Kachel mit Bild neben der Beschriftung statt winzigem Foto; keine Wäsche-Markierung auf bereits getragenen Tagen
+- [x] Wetter-Fenster ohne doppelten Titel und zweiten Schliessen-Knopf
+- [x] Garderobe nach Entwurf: Kachel mit kleinem Herz und „Marke · N× getragen“; Detail mit Bild links, grosser Tragezahl, Angaben als Zeilen, „Passt gut zu“, Wäsche und Herz
+- [x] Journal-Tag nach Entwurf: Farbstreifen und eine Zeile statt Datumsfeld und Mini-Fotos; Einkaufsberatung mit Bedingungen und Budgetzeile
+- [x] Gespeicherte Looks heissen nach ihren Farben („Grün & Grau“) statt „Alltag · 4 Stücke“; „Zuletzt getragen“ sortiert jetzt wirklich nach dem letzten Tragetag
+- [x] Mehrere Fotos ohne KI-Freigabe: kein automatisches Gerätemodell mehr, Speichern sofort möglich; mit KI „KI überspringen“
+- [x] Falsche Texte korrigiert: Chat-Datenschutzhinweis (Fotos werden gesendet), entfernter Online-Stylist, „Anderer Look“, Saison-Auswahl, „Kalender“; „1 Gesprächsrunde“
+- [x] Lesbarkeit: keine Fliesstexte unter 11,5 px, kleine Bedienelemente mit 44-px-Tippfläche, kein hängender Hover nach Antippen
+
 ## Version 0.29.0 – Minimal nach Entwurf
 
 - [x] Stand mit allen Funktionen als Branch `backup/journal-0.28.0-full` sichern

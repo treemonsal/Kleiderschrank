@@ -96,19 +96,13 @@ test('Feedback „Zu auffällig“ und Ablehnung ohne Grund werden dauerhaft ges
   await page
     .getByRole('button', { name: 'Tageslook: Passt nicht', exact: true })
     .click()
-  await page
-    .getByRole('dialog')
-    .getByRole('button', { name: 'Zu auffällig', exact: true })
-    .click()
-  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Zu auffällig', exact: true }).click()
+  await expect(page.getByText('Grund angeben, freiwillig')).toHaveCount(0)
   await page
     .getByRole('button', { name: 'Tageslook: Passt nicht', exact: true })
     .click()
-  await page
-    .getByRole('dialog')
-    .getByRole('button', { name: 'Ohne Grund ablehnen', exact: true })
-    .click()
-  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Ohne Grund', exact: true }).click()
+  await expect(page.getByText('Grund angeben, freiwillig')).toHaveCount(0)
   const saved = await exported(page)
   expect(saved.version).toBe(8)
   expect(saved.feedback).toHaveLength(2)
@@ -167,7 +161,7 @@ test('Ein inzwischen bestätigter Tragetag lässt sich aus einer alten Vorschau 
     .getByRole('button', { name: 'Heute getragen', exact: true })
     .click()
   await expect(
-    other.getByRole('button', { name: 'Getragen', exact: true }),
+    other.getByText('Im Journal vermerkt', { exact: true }),
   ).toBeVisible()
   // The confirmed day closes the preview here; nothing can be applied.
   await expect(
@@ -184,4 +178,29 @@ test('Ein inzwischen bestätigter Tragetag lässt sich aus einer alten Vorschau 
   expect(recorded.garmentIds).toHaveLength(3)
   expect(recorded.garmentIds).not.toContain('jacket')
   await other.close()
+})
+
+test('„Heute getragen“ lässt sich direkt zurücknehmen, ohne Spuren zu hinterlassen', async ({
+  page,
+}) => {
+  await seed(page)
+  const before = await exported(page)
+  await page.getByRole('button', { name: 'Heute', exact: true }).click()
+  const look = page.getByRole('region', { name: 'Dein Tageslook' })
+  await look
+    .getByRole('button', { name: 'Heute getragen', exact: true })
+    .click()
+  await expect(look.getByText('Im Journal vermerkt')).toBeVisible()
+  await look.getByRole('button', { name: 'Rückgängig', exact: true }).click()
+  await expect(
+    look.getByRole('button', { name: 'Heute getragen', exact: true }),
+  ).toBeVisible()
+  const after = await exported(page)
+  expect(after.calendar).toEqual(before.calendar)
+  expect(after.outfits).toEqual(before.outfits)
+  expect(
+    after.garments.map((item: { inLaundry?: boolean }) => !!item.inLaundry),
+  ).toEqual(
+    before.garments.map((item: { inLaundry?: boolean }) => !!item.inLaundry),
+  )
 })

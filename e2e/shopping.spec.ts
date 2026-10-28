@@ -120,11 +120,13 @@ test('Neue Nutzer sehen Fortschritt und erhalten keine verfrühte Shopping-Auffo
     name: 'Persönliche Shopping-Beratung',
     exact: true,
   })
-  await card
-    .getByText('Wann wird Shopping freigeschaltet?', { exact: true })
-    .click()
-  await expect(card.getByText(/0 von 7 bestätigten Tragetagen/)).toBeVisible()
-  await expect(card.getByText(/0 von 3 unterschiedlichen Looks/)).toBeVisible()
+  await expect(card.getByText('Noch gesperrt', { exact: true })).toBeVisible()
+  await expect(
+    card.getByRole('listitem').filter({ hasText: '7 Tragetage' }),
+  ).toContainText('0 / 7')
+  await expect(
+    card.getByRole('listitem').filter({ hasText: '3 Lookbewertungen' }),
+  ).toContainText('0 / 3')
   expect(requests).toEqual([])
 })
 

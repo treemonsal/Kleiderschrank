@@ -64,12 +64,25 @@ test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Filtern, Favorisieren u
   await dialog.getByLabel('Notizen').fill('Für warme Tage.\nLeicht und luftig.')
   await dialog.getByRole('button', { name: 'Änderungen speichern' }).click()
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
+  await page.getByRole('button', { name: 'Sommerhemd öffnen' }).click()
   await page
-    .getByRole('button', { name: 'Sommerhemd: Als Favorit markieren' })
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Als Favorit markieren', exact: true })
     .click()
   await expect(
-    page.getByRole('button', { name: 'Sommerhemd: Favorit entfernen' }),
+    page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Favorit entfernen', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Schliessen', exact: true })
+    .click()
+  await expect(
+    page
+      .getByRole('button', { name: 'Sommerhemd öffnen' })
+      .getByRole('img', { name: 'Favorit' }),
+  ).toBeVisible()
   await page.getByRole('button', { name: 'Schuhe', exact: true }).click()
   await expect(page.getByText('Hier liegt gerade nichts.')).toBeVisible()
   await page.getByRole('button', { name: 'Alle', exact: true }).click()

@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
+import { pickJournalDay } from './day-helpers'
 
 test.use({ timezoneId: 'Europe/Zurich' })
 const fixedTime = new Date('2026-10-15T10:00:00Z')
@@ -141,7 +142,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
     .click()
   await page.getByRole('button', { name: 'Speichern', exact: true }).click()
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
-  await page.getByLabel('Tag auswählen', { exact: true }).fill('2026-10-16')
+  await pickJournalDay(page, '2026-10-16')
   await page
     .getByRole('button', { name: 'Look einplanen', exact: true })
     .click()
@@ -157,7 +158,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
   await expect(
     page.getByRole('button', { name: 'Getragen', exact: true }),
   ).toHaveCount(0)
-  await page.getByLabel('Tag auswählen', { exact: true }).fill('2026-10-15')
+  await pickJournalDay(page, '2026-10-15')
   await page
     .getByRole('button', { name: 'Look einplanen', exact: true })
     .click()
@@ -223,7 +224,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
   await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await expect(page.getByText('Getragen', { exact: true })).toBeVisible()
-  await page.getByLabel('Tag auswählen', { exact: true }).fill('2026-10-16')
+  await pickJournalDay(page, '2026-10-16')
   await expect(page.getByText('Besprechung', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page
@@ -384,9 +385,9 @@ test('Kalender verwendet den lokalen iPhone-Tag statt des UTC-Datums', async ({
   await page.goto('/')
   await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
-  await expect(page.getByLabel('Tag auswählen', { exact: true })).toHaveValue(
-    '2026-03-29',
-  )
+  await expect(
+    page.locator('.calendar-grid button[data-day="2026-03-29"]'),
+  ).toHaveAttribute('aria-pressed', 'true')
   await page
     .getByRole('button', { name: 'Nächster Monat', exact: true })
     .click()

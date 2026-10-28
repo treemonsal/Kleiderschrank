@@ -65,52 +65,65 @@ export function BatchImport({
       ),
     )
 
+  const [analysing, setAnalysing] = useState(false)
   useEffect(() => {
     const active = new AbortController()
     controller.current = active
     void (async () => {
+      // Photos are prepared on the device first, so every piece can be
+      // saved even if an online analysis later fails or is skipped.
+      const prepared: { key: string; photo: Blob }[] = []
+      const connection = readAIConnection()
       for (const entry of entries) {
         if (active.signal.aborted) return
         patch(entry.key, { status: 'working' })
-        let photo: Blob
         try {
-          photo = await preparePhoto(entry.file)
-        } catch {
-          patch(entry.key, { status: 'failed' })
-          continue
-        }
-        edit(entry.key, { photo })
-        try {
-          const connection = readAIConnection()
-          if (connection?.enabled) {
-            const result = await analyzePhoto(photo, connection, active.signal)
-            if (active.signal.aborted) return
-            edit(entry.key, {
-              ...(result.attributes ?? {}),
-              ...(result.cutout ? { cutout: result.cutout } : {}),
-            })
-          } else {
-            // Without online AI the on-device model still removes the background.
-            const { removePhotoBackground } =
-              await import('./background-removal')
-            const cutout = await removePhotoBackground(
-              photo,
-              active.signal,
-              () => {},
-            )
-            edit(entry.key, { cutout })
-          }
-          patch(entry.key, { status: 'done' })
-        } catch {
+          const photo = await preparePhoto(entry.file)
           if (active.signal.aborted) return
+          edit(entry.key, { photo })
+          prepared.push({ key: entry.key, photo })
+          patch(entry.key, { status: connection?.enabled ? 'waiting' : 'done' })
+        } catch {
           patch(entry.key, { status: 'failed' })
         }
       }
+      // Recognition and cut-out only run with the free AI switched on.
+      if (!connection?.enabled) return
+      setAnalysing(true)
+      for (const { key, photo } of prepared) {
+        if (active.signal.aborted) break
+        patch(key, { status: 'working' })
+        try {
+          const result = await analyzePhoto(photo, connection, active.signal)
+          if (active.signal.aborted) break
+          edit(key, {
+            ...(result.attributes ?? {}),
+            ...(result.cutout ? { cutout: result.cutout } : {}),
+          })
+          patch(key, { status: 'done' })
+        } catch {
+          if (active.signal.aborted) break
+          patch(key, { status: 'failed' })
+        }
+      }
+      setAnalysing(false)
     })()
     return () => active.abort()
     // Runs once for the files chosen when the sheet opened.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  function skipAnalysis() {
+    controller.current?.abort()
+    setAnalysing(false)
+    // Pieces keep their original photo and stay editable.
+    setEntries((current) =>
+      current.map((entry) =>
+        entry.status === 'done' || entry.status === 'failed'
+          ? entry
+          : { ...entry, status: entry.draft.photo ? 'done' : 'failed' },
+      ),
+    )
+  }
 
   const busy = entries.some(
     (entry) => entry.status === 'waiting' || entry.status === 'working',
@@ -224,6 +237,11 @@ export function BatchImport({
           ))}
         </ul>
         {error && <ErrorMessage>{error}</ErrorMessage>}
+        {analysing && (
+          <button type="button" className="text-button" onClick={skipAnalysis}>
+            KI überspringen, Originalfotos verwenden
+          </button>
+        )}
         <button
           type="button"
           className="button primary full"

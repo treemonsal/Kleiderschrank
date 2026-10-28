@@ -117,7 +117,7 @@ async function readResponse(
   if (!response.ok) {
     if (response.status === 401)
       throw new Error(
-        'Der Verbindungscode stimmt nicht. Prüfe ihn unter Einstellungen → Online-Foto-KI.',
+        'Der Verbindungscode stimmt nicht. Prüfe ihn unter Einstellungen → Kostenlose KI.',
       )
     if (response.status === 429 || response.status === 503)
       throw new Error(

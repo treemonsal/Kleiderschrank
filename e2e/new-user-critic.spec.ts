@@ -12,12 +12,12 @@ test('Leere Garderobe führt direkt zum ersten Stück statt in eine leere Outfit
   await expect(add).toBeVisible()
   await expect(add).toHaveCount(1)
   await expect(
-    page.getByRole('button', { name: 'Auswahl anpassen', exact: true }),
+    page.getByRole('button', { name: 'Looks öffnen', exact: true }),
   ).toHaveCount(0)
 
   await stepDay(page, -1)
   await expect(
-    page.getByRole('button', { name: 'Auswahl anpassen', exact: true }),
+    page.getByRole('button', { name: 'Looks öffnen', exact: true }),
   ).toHaveCount(0)
   await page.getByRole('button', { name: 'Zu heute', exact: true }).click()
   await add.click()
@@ -38,9 +38,7 @@ test('Mit ersten Stücken bleibt die Anpassung einer unvollständigen Auswahl er
     .click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await page.getByRole('button', { name: 'Heute', exact: true }).click()
-  await page
-    .getByRole('button', { name: 'Auswahl anpassen', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Looks öffnen', exact: true }).click()
   await expect(
     page.getByRole('heading', { name: 'Looks', exact: true }),
   ).toBeVisible()

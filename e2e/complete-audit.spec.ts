@@ -180,7 +180,7 @@ test('Gespeicherte Outfit-Favoriten und Wäschewechsel erhalten echte Fotos und 
     .getByRole('button', { name: 'In die Wäsche legen', exact: true })
     .click()
   await expect(
-    dialog.getByRole('button', { name: 'Als sauber markieren', exact: true }),
+    dialog.getByRole('button', { name: 'Aus der Wäsche nehmen', exact: true }),
   ).toBeVisible()
   await dialog.getByRole('button', { name: 'Schliessen', exact: true }).click()
   await expect
