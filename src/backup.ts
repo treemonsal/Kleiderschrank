@@ -9,6 +9,7 @@ import {
   type ChatSession,
 } from './chat-model'
 import { blobToDataURL } from './photos'
+import { parsePhotoRef } from './sync-model'
 import { db } from './db'
 import { isDay, MAX_CALENDAR_ENTRIES, type CalendarEntry } from './calendar'
 import { parseSavedWeather, type WeatherState } from './weather'
@@ -252,7 +253,30 @@ function parseWornColors(value: unknown, status: unknown): string[] {
     choice(color, [...COLORS.map((item) => item.name), '']),
   )
 }
-export function parseFullBackup(json: string): BackupData {
+/** Photos the sync could not (yet) load; such records must not be imported. */
+export const PENDING_PHOTOS = new WeakSet<Blob>()
+
+/**
+ * Validates a backup. The Drive copy used for syncing references photos as
+ * „ref:<type>:<sha256>“; only then `photos` resolves them, so normal backup
+ * files must still embed every photo.
+ */
+export function parseFullBackup(
+  json: string,
+  photos?: Map<string, Blob>,
+): BackupData {
+  const readPhoto = (value: unknown) => {
+    const ref = photos ? parsePhotoRef(value) : undefined
+    if (!ref) return photo(value)
+    const blob = photos!.get(ref.hash)
+    if (blob)
+      return blob.type === ref.type
+        ? blob
+        : new Blob([blob], { type: ref.type })
+    const pending = new Blob([], { type: ref.type })
+    PENDING_PHOTOS.add(pending)
+    return pending
+  }
   if (new Blob([json]).size > MAX_BACKUP_BYTES)
     throw new Error('Die Sicherung ist grösser als 100 MB.')
   let data
@@ -277,8 +301,8 @@ export function parseFullBackup(json: string): BackupData {
       const name = text(item.name, 100).trim()
       if (!id || !name || ids.has(id) || typeof item.favorite !== 'boolean')
         throw invalid()
-      const original = photo(item.photo)
-      const cutout = data.version >= 4 ? photo(item.cutout) : undefined
+      const original = readPhoto(item.photo)
+      const cutout = data.version >= 4 ? readPhoto(item.cutout) : undefined
       if (cutout && (!original || cutout.type !== 'image/png')) throw invalid()
       ids.add(id)
       return {

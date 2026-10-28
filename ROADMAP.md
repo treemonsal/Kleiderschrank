@@ -1,11 +1,19 @@
 # Entwicklungsplan
 
+## Version 0.32.0 – Auf allen Geräten mit Google
+
+- [x] Entscheidung: Google Drive (App-Ordner) für alle; jede Person mit eigenem Konto
+- [x] Anmeldung per Weiterleitung (ohne Popup, ohne Google-Skript), Token nur auf dem Gerät
+- [x] Drei-Wege-Abgleich (Gerät, Drive, letzter gemeinsamer Stand): neuere Änderungen gewinnen, Löschungen kommen nicht zurück, Änderungen nach fremden Löschungen bleiben erhalten
+- [x] Fotos einzeln per Prüfsumme, nur einmal hochgeladen; noch fehlende Fotos werden abgewartet statt Stücke zu verlieren
+- [x] Automatisch beim Start, beim Zurückkehren, alle 5 Minuten und nach Änderungen; abgelaufene Anmeldung wird nur beim App-Start erneuert
+- [ ] Client-ID in Google Cloud anlegen (docs/GOOGLE_SYNC.md) und eintragen; danach echter Test auf iPhone und zweitem Gerät
+
 ## Version 0.31.0 – Bilder ziehen und einsetzen
 
 - [x] Bild aus einem anderen Browserfenster in die App ziehen: ein Bild öffnet „Neues Stück“, mehrere den Stapel, im offenen Editor ersetzt es nur das Foto; nichts wird vorher heruntergeladen
 - [x] Gesperrte Webbilder (ohne Freigabe der Seite) werden verständlich erklärt, mit Ausweg „Bild kopieren“ und Einsetzen (Cmd/Strg+V oder Knopf im Editor, auch auf dem iPhone)
 - [x] Ein daneben fallendes Bild kann die App nie verlassen oder ungespeicherte Eingaben verwerfen
-- [ ] Geräteübergreifendes Speichern mit Konto: wartet auf Entscheidung und Zugangsdaten
 
 ## Version 0.30.1 – Wetter im Kopf von Heute
 

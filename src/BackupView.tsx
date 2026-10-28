@@ -21,6 +21,7 @@ import { storageError } from './db'
 import { ErrorMessage, Sheet } from './ui'
 import { updateBackupReminder } from './backup-reminder'
 import { AISettings } from './AISettings'
+import { DriveSyncCard } from './DriveSync'
 import { StyleProfileCard } from './StyleProfile'
 import { version } from '../package.json'
 
@@ -99,6 +100,7 @@ export function BackupView({
       <AISettings />
       <StyleProfileCard items={items} notify={notify} />
       <EverydaySettings />
+      <DriveSyncCard />
       <section className="settings-section" id="backup-section" tabIndex={-1}>
         <div className="section-heading">
           <h2>Sicherung</h2>
