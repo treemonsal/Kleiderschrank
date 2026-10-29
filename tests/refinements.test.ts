@@ -20,7 +20,7 @@ import {
 } from '../src/backup'
 import { createPersonalizationScorer } from '../src/personalization'
 import { chooseDailyOutfit } from '../src/daily-outfit'
-import { outfitKey } from '../src/outfit-model'
+import { feedbackKey, outfitKey } from '../src/outfit-model'
 
 const databases: WardrobeDatabase[] = []
 afterEach(async () => {
@@ -273,9 +273,9 @@ describe('Optionales und gezieltes Outfitfeedback', () => {
     expect(parseFullBackup(json).feedback[0].reason).toBe('bold')
     const destination = (await setup()).db
     await importFullBackup(parseFullBackup(json), 'replace', destination)
-    expect((await destination.feedback.get(outfitKey(ids)))?.reason).toBe(
-      'bold',
-    )
+    expect(
+      (await destination.feedback.get(feedbackKey(ids, 'Alltag')))?.reason,
+    ).toBe('bold')
     await setOutfitFeedback(ids, 'rejected', db)
     expect((await db.feedback.get(outfitKey(ids)))?.reason).toBeUndefined()
     const selected = chooseDailyOutfit(

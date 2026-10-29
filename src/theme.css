@@ -1731,7 +1731,7 @@ details.outfit-reasons li {
   flex-wrap: wrap;
 }
 .photo-actions > .button {
-  min-width: 0;
+  min-width: fit-content;
   font-size: 0.88rem;
 }
 

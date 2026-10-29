@@ -15,7 +15,13 @@ const attributes = {
 async function mock(
   page: Page,
   failure:
-    'none' | 'limit' | 'gpu' | 'unavailable' | 'unknown' | 'network' = 'none',
+    | 'none'
+    | 'limit'
+    | 'gpu'
+    | 'unavailable'
+    | 'unknown'
+    | 'network'
+    | 'hang' = 'none',
 ) {
   const png = await readFile('public/icon-192.png')
   const calls: string[] = []
@@ -35,6 +41,8 @@ async function mock(
       if (failure === 'unavailable')
         return route.fulfill({ status: 503, body: 'Service unavailable' })
       if (failure === 'network') return route.abort('failed')
+      // A recognition that never answers.
+      if (failure === 'hang') return new Promise<void>(() => {})
       return route.fulfill({ json: { event_id: 'a'.repeat(32) } })
     }
     if (url === V + '/gradio_api/call/run_router/' + 'a'.repeat(32))
@@ -250,6 +258,42 @@ test('Ausgeschöpftes Erkennungslimit behält Freistellung und Original und lös
   await expect(
     page.getByRole('button', { name: 'Mein Stück öffnen' }),
   ).toBeVisible()
+})
+
+test('Eine fertige Freistellung wird sofort übernommen und bleibt, wenn die Erkennung ihr Zeitlimit überschreitet', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    ;(
+      window as unknown as { __MYSTYLE_PHOTO_STEP_TIMEOUT_MS__: number }
+    ).__MYSTYLE_PHOTO_STEP_TIMEOUT_MS__ = 8000
+  })
+  await mock(page, 'hang')
+  await page.goto('/')
+  await activate(page)
+  await page.getByRole('button', { name: 'Erstes Stück hinzufügen' }).click()
+  await page
+    .getByLabel('Foto aus Mediathek')
+    .setInputFiles(path.resolve('public/icon-192.png'))
+  // Used while recognition is still running.
+  await expect(
+    page.getByRole('button', { name: 'Original verwenden', exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByText('Foto wird analysiert und freigestellt', { exact: false }),
+  ).toBeVisible()
+  // Then recognition gives up on its own; the cutout stays.
+  await expect(
+    page.getByText('Ein Schritt hat zu lange gebraucht', { exact: false }).or(
+      page.getByText('Bilderkennung: Der Dienst hat zu lange gebraucht', {
+        exact: false,
+      }),
+    ),
+  ).toBeVisible({ timeout: 10000 })
+  await expect(
+    page.getByRole('button', { name: 'Original verwenden', exact: true }),
+  ).toBeVisible()
+  await expect(page.getByText('Hintergrund entfernt.')).toBeVisible()
 })
 
 test('Widerruf während Verbindungsprüfung kann durch späte Antworten nicht rückgängig werden', async ({

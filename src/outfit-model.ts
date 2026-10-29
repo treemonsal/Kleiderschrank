@@ -91,6 +91,13 @@ export interface OutfitCandidate {
 export function outfitKey(ids: string[]): string {
   return JSON.stringify([...ids].sort())
 }
+/**
+ * A rating belongs to a combination and, when given, the occasion it was
+ * rated for: the same look may suit Alltag but not Büro.
+ */
+export function feedbackKey(ids: string[], occasion?: Occasion): string {
+  return occasion ? `${outfitKey(ids)}@${occasion}` : outfitKey(ids)
+}
 export function isCompleteOutfit(items: Garment[]): boolean {
   const count = (category: string) =>
     items.filter((item) => item.category === category).length

@@ -17,6 +17,8 @@ export interface AIResult {
   cutout?: Blob
   warnings: string[]
 }
+/** A finished step handed over before the other one is done. */
+export type AIPartial = Partial<Pick<AIResult, 'attributes' | 'cutout'>>
 export const AI_CONNECTION_KEY = 'mystyle-photo-ai'
 export const AI_CONNECTION_CHANGED = 'mystyle-photo-ai-changed'
 export function validateConnection(value: AIConnection): AIConnection {
@@ -177,6 +179,7 @@ export async function analyzePhoto(
   connection: AIConnection,
   signal: AbortSignal,
   task: PhotoTask = 'all',
+  onPartial?: (part: AIPartial) => void,
 ): Promise<AIResult> {
   if (!['all', 'attributes', 'cutout'].includes(task))
     throw new Error('Unbekannter Foto-Schritt.')
@@ -188,7 +191,7 @@ export async function analyzePhoto(
     )
   if (c.mode === 'community') {
     const { analyzeCommunityPhoto } = await import('./community-ai')
-    return analyzeCommunityPhoto(photo, signal, task)
+    return analyzeCommunityPhoto(photo, signal, task, onPartial)
   }
   if (task !== 'all') {
     const health = await checkAIConnection(c, signal)

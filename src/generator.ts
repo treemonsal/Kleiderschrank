@@ -123,15 +123,16 @@ export function generateOutfits(
       : undefined
   const variety = profile?.variety ?? 'balanced'
   const compatibility = createCompatibilityScorer(feedback)
+  // Compared by combination: an entry's id also names its occasion.
   const rejected = new Set(
     feedback
       .filter((entry) => entry.verdict === 'rejected')
-      .map((entry) => entry.id),
+      .map((entry) => outfitKey(entry.garmentIds)),
   )
   const liked = new Set(
     feedback
       .filter((entry) => entry.verdict === 'liked')
-      .map((entry) => entry.id),
+      .map((entry) => outfitKey(entry.garmentIds)),
   )
   const likedItems = new Map<string, number>()
   for (const entry of feedback.filter((entry) => entry.verdict === 'liked')) {

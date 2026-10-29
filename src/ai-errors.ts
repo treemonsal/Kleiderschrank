@@ -6,6 +6,7 @@ export type AIProblemKind =
   | 'network'
   | 'invalid'
   | 'unknown'
+  | 'timeout'
 export class AIProviderError extends Error {
   constructor(
     readonly kind: AIProblemKind,
@@ -122,6 +123,7 @@ export function describeAIProblem(
     invalid: 'Die Antwort des Dienstes konnte nicht verwendet werden.',
     unknown:
       'Der Dienst meldet einen Fehler, nennt aber keine eindeutige Ursache.',
+    timeout: 'Der Dienst hat zu lange gebraucht.',
   }
   let message = `${service}: ${messages[problem.kind]}`
   if (problem.retryAt && problem.retryAt > Date.now())

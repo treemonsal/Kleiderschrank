@@ -270,7 +270,7 @@ describe('Gespräch, Migration und sichere Speicheraktionen', () => {
     expect((await next.garments.get('shirt'))?.name).toBe('shirt')
     expect((await next.preferences.get('personal'))?.colors).toEqual(['Blau'])
     expect(await next.chat.count()).toBe(0)
-    expect(next.verno).toBe(6)
+    expect(next.verno).toBe(7)
   })
   it('speichert Frage und geprüfte Antwort gemeinsam und führt noch keine Outfitaktion aus', async () => {
     const db = await database(),

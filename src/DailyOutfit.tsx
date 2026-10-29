@@ -16,6 +16,7 @@ import { StyleProfileCard } from './StyleProfile'
 import {
   DEFAULT_PREFERENCES,
   isCompleteOutfit,
+  feedbackKey,
   outfitKey,
 } from './outfit-model'
 import { chooseDailyOutfit } from './daily-outfit'
@@ -28,6 +29,7 @@ import { weatherFresh, weatherLabel } from './weather'
 import { useClock } from './useWeather'
 import { WeatherPanel } from './WeatherPanel'
 import { useFitText } from './useFitText'
+import { ratingFor } from './personalization'
 import { DailyRefinement } from './DailyRefinement'
 import { OutfitSwap } from './OutfitSwap'
 import { WeatherSymbol } from './WeatherSymbol'
@@ -107,7 +109,7 @@ export function DailyOutfit({
     ? {
         garmentIds: recorded.garmentIds,
         options: {
-          occasion: recorded.occasion,
+          occasion: entry?.occasion ?? recorded.occasion,
           season: recorded.season,
           style: recorded.style,
           includeAccessory: recorded.garmentIds.some(
@@ -492,12 +494,14 @@ export function DailyOutfit({
                 ))}
               {day <= today && complete && (
                 <OutfitRating
-                  key={outfitKey(look.garmentIds)}
+                  key={feedbackKey(look.garmentIds, look.options.occasion)}
                   ids={look.garmentIds}
                   occasion={look.options.occasion}
                   label="Tageslook"
-                  rating={state.feedback.find(
-                    (item) => item.id === outfitKey(look.garmentIds),
+                  rating={ratingFor(
+                    state.feedback,
+                    look.garmentIds,
+                    look.options.occasion,
                   )}
                   disabled={busy}
                   notify={notify}

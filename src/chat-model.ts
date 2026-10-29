@@ -281,7 +281,9 @@ export function validateChatLook(
     pieces.length === ids.length &&
     isCompleteOutfit(pieces) &&
     !feedbackForOccasion(feedback, options.occasion).some(
-      (entry) => entry.id === outfitKey(ids) && entry.verdict === 'rejected',
+      (entry) =>
+        outfitKey(entry.garmentIds) === outfitKey(ids) &&
+        entry.verdict === 'rejected',
     )
   )
 }

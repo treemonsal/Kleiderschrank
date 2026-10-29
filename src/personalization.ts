@@ -3,6 +3,7 @@ import { COLORS } from './model'
 import { interviewStyles } from './style-interview'
 import {
   OCCASIONS,
+  outfitKey,
   type Occasion,
   type OutfitFeedback,
   type Preferences,
@@ -50,12 +51,34 @@ export function parseStyleProfile(value: unknown): StyleProfile {
 }
 
 // Legacy feedback remains global. New feedback belongs to the occasion that was rated.
+/**
+ * Ratings that apply to an occasion: those given for it, plus older ones
+ * without occasion unless the same look was rated for this occasion since.
+ */
 export function feedbackForOccasion(
   feedback: OutfitFeedback[],
   occasion: Occasion,
 ) {
+  const specific = new Set(
+    feedback
+      .filter((entry) => entry.occasion === occasion)
+      .map((entry) => outfitKey(entry.garmentIds)),
+  )
   return feedback.filter(
-    (entry) => !entry.occasion || entry.occasion === occasion,
+    (entry) =>
+      entry.occasion === occasion ||
+      (!entry.occasion && !specific.has(outfitKey(entry.garmentIds))),
+  )
+}
+/** The rating a look has for an occasion, if any. */
+export function ratingFor(
+  feedback: OutfitFeedback[],
+  ids: string[],
+  occasion: Occasion,
+): OutfitFeedback | undefined {
+  const key = outfitKey(ids)
+  return feedbackForOccasion(feedback, occasion).find(
+    (entry) => outfitKey(entry.garmentIds) === key,
   )
 }
 

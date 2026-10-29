@@ -15,6 +15,7 @@ on:
       - '.nvmrc'
       - '.prettier*'
       - 'scripts/verify_project_backup.py'
+      - 'server/**'
       - '.github/workflows/**'
   pull_request:
     paths:
@@ -28,6 +29,7 @@ on:
       - '.nvmrc'
       - '.prettier*'
       - 'scripts/verify_project_backup.py'
+      - 'server/**'
       - '.github/workflows/**'
 
 permissions:
@@ -54,6 +56,11 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - run: npm run format:check
       - run: python3 scripts/verify_project_backup.py
+      - name: Servertests (eigener KI-Server, ohne Modell)
+        run: |
+          python3 -m venv "$RUNNER_TEMP/server-venv"
+          "$RUNNER_TEMP/server-venv/bin/pip" install --quiet -r server/requirements-test.txt
+          cd server && "$RUNNER_TEMP/server-venv/bin/python" -m pytest -q
       - run: npm test
       - run: npm run build
       - run: npx playwright install --with-deps chromium
@@ -63,6 +70,37 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: browser-diagnostics
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # Safari engine (iPhone focus). Informational until it has run green a few
+  # times: failures are reported in the log and as diagnostics, but do not
+  # block the check above.
+  webkit:
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run build
+      - run: npx playwright install --with-deps webkit
+      - name: Browsertests mit WebKit
+        id: webkit
+        continue-on-error: true
+        run: npm run test:e2e:webkit
+      - name: WebKit-Diagnose sichern
+        if: steps.webkit.outcome == 'failure'
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: webkit-diagnostics
           path: test-results/
           if-no-files-found: ignore
           retention-days: 7

@@ -6,19 +6,21 @@ import {
   type CalendarEntry,
 } from './calendar'
 import { UserFacingError } from './constraints'
-import { isCompleteOutfit, type OutfitOptions } from './outfit-model'
+import { isCompleteOutfit, OCCASIONS, type OutfitOptions } from './outfit-model'
 import type { Garment } from './model'
 import { dueForWash, wearsSinceWash } from './laundry'
 
 export async function saveCalendarEntry(
-  draft: Pick<CalendarEntry, 'day' | 'outfitId' | 'status' | 'note'>,
+  draft: Pick<CalendarEntry, 'day' | 'outfitId' | 'status' | 'note'> &
+    Partial<Pick<CalendarEntry, 'occasion'>>,
   expectedUpdatedAt: string | null = null,
   database = db,
 ): Promise<void> {
   if (
     !isDay(draft.day) ||
     !['planned', 'worn'].includes(draft.status) ||
-    draft.note.length > 200
+    draft.note.length > 200 ||
+    (draft.occasion !== undefined && !OCCASIONS.includes(draft.occasion))
   )
     throw new UserFacingError(
       'Bitte prüfe Tag, Status und Notiz (höchstens 200 Zeichen).',
@@ -64,10 +66,15 @@ export async function saveCalendarEntry(
             ? current.wornColors
             : pieces.map((item) => item!.color)
           : undefined
+      // Without a stated occasion the day keeps its own only for the same look.
+      const occasion =
+        draft.occasion ??
+        (current?.outfitId === draft.outfitId ? current.occasion : undefined)
       await database.calendar.put({
         day: draft.day,
         outfitId: draft.outfitId,
         status: draft.status,
+        ...(occasion ? { occasion } : {}),
         ...(wornColors ? { wornColors } : {}),
         id: draft.day,
         note: draft.note.trim(),
@@ -148,7 +155,13 @@ export async function markWorn(
       const outfitId = await saveOutfit(ids, options, database)
       const current = await database.calendar.get(day)
       await saveCalendarEntry(
-        { day, outfitId, status: 'worn', note: current?.note ?? '' },
+        {
+          day,
+          outfitId,
+          status: 'worn',
+          note: current?.note ?? '',
+          occasion: options.occasion,
+        },
         expectedUpdatedAt,
         database,
       )

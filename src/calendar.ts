@@ -1,10 +1,12 @@
-import type { SavedOutfit } from './outfit-model'
+import type { Occasion, SavedOutfit } from './outfit-model'
 
 export interface CalendarEntry {
   id: string
   day: string
   outfitId: string
   status: 'planned' | 'worn'
+  /** The occasion of this day; a reused look may have been saved for another. */
+  occasion?: Occasion
   wornColors?: string[]
   note: string
   createdAt: string
