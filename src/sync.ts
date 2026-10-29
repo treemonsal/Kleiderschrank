@@ -25,7 +25,7 @@ import {
   type SyncRecord,
   type SyncSides,
 } from './sync-model'
-import { outfitKey } from './outfit-model'
+import { feedbackKey, OCCASIONS, type OutfitFeedback } from './outfit-model'
 
 export const SYNC_FILE = 'mystyle-sync.json'
 /** Photos nobody references any more are removed after a day. */
@@ -57,6 +57,36 @@ function records(value: unknown): SyncRecord[] {
       )
     : []
 }
+/**
+ * Ratings written before 0.36 carry ids without their occasion. Plan with
+ * the current ids, keeping the newer of two entries for the same rating.
+ */
+export function rekeyFeedback(value: unknown): unknown {
+  if (!Array.isArray(value)) return value
+  const byId = new Map<string, unknown>()
+  for (const item of value) {
+    const entry = item as Partial<OutfitFeedback> | null
+    const ids = entry?.garmentIds
+    const valid =
+      !!entry &&
+      Array.isArray(ids) &&
+      ids.every((id) => typeof id === 'string') &&
+      (entry.occasion === undefined || OCCASIONS.includes(entry.occasion))
+    const id = valid
+      ? feedbackKey(ids as string[], entry!.occasion)
+      : (entry as { id?: unknown } | null)?.id
+    const record = valid ? { ...entry, id } : item
+    const key = typeof id === 'string' ? id : `invalid:${byId.size}`
+    const known = byId.get(key) as Partial<OutfitFeedback> | undefined
+    if (
+      !known ||
+      String(known.updatedAt ?? '') < String(entry?.updatedAt ?? '')
+    )
+      byId.set(key, record)
+  }
+  return [...byId.values()]
+}
+
 function single(value: unknown, id: string): SyncRecord[] {
   return value && typeof value === 'object'
     ? records([{ ...(value as object), id }])
@@ -168,6 +198,7 @@ export async function syncWithDrive(
         'Die Daten in Google Drive sind beschädigt. Auf diesem Gerät wurde nichts verändert.',
       )
     }
+    raw.feedback = rekeyFeedback(raw.feedback)
     remoteSides = sidesOf(raw)
     const local = await readBackupData(database)
     const localSides = sidesOf(local)
@@ -308,7 +339,10 @@ export async function syncWithDrive(
           await database.outfits.delete(outfit.id)
         }
       for (const item of await database.feedback.toArray())
-        if (orphan(item.garmentIds) || item.id !== outfitKey(item.garmentIds))
+        if (
+          orphan(item.garmentIds) ||
+          item.id !== feedbackKey(item.garmentIds, item.occasion)
+        )
           await database.feedback.delete(item.id)
       const looks = new Set(
         (await database.outfits.toCollection().primaryKeys()) as string[],

@@ -17,6 +17,7 @@ import {
 import {
   DEFAULT_OUTFIT_OPTIONS,
   DEFAULT_PREFERENCES,
+  feedbackKey,
   outfitKey,
   type OutfitFeedback,
   type Preferences,
@@ -400,7 +401,7 @@ describe('Dauerhafte, kontrollierbare Stilprofile und Rückmeldungen', () => {
   it('zählt wiederholte Bewertungen nur einmal, erlaubt Umentscheiden und schützt neue Rückmeldungen vor altem Undo', async () => {
     const db = await database()
     await setOutfitFeedback(ids, 'liked', db, { occasion: 'Alltag' })
-    const first = (await db.feedback.get(outfitKey(ids)))!
+    const first = (await db.feedback.get(feedbackKey(ids, 'Alltag')))!
     await setOutfitFeedback(ids, 'rejected', db, {
       reason: 'colors',
       occasion: 'Alltag',
@@ -438,8 +439,10 @@ describe('Dauerhafte, kontrollierbare Stilprofile und Rückmeldungen', () => {
     )
     const old = JSON.parse(await createDatabaseBackup(db))
     delete old.preferences.styleProfile
+    // A file from before ratings had an occasion.
     delete old.feedback[0].occasion
     delete old.feedback[0].reason
+    old.feedback[0].id = outfitKey(ids)
     expect(
       parseFullBackup(JSON.stringify(old)).feedback[0].reason,
     ).toBeUndefined()

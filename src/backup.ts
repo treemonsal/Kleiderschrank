@@ -30,6 +30,7 @@ import {
   DEFAULT_PREFERENCES,
   COMFORTS,
   OCCASIONS,
+  feedbackKey,
   outfitKey,
   type OutfitOptions,
   type OutfitFeedback,
@@ -400,16 +401,26 @@ export function parseFullBackup(
       updatedAt: timestamp(item.updatedAt),
     }
   })
-  const feedbackIds = new Set<string>()
-  const feedback: OutfitFeedback[] = data.feedback.map(
+  const rawFeedbackIds = new Set<string>()
+  const parsedFeedback: OutfitFeedback[] = data.feedback.map(
     (item: OutfitFeedback) => {
       if (!item || typeof item !== 'object') throw invalid()
       const garmentIds = references(item.garmentIds),
-        id = outfitKey(garmentIds)
-      if (item.id !== id || feedbackIds.has(id)) throw invalid()
+        occasion =
+          item.occasion === undefined
+            ? undefined
+            : choice(item.occasion, OCCASIONS),
+        id = feedbackKey(garmentIds, occasion)
+      // Before 0.36 a rating's id left out its occasion; such entries are
+      // re-keyed. The same raw id twice stays invalid.
+      if (
+        (item.id !== id && item.id !== outfitKey(garmentIds)) ||
+        rawFeedbackIds.has(item.id)
+      )
+        throw invalid()
       if (item.reason !== undefined && item.verdict !== 'rejected')
         throw invalid()
-      feedbackIds.add(id)
+      rawFeedbackIds.add(item.id)
       return {
         id,
         garmentIds,
@@ -425,13 +436,20 @@ export function parseFullBackup(
                 'bold',
               ] as const),
             }),
-        ...(item.occasion === undefined
-          ? {}
-          : { occasion: choice(item.occasion, OCCASIONS) }),
+        ...(occasion === undefined ? {} : { occasion }),
         updatedAt: timestamp(item.updatedAt),
       }
     },
   )
+  // A file written by devices on both sides of the 0.36 change may hold one
+  // rating under its old and its new id: the newer one counts.
+  const newestFeedback = new Map<string, OutfitFeedback>()
+  for (const item of parsedFeedback) {
+    const known = newestFeedback.get(item.id)
+    if (!known || known.updatedAt < item.updatedAt)
+      newestFeedback.set(item.id, item)
+  }
+  const feedback = [...newestFeedback.values()]
   let preferences: Preferences | null = null
   if (data.preferences !== null) {
     const item = data.preferences
@@ -518,6 +536,9 @@ export function parseFullBackup(
         day: item.day,
         outfitId: identifier(item.outfitId),
         status: choice(item.status, ['planned', 'worn']),
+        ...(item.occasion === undefined
+          ? {}
+          : { occasion: choice(item.occasion, OCCASIONS) }),
         ...(item.wornColors === undefined
           ? {}
           : {

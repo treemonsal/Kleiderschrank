@@ -1,7 +1,13 @@
-import { parseAttributes, type AIResult, type PhotoTask } from './cloud-ai'
+import {
+  parseAttributes,
+  type AIPartial,
+  type AIResult,
+  type PhotoTask,
+} from './cloud-ai'
 import { blobToDataURL, validateBackupPhotos } from './photos'
 import { AIProviderError, providerError, describeAIProblem } from './ai-errors'
 import { askVision, fallbackDisabled } from './ai-router'
+import { runPhotoSteps } from './photo-steps'
 
 export const VISION_HOST = 'https://prithivmlmods-qwen3-vl-outpost.hf.space'
 export const CUTOUT_HOST = 'https://zhengpeng7-birefnet-demo.hf.space'
@@ -292,13 +298,21 @@ export async function analyzeCommunityPhoto(
   photo: Blob,
   signal: AbortSignal,
   task: PhotoTask = 'all',
+  onPartial?: (part: AIPartial) => void,
 ): Promise<AIResult> {
-  const [attributes, cutout] = await Promise.allSettled([
-    task === 'cutout' ? Promise.resolve(undefined) : recognize(photo, signal),
-    task === 'attributes'
-      ? Promise.resolve(undefined)
-      : cutoutWithFallback(photo, signal),
-  ])
+  // Each step has its own time limit and is handed over as soon as it is done.
+  const { attributes, cutout } = await runPhotoSteps(
+    {
+      attributes:
+        task === 'cutout' ? undefined : (step) => recognize(photo, step),
+      cutout:
+        task === 'attributes'
+          ? undefined
+          : (step) => cutoutWithFallback(photo, step),
+    },
+    signal,
+    onPartial,
+  )
   if (signal.aborted)
     throw new DOMException('Analyse abgebrochen.', 'AbortError')
   const warnings: string[] = []

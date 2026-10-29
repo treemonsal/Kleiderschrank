@@ -76,9 +76,11 @@ export function shoppingEvidence(data: ShoppingData, now = Date.now()) {
           86400000,
       ) + 1
     : 0
+  // One rating per look: the newest, whichever occasion it was given for.
   const ratings = [
     ...new Map(
-      data.feedback
+      [...data.feedback]
+        .sort((a, b) => a.updatedAt.localeCompare(b.updatedAt))
         .filter(
           (entry) =>
             complete(entry.garmentIds, byId) &&

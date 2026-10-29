@@ -5,6 +5,7 @@ import {
   readAIConnection,
   AI_CONNECTION_KEY,
   AI_CONNECTION_CHANGED,
+  type AIPartial,
   type PhotoAttributes,
   type PhotoTask,
 } from './cloud-ai'
@@ -97,50 +98,68 @@ export function PhotoAssistant({
     setError('')
     setMessage('')
     onBusy(true)
-    try {
-      const result = await analyzePhoto(photo, allowed, next.signal, task)
-      if (next.signal.aborted) return
-      if (result.attributes) apply(result.attributes)
-      if (result.cutout && autoStart) {
-        callbacks.current.onChoose(result.cutout)
-        setApplied(true)
-      } else if (result.cutout) setPreview(result.cutout)
+    // Each finished step is used at once; a slow other step cannot take it
+    // away again, not even when it runs into the time limit.
+    const got = { attributes: false, cutout: false }
+    const deliver = (part: AIPartial) => {
+      if (controller.current !== next || next.signal.aborted) return
+      if (part.attributes && !got.attributes) {
+        got.attributes = true
+        apply(part.attributes)
+      }
+      if (part.cutout && !got.cutout) {
+        got.cutout = true
+        if (autoStart) {
+          callbacks.current.onChoose(part.cutout)
+          setApplied(true)
+        } else setPreview(part.cutout)
+      }
+    }
+    const done = () =>
+      [
+        got.attributes
+          ? 'Angaben vorbereitet. Bitte kurz prüfen: Stil und Saison sind Schätzungen.'
+          : '',
+        got.cutout
+          ? autoStart
+            ? 'Hintergrund entfernt.'
+            : 'Freistellung bereit. Prüfe sie und übernimm sie bei Bedarf.'
+          : '',
+      ].filter(Boolean)
+    const retryMissing = () =>
       setRetry((previous) => ({
-        attributes:
-          task === 'cutout' ? previous.attributes : !result.attributes,
-        cutout: task === 'attributes' ? previous.cutout : !result.cutout,
+        attributes: task === 'cutout' ? previous.attributes : !got.attributes,
+        cutout: task === 'attributes' ? previous.cutout : !got.cutout,
       }))
-      setMessage(
-        [
-          result.attributes
-            ? 'Angaben vorbereitet. Bitte kurz prüfen: Stil und Saison sind Schätzungen.'
-            : '',
-          result.cutout
-            ? autoStart
-              ? 'Hintergrund entfernt.'
-              : 'Freistellung bereit. Prüfe sie und übernimm sie bei Bedarf.'
-            : '',
-          ...result.warnings,
-        ]
-          .filter(Boolean)
-          .join(' '),
+    try {
+      const result = await analyzePhoto(
+        photo,
+        allowed,
+        next.signal,
+        task,
+        deliver,
       )
+      if (next.signal.aborted) return
+      deliver(result)
+      retryMissing()
+      setMessage([...done(), ...result.warnings].join(' '))
     } catch (e) {
       if (!next.signal.aborted || next.signal.reason === 'timeout')
-        setRetry((previous) => ({
-          attributes: task === 'cutout' ? previous.attributes : true,
-          cutout: task === 'attributes' ? previous.cutout : true,
-        }))
+        retryMissing()
       if (!next.signal.aborted)
         setError(
           e instanceof Error
             ? e.message
             : 'Die Online-KI ist nicht erreichbar.',
         )
-      else if (next.signal.reason === 'timeout')
+      else if (next.signal.reason === 'timeout') {
+        if (done().length) setMessage(done().join(' '))
         setError(
-          'Der kostenlose Server hat zu lange gebraucht. Dein Foto ist erhalten; bitte erneut versuchen.',
+          got.attributes || got.cutout
+            ? 'Ein Schritt hat zu lange gebraucht. Das fertige Ergebnis ist übernommen; den Rest kannst du erneut versuchen.'
+            : 'Der kostenlose Server hat zu lange gebraucht. Dein Foto ist erhalten; bitte erneut versuchen.',
         )
+      }
     } finally {
       clearTimeout(timer)
       if (controller.current === next) {
@@ -291,7 +310,8 @@ export function PhotoAssistant({
             </p>
           )}
           {error && <ErrorMessage>{error}</ErrorMessage>}
-          {applied && !status && (
+          {/* A cutout already in use can be undone while the other step runs. */}
+          {applied && (
             <button
               type="button"
               className="text-button"

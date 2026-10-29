@@ -49,8 +49,8 @@ export function chooseDailyOutfit(
             ? 'Herbst'
             : 'Winter'
   }
-  const plannedId = calendar.find((entry) => entry.day === day)?.outfitId
-  const planned = outfits.find((outfit) => outfit.id === plannedId)
+  const plannedEntry = calendar.find((entry) => entry.day === day)
+  const planned = outfits.find((outfit) => outfit.id === plannedEntry?.outfitId)
   if (planned) {
     const pieces = planned.garmentIds.flatMap(
       (id) => items.find((item) => item.id === id) ?? [],
@@ -61,7 +61,7 @@ export function chooseDailyOutfit(
         name: planned.name,
         planned: true,
         options: {
-          occasion: planned.occasion,
+          occasion: plannedEntry?.occasion ?? planned.occasion,
           season: planned.season,
           style: planned.style,
           includeAccessory: pieces.some(
@@ -82,7 +82,7 @@ export function chooseDailyOutfit(
       isCompleteOutfit(selected) &&
       !feedbackForOccasion(feedback, selection.options.occasion).some(
         (entry) =>
-          entry.id === outfitKey(selection.garmentIds) &&
+          outfitKey(entry.garmentIds) === outfitKey(selection.garmentIds) &&
           entry.verdict === 'rejected',
       )
     )

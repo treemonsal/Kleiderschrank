@@ -133,7 +133,11 @@ export async function applyDailyRefinement(
         current.options,
         database,
       )
-      await saveCalendarEntry({ ...entry, outfitId }, entry.updatedAt, database)
+      await saveCalendarEntry(
+        { ...entry, outfitId, occasion: current.options.occasion },
+        entry.updatedAt,
+        database,
+      )
     }
     await database.preferences.put({
       ...preferences,

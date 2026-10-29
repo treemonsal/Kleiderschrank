@@ -16,6 +16,7 @@ import {
   DEFAULT_PREFERENCES,
   OCCASIONS,
   DEFAULT_OUTFIT_OPTIONS,
+  feedbackKey,
   isCompleteOutfit,
   outfitKey,
   type OutfitFeedback,
@@ -57,6 +58,18 @@ export class WardrobeDatabase extends Dexie {
     this.version(4).stores({ garments: 'id, category, updatedAt' })
     this.version(5).stores({ chat: 'id, updatedAt' })
     this.version(6).stores({ syncState: 'id' })
+    // Ratings are kept per occasion: re-key those that name one.
+    this.version(7)
+      .stores({ feedback: 'id, updatedAt, *garmentIds' })
+      .upgrade(async (transaction) => {
+        const table = transaction.table<OutfitFeedback, string>('feedback')
+        for (const entry of await table.toArray()) {
+          const id = feedbackKey(entry.garmentIds, entry.occasion)
+          if (id === entry.id) continue
+          await table.delete(entry.id)
+          await table.put({ ...entry, id })
+        }
+      })
   }
 }
 export async function deleteGarment(id: string, database = db): Promise<void> {
@@ -185,9 +198,10 @@ export async function setOutfitFeedback(
           ))
       )
         throw new UserFacingError('Diese Bewertung ist ungültig.')
-      const previous = await database.feedback.get(outfitKey(ids))
+      const id = feedbackKey(ids, context.occasion)
+      const previous = await database.feedback.get(id)
       await database.feedback.put({
-        id: outfitKey(ids),
+        id,
         garmentIds: [...ids],
         verdict,
         updatedAt: new Date(
@@ -214,13 +228,19 @@ export async function toggleOutfitLike(
     database.garments,
     database.feedback,
     async () => {
-      const key = outfitKey(ids),
+      const key = feedbackKey(ids, occasion),
         current = await database.feedback.get(key)
-      if (
-        current?.verdict === 'liked' &&
-        (!occasion || !current.occasion || current.occasion === occasion)
-      ) {
+      if (current?.verdict === 'liked') {
         await database.feedback.delete(key)
+        return false
+      }
+      // An older rating without occasion counts everywhere; taking back the
+      // like it shows removes it.
+      const general = occasion
+        ? await database.feedback.get(outfitKey(ids))
+        : undefined
+      if (!current && general?.verdict === 'liked' && !general.occasion) {
+        await database.feedback.delete(general.id)
         return false
       }
       await setOutfitFeedback(ids, 'liked', database, { occasion })

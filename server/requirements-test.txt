@@ -1,0 +1,6 @@
+# Enough for the server tests: they replace the model with a stand-in, so
+# torch, transformers and rembg are not needed. Versions match requirements.txt.
+fastapi==0.143.2
+pillow==12.3.0
+pytest==9.1.1
+httpx2==2.13.1

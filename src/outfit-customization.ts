@@ -172,7 +172,7 @@ export async function swapDailyPiece(
       if (entry) {
         const outfitId = await saveOutfit(ids, input.options, database)
         await saveCalendarEntry(
-          { ...entry, outfitId },
+          { ...entry, outfitId, occasion: input.options.occasion },
           entry.updatedAt,
           database,
         )

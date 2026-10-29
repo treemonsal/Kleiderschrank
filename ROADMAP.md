@@ -1,5 +1,13 @@
 # Entwicklungsplan
 
+## Version 0.36.0 – Befunde aus der externen Code-Prüfung
+
+- [x] Bewertungen gelten pro Anlass: Gefällt für Alltag und passt nicht fürs Büro überschreiben sich nicht mehr (Schlüssel mit Anlass, Datenbankversion 7 stellt alte Einträge um, Sicherungen und Google-Abgleich lesen beide Formen)
+- [x] Ein Tragetag speichert seinen eigenen Anlass; ein als Alltag gespeicherter Look wird an einem Büro-Tag nicht mehr als Alltag geführt
+- [x] KI-Foto-Schritte einzeln: Erkennung und Freistellung haben je ein eigenes Zeitlimit, fertige Ergebnisse werden sofort übernommen und gehen bei einer Zeitüberschreitung des anderen Schritts nicht verloren; „Original verwenden“ schon während des Laufs
+- [x] Prüfung auf GitHub: Servertests des eigenen KI-Servers (ohne Modell) und ein WebKit-Lauf (vorerst nur informativ)
+- [ ] Offen, Entscheidung nötig: Stücke archivieren statt löschen, damit Tragetage erhalten bleiben
+
 ## Version 0.35.0 – Claude-Look mit Apple-Aufbau
 
 - [x] Backup des Journal-Designs im Branch `backup/design-0.34.1-journal`
