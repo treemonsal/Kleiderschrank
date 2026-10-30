@@ -1,6 +1,7 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
+import { sortOutAndDelete } from './garment-helpers'
 
 async function addGarment(page: Page, name: string, photo = false) {
   await page
@@ -94,8 +95,19 @@ test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Filtern, Favorisieren u
   await expect(
     page.getByRole('dialog').getByText('Für warme Tage.', { exact: false }),
   ).toBeVisible()
+  // Sorting out keeps the piece; deleting for good happens from the archive.
+  await page.getByRole('button', { name: 'Aussortieren', exact: true }).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await expect(
+    page.getByRole('button', { name: 'Sommerhemd öffnen' }),
+  ).toHaveCount(0)
+  await page
+    .getByRole('button', { name: 'Nur aussortierte Stücke', exact: true })
+    .click()
+  await page.getByRole('button', { name: 'Sommerhemd öffnen' }).click()
+  await expect(page.getByRole('dialog')).toContainText('Aussortiert am')
   await page.getByRole('button', { name: 'Stück löschen', exact: true }).click()
-  await expect(page.getByText('Dieses Stück wirklich löschen?')).toBeVisible()
+  await expect(page.getByText('Dieses Stück endgültig löschen?')).toBeVisible()
   await page.getByRole('button', { name: 'Behalten', exact: true }).click()
   await page.getByRole('button', { name: 'Stück löschen', exact: true }).click()
   await page.getByRole('button', { name: 'Endgültig löschen' }).click()
@@ -127,8 +139,7 @@ test('Sicherung exportiert Fotos und stellt sie wieder her; fehlerhafte Dateien 
   // Delete through the real UI, then restore from the downloaded file.
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'Mein Mantel öffnen' }).click()
-  await page.getByRole('button', { name: 'Stück löschen', exact: true }).click()
-  await page.getByRole('button', { name: 'Endgültig löschen' }).click()
+  await sortOutAndDelete(page, 'Mein Mantel')
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -238,7 +249,9 @@ for (const width of [375, 390, 430]) {
     ).toBeVisible()
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     await page.screenshot({
@@ -264,7 +277,9 @@ for (const width of [375, 390, 430]) {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     await page.screenshot({

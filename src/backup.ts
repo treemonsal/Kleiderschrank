@@ -19,6 +19,7 @@ import { blobToDataURL } from './photos'
 import { parsePhotoRef } from './sync-model'
 import { db } from './db'
 import { isDay, MAX_CALENDAR_ENTRIES, type CalendarEntry } from './calendar'
+import { isWarmth } from './warmth'
 import { parseSavedWeather, type WeatherState } from './weather'
 import {
   assertWardrobeCapacity,
@@ -47,6 +48,10 @@ export interface BackupData {
   calendar?: CalendarEntry[]
   weather?: WeatherState | null
   chat?: ChatSession | null
+}
+const warmth = (value: unknown) => {
+  if (!isWarmth(value)) throw invalid()
+  return value
 }
 const invalid = () =>
   new Error(
@@ -350,6 +355,10 @@ export function parseFullBackup(
         ...(item.washedAt === undefined
           ? {}
           : { washedAt: timestamp(item.washedAt) }),
+        ...(item.archivedAt === undefined
+          ? {}
+          : { archivedAt: timestamp(item.archivedAt) }),
+        ...(item.warmth === undefined ? {} : { warmth: warmth(item.warmth) }),
         createdAt: timestamp(item.createdAt),
         updatedAt: timestamp(item.updatedAt),
         photo: original,

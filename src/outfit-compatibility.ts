@@ -1,16 +1,24 @@
 import type { Garment } from './model'
 import type { OutfitFeedback } from './outfit-model'
 import { colorHarmony, styleCoherence } from './color-harmony'
+import { ratingWeight } from './personalization'
 const neutral = new Set(['Schwarz', 'Weiss', 'Grau', 'Beige', 'Braun'])
 const pairKey = (a: string, b: string) => JSON.stringify([a, b].sort())
 // Bounded, explicit signals from liked combinations, never inferred from a skipped look.
-export function createCompatibilityScorer(feedback: OutfitFeedback[]) {
-  const likedPairs = new Set<string>()
+export function createCompatibilityScorer(
+  feedback: OutfitFeedback[],
+  now = Date.now(),
+) {
+  // Each liked pair keeps the weight of its newest rating.
+  const likedPairs = new Map<string, number>()
   for (const entry of feedback) {
     if (entry.verdict !== 'liked') continue
+    const weight = ratingWeight(entry.updatedAt, now)
     for (let i = 0; i < entry.garmentIds.length; i++)
-      for (let j = i + 1; j < entry.garmentIds.length; j++)
-        likedPairs.add(pairKey(entry.garmentIds[i], entry.garmentIds[j]))
+      for (let j = i + 1; j < entry.garmentIds.length; j++) {
+        const key = pairKey(entry.garmentIds[i], entry.garmentIds[j])
+        likedPairs.set(key, Math.max(likedPairs.get(key) ?? 0, weight))
+      }
   }
   return (items: Garment[]) => {
     const known = items.filter((item) => item.color)
@@ -32,7 +40,7 @@ export function createCompatibilityScorer(feedback: OutfitFeedback[]) {
         const a = items[i],
           b = items[j]
         pairs++
-        if (likedPairs.has(pairKey(a.id, b.id))) liked++
+        liked += likedPairs.get(pairKey(a.id, b.id)) ?? 0
         if (a.styles.length && b.styles.length) {
           stylePairs++
           if (a.styles.some((style) => b.styles.includes(style))) sharedStyles++

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 import { readFile } from 'node:fs/promises'
 const stamp = '2026-01-01T00:00:00.000Z'
 const now = '2026-10-15T10:00:00.000Z'

@@ -1,5 +1,6 @@
 import type { Garment } from './model'
 import { isCompleteOutfit } from './outfit-model'
+import { warmthProxy } from './warmth'
 
 export const REFINEMENT_LABELS = {
   similar: 'Ähnlich, aber anders',
@@ -18,21 +19,6 @@ export function colorfulness(items: Garment[]) {
     (sum, color) => sum + (neutral.has(color) ? 0 : color === 'Bunt' ? 2 : 1),
     0,
   )
-}
-// A deliberately coarse proxy, not a material/insulation or safety assessment.
-export function warmthProxy(items: Garment[]) {
-  return items.reduce((sum, item) => {
-    if (item.category === 'Jacken') return sum + 4
-    if (!['Oberteile', 'Hosen', 'Kleider'].includes(item.category)) return sum
-    return (
-      sum +
-      (item.seasons.includes('Winter')
-        ? 1
-        : item.seasons.length === 1 && item.seasons[0] === 'Sommer'
-          ? -0.5
-          : 0)
-    )
-  }, 0)
 }
 export function validRefinement(items: Garment[], request: OutfitRefinement) {
   const current = items.filter((item) => request.currentIds.includes(item.id))

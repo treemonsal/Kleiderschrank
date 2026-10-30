@@ -353,7 +353,7 @@ for (const action of [
 
 test('Gespräch wird auf zweitem Gerät wiederhergestellt, Online-Freigabe wird nicht übertragen', async ({
   page,
-  browser,
+  newDevice,
 }) => {
   await page.goto('/')
   await importData(page)
@@ -368,7 +368,7 @@ test('Gespräch wird auf zweitem Gerät wiederhergestellt, Online-Freigabe wird 
   ).toHaveCount(1)
   await dialog.getByRole('button', { name: 'Schliessen', exact: true }).click()
   const backup = await exportData(page)
-  const context = await browser.newContext(),
+  const context = await newDevice(),
     other = await context.newPage()
   await other.goto('/')
   await importData(other, backup)
@@ -547,7 +547,9 @@ for (const width of [320, 390])
     await provider(page)
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     const dialog = await open(page)

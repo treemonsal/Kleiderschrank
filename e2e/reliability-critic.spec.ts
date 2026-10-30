@@ -1,4 +1,5 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
+import { sortOutAndDelete } from './garment-helpers'
 
 test.use({ timezoneId: 'Europe/Zurich' })
 
@@ -135,12 +136,7 @@ test('Entfernen eines geöffneten Stücks in einem zweiten Fenster gibt die Navi
   await other
     .getByRole('button', { name: 'Review-Hemd öffnen', exact: true })
     .click()
-  await other
-    .getByRole('button', { name: 'Stück löschen', exact: true })
-    .click()
-  await other
-    .getByRole('button', { name: 'Endgültig löschen', exact: true })
-    .click()
+  await sortOutAndDelete(other, 'Review-Hemd')
 
   await expect(page.getByRole('dialog')).not.toBeVisible()
   await expect(

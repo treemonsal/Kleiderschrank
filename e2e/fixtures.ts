@@ -1,6 +1,6 @@
-import { test as base } from '@playwright/test'
-export { expect } from '@playwright/test'
-export type { Page, Locator, BrowserContext } from '@playwright/test'
+import { test as base } from './base'
+export { expect } from './base'
+export type { Page, Locator, BrowserContext } from './base'
 
 /**
  * Existing provider tests simulate a single AI service. They opt out of the

@@ -32,6 +32,7 @@ export const COLORS = [
 export type Category = (typeof CATEGORIES)[number]
 export type Season = (typeof SEASONS)[number]
 export type Style = (typeof STYLES)[number]
+export type Warmth = 1 | 2 | 3
 export interface Garment {
   id: string
   name: string
@@ -49,6 +50,13 @@ export interface Garment {
   price?: number
   /** Last time the piece was marked clean; wears after it count towards the next wash. */
   washedAt?: string
+  /** How warm the piece is, if recorded: 1 leicht, 2 mittel, 3 warm. */
+  warmth?: Warmth
+  /**
+   * Sorted out: no longer suggested or listed in the wardrobe, but kept so
+   * worn days, looks and ratings stay complete.
+   */
+  archivedAt?: string
   photo?: Blob
   cutout?: Blob
   createdAt: string

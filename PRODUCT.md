@@ -1,5 +1,12 @@
 # MyStyle
 
+## Version 0.37.0 – Aussortieren, Wärme, mehr Varianten
+
+- Stücke werden aussortiert statt gelöscht: Sie verschwinden aus Raster, Vorschlägen, „Passt gut zu“, Chat und Einkaufsberatung, aber Tragetage, Looks und Bewertungen bleiben. Zurückholen jederzeit; endgültiges Löschen nur aus dem Archiv mit Bestätigung (wie bisher mit abhängigen Looks).
+- Optionale Wärme pro Stück (Leicht, Mittel, Warm), manuell oder durch die Foto-KI, immer prüfbar. Wirkt nur bei erfasster Wärme auf Oberteile, Hosen, Kleider und Jacken und auf „Wärmer“. Keine Passform- oder Materialfelder.
+- Verfeinern zeigt bis zu fünf Varianten nacheinander („Weitere Variante“); übernommen wird die gezeigte.
+- Bewertungen verlieren mit dem Alter leicht an Gewicht: voll bis 30 Tage, danach linear bis 80 % nach einem Jahr.
+
 ## Version 0.32.0 – Auf allen Geräten
 
 - Freiwillige Anmeldung mit Google; der Kleiderschrank liegt zusätzlich im versteckten App-Ordner des eigenen Drive und wird zwischen eigenen Geräten abgeglichen. Kostenlos, kein eigener Server, jede Person mit eigenem Konto. Ohne Anmeldung bleibt alles wie bisher nur lokal.

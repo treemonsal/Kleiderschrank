@@ -82,6 +82,16 @@ export function ratingFor(
   )
 }
 
+/**
+ * How much a rating counts: fully for a month, then gently less, down to
+ * 0.8 after a year. Tastes shift a little, old ratings still matter.
+ */
+export function ratingWeight(updatedAt: string, now = Date.now()): number {
+  const days = (now - Date.parse(updatedAt)) / 86400000
+  if (!Number.isFinite(days) || days <= 30) return 1
+  return 1 - 0.2 * Math.min(1, (days - 30) / 335)
+}
+
 const neutral = new Set(['Schwarz', 'Weiss', 'Grau', 'Beige', 'Braun'])
 const bounded = (value: number) => Math.max(-1, Math.min(1, value))
 const colorPair = (a: string, b: string) => JSON.stringify([a, b].sort())
@@ -89,6 +99,7 @@ export function createPersonalizationScorer(
   items: Garment[],
   preferences: Preferences,
   feedback: OutfitFeedback[],
+  now = Date.now(),
 ) {
   const byId = new Map(items.map((item) => [item.id, item]))
   const colors = new Map<string, number>(),
@@ -108,6 +119,7 @@ export function createPersonalizationScorer(
     )
       continue
     const positive = entry.verdict === 'liked'
+    const weight = ratingWeight(entry.updatedAt, now)
     // This signal describes the outfit's recorded colorfulness, never an
     // individual color, garment, body shape, pattern or unrecorded fit.
     if (!positive && entry.reason === 'bold') {
@@ -115,7 +127,7 @@ export function createPersonalizationScorer(
         pieces.every((piece) => piece.color) &&
         pieces.some((piece) => !neutral.has(piece.color))
       ) {
-        quieterVotes++
+        quieterVotes += weight
         observations++
       }
       continue
@@ -123,11 +135,15 @@ export function createPersonalizationScorer(
     if (!positive && entry.reason !== 'colors' && entry.reason !== 'style')
       continue
     observations++
-    const sign = positive ? 1 : -1
+    const sign = (positive ? 1 : -1) * weight
     if (positive)
       for (const piece of pieces) {
         if (piece.color)
-          add(colors, `${piece.category}:${piece.color}`, 1 / pieces.length)
+          add(
+            colors,
+            `${piece.category}:${piece.color}`,
+            weight / pieces.length,
+          )
       }
     if (positive || entry.reason === 'style') {
       const unique = [...new Set(pieces.flatMap((piece) => piece.styles))]

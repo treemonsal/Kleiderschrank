@@ -17,6 +17,7 @@ import type { Garment } from './model'
 import {
   createPersonalizationScorer,
   feedbackForOccasion,
+  ratingWeight,
 } from './personalization'
 import { createCompatibilityScorer } from './outfit-compatibility'
 import {
@@ -25,6 +26,7 @@ import {
   type RecentWear,
 } from './wear-history'
 import type { WeatherDay } from './weather'
+import { warmthFit } from './warmth'
 import {
   outfitKey,
   isCompleteOutfit,
@@ -55,6 +57,7 @@ export function eligibleGarments(
   return items.filter(
     (item) =>
       !item.inLaundry &&
+      !item.archivedAt &&
       (options.season === 'Alle' ||
         !item.seasons.length ||
         item.seasons.includes(options.season)) &&
@@ -129,15 +132,23 @@ export function generateOutfits(
       .filter((entry) => entry.verdict === 'rejected')
       .map((entry) => outfitKey(entry.garmentIds)),
   )
-  const liked = new Set(
+  // Liked looks and pieces count a little less once the rating is old.
+  const liked = new Map(
     feedback
       .filter((entry) => entry.verdict === 'liked')
-      .map((entry) => outfitKey(entry.garmentIds)),
+      .map((entry) => [
+        outfitKey(entry.garmentIds),
+        ratingWeight(entry.updatedAt),
+      ]),
   )
   const likedItems = new Map<string, number>()
   for (const entry of feedback.filter((entry) => entry.verdict === 'liked')) {
+    const weight = ratingWeight(entry.updatedAt)
     for (const id of entry.garmentIds)
-      likedItems.set(id, Math.min(1.5, (likedItems.get(id) || 0) + 0.3))
+      likedItems.set(
+        id,
+        Math.min(1.5, (likedItems.get(id) || 0) + 0.3 * weight),
+      )
   }
   const season = seasonFor(history?.day ?? weather?.day ?? localDay(), weather)
   const suitabilityCache = new Map<string, number>()
@@ -155,6 +166,7 @@ export function generateOutfits(
         : 0) +
       occasionItemScore(item, options.occasion) +
       seasonScore(item, season) +
+      warmthFit(item, weather, offset) +
       (likedItems.get(item.id) || 0) +
       personal.itemScore(item) +
       Math.min(1, (wearCounts.get(item.id) ?? 0) * 0.2) -
@@ -233,7 +245,7 @@ export function generateOutfits(
       score += occasionLookScore(selected, options.occasion).score
       score += patternHarmony(selected).score
       score += wornTogetherScore(selected, history?.together)
-      if (liked.has(key)) score += 4
+      score += 4 * (liked.get(key) ?? 0)
       score +=
         noise(key, seed) * (variety === 'explore' ? 0.8 : 0.35) -
         recentCombinationPenalty(key, history) *
@@ -353,7 +365,7 @@ export function generateOutfits(
       )
     if (weather) {
       reasons.push(
-        `Vorhersage: ${Math.round(weather.min)} bis ${Math.round(weather.max)} °C. Saisonangaben helfen bei der groben Auswahl; Material und Wärme bleiben ungeprüft.`,
+        `Vorhersage: ${Math.round(weather.min)} bis ${Math.round(weather.max)} °C. Saison und Wärmegrad helfen bei der Auswahl; Material bleibt ungeprüft.`,
       )
       if (offset)
         reasons.push(

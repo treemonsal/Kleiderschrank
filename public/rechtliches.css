@@ -49,6 +49,8 @@ h1 {
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.022em;
+  /* Long German words break at the soft hyphen, never off screen. */
+  overflow-wrap: break-word;
 }
 .stand {
   margin: 6px 0 24px;

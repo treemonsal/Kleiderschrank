@@ -23,6 +23,7 @@ import { PhotoColorPicker } from './PhotoColorPicker'
 import { BackgroundRemoval } from './BackgroundRemoval'
 import { PhotoAssistant } from './PhotoAssistant'
 import type { PhotoAttributes } from './cloud-ai'
+import { WARMTH_LABELS } from './warmth'
 
 export function Editor({
   item,
@@ -413,6 +414,30 @@ export function Editor({
                   }
                 >
                   {season}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="field">
+            <span id="warmth-label">
+              Wärme <span className="optional">optional</span>
+            </span>
+            <div
+              className="chips wrap"
+              role="group"
+              aria-labelledby="warmth-label"
+            >
+              {([1, 2, 3] as const).map((level) => (
+                <button
+                  className={`chip ${draft.warmth === level ? 'active' : ''}`}
+                  key={level}
+                  type="button"
+                  aria-pressed={draft.warmth === level}
+                  onClick={() =>
+                    update('warmth', draft.warmth === level ? undefined : level)
+                  }
+                >
+                  {WARMTH_LABELS[level]}
                 </button>
               ))}
             </div>

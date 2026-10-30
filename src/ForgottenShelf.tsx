@@ -25,9 +25,10 @@ export function ForgottenShelf({
   const forgottenMode = wear.size > 0
   if (!forgottenMode && !fallback) return null
   const title = forgottenMode ? 'Lange nicht getragen' : 'Zuletzt hinzugefügt'
+  const current = items.filter((item) => !item.archivedAt)
   const shown = (
     forgottenMode
-      ? items
+      ? current
           .filter((item) => !item.inLaundry)
           .sort(
             (a, b) =>
@@ -35,7 +36,7 @@ export function ForgottenShelf({
                 wear.get(b.id)?.lastWorn ?? '',
               ) || a.name.localeCompare(b.name, 'de'),
           )
-      : [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+      : [...current].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
   ).slice(0, limit)
   if (!shown.length) return null
   return (

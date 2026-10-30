@@ -186,7 +186,8 @@ test('Persönliche Kaufideen starten erst nach Freigabe, passen zu echten Stück
     expect(
       await page.evaluate(
         () =>
-          document.documentElement.scrollWidth <= innerWidth &&
+          document.documentElement.scrollWidth <=
+            document.documentElement.clientWidth &&
           document.querySelector('dialog')!.scrollWidth <=
             document.querySelector('dialog')!.clientWidth + 1,
       ),

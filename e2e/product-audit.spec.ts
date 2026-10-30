@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 import { readFile } from 'node:fs/promises'
 const stamp = '2026-01-01T00:00:00.000Z'
 const base = ['Oberteile', 'Hosen', 'Schuhe', 'Jacken'].map((category, i) => ({
@@ -96,7 +96,9 @@ for (const width of [375, 390, 430])
     await expect(page.locator('.daily-context')).toContainText('Ohne Wetter')
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     await page.screenshot({

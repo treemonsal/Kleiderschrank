@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './base'
 const stamp = '2026-01-01T00:00:00.000Z'
 const now = '2026-10-15T10:00:00.000Z'
 const piece = (id: string, name: string, category: string, color: string) => ({
@@ -78,7 +78,9 @@ test('Journal zeigt selten getragene Stücke zuerst und Skizzen zeigen die Farbe
   await expect(shelf).toContainText('Noch nie getragen')
   expect(
     await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
+      () =>
+        document.documentElement.scrollWidth <=
+        document.documentElement.clientWidth,
     ),
   ).toBe(true)
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()

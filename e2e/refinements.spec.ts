@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 import { readFile } from 'node:fs/promises'
 import { refinementFixture } from '../tests/fixtures/refinement'
 
@@ -58,7 +58,9 @@ for (const width of [320, 390]) {
     await expect(daily.locator('.figure-tile.is-new')).toHaveCount(1)
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     await preview.screenshot({
@@ -88,6 +90,48 @@ for (const width of [320, 390]) {
     expect(external).toEqual([])
   })
 }
+
+test('„Weitere Variante“ blättert durch Alternativen und übernimmt die gezeigte', async ({
+  page,
+}) => {
+  await seed(page)
+  const daily = page.getByRole('region', {
+    name: 'Dein Tageslook',
+    exact: true,
+  })
+  await daily.getByRole('button', { name: 'Ähnlich', exact: true }).click()
+  const preview = daily.getByRole('region', {
+    name: 'Vorschau der Anpassung',
+  })
+  await expect(preview).toContainText(/1 von [2-5]/)
+  const first = await preview.locator('p').nth(1).textContent()
+  await preview
+    .getByRole('button', { name: 'Weitere Variante', exact: true })
+    .click()
+  await expect(preview).toContainText(/2 von [2-5]/)
+  const second = await preview.locator('p').nth(1).textContent()
+  expect(second).not.toBe(first)
+  const shown = await daily
+    .locator('.figure-tile .outfit-piece')
+    .evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute('aria-label')),
+    )
+  await preview.getByRole('button', { name: 'Übernehmen', exact: true }).click()
+  await expect(preview).toHaveCount(0)
+  const saved = await exported(page)
+  const names: Record<string, string> = {
+    'top-red': 'Rotes Shirt',
+    'top-beige': 'Beiges Shirt',
+    pants: 'Schwarze Hose',
+    shoes: 'Weisse Sneaker',
+    boots: 'Braune Schuhe',
+    jacket: 'Beige Jacke',
+  }
+  const applied = (saved.preferences.dailySelection.garmentIds as string[])
+    .map((id) => `${names[id] ?? id} öffnen`)
+    .sort()
+  expect(applied).toEqual([...shown].sort())
+})
 
 test('Feedback „Zu auffällig“ und Ablehnung ohne Grund werden dauerhaft gesichert', async ({
   page,

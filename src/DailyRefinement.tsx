@@ -21,6 +21,8 @@ const SHORT: Record<Intent, string> = {
   similar: 'Ähnlich',
 }
 const ORDER: Intent[] = ['warmer', 'quieter', 'similar']
+/** How many alternatives „Weitere Variante“ steps through. */
+const MAX_CHOICES = 5
 
 export interface RefinementProps {
   day: string
@@ -46,18 +48,17 @@ export interface RefinementProps {
  */
 export function DailyRefinement(props: RefinementProps) {
   const [preview, setPreview] = useState<{
-    candidate: OutfitCandidate
+    choices: OutfitCandidate[]
+    index: number
     request: OutfitRefinement
     snapshot: RefinementProps
   }>()
+  const candidate = preview?.choices[preview.index]
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const { onPreview } = props
-  useEffect(
-    () => onPreview(preview?.candidate.garmentIds),
-    [preview, onPreview],
-  )
+  useEffect(() => onPreview(candidate?.garmentIds), [candidate, onPreview])
   useEffect(() => () => onPreview(undefined), [onPreview])
   function suggest(intent: Intent) {
     setError('')
@@ -68,7 +69,7 @@ export function DailyRefinement(props: RefinementProps) {
     }
     const snapshot = props
     const request = { intent, currentIds: snapshot.ids, lockedIds: [] }
-    const candidate = refinementChoices(
+    const choices = refinementChoices(
       snapshot.items,
       snapshot.options,
       snapshot.preferences,
@@ -78,10 +79,12 @@ export function DailyRefinement(props: RefinementProps) {
       snapshot.calendar,
       snapshot.day,
       snapshot.weather,
-    )[0]
-    setPreview(candidate ? { candidate, request, snapshot } : undefined)
+    ).slice(0, MAX_CHOICES)
+    setPreview(
+      choices.length ? { choices, index: 0, request, snapshot } : undefined,
+    )
     setMessage(
-      candidate
+      choices.length
         ? ''
         : intent === 'warmer'
           ? 'Keine wärmere Variante gefunden. Ergänze eine passende Jacke.'
@@ -92,19 +95,17 @@ export function DailyRefinement(props: RefinementProps) {
   }
   const name = (id: string) =>
     props.items.find((item) => item.id === id)?.name ?? ''
-  const added = preview
-    ? preview.candidate.garmentIds.filter(
-        (id) => !preview.snapshot.ids.includes(id),
-      )
-    : []
-  const removed = preview
-    ? preview.snapshot.ids.filter(
-        (id) => !preview.candidate.garmentIds.includes(id),
-      )
-    : []
+  const added =
+    preview && candidate
+      ? candidate.garmentIds.filter((id) => !preview.snapshot.ids.includes(id))
+      : []
+  const removed =
+    preview && candidate
+      ? preview.snapshot.ids.filter((id) => !candidate.garmentIds.includes(id))
+      : []
   return (
     <>
-      {preview && (
+      {preview && candidate && (
         <section
           className="card refinement-preview"
           aria-label="Vorschau der Anpassung"
@@ -112,6 +113,8 @@ export function DailyRefinement(props: RefinementProps) {
         >
           <p className="card-kicker">
             Vorschau · {SHORT[preview.request.intent]}
+            {preview.choices.length > 1 &&
+              ` · ${preview.index + 1} von ${preview.choices.length}`}
           </p>
           <p>
             {added.map(name).join(', ') || 'Gleiche Teile'}
@@ -119,6 +122,22 @@ export function DailyRefinement(props: RefinementProps) {
           </p>
           {error && <ErrorMessage>{error}</ErrorMessage>}
           <div className="refinement-buttons">
+            {preview.choices.length > 1 && (
+              <button
+                type="button"
+                className="text-button refinement-next"
+                disabled={busy}
+                onClick={() => {
+                  setError('')
+                  setPreview({
+                    ...preview,
+                    index: (preview.index + 1) % preview.choices.length,
+                  })
+                }}
+              >
+                Weitere Variante
+              </button>
+            )}
             <button
               type="button"
               className="button secondary"
@@ -135,7 +154,7 @@ export function DailyRefinement(props: RefinementProps) {
               className="button primary"
               disabled={busy}
               onClick={async () => {
-                const { snapshot, request, candidate } = preview
+                const { snapshot, request } = preview
                 setBusy(true)
                 setError('')
                 try {

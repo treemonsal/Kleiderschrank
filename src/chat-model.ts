@@ -1,4 +1,5 @@
 import { CATEGORIES, type Garment } from './model'
+import { WARMTH_LABELS } from './warmth'
 import { interviewContext } from './style-interview'
 import {
   OCCASIONS,
@@ -146,7 +147,7 @@ export function buildChatContext(
     (item.inLaundry ? 0 : 2)
   const groups = CATEGORIES.map((category) =>
     data.garments
-      .filter((item) => item.category === category)
+      .filter((item) => item.category === category && !item.archivedAt)
       .sort((a, b) => score(b) - score(a) || a.id.localeCompare(b.id)),
   )
   const items: Garment[] = []
@@ -198,6 +199,7 @@ export function buildChatContext(
       brand: item.brand.slice(0, 60),
       styles: item.styles,
       seasons: item.seasons,
+      ...(item.warmth ? { warmth: WARMTH_LABELS[item.warmth] } : {}),
       available: !item.inLaundry,
       ...(item.notes ? { notes: item.notes.slice(0, 200) } : {}),
       timesWorn: wear.get(item.id)?.count ?? 0,

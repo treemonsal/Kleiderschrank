@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 
 test.use({ timezoneId: 'Europe/Zurich' })
 
@@ -79,7 +79,9 @@ for (const width of [320, 375, 390, 430])
       expect(Number(weatherBox.height.toFixed(3))).toBeGreaterThanOrEqual(44)
       expect(
         await page.evaluate(
-          () => document.documentElement.scrollWidth <= innerWidth,
+          () =>
+            document.documentElement.scrollWidth <=
+            document.documentElement.clientWidth,
         ),
       ).toBe(true)
     })
