@@ -56,8 +56,12 @@ function touchShim() {
  * WebKit refuses to keep photos (Blobs) in IndexedDB in an ephemeral session,
  * exactly like Safari's private browsing. Playwright's normal contexts are
  * ephemeral, so on WebKit every context gets its own profile on disk instead.
- * Chromium keeps the regular contexts.
+ * Chromium keeps the regular contexts; MYSTYLE_E2E_PROFILE=1 runs it the
+ * WebKit way to check this setup without WebKit installed.
  */
+const usesProfile = (browserName: string) =>
+  browserName === 'webkit' || process.env.MYSTYLE_E2E_PROFILE === '1'
+
 export const test = playwrightTest.extend<{ newDevice: NewDevice }>({
   newDevice: async (
     { browser, browserName, playwright, launchOptions, headless },
@@ -66,16 +70,15 @@ export const test = playwrightTest.extend<{ newDevice: NewDevice }>({
     const opened: BrowserContext[] = []
     const folders: string[] = []
     await use(async (options = {}) => {
-      if (browserName !== 'webkit') return browser.newContext(options)
-      const folder = await mkdtemp(join(tmpdir(), 'mystyle-webkit-'))
+      if (!usesProfile(browserName)) return browser.newContext(options)
+      const folder = await mkdtemp(join(tmpdir(), 'mystyle-profile-'))
       folders.push(folder)
-      const context = await playwright.webkit.launchPersistentContext(folder, {
-        ...launchOptions,
-        headless,
-        ...options,
-      })
-      // A persistent profile opens with a blank page; tests open their own.
-      for (const page of context.pages()) await page.close()
+      const context = await playwright[browserName].launchPersistentContext(
+        folder,
+        { ...launchOptions, headless, ...options },
+      )
+      // A profile opens with one window, which stays open: WebKit's test
+      // browser quits when its last window closes. The `page` fixture uses it.
       await context.addInitScript(touchShim)
       opened.push(context)
       return context
@@ -88,7 +91,7 @@ export const test = playwrightTest.extend<{ newDevice: NewDevice }>({
     {
       browserName,
       newDevice,
-      context: _unused,
+      context: regular,
       baseURL,
       contextOptions,
       deviceScaleFactor,
@@ -106,7 +109,7 @@ export const test = playwrightTest.extend<{ newDevice: NewDevice }>({
     },
     use,
   ) => {
-    if (browserName !== 'webkit') return use(_unused)
+    if (!usesProfile(browserName)) return use(regular)
     await use(
       await newDevice({
         ...contextOptions,
@@ -125,5 +128,9 @@ export const test = playwrightTest.extend<{ newDevice: NewDevice }>({
         colorScheme,
       }),
     )
+  },
+  page: async ({ context, browserName }, use) => {
+    const [first] = usesProfile(browserName) ? context.pages() : []
+    await use(first ?? (await context.newPage()))
   },
 })
