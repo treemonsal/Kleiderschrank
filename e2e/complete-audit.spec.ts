@@ -35,7 +35,9 @@ for (const width of [320, 375, 430])
     }
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
   })
@@ -230,15 +232,18 @@ test('Fehlgeschlagene Freistellungsanzeige versucht erneut und fällt ohne Daten
   await page.evaluate(() => {
     const create = URL.createObjectURL.bind(URL)
     const revoke = URL.revokeObjectURL.bind(URL)
-    let failures = 2
+    // Every cut-out fails twice, counted per image: "Passt gut zu" opens
+    // pictures too, in no fixed order, and must not use up the failures.
+    const failures = new Map<Blob, number>()
     URL.createObjectURL = (value) => {
       const url = create(value)
-      if (
-        value instanceof Blob &&
-        value.type.startsWith('image/') &&
-        failures-- > 0
-      )
-        revoke(url)
+      if (value instanceof Blob && value.type === 'image/png') {
+        const count = failures.get(value) ?? 0
+        if (count < 2) {
+          failures.set(value, count + 1)
+          revoke(url)
+        }
+      }
       return url
     }
   })

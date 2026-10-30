@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 
 const stamp = '2026-01-01T00:00:00.000Z'
 async function seed(page: Page, existing = false) {

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 import { readFile } from 'node:fs/promises'
 const stamp = '2026-01-01T00:00:00.000Z'
 const now = '2026-10-15T10:00:00.000Z'
@@ -118,6 +118,30 @@ test('Alltag-Einstellungen bleiben gespeichert', async ({ page }) => {
   await page
     .getByRole('checkbox', { name: 'Automatisch in die Wäsche legen' })
     .uncheck()
+  // The switch flips at once; reload only after both choices are written.
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          new Promise((resolve, reject) => {
+            const request = indexedDB.open('mystyle-private-wardrobe')
+            request.onerror = () => reject(request.error)
+            request.onsuccess = () => {
+              const database = request.result
+              const read = database
+                .transaction('preferences')
+                .objectStore('preferences')
+                .get('personal')
+              read.onsuccess = () => {
+                database.close()
+                const { comfort, autoLaundry } = read.result ?? {}
+                resolve(`${comfort}/${autoLaundry}`)
+              }
+            }
+          }),
+      ),
+    )
+    .toBe('cold/false')
   await page.reload()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })

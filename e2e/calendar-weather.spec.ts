@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 import { readFile } from 'node:fs/promises'
 import { pickJournalDay } from './day-helpers'
 
@@ -429,14 +429,18 @@ for (const width of [375, 390, 430]) {
     await openWeather(page)
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
     await page.getByRole('button', { name: 'Journal', exact: true }).click()
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     await page.screenshot({
@@ -451,7 +455,9 @@ for (const width of [375, 390, 430]) {
     await page.getByRole('button', { name: 'Journal', exact: true }).click()
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     await page.screenshot({

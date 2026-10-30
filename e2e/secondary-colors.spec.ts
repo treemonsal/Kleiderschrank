@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './base'
 import { readFile } from 'node:fs/promises'
 
 test('Ein Stück bekommt eine Hauptfarbe und bis zu drei Zweitfarben, die gesichert werden', async ({

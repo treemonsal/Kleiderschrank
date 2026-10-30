@@ -3,6 +3,8 @@ import { flushSync } from 'react-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import {
+  Archive,
+  ArchiveRestore,
   ArrowRight,
   BookOpen,
   CircleAlert,
@@ -24,6 +26,7 @@ import {
 import {
   db,
   deleteGarment,
+  setArchived,
   storageError,
   toggleFavorite,
   setLaundry,
@@ -43,6 +46,7 @@ import { ErrorMessage, GarmentCard, GarmentPicture, Sheet } from './ui'
 import { useStylistInbox } from './stylist-inbox'
 import { carriesImage, imagesFromDrop, imagesFromPaste } from './image-drop'
 import { useDriveSync } from './DriveSync'
+import { WARMTH_LABELS } from './warmth'
 import {
   restorePageScroll,
   scrollSectionIntoView,
@@ -135,10 +139,21 @@ function Wardrobe({
   const [category, setCategory] = useViewState('wardrobe.category', 'Alle')
   const [favorites, setFavorites] = useViewState('wardrobe.favorites', false)
   const [laundryOnly, setLaundryOnly] = useViewState('wardrobe.laundry', false)
-  const filtered = filterGarments(items, '', category, favorites)
+  const [archiveOnly, setArchiveOnly] = useViewState('wardrobe.archive', false)
+  // Sorted-out pieces have their own list; everything else shows the rest.
+  const active = items.filter((item) => !item.archivedAt)
+  const archived = items.filter((item) => item.archivedAt)
+  const showArchive = archiveOnly && archived.length > 0
+  const base = showArchive ? archived : active
+  const filtered = filterGarments(base, '', category, favorites)
     .filter((item) => !laundryOnly || item.inLaundry)
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-  const hasFilters = category !== 'Alle' || favorites || laundryOnly
+    .sort((a, b) =>
+      showArchive
+        ? (b.archivedAt ?? '').localeCompare(a.archivedAt ?? '')
+        : b.createdAt.localeCompare(a.createdAt),
+    )
+  const hasFilters =
+    category !== 'Alle' || favorites || laundryOnly || showArchive
   return (
     <div className="view wardrobe-view">
       <header className="page-heading journal-heading">
@@ -146,8 +161,9 @@ function Wardrobe({
           <div>
             <h1>Garderobe</h1>
             <p className="page-sub">
-              {items.length} {items.length === 1 ? 'Stück' : 'Stücke'} ·{' '}
-              {items.filter((item) => item.inLaundry).length} in der Wäsche
+              {active.length} {active.length === 1 ? 'Stück' : 'Stücke'} ·{' '}
+              {active.filter((item) => item.inLaundry).length} in der Wäsche
+              {archived.length > 0 && ` · ${archived.length} aussortiert`}
             </p>
           </div>
           <div className="heading-actions">
@@ -177,8 +193,8 @@ function Wardrobe({
             {c}{' '}
             <small>
               {c === 'Alle'
-                ? items.length
-                : items.filter((item) => item.category === c).length}
+                ? base.length
+                : base.filter((item) => item.category === c).length}
             </small>
           </button>
         ))}
@@ -208,11 +224,22 @@ function Wardrobe({
           <LaundryIcon size={15} />
           In der Wäsche
         </button>
+        {archived.length > 0 && (
+          <button
+            className={`chip ${showArchive ? 'active' : ''}`}
+            aria-label="Nur aussortierte Stücke"
+            aria-pressed={showArchive}
+            onClick={() => setArchiveOnly(!showArchive)}
+          >
+            <Archive size={14} strokeWidth={1.6} />
+            Aussortiert
+          </button>
+        )}
       </div>
-      {items.length > 0 && (
+      {!showArchive && active.length > 0 && (
         <figure className="color-balance">
           <div aria-hidden="true">
-            {[...items]
+            {[...active]
               .sort(
                 (a, b) =>
                   (wear.get(b.id)?.count ?? 0) - (wear.get(a.id)?.count ?? 0),
@@ -268,6 +295,7 @@ function Detail({
   onEdit,
   onFavorite,
   onDeleted,
+  onArchived,
 }: {
   item: Garment
   items: Garment[]
@@ -277,10 +305,22 @@ function Detail({
   onEdit: () => void
   onFavorite: () => Promise<void>
   onDeleted: () => void
+  onArchived: (archived: boolean) => void
 }) {
   const [confirm, setConfirm] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  async function archive(archived: boolean) {
+    setBusy(true)
+    setError('')
+    try {
+      await setArchived(item.id, archived)
+      onArchived(archived)
+    } catch (err) {
+      setError(storageError(err))
+      setBusy(false)
+    }
+  }
   return (
     <Sheet
       title={item.name}
@@ -307,6 +347,16 @@ function Detail({
                 ? `zuletzt ${lastWorn(wear.lastWorn)}`
                 : 'noch nie getragen'}
             </p>
+            {item.archivedAt && (
+              <p className="detail-archived">
+                Aussortiert am{' '}
+                {new Date(item.archivedAt).toLocaleDateString('de-CH', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })}
+              </p>
+            )}
           </div>
         </div>
         <dl className="detail-facts">
@@ -320,6 +370,7 @@ function Detail({
               ],
               ['Marke', item.brand],
               ['Saison', item.seasons.join(', ')],
+              ['Wärme', item.warmth ? WARMTH_LABELS[item.warmth] : ''],
               ['Stil', item.styles.join(', ')],
               ['Notiz', item.notes],
             ] as const
@@ -332,62 +383,66 @@ function Detail({
               </div>
             ))}
         </dl>
-        <PairingSuggestions item={item} items={items} onOpen={onOpen} />
-        <div className="detail-toggles">
-          <button
-            className="button secondary laundry-toggle"
-            data-motion="laundry"
-            disabled={busy}
-            aria-pressed={!!item.inLaundry}
-            onClick={async () => {
-              setBusy(true)
-              setError('')
-              try {
-                await setLaundry(item.id, !item.inLaundry)
-              } catch (error) {
-                setError(storageError(error))
-              } finally {
-                setBusy(false)
+        {!item.archivedAt && (
+          <PairingSuggestions item={item} items={items} onOpen={onOpen} />
+        )}
+        {!item.archivedAt && (
+          <div className="detail-toggles">
+            <button
+              className="button secondary laundry-toggle"
+              data-motion="laundry"
+              disabled={busy}
+              aria-pressed={!!item.inLaundry}
+              onClick={async () => {
+                setBusy(true)
+                setError('')
+                try {
+                  await setLaundry(item.id, !item.inLaundry)
+                } catch (error) {
+                  setError(storageError(error))
+                } finally {
+                  setBusy(false)
+                }
+              }}
+            >
+              <LaundryIcon size={16} />
+              {item.inLaundry ? 'Aus der Wäsche nehmen' : 'In die Wäsche legen'}
+            </button>
+            <button
+              data-motion="heart"
+              className={`icon-button detail-heart ${item.favorite ? 'is-favorite' : ''}`}
+              aria-label={
+                item.favorite ? 'Favorit entfernen' : 'Als Favorit markieren'
               }
-            }}
-          >
-            <LaundryIcon size={16} />
-            {item.inLaundry ? 'Aus der Wäsche nehmen' : 'In die Wäsche legen'}
-          </button>
-          <button
-            data-motion="heart"
-            className={`icon-button detail-heart ${item.favorite ? 'is-favorite' : ''}`}
-            aria-label={
-              item.favorite ? 'Favorit entfernen' : 'Als Favorit markieren'
-            }
-            aria-pressed={item.favorite}
-            disabled={busy}
-            onClick={async () => {
-              setBusy(true)
-              setError('')
-              try {
-                await onFavorite()
-              } catch (error) {
-                setError(storageError(error))
-              } finally {
-                setBusy(false)
-              }
-            }}
-          >
-            <Heart
-              size={18}
-              strokeWidth={1.5}
-              fill={item.favorite ? 'currentColor' : 'none'}
-            />
-          </button>
-        </div>
+              aria-pressed={item.favorite}
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true)
+                setError('')
+                try {
+                  await onFavorite()
+                } catch (error) {
+                  setError(storageError(error))
+                } finally {
+                  setBusy(false)
+                }
+              }}
+            >
+              <Heart
+                size={18}
+                strokeWidth={1.5}
+                fill={item.favorite ? 'currentColor' : 'none'}
+              />
+            </button>
+          </div>
+        )}
         {error && <ErrorMessage>{error}</ErrorMessage>}
         {confirm ? (
           <div className="delete-confirm" role="alert">
-            <h4>Dieses Stück wirklich löschen?</h4>
+            <h4>Dieses Stück endgültig löschen?</h4>
             <p>
               Outfits, Kalendereinträge und Bewertungen mit diesem Stück werden
-              ebenfalls gelöscht.
+              ebenfalls gelöscht. Aussortiert bleibt dein Journal vollständig.
             </p>
             <div className="photo-actions">
               <button
@@ -418,17 +473,41 @@ function Detail({
           </div>
         ) : (
           <div className="detail-actions">
-            <button className="button primary" onClick={onEdit}>
-              <Pencil size={17} />
-              Bearbeiten
-            </button>
-            <button
-              className="icon-button delete-button"
-              aria-label="Stück löschen"
-              onClick={() => setConfirm(true)}
-            >
-              <Trash2 size={19} />
-            </button>
+            {item.archivedAt ? (
+              <>
+                <button
+                  className="button primary"
+                  disabled={busy}
+                  onClick={() => void archive(false)}
+                >
+                  <ArchiveRestore size={17} />
+                  Zurückholen
+                </button>
+                <button
+                  className="icon-button delete-button"
+                  aria-label="Stück löschen"
+                  disabled={busy}
+                  onClick={() => setConfirm(true)}
+                >
+                  <Trash2 size={19} />
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="button primary" onClick={onEdit}>
+                  <Pencil size={17} />
+                  Bearbeiten
+                </button>
+                <button
+                  className="icon-button archive-button"
+                  aria-label="Aussortieren"
+                  disabled={busy}
+                  onClick={() => void archive(true)}
+                >
+                  <Archive size={19} />
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -799,7 +878,15 @@ export default function App() {
           onFavorite={() => toggleFavorite(selected)}
           onDeleted={() => {
             setSelectedId(null)
-            notify('Das Stück wurde gelöscht.')
+            notify('Das Stück wurde endgültig gelöscht.')
+          }}
+          onArchived={(archived) => {
+            setSelectedId(null)
+            notify(
+              archived
+                ? 'Aussortiert. Tragetage und Looks bleiben im Journal; unter Garderobe → Aussortiert holst du es zurück.'
+                : 'Zurück in der Garderobe.',
+            )
           }}
         />
       )}

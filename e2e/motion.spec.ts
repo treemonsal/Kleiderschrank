@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './base'
 
 test('Menüleiste bleibt auch während der Seitenanimation vor dem Inhalt sichtbar', async ({
   page,

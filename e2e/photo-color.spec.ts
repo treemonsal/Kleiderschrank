@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 import { readFile } from 'node:fs/promises'
 
 async function image(page: Page, left = '#0000ff', right = left) {
@@ -235,7 +235,9 @@ for (const width of [375, 390, 430]) {
     ).toBe(true)
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     const range = await page

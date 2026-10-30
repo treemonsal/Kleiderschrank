@@ -1,12 +1,20 @@
 # Entwicklungsplan
 
+## Version 0.37.0 – Aussortieren, Wärme, mehr Varianten
+
+- [x] Aussortieren statt Löschen: Tragetage, Looks und Bewertungen bleiben, das Stück verschwindet aus Vorschlägen; Filter „Aussortiert“ zum Zurückholen oder endgültigen Löschen; in Sicherung und Abgleich enthalten
+- [x] Wärme (Leicht, Mittel, Warm) im Editor und aus der Foto-KI; passt zum Wetter und macht „Wärmer“ genauer (dicke statt dünner Jacke)
+- [x] „Weitere Variante“ blättert beim Verfeinern durch bis zu fünf Alternativen
+- [x] Ältere Bewertungen zählen leicht weniger (nach einem Jahr 80 %)
+- [ ] WebKit-Lauf auswerten und echte Safari-Fehler beheben
+
 ## Version 0.36.0 – Befunde aus der externen Code-Prüfung
 
 - [x] Bewertungen gelten pro Anlass: Gefällt für Alltag und passt nicht fürs Büro überschreiben sich nicht mehr (Schlüssel mit Anlass, Datenbankversion 7 stellt alte Einträge um, Sicherungen und Google-Abgleich lesen beide Formen)
 - [x] Ein Tragetag speichert seinen eigenen Anlass; ein als Alltag gespeicherter Look wird an einem Büro-Tag nicht mehr als Alltag geführt
 - [x] KI-Foto-Schritte einzeln: Erkennung und Freistellung haben je ein eigenes Zeitlimit, fertige Ergebnisse werden sofort übernommen und gehen bei einer Zeitüberschreitung des anderen Schritts nicht verloren; „Original verwenden“ schon während des Laufs
 - [x] Prüfung auf GitHub: Servertests des eigenen KI-Servers (ohne Modell) und ein WebKit-Lauf (vorerst nur informativ)
-- [ ] Offen, Entscheidung nötig: Stücke archivieren statt löschen, damit Tragetage erhalten bleiben
+- [x] Entscheidung 29.10.2026: Stücke werden aussortiert statt gelöscht (umgesetzt in 0.37.0)
 
 ## Version 0.35.0 – Claude-Look mit Apple-Aufbau
 

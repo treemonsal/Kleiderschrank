@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './base'
 
 test('Datenschutz und Nutzungsbedingungen sind aus den Einstellungen erreichbar', async ({
   page,
@@ -20,11 +20,16 @@ test('Datenschutz und Nutzungsbedingungen sind aus den Einstellungen erreichbar'
   await expect(
     page.getByRole('button', { name: 'Einstellungen öffnen', exact: true }),
   ).toBeVisible()
-  // Pages must not scroll sideways on a phone.
-  await page.goto('datenschutz.html')
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
-  ).toBe(true)
+  // Pages must not scroll sideways, even on the smallest phone.
+  await page.setViewportSize({ width: 320, height: 640 })
+  for (const file of ['datenschutz.html', 'nutzungsbedingungen.html']) {
+    await page.goto(file)
+    expect(
+      await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
+      ),
+    ).toBe(true)
+  }
 })

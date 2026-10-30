@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 import { readFile } from 'node:fs/promises'
 
 test.setTimeout(120000)

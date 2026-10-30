@@ -152,7 +152,10 @@ export function shoppingPieces(data: ShoppingData): Garment[] {
   )
   const groups = CATEGORIES.map((category) =>
     data.garments
-      .filter((item) => item.category === category && !item.inLaundry)
+      .filter(
+        (item) =>
+          item.category === category && !item.inLaundry && !item.archivedAt,
+      )
       .sort(
         (a, b) =>
           Number(liked.has(b.id)) - Number(liked.has(a.id)) ||

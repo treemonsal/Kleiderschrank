@@ -2241,3 +2241,62 @@ input[type='range'],
     transition: none;
   }
 }
+
+/* Sorting a piece out: a neutral round action beside „Bearbeiten“. */
+.archive-button,
+.icon-button.archive-button {
+  width: 49px;
+  height: 49px;
+  flex: none;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sys-surface);
+  color: var(--claude-dark);
+  box-shadow: inset 0 0 0 1px var(--sys-border);
+}
+.delete-button,
+.icon-button.delete-button {
+  width: 49px;
+  height: 49px;
+  flex: none;
+  border-radius: 50%;
+}
+.detail-archived {
+  display: inline-block;
+  max-width: 100%;
+  margin: 8px 0 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--sys-surface-2);
+  color: var(--sys-label-2);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Refinement preview: „Weitere Variante“ steps through the alternatives. */
+.refinement-buttons {
+  flex-wrap: wrap;
+  align-items: center;
+}
+.refinement-buttons .refinement-next {
+  min-height: 44px;
+  margin-right: auto;
+}
+
+/* Detail actions never push the sheet wider than the screen. */
+.detail-actions > .button {
+  min-width: 0;
+}
+/* Three filters (Favoriten, Wäsche, Aussortiert) wrap on narrow screens. */
+.filter-chips {
+  flex-wrap: wrap;
+}
+
+/* Seven 44 px days only fit without the column gaps below 390 px (iPhone SE,
+   mini); with them each day was 43.9 px wide. */
+@media (max-width: 389px) {
+  .calendar-grid,
+  .calendar-weekdays {
+    column-gap: 0;
+  }
+}

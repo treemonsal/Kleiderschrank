@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 import { readFile } from 'node:fs/promises'
 import type { Category } from '../src/model'
 
@@ -154,6 +154,15 @@ test('Fehlende Kleidung wird erklärt und Löschungen entfernen abhängige Looks
   await expect(page.locator('.saved-look')).toHaveCount(1)
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
   await page.getByRole('button', { name: 'Hemd öffnen', exact: true }).click()
+  // Sorted out, the piece leaves the wardrobe but its saved look stays.
+  await page.getByRole('button', { name: 'Aussortieren', exact: true }).click()
+  await page.getByRole('button', { name: 'Looks', exact: true }).click()
+  await expect(page.locator('.saved-look')).toHaveCount(1)
+  await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Nur aussortierte Stücke', exact: true })
+    .click()
+  await page.getByRole('button', { name: 'Hemd öffnen', exact: true }).click()
   await page.getByRole('button', { name: 'Stück löschen', exact: true }).click()
   await expect(
     page.getByText(
@@ -222,7 +231,9 @@ for (const width of [375, 390, 430]) {
     await expect(page.getByRole('heading', { name: 'Looks' })).toBeVisible()
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     await page.screenshot({

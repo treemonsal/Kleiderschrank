@@ -92,7 +92,8 @@ describe('Persönliche Auswahl statt rein dekorativem Fragebogen', () => {
         items,
         DEFAULT_OUTFIT_OPTIONS,
         profile({ styleProfile: { ...DEFAULT_STYLE_PROFILE, variety } }),
-        [rating()],
+        // A fresh rating: this test is about variety, not about its age.
+        [rating({ updatedAt: new Date().toISOString() })],
         0,
         undefined,
         new Map(),

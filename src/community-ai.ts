@@ -18,6 +18,7 @@ color: Schwarz, Weiss, Grau, Beige, Braun, Blau, Grün, Rot, Rosa, Gelb, Violett
 brand: empty unless the brand name/logo is clearly legible; never guess,
 seasons: array from Frühling, Sommer, Herbst, Winter, or [] if uncertain,
 styles: array from Casual, Minimalistisch, Elegant, Sportlich, Streetwear, Vintage, or [],
+warmth: 1 (light, e.g. T-shirt, linen, sandals), 2 (medium, e.g. shirt, jeans, sneakers) or 3 (warm, e.g. knit, wool coat, boots), or null if uncertain,
 notes: short German description of visible details only, max 400 chars. Do not invent fabric, fit or personal characteristics. Seasons/style are estimates. If no clothing is recognizable return null.`
 const options = {
   credentials: 'omit',

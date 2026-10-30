@@ -1,4 +1,5 @@
 import { CATEGORIES, COLORS, SEASONS, STYLES, type GarmentDraft } from './model'
+import { isWarmth } from './warmth'
 import { blobToDataURL, validateBackupPhotos } from './photos'
 
 export interface AIConnection {
@@ -10,7 +11,8 @@ export interface AIConnection {
 export type PhotoAttributes = Pick<
   GarmentDraft,
   'name' | 'category' | 'color' | 'brand' | 'seasons' | 'styles' | 'notes'
->
+> &
+  Partial<Pick<GarmentDraft, 'warmth'>>
 export type PhotoTask = 'all' | 'attributes' | 'cutout'
 export interface AIResult {
   attributes?: PhotoAttributes
@@ -110,6 +112,8 @@ export function parseAttributes(value: unknown): PhotoAttributes {
     seasons: list('seasons', SEASONS),
     styles: list('styles', STYLES),
     notes: text('notes', 2000),
+    // Optional and only taken when it is one of the three levels.
+    ...(isWarmth(a.warmth) ? { warmth: a.warmth } : {}),
   }
 }
 async function readResponse(

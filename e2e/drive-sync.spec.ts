@@ -1,5 +1,6 @@
-import { test, expect, type BrowserContext, type Page } from '@playwright/test'
+import { test, expect, type BrowserContext, type Page } from './base'
 import { FakeDrive } from '../tests/fixtures/fake-drive'
+import { sortOutAndDelete } from './garment-helpers'
 
 // Network mocks use page.route, which a controlling service worker bypasses.
 test.use({ serviceWorkers: 'block' })
@@ -31,7 +32,12 @@ async function device(context: BrowserContext, drive: FakeDrive) {
       scope: 'https://www.googleapis.com/auth/drive.appdata openid email',
       state: url.searchParams.get('state')!,
     }).toString()
-    return route.fulfill({ status: 302, headers: { location: back.href } })
+    // WebKit cannot fulfil a redirect status, so the fake Google page sends
+    // the browser back itself, like the real redirect would.
+    return route.fulfill({
+      contentType: 'text/html',
+      body: `<script>location.replace(${JSON.stringify(back.href)})</script>`,
+    })
   })
   await context.route('https://openidconnect.googleapis.com/**', (route) =>
     route.fulfill({
@@ -113,15 +119,15 @@ test('Ohne eingerichtete Google-Anmeldung zeigt die App keinen Anmeldeknopf', as
 })
 
 test('Zwei Geräte mit demselben Google-Konto teilen Stücke und Löschungen', async ({
-  browser,
+  newDevice,
 }, info) => {
   const drive = new FakeDrive()
   const options = {
     ...info.project.use,
     serviceWorkers: 'block' as const,
   }
-  const phone = await browser.newContext(options)
-  const laptop = await browser.newContext(options)
+  const phone = await newDevice(options)
+  const laptop = await newDevice(options)
   try {
     const a = await device(phone, drive)
     await addPiece(a, 'Blaues Hemd', 'Oberteile')
@@ -139,10 +145,7 @@ test('Zwei Geräte mit demselben Google-Konto teilen Stücke und Löschungen', a
     await b
       .getByRole('button', { name: 'Graue Hose öffnen', exact: true })
       .click()
-    await b.getByRole('button', { name: 'Stück löschen', exact: true }).click()
-    await b
-      .getByRole('button', { name: 'Endgültig löschen', exact: true })
-      .click()
+    await sortOutAndDelete(b, 'Graue Hose')
     // Local changes are uploaded a few seconds later on their own.
     await expect
       .poll(
@@ -185,10 +188,10 @@ test('Zwei Geräte mit demselben Google-Konto teilen Stücke und Löschungen', a
 })
 
 test('Eine abgelaufene Anmeldung wird beim App-Start mit einer Weiterleitung erneuert', async ({
-  browser,
+  newDevice,
 }, info) => {
   const drive = new FakeDrive()
-  const context = await browser.newContext({
+  const context = await newDevice({
     ...info.project.use,
     serviceWorkers: 'block',
   })

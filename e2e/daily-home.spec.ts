@@ -1,4 +1,4 @@
-import { test, expect, type Page, type Locator } from '@playwright/test'
+import { test, expect, type Page, type Locator } from './base'
 import { readFile } from 'node:fs/promises'
 import { stepDay } from './day-helpers'
 const stamp = '2026-01-01T00:00:00.000Z'
@@ -279,7 +279,9 @@ test('Wischen wechselt Tage auf Heute und lässt Tabs, vertikales Scrollen, Eing
 test('Native Touch-Geste im mobilen Chromium wechselt den Tag und behält die Startseite', async ({
   page,
   context,
+  browserName,
 }) => {
+  test.skip(browserName !== 'chromium', 'Touch-Eingaben über CDP')
   await page.clock.install({ time: new Date(now) })
   await page.goto('/')
   const bounds = await page.locator('.daily-look').boundingBox()
@@ -309,7 +311,9 @@ test('Native Touch-Geste im mobilen Chromium wechselt den Tag und behält die St
 test('Native Tagesgeste über einem Outfitfoto öffnet keine Kleidungsdetails', async ({
   page,
   context,
+  browserName,
 }) => {
+  test.skip(browserName !== 'chromium', 'Touch-Eingaben über CDP')
   await page.clock.install({ time: new Date(now) })
   await page.goto('/')
   const session = await context.newCDPSession(page)
@@ -494,7 +498,9 @@ for (const width of [375, 390, 430]) {
     ).toBeVisible()
     expect(
       await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
       ),
     ).toBe(true)
     await page.screenshot({
@@ -662,7 +668,9 @@ test('Wäsche-Status übersteht Neustart und Bearbeitung, filtert Vorschläge un
   await expect(page.locator('.garment-card')).toContainText('Hemd')
   expect(
     await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
+      () =>
+        document.documentElement.scrollWidth <=
+        document.documentElement.clientWidth,
     ),
   ).toBe(true)
   await page.screenshot({
@@ -734,7 +742,9 @@ test('Tageskarte folgt dem Finger, federt bei kurzer Geste zurück und manuelle 
   ).toContain('40')
   expect(
     await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
+      () =>
+        document.documentElement.scrollWidth <=
+        document.documentElement.clientWidth,
     ),
   ).toBe(true)
   await touch('touchend', 230)

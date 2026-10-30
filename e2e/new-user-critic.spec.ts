@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './base'
 import { stepDay } from './day-helpers'
 
 test('Leere Garderobe führt direkt zum ersten Stück statt in eine leere Outfit-Auswahl', async ({

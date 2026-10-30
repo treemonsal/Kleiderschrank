@@ -19,7 +19,7 @@ export function outfitsWith(
   feedback: OutfitFeedback[],
 ): OutfitCandidate[] {
   const piece = items.find((item) => item.id === id)
-  if (!piece) return []
+  if (!piece || piece.archivedAt) return []
   const anchor = { ...piece, inLaundry: false }
   const others = items.filter((item) => item.id !== id)
   const options = {

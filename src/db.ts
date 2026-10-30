@@ -1,3 +1,4 @@
+import { isWarmth } from './warmth'
 import Dexie, { type Table } from 'dexie'
 import { parseStyleProfile } from './personalization'
 import { cleanSecondaryColors, COLORS, STYLES } from './model'
@@ -453,6 +454,7 @@ export async function saveGarment(
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   }
+  if (!isWarmth(garment.warmth)) delete garment.warmth
   const secondary = cleanSecondaryColors(draft.secondaryColors, draft.color)
   if (secondary.length) garment.secondaryColors = secondary
   else delete garment.secondaryColors
@@ -513,9 +515,56 @@ export function storageError(error: unknown): string {
   if (error instanceof Error && /quota/i.test(error.name + error.message)) {
     return 'Der Gerätespeicher ist voll. Sichere deine Daten und schaffe Platz, bevor du es erneut versuchst.'
   }
+  // Safari keeps no photos in IndexedDB while browsing privately.
+  const inner = (error as { inner?: unknown } | null)?.inner
+  if (
+    [error, inner].some(
+      (item) => item instanceof Error && /blob/i.test(item.message),
+    )
+  ) {
+    return 'Im privaten Surfen kann Safari keine Fotos speichern. Öffne MyStyle in einem normalen Tab oder vom Home-Bildschirm.'
+  }
   return 'Die Daten konnten nicht lokal gespeichert werden. Bitte versuche es erneut. Prüfe, ob dein Browser lokale Speicherung erlaubt.'
 }
 
+/**
+ * Sorts a piece out (or brings it back). It leaves suggestions and the
+ * wardrobe list; worn days, looks and ratings that include it stay intact.
+ */
+export async function setArchived(
+  id: string,
+  archived: boolean,
+  database = db,
+): Promise<void> {
+  await database.transaction(
+    'rw',
+    database.garments,
+    database.preferences,
+    async () => {
+      const current = await database.garments.get(id)
+      if (!current)
+        throw new UserFacingError('Dieses Stück ist nicht mehr vorhanden.')
+      const now = new Date(
+        Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
+      ).toISOString()
+      const { archivedAt: _previous, ...rest } = current
+      await database.garments.put(
+        archived
+          ? { ...rest, archivedAt: current.archivedAt ?? now, updatedAt: now }
+          : { ...rest, updatedAt: now },
+      )
+      const preferences = await database.preferences.get('personal')
+      if (archived && preferences?.dailySelection?.garmentIds.includes(id))
+        await database.preferences.put({
+          ...preferences,
+          dailySelection: undefined,
+          updatedAt: new Date(
+            Math.max(Date.now(), Date.parse(preferences.updatedAt) + 1),
+          ).toISOString(),
+        })
+    },
+  )
+}
 export async function setLaundry(
   id: string,
   inLaundry: boolean,

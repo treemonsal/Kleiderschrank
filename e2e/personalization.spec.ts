@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page } from './base'
 const stamp = '2026-01-01T00:00:00.000Z'
 const garments = [
   {
@@ -299,7 +299,7 @@ test('Likes bleiben nach Neustart erhalten und Zurücksetzen schützt das Stilpr
 
 test('Profil und Feedback sind per Sicherung auf einem zweiten Gerät nutzbar', async ({
   page,
-  browser,
+  newDevice,
 }) => {
   await page.goto('/')
   await importData(page)
@@ -308,7 +308,7 @@ test('Profil und Feedback sind per Sicherung auf einem zweiten Gerät nutzbar', 
     .getByRole('button', { name: 'Tageslook: Gefällt mir', exact: true })
     .click()
   const data = await exported(page)
-  const context = await browser.newContext()
+  const context = await newDevice()
   const other = await context.newPage()
   await other.goto('/')
   await expect(
