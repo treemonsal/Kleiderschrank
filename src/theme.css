@@ -40,8 +40,8 @@
   --sys-danger-fill: rgb(217 200 169 / 0.16);
   --sys-success: var(--c-ink);
   --sys-heart: var(--c-accent);
-  --sys-material: rgb(35 35 37 / 0.97);
-  --sys-material-thick: rgb(35 35 37 / 0.97);
+  --sys-material: var(--c-ground);
+  --sys-material-thick: var(--c-ground);
   --sys-scrim: rgb(0 0 0 / 0.5);
   --sys-shadow-card: none;
   --sys-shadow-sheet: none;
