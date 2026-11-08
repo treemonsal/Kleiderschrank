@@ -1,5 +1,15 @@
 # Entwicklungsplan
 
+## Version 0.38.0 – Charcoal & Sand
+
+- [x] Dunkles Design C (Charcoal `#232325`, Sand `#d9c8a9`), immer dunkel; Claude-Look im Branch `backup/design-0.37.0-claude`
+- [x] Nichts leuchtet: keine Schatten, keine Unschärfe
+- [x] Keine Box in der Box: Look-Tafel, Detail-Fakten, Kalendertag, Stilgespräch, Wetter flach
+- [x] Konzentrische Ecken, grössere Look-Bilder und grosser Look-Titel, Namen direkt auf dem Bild
+- [x] Unnötige Texte und Badges entfernt (Legenden, Untertitel, „Für dich zusammengestellt“, „4 Teile“, „Ohne Wetter“, „Offen“, „Pflichtfeld“, Farbbilanz, Zähler 0, leere Kategorien)
+- [x] Echte Kleidungs-Icons (Phosphor) statt eigener Zeichnungen
+- [ ] Echter Test auf dem iPhone
+
 ## Version 0.37.0 – Aussortieren, Wärme, mehr Varianten
 
 - [x] Aussortieren statt Löschen: Tragetage, Looks und Bewertungen bleiben, das Stück verschwindet aus Vorschlägen; Filter „Aussortiert“ zum Zurückholen oder endgültigen Löschen; in Sicherung und Abgleich enthalten

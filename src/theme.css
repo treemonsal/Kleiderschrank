@@ -1,52 +1,51 @@
 /*
- * Claude look (0.35.0): Apple structure, type and motion (apple-design
- * skill: system font with Dynamic Type, grouped surfaces, material bars,
- * springs in src/spring.ts and src/useSheetMotion.ts) in Claude's colours
- * and shapes. Colours are Anthropic's published brand palette
- * (github.com/anthropics/skills, brand-guidelines): Dark #141413,
- * Light #faf9f5, Light Gray #e8e6dc, Mid Gray #b0aea5 and Orange #d97757,
- * the orange only on shapes, as the guidelines say. Icons are Lucide with
- * Claude Design's thin round strokes. Light only. Loaded after journal.css;
- * the Classical journal design lives on backup/design-0.34.1-journal.
+ * Charcoal and sand (0.38.0, Tim's choice): one dark ground #232325, warm
+ * light ink #eee6d8 and sand #d9c8a9 as the only accent. Always dark.
+ * Flat: one level of surface, nothing glows (no shadows, no blur), corners
+ * concentric. Structure and motion from the apple-design skill (system font
+ * with Dynamic Type, springs in src/spring.ts and src/useSheetMotion.ts).
+ * Icons: Lucide; clothing from Phosphor (src/GarmentSketch.tsx). Loaded
+ * after journal.css. Earlier looks: backup/design-0.37.0-claude and
+ * backup/design-0.34.1-journal. Details in design/CHARCOAL_SAND.md.
  */
 
 /* ── Tokens ────────────────────────────────────────────────────────── */
 :root {
-  --claude-dark: #141413;
-  --claude-light: #faf9f5;
-  --claude-light-gray: #e8e6dc;
-  --claude-mid-gray: #b0aea5;
-  --claude-orange: #d97757;
-  /* Secondary text in the same warm grey family, readable (6.3:1). */
-  --claude-text-2: #5e5d59;
+  /* Charcoal and sand (0.38.0): one dark ground, warm light ink, sand
+     as the only accent. No pure black, no pure white. */
+  --c-ground: #232325;
+  --c-ink: #eee6d8;
+  --c-ink-2: #b5ad9f;
+  --c-ink-3: #878075;
+  --c-line: #3a3936;
+  --c-accent: #d9c8a9;
 
-  --sys-bg: var(--claude-light);
-  --sys-surface: #ffffff;
-  --sys-surface-2: #f0eee6;
-  --sys-elevated: #ffffff;
-  --sys-fill: rgb(20 20 19 / 0.05);
-  --sys-fill-strong: rgb(20 20 19 / 0.09);
-  --sys-label: var(--claude-dark);
-  --sys-label-2: var(--claude-text-2);
-  --sys-label-3: var(--claude-mid-gray);
-  --sys-separator: var(--claude-light-gray);
-  --sys-separator-opaque: var(--claude-light-gray);
-  --sys-border: rgb(20 20 19 / 0.14);
-  --sys-tint: var(--claude-dark);
-  --sys-tint-text: var(--claude-dark);
-  --sys-tint-fill: rgb(217 119 87 / 0.16);
-  --sys-accent: var(--claude-orange);
-  --sys-danger: var(--claude-dark);
-  --sys-danger-fill: rgb(217 119 87 / 0.16);
-  --sys-success: var(--claude-dark);
-  --sys-heart: var(--claude-orange);
-  --sys-material: rgb(250 249 245 / 0.84);
-  --sys-material-thick: rgb(250 249 245 / 0.94);
-  --sys-scrim: rgb(20 20 19 / 0.3);
-  --sys-shadow-card: 0 4px 20px rgb(20 20 19 / 0.035);
-  --sys-shadow-sheet: 0 -8px 40px rgb(20 20 19 / 0.1);
-  --sys-shadow-float:
-    0 8px 28px rgb(20 20 19 / 0.1), 0 1px 3px rgb(20 20 19 / 0.06);
+  --sys-bg: var(--c-ground);
+  --sys-surface: #2b2a2b;
+  --sys-surface-2: #2b2a2b;
+  --sys-elevated: #2e2d2e;
+  --sys-fill: rgb(238 230 216 / 0.07);
+  --sys-fill-strong: rgb(238 230 216 / 0.12);
+  --sys-label: var(--c-ink);
+  --sys-label-2: var(--c-ink-2);
+  --sys-label-3: var(--c-ink-3);
+  --sys-separator: var(--c-line);
+  --sys-separator-opaque: var(--c-line);
+  --sys-border: rgb(238 230 216 / 0.16);
+  --sys-tint: var(--c-accent);
+  --sys-tint-text: var(--c-ink);
+  --sys-tint-fill: rgb(217 200 169 / 0.16);
+  --sys-accent: var(--c-accent);
+  --sys-danger: var(--c-ink);
+  --sys-danger-fill: rgb(217 200 169 / 0.16);
+  --sys-success: var(--c-ink);
+  --sys-heart: var(--c-accent);
+  --sys-material: rgb(35 35 37 / 0.97);
+  --sys-material-thick: rgb(35 35 37 / 0.97);
+  --sys-scrim: rgb(0 0 0 / 0.5);
+  --sys-shadow-card: none;
+  --sys-shadow-sheet: none;
+  --sys-shadow-float: none;
   --sys-hairline: 1px;
   --sys-font:
     -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro',
@@ -99,7 +98,7 @@
   --line: var(--sys-separator);
   --accent: var(--sys-tint-text);
   --action: var(--sys-tint);
-  --accent-ink: var(--claude-light);
+  --accent-ink: var(--c-ground);
   --hero: var(--sys-surface);
   --rose: var(--sys-heart);
   --danger: var(--sys-danger);
@@ -109,7 +108,7 @@
   --shadow: var(--sys-shadow-float);
   --card-shadow: none;
 
-  color-scheme: light;
+  color-scheme: dark;
   font-family: var(--sys-font);
   letter-spacing: 0;
   font-variant-numeric: normal;
@@ -118,9 +117,9 @@
 }
 @media (prefers-contrast: more) {
   :root {
-    --sys-label-2: #3d3d3a;
-    --sys-border: rgb(20 20 19 / 0.45);
-    --sys-separator: #b0aea5;
+    --sys-label-2: #d6cfc2;
+    --sys-border: rgb(238 230 216 / 0.45);
+    --sys-separator: #878075;
   }
 }
 /* Solid surfaces when transparency is reduced. */
@@ -254,8 +253,6 @@ h4 {
 /* Scroll edge effect: material only once content passes beneath. */
 [data-scrolled] .app-header {
   background: var(--sys-material);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
   box-shadow: 0 var(--sys-hairline) 0 var(--sys-separator);
 }
 .wordmark {
@@ -304,11 +301,10 @@ h4 {
   padding: 0 max(8px, env(safe-area-inset-left))
     max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-right));
   border: 0;
+  border-top: var(--sys-hairline) solid var(--sys-separator);
   border-radius: 0;
   background: var(--sys-material);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: 0 calc(var(--sys-hairline) * -1) 0 var(--sys-separator);
+  box-shadow: none;
 }
 .tab-bar > button {
   flex: 1;
@@ -376,14 +372,14 @@ h4 {
 }
 .button.primary {
   background: var(--sys-tint);
-  color: var(--claude-light);
+  color: var(--c-ground);
   border: 0;
 }
 .button.primary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--sys-tint) 86%, #ffffff);
+  background: color-mix(in srgb, var(--sys-tint) 88%, var(--c-ink));
 }
 .button.primary:active:not(:disabled) {
-  background: color-mix(in srgb, var(--sys-tint) 76%, #ffffff);
+  background: color-mix(in srgb, var(--sys-tint) 80%, var(--c-ground));
 }
 .button.primary:disabled {
   background: var(--sys-fill);
@@ -441,7 +437,7 @@ h4 {
   border: 0;
   border-radius: 50%;
   background: var(--sys-tint);
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .chip,
 .chips button,
@@ -461,12 +457,12 @@ h4 {
 .chips .chip.active,
 .chip[aria-pressed='true'] {
   background: var(--sys-tint);
-  color: var(--claude-light);
+  color: var(--c-ground);
   border: 0;
 }
 .chip.active svg,
 .chip[aria-pressed='true'] svg {
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 
 /* Text inputs: filled, borderless, 17px so iOS never zooms. */
@@ -535,10 +531,8 @@ input[type='range'],
   width: 27px;
   height: 27px;
   border-radius: 50%;
-  background: #ffffff;
-  box-shadow:
-    0 3px 8px rgb(0 0 0 / 0.15),
-    0 3px 1px rgb(0 0 0 / 0.06);
+  background: var(--c-ink);
+  box-shadow: none;
   transition: transform 260ms var(--sys-ease);
 }
 .check-row input[type='checkbox']:checked {
@@ -645,7 +639,7 @@ input[type='range'],
   place-items: center;
   border-radius: 8px;
   background: var(--sys-tint);
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .action-icon svg {
   width: 18px;
@@ -769,8 +763,6 @@ input[type='range'],
   border-radius: 999px;
   padding: 10px 10px 10px 18px;
   background: var(--sys-material-thick);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  backdrop-filter: blur(24px) saturate(180%);
   color: var(--sys-label);
   box-shadow: var(--sys-shadow-float);
   font-size: 0.88rem;
@@ -784,10 +776,10 @@ input[type='range'],
 }
 .toast.toast-error {
   background: var(--sys-danger);
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .toast.toast-error > svg {
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .error-message {
   color: var(--sys-danger);
@@ -899,7 +891,7 @@ input[type='range'],
   .day-number
   > span:last-child {
   background: var(--sys-danger);
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .calendar-grid > button.selected .day-number {
   outline: 0;
@@ -972,8 +964,6 @@ input[type='range'],
   height: 32px;
   min-height: 32px;
   background: var(--sys-material-thick);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   color: var(--sys-label);
 }
 .figure-tile.is-new {
@@ -991,12 +981,10 @@ input[type='range'],
 }
 .new-badge {
   background: var(--sys-tint);
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .laundry-badge {
   background: var(--sys-material-thick);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   color: var(--sys-label);
 }
 .figure-plate-wrap figcaption {
@@ -1031,7 +1019,7 @@ details.outfit-reasons li {
 }
 .refine-row .button[aria-pressed='true'] {
   background: var(--sys-tint);
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .daily-look .daily-worn,
 .daily-quick-actions > .button {
@@ -1082,7 +1070,7 @@ details.outfit-reasons li {
 .outfit-rating .icon-button[aria-pressed='true'],
 .rating-buttons button[aria-pressed='true'] {
   background: var(--sys-tint);
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .rating-reasons > p:first-child {
   font-size: 0.82rem;
@@ -1319,9 +1307,7 @@ details.outfit-reasons li {
   background: var(--sys-elevated);
   color: var(--sys-label);
   font-weight: 600;
-  box-shadow:
-    0 3px 8px rgb(0 0 0 / 0.12),
-    0 3px 1px rgb(0 0 0 / 0.04);
+  box-shadow: none;
 }
 
 .look-composer {
@@ -1511,7 +1497,7 @@ details.outfit-reasons li {
 }
 .condition-ring {
   border: 1.5px solid var(--sys-label-3);
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .done > .condition-ring {
   border-color: var(--sys-success);
@@ -1533,7 +1519,7 @@ details.outfit-reasons li {
   border: 0;
   border-radius: 20px 20px 6px 20px;
   background: var(--sys-tint);
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .chat-message:not(.user) .chat-text {
   font-family: var(--sys-font);
@@ -1606,8 +1592,6 @@ details.outfit-reasons li {
   padding: 10px 18px;
   border: 0;
   background: var(--sys-material-thick);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
   box-shadow: 0 var(--sys-hairline) 0 var(--sys-separator);
 }
 .style-interview {
@@ -1780,36 +1764,36 @@ svg.lucide {
 .journal-row {
   background: var(--sys-surface);
   box-shadow:
-    inset 0 0 0 1px var(--claude-light-gray),
+    inset 0 0 0 1px var(--c-line),
     var(--sys-shadow-card);
 }
 .journal-view .shopping-card.is-ready {
   box-shadow:
-    inset 0 0 0 1.5px var(--claude-orange),
+    inset 0 0 0 1.5px var(--c-accent),
     var(--sys-shadow-card);
 }
 /* List rows share one card: only the outer rows carry the border. */
 .journal-row {
   box-shadow:
-    inset 1px 0 0 var(--claude-light-gray),
-    inset -1px 0 0 var(--claude-light-gray);
+    inset 1px 0 0 var(--c-line),
+    inset -1px 0 0 var(--c-line);
 }
 .journal-row:first-of-type {
   box-shadow:
-    inset 1px 0 0 var(--claude-light-gray),
-    inset -1px 0 0 var(--claude-light-gray),
-    inset 0 1px 0 var(--claude-light-gray);
+    inset 1px 0 0 var(--c-line),
+    inset -1px 0 0 var(--c-line),
+    inset 0 1px 0 var(--c-line);
 }
 .journal-row:last-of-type {
   box-shadow:
-    inset 1px 0 0 var(--claude-light-gray),
-    inset -1px 0 0 var(--claude-light-gray),
-    inset 0 -1px 0 var(--claude-light-gray),
+    inset 1px 0 0 var(--c-line),
+    inset -1px 0 0 var(--c-line),
+    inset 0 -1px 0 var(--c-line),
     var(--sys-shadow-card);
 }
 .journal-row:only-of-type {
   box-shadow:
-    inset 0 0 0 1px var(--claude-light-gray),
+    inset 0 0 0 1px var(--c-line),
     var(--sys-shadow-card);
 }
 
@@ -1819,20 +1803,20 @@ svg.lucide {
 }
 .button.primary,
 .button.primary:hover:not(:disabled) {
-  background: var(--claude-dark);
-  color: var(--claude-light);
+  background: var(--c-ink);
+  color: var(--c-ground);
 }
 .button.primary:active:not(:disabled) {
-  background: #3d3d3a;
+  background: var(--c-accent);
 }
 .button.primary:disabled {
   background: var(--sys-surface-2);
-  color: var(--claude-mid-gray);
+  color: var(--c-ink-3);
 }
 .button.secondary,
 .button.secondary:hover:not(:disabled) {
   background: var(--sys-surface);
-  color: var(--claude-dark);
+  color: var(--c-ink);
   box-shadow: inset 0 0 0 1px var(--sys-border);
 }
 .button.secondary:active:not(:disabled) {
@@ -1840,12 +1824,12 @@ svg.lucide {
 }
 .button.danger {
   background: var(--sys-surface);
-  color: var(--claude-dark);
-  box-shadow: inset 0 0 0 1px var(--claude-orange);
+  color: var(--c-ink);
+  box-shadow: inset 0 0 0 1px var(--c-accent);
 }
 @media (hover: none) {
   .button.primary:hover:not(:disabled):not(:active) {
-    background: var(--claude-dark);
+    background: var(--c-ink);
   }
   .button.secondary:hover:not(:disabled):not(:active) {
     background: var(--sys-surface);
@@ -1855,10 +1839,10 @@ svg.lucide {
 .text-button,
 .link-button,
 .inline-link {
-  color: var(--claude-dark);
+  color: var(--c-ink);
   font-weight: 600;
   text-decoration: underline;
-  text-decoration-color: var(--claude-orange);
+  text-decoration-color: var(--c-accent);
   text-decoration-thickness: 1.5px;
   text-underline-offset: 4px;
 }
@@ -1870,7 +1854,7 @@ svg.lucide {
 .rating-chips .button {
   border-radius: 999px;
   background: var(--sys-surface);
-  color: var(--claude-dark);
+  color: var(--c-ink);
   box-shadow: inset 0 0 0 1px var(--sys-border);
 }
 .chip.active,
@@ -1878,22 +1862,20 @@ svg.lucide {
 .chip[aria-pressed='true'],
 .text-tabs > button.active,
 .refine-row .button[aria-pressed='true'] {
-  background: var(--claude-dark);
-  color: var(--claude-light);
+  background: var(--c-ink);
+  color: var(--c-ground);
   box-shadow: none;
 }
 .chip.active svg,
 .chip[aria-pressed='true'] svg {
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .outfit-tabs {
   background: var(--sys-surface-2);
 }
 .outfit-tabs > button.active {
   background: var(--sys-surface);
-  box-shadow:
-    0 0 0 1px var(--claude-light-gray),
-    0 2px 6px rgb(20 20 19 / 0.08);
+  box-shadow: 0 0 0 1px var(--c-line);
 }
 /* Inputs: white fields with a hairline, orange focus ring as in Claude. */
 input:not([type='checkbox']):not([type='radio']):not([type='file']):not(
@@ -1914,47 +1896,47 @@ textarea:focus-visible,
 .field input:focus-visible,
 .field select:focus-visible,
 .field textarea:focus-visible {
-  outline: 2px solid rgb(217 119 87 / 0.55);
+  outline: 2px solid rgb(217 200 169 / 0.6);
   outline-offset: 1px;
 }
 :focus-visible,
 summary:focus-visible {
-  outline: 2px solid var(--claude-orange);
+  outline: 2px solid var(--c-accent);
   outline-offset: 2px;
 }
 input[type='checkbox'],
 input[type='radio'],
 input[type='range'],
 .check-row input {
-  accent-color: var(--claude-dark);
+  accent-color: var(--c-ink);
 }
 .check-row input[type='checkbox']:checked {
-  background: var(--claude-orange);
+  background: var(--c-accent);
 }
 .icon-button,
 .profile-button,
 .stylist-link {
-  color: var(--claude-dark);
+  color: var(--c-ink);
 }
 .icon-button.soft {
   color: var(--sys-label-2);
 }
 .icon-button.primary-add {
   border-radius: var(--sys-radius-control);
-  background: var(--claude-dark);
-  color: var(--claude-light);
+  background: var(--c-ink);
+  color: var(--c-ground);
 }
 .profile-button.active {
-  color: var(--claude-dark);
+  color: var(--c-ink);
   background: var(--sys-tint-fill);
 }
 .inbox-dot {
-  background: var(--claude-orange);
+  background: var(--c-accent);
 }
 /* Settings rows: plain dark icons, no coloured tiles. */
 .action-icon {
   background: transparent;
-  color: var(--claude-dark);
+  color: var(--c-ink);
 }
 .outfit-rating .icon-button,
 .rating-buttons button {
@@ -1963,36 +1945,36 @@ input[type='range'],
 }
 .outfit-rating .icon-button[aria-pressed='true'],
 .rating-buttons button[aria-pressed='true'] {
-  background: var(--claude-dark);
-  color: var(--claude-light);
+  background: var(--c-ink);
+  color: var(--c-ground);
   box-shadow: none;
 }
 .delete-button,
 .icon-button.delete-button {
   background: var(--sys-surface);
-  color: var(--claude-dark);
-  box-shadow: inset 0 0 0 1px var(--claude-orange);
+  color: var(--c-ink);
+  box-shadow: inset 0 0 0 1px var(--c-accent);
 }
 .detail-heart {
   background: var(--sys-surface);
   box-shadow: inset 0 0 0 1px var(--sys-border);
 }
 .new-badge {
-  background: var(--claude-orange);
-  color: var(--claude-dark);
+  background: var(--c-accent);
+  color: var(--c-ground);
 }
 .toast > svg,
 .worn-line > span {
-  color: var(--claude-dark);
+  color: var(--c-ink);
 }
 .worn-line > span svg {
-  color: var(--claude-orange);
+  color: var(--c-accent);
 }
 
 /* Tab bar: the active page sits in a soft orange pill. */
 .tab-bar > button.active,
 .tab-bar > button.active .nav-icon {
-  color: var(--claude-dark);
+  color: var(--c-ink);
 }
 .tab-bar > button.active {
   font-weight: 600;
@@ -2010,12 +1992,12 @@ input[type='range'],
 
 /* Days: today filled orange, the chosen day dark. */
 [aria-current='date'] .day-number > span:last-child {
-  color: var(--claude-dark);
+  color: var(--c-ink);
 }
 .home-week-strip .selected .day-number > span:last-child,
 .calendar-grid > button.selected .day-number > span:last-child {
-  background: var(--claude-dark);
-  color: var(--claude-light);
+  background: var(--c-ink);
+  color: var(--c-ground);
 }
 .home-week-strip [aria-current='date'] .day-number > span:last-child,
 .calendar-grid > button[aria-current='date'] .day-number > span:last-child,
@@ -2024,8 +2006,8 @@ input[type='range'],
   > button[aria-current='date'].selected
   .day-number
   > span:last-child {
-  background: var(--claude-orange);
-  color: var(--claude-dark);
+  background: var(--c-accent);
+  color: var(--c-ground);
 }
 .journal-date .kicker,
 .journal-date .kicker.is-today {
@@ -2038,11 +2020,11 @@ input[type='range'],
   height: 7px;
   margin: 0 6px 1px 0;
   border-radius: 50%;
-  background: var(--claude-orange);
+  background: var(--c-accent);
   vertical-align: middle;
 }
 .day-empty-number {
-  color: var(--claude-dark);
+  color: var(--c-ink);
 }
 
 /* Fewer boxes: the week strip and key figures sit on the ground. */
@@ -2064,7 +2046,7 @@ input[type='range'],
 }
 .calendar-view {
   box-shadow:
-    inset 0 0 0 1px var(--claude-light-gray),
+    inset 0 0 0 1px var(--c-line),
     var(--sys-shadow-card);
 }
 .calendar-grid .day-number > span:last-child {
@@ -2072,7 +2054,7 @@ input[type='range'],
 }
 .figure-plate {
   box-shadow:
-    inset 0 0 0 1px var(--claude-light-gray),
+    inset 0 0 0 1px var(--c-line),
     var(--sys-shadow-card);
 }
 .figure-tile > .outfit-piece,
@@ -2084,7 +2066,7 @@ input[type='range'],
 .detail-photo,
 .detail-pair .garment-picture,
 .look-bands {
-  box-shadow: inset 0 0 0 1px var(--claude-light-gray);
+  box-shadow: inset 0 0 0 1px var(--c-line);
 }
 .garment-picture {
   background: var(--sys-surface-2);
@@ -2097,63 +2079,63 @@ input[type='range'],
 }
 .chat-message.user {
   background: var(--sys-surface-2);
-  color: var(--claude-dark);
+  color: var(--c-ink);
   border-radius: 16px;
 }
 .chat-sheet .sheet-header {
-  box-shadow: 0 1px 0 var(--claude-light-gray);
+  box-shadow: 0 1px 0 var(--c-line);
 }
 
 /* Toast: a dark capsule, like Claude's notices. */
 .toast {
-  background: var(--claude-dark);
-  color: var(--claude-light);
+  background: var(--c-ink);
+  color: var(--c-ground);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
 .toast > svg,
 .toast > button {
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .toast.toast-error {
-  background: var(--claude-dark);
+  background: var(--c-ink);
   box-shadow:
-    inset 3px 0 0 var(--claude-orange),
+    inset 3px 0 0 var(--c-accent),
     var(--sys-shadow-float);
 }
 .condition-ring {
-  color: var(--claude-light);
+  color: var(--c-ground);
 }
 .done > .condition-ring {
-  border-color: var(--claude-orange);
-  background: var(--claude-orange);
-  color: var(--claude-dark);
+  border-color: var(--c-accent);
+  background: var(--c-accent);
+  color: var(--c-ground);
 }
 .drop-overlay {
-  border-color: var(--claude-orange);
-  color: var(--claude-dark);
+  border-color: var(--c-accent);
+  color: var(--c-ink);
 }
 .batch-progress > span {
-  background: var(--claude-orange);
+  background: var(--c-accent);
 }
 .laundry-badge {
   background: var(--sys-material-thick);
-  color: var(--claude-dark);
+  color: var(--c-ink);
 }
 .figure-tile.is-new {
-  outline-color: var(--claude-orange);
+  outline-color: var(--c-accent);
 }
 .offline-banner,
 .update-banner {
   background: var(--sys-surface);
   box-shadow:
-    inset 0 0 0 1px var(--claude-light-gray),
+    inset 0 0 0 1px var(--c-line),
     var(--sys-shadow-float);
 }
 .update-banner button {
-  color: var(--claude-dark);
+  color: var(--c-ink);
   text-decoration: underline;
-  text-decoration-color: var(--claude-orange);
+  text-decoration-color: var(--c-accent);
 }
 
 /* ── Audit fixes ───────────────────────────────────────────────────── */
@@ -2202,16 +2184,16 @@ input[type='range'],
 .sheet p a,
 .micro-copy a,
 .weather-credit a {
-  color: var(--claude-dark);
+  color: var(--c-ink);
   text-decoration: underline;
-  text-decoration-color: var(--claude-orange);
+  text-decoration-color: var(--c-accent);
   text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
 }
 /* Disclosures laid out as flex rows lose their marker: draw a chevron. */
 .background-assist summary,
 .stylist-disclosure summary {
-  color: var(--claude-dark);
+  color: var(--c-ink);
   font-size: 0.88rem;
   font-weight: 600;
 }
@@ -2251,7 +2233,7 @@ input[type='range'],
   border: 0;
   border-radius: 50%;
   background: var(--sys-surface);
-  color: var(--claude-dark);
+  color: var(--c-ink);
   box-shadow: inset 0 0 0 1px var(--sys-border);
 }
 .delete-button,
@@ -2299,4 +2281,203 @@ input[type='range'],
   .calendar-weekdays {
     column-gap: 0;
   }
+}
+
+/* ── Charcoal and sand (0.38.0): flat, quiet, concentric ───────────────
+   One level of surface only: anything inside a card or a sheet sits on it
+   without its own box. Nothing glows: no shadows, no outline rings, no
+   blur halos. Corners are concentric: a shape inside another uses the
+   outer radius minus the gap between them. */
+:root {
+  --r-card: 20px;
+  --r-card-pad: 16px;
+  --r-tile: 18px;
+  --r-tile-inset: 6px;
+  --r-control: 12px;
+  --r-segment-pad: 3px;
+}
+
+/* Surfaces: a plain step lighter than the ground, no rings. */
+.card,
+.settings-card,
+.style-profile-card,
+.online-stylist,
+.backup-reminder,
+.wardrobe-summary,
+.add-banner,
+.style-invitation,
+.insight-tiles > div,
+.swap-choice,
+.photo-picker,
+.import-choice,
+.outfit-empty,
+.outfit-options,
+.journal-view .shopping-card,
+.refinement-preview,
+.everyday-card,
+.install-help,
+.worn-line,
+.calendar-note,
+.add-row,
+.journal-day,
+.journal-backup,
+.saved-look,
+.style-interview,
+.discard-notice,
+.journal-row,
+.calendar-view {
+  background: var(--sys-surface);
+  box-shadow: none;
+  border-radius: var(--r-card);
+}
+.journal-view .shopping-card.is-ready {
+  box-shadow: none;
+}
+.garment-card .garment-picture,
+.detail-photo,
+.detail-pair .garment-picture,
+.look-bands,
+.figure-plate,
+.figure-tile.is-new {
+  box-shadow: none;
+}
+
+/* Flatten: no box inside a box. */
+.figure-plate,
+.look-composer,
+.detail-body .detail-facts,
+.weather-panel,
+.interview-question,
+.calendar-view .journal-day,
+dialog .card,
+dialog .settings-card,
+dialog .style-interview,
+dialog .everyday-card {
+  background: transparent;
+  box-shadow: none;
+}
+.figure-plate {
+  padding: 0;
+  gap: 8px;
+  border-radius: 0;
+}
+.look-composer {
+  padding: 0;
+}
+.detail-body .detail-facts {
+  padding: 0;
+}
+.calendar-view .journal-day {
+  margin-top: 8px;
+  padding: 16px 0 0;
+  border-radius: 0;
+  border-top: 1px solid var(--sys-separator);
+}
+dialog .style-interview,
+dialog .card {
+  padding-inline: 0;
+}
+
+/* The look: big pictures, the name under each picture, no inner plate. */
+.figure-tile > .outfit-piece {
+  border-radius: var(--r-tile);
+  background: transparent;
+}
+.figure-tile > .outfit-piece > .garment-picture {
+  border-radius: var(--r-tile);
+}
+.figure-plate {
+  grid-template-rows: 230px 190px;
+  grid-auto-rows: 150px;
+}
+.figure-tile > .outfit-piece {
+  position: relative;
+  overflow: hidden;
+}
+/* The name lies on the picture's lower edge: no box of its own. */
+.figure-tile .outfit-piece > .figure-caption,
+.figure-tile.is-wide .outfit-piece > .figure-caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  width: auto;
+  padding: 28px 12px 10px;
+  background: linear-gradient(rgb(35 35 37 / 0), rgb(35 35 37 / 0.88) 70%);
+  border-radius: 0 0 var(--r-tile) var(--r-tile);
+}
+.figure-tile .figure-caption small {
+  display: none;
+}
+.figure-tile .figure-caption > span {
+  font-size: 0.95rem;
+  color: var(--c-ink);
+}
+.figure-tile.is-wide > .outfit-piece > .garment-picture {
+  flex: 1;
+}
+.figure-tile .piece-swap {
+  top: var(--r-tile-inset);
+  right: var(--r-tile-inset);
+  width: calc(2 * (var(--r-tile) - var(--r-tile-inset)));
+  height: calc(2 * (var(--r-tile) - var(--r-tile-inset)));
+  min-height: 0;
+  background: rgb(35 35 37 / 0.78);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.figure-tile.is-new {
+  outline: 1.5px solid var(--sys-tint);
+  outline-offset: 2px;
+  border-radius: calc(var(--r-tile) + 2px);
+}
+.laundry-badge {
+  background: rgb(35 35 37 / 0.78);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Segmented controls: inner pill radius = outer - padding. */
+.outfit-tabs {
+  padding: var(--r-segment-pad);
+  border-radius: var(--r-control);
+  background: var(--sys-fill);
+}
+.outfit-tabs > button {
+  border-radius: calc(var(--r-control) - var(--r-segment-pad));
+}
+.outfit-tabs > button.active {
+  background: var(--sys-fill-strong);
+  box-shadow: none;
+}
+
+/* Pictures inside a card keep the card's curve: radius minus padding. */
+.saved-look .look-bands,
+.journal-row .photo-placeholder,
+.journal-row img {
+  border-radius: calc(var(--r-card) - var(--r-card-pad));
+}
+
+/* Bars and sheets are solid: no blur halo anywhere, including the
+   older theme layers underneath. */
+*,
+::backdrop {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* The look title is the headline of the day. */
+.daily-look header h1 {
+  font-size: clamp(1.9rem, 8.5vw, 2.4rem);
+  line-height: 1.05;
+}
+/* A drop target, not a card inside the sheet. */
+.photo-picker {
+  background: transparent;
+  border: 1.5px dashed var(--sys-border);
+}
+.journal-backup .button {
+  white-space: nowrap;
+}
+/* Pictures fill their tile edge to edge, inside its rounded corners. */
+.figure-tile .garment-picture img {
+  object-fit: cover;
 }

@@ -189,7 +189,7 @@ export function DailyOutfit({
         : 'Eingeplant'
     : isToday
       ? items.length
-        ? 'Für dich zusammengestellt'
+        ? ''
         : 'Erster Schritt'
       : past
         ? 'Rückblick'
@@ -242,16 +242,12 @@ export function DailyOutfit({
                   <WeatherSymbol code={forecast?.code} size={20} />
                   <span className="weather-range">Wetter</span>
                 </span>
-                <small>
-                  {state?.weather ? (
-                    <>
-                      <span>Vorhersage</span>
-                      <span>nicht aktuell</span>
-                    </>
-                  ) : (
-                    <span>Ort auswählen</span>
-                  )}
-                </small>
+                {state?.weather && (
+                  <small>
+                    <span>Vorhersage</span>
+                    <span>nicht aktuell</span>
+                  </small>
+                )}
               </>
             )}
           </button>
@@ -304,16 +300,6 @@ export function DailyOutfit({
             )
           })}
         </div>
-        <p className="calendar-ring-legend week-legend" aria-hidden="true">
-          <span>
-            <i className="legend-worn" />
-            getragen, in seinen Farben
-          </span>
-          <span>
-            <i className="legend-plan" />
-            geplant
-          </span>
-        </p>
       </section>
       <div className="day-slide-viewport">
         <section
@@ -324,15 +310,11 @@ export function DailyOutfit({
         >
           {!emptyDay && (state || isToday) && (
             <header>
-              <p className="eyebrow">
-                <span>{badge}</span>
-                {!!look?.garmentIds.length && (
-                  <span className="look-count">
-                    {look.garmentIds.length}{' '}
-                    {look.garmentIds.length === 1 ? 'Teil' : 'Teile'}
-                  </span>
-                )}
-              </p>
+              {badge && (
+                <p className="eyebrow">
+                  <span>{badge}</span>
+                </p>
+              )}
               <h1>
                 {recorded?.name ?? (isToday ? colorTitle : 'Vergangener Tag')}
               </h1>
@@ -353,7 +335,6 @@ export function DailyOutfit({
               <div className="daily-context">
                 {[
                   look.options.occasion,
-                  look.options.season !== 'Alle' ? look.options.season : '',
                   !entry && state.preferences.useWeather !== false && fresh
                     ? 'Wetter berücksichtigt'
                     : !entry &&
@@ -361,9 +342,7 @@ export function DailyOutfit({
                         state.weather &&
                         !fresh
                       ? 'Wetter veraltet · nicht verwendet'
-                      : !entry
-                        ? 'Ohne Wetter'
-                        : '',
+                      : '',
                 ]
                   .filter(Boolean)
                   .map((label) => (

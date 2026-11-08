@@ -32,7 +32,6 @@ import {
   setLaundry,
 } from './db'
 import { CATEGORIES, filterGarments, type Garment } from './model'
-import { colorHex } from './swatch'
 import { keepPhotoIdentity } from './photo-identity'
 import { PairingSuggestions } from './PairingSuggestions'
 import { EmptyIllustration } from './EmptyIllustration'
@@ -154,6 +153,7 @@ function Wardrobe({
     )
   const hasFilters =
     category !== 'Alle' || favorites || laundryOnly || showArchive
+  const laundryCount = active.filter((item) => item.inLaundry).length
   return (
     <div className="view wardrobe-view">
       <header className="page-heading journal-heading">
@@ -161,9 +161,13 @@ function Wardrobe({
           <div>
             <h1>Garderobe</h1>
             <p className="page-sub">
-              {active.length} {active.length === 1 ? 'Stück' : 'Stücke'} ·{' '}
-              {active.filter((item) => item.inLaundry).length} in der Wäsche
-              {archived.length > 0 && ` · ${archived.length} aussortiert`}
+              {[
+                `${active.length} ${active.length === 1 ? 'Stück' : 'Stücke'}`,
+                laundryCount > 0 && `${laundryCount} in der Wäsche`,
+                archived.length > 0 && `${archived.length} aussortiert`,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
             </p>
           </div>
           <div className="heading-actions">
@@ -182,22 +186,29 @@ function Wardrobe({
         role="group"
         aria-label="Kategorie filtern"
       >
-        {['Alle', ...CATEGORIES].map((c) => (
-          <button
-            key={c}
-            className={category === c ? 'active' : ''}
-            aria-label={c}
-            aria-pressed={category === c}
-            onClick={() => setCategory(c)}
-          >
-            {c}{' '}
-            <small>
-              {c === 'Alle'
-                ? base.length
-                : base.filter((item) => item.category === c).length}
-            </small>
-          </button>
-        ))}
+        {['Alle', ...CATEGORIES]
+          .filter(
+            (c) =>
+              c === 'Alle' ||
+              c === category ||
+              base.some((item) => item.category === c),
+          )
+          .map((c) => (
+            <button
+              key={c}
+              className={category === c ? 'active' : ''}
+              aria-label={c}
+              aria-pressed={category === c}
+              onClick={() => setCategory(c)}
+            >
+              {c}{' '}
+              <small>
+                {c === 'Alle'
+                  ? base.length
+                  : base.filter((item) => item.category === c).length}
+              </small>
+            </button>
+          ))}
       </div>
       <div className="filter-chips">
         <button
@@ -236,27 +247,6 @@ function Wardrobe({
           </button>
         )}
       </div>
-      {!showArchive && active.length > 0 && (
-        <figure className="color-balance">
-          <div aria-hidden="true">
-            {[...active]
-              .sort(
-                (a, b) =>
-                  (wear.get(b.id)?.count ?? 0) - (wear.get(a.id)?.count ?? 0),
-              )
-              .map((item) => (
-                <span
-                  key={item.id}
-                  style={{
-                    flex: Math.max(wear.get(item.id)?.count ?? 0, 1),
-                    background: colorHex(item.color),
-                  }}
-                />
-              ))}
-          </div>
-          <figcaption>Farbbilanz, gewichtet nach Tragehäufigkeit</figcaption>
-        </figure>
-      )}
       {filtered.length ? (
         <div className="garment-grid">
           {filtered.map((item) => (

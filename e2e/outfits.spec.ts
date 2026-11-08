@@ -58,7 +58,7 @@ test('Looks aus echtem Bestand vorschlagen, speichern, benennen, favorisieren, f
   })
   await favorite.click()
   await expect(favorite).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.getByText('1 gespeichert · 1 Favoriten')).toBeVisible()
+  await expect(page.getByText('1 gespeichert', { exact: true })).toBeVisible()
   await page.screenshot({
     path: testInfo.outputPath('saved-outfit-iphone.png'),
     fullPage: true,
@@ -177,7 +177,7 @@ test('Fehlende Kleidung wird erklärt und Löschungen entfernen abhängige Looks
     .click()
   await page.getByRole('button', { name: 'Looks', exact: true }).click()
   await expect(page.locator('.saved-look')).toHaveCount(0)
-  await expect(page.getByText('0 gespeichert · 0 Favoriten')).toBeVisible()
+  await expect(page.getByText('0 gespeichert', { exact: true })).toBeVisible()
 })
 
 test('Eine gefälschte Bildsignatur reicht nicht für einen gültigen Import', async ({

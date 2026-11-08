@@ -5,13 +5,13 @@ export function EmptyIllustration() {
   return (
     <div className="empty-illustration" aria-hidden="true">
       <span className="tilt-left">
-        <GarmentSketch category="Oberteile" color="Blau" />
+        <GarmentSketch category="Oberteile" />
       </span>
       <span>
-        <GarmentSketch category="Hosen" color="Beige" />
+        <GarmentSketch category="Hosen" />
       </span>
       <span className="tilt-right">
-        <GarmentSketch category="Schuhe" color="Braun" />
+        <GarmentSketch category="Schuhe" />
       </span>
     </div>
   )

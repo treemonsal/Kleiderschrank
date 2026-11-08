@@ -93,7 +93,7 @@ for (const width of [375, 390, 430])
     const plate = (await page.locator('.figure-plate').boundingBox())!
     expect(action.y).toBeGreaterThan(plate.y + plate.height)
     expect(Number(action.height.toFixed(3))).toBeGreaterThanOrEqual(44)
-    await expect(page.locator('.daily-context')).toContainText('Ohne Wetter')
+    await expect(page.locator('.daily-context')).not.toContainText('Wetter')
     expect(
       await page.evaluate(
         () =>

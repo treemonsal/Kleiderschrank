@@ -1,5 +1,7 @@
 # Claude-Look (ab 0.35.0)
 
+> Abgelöst seit 0.38.0 durch [Charcoal & Sand](CHARCOAL_SAND.md). Dieser Look liegt im Branch `backup/design-0.37.0-claude`.
+
 Apples Aufbau, Schrift und Bewegung (Skill `.claude/skills/apple-design`) in Claudes Farben und Formen. Nur Hellmodus. Umgesetzt in `src/theme.css` (nach `journal.css` geladen), `src/spring.ts`, `src/useSheetMotion.ts`, `src/useDaySwipe.ts` und `src/useFitText.ts`.
 
 Das vorherige Journal-Design (inklusive Cormorant/Lora) liegt im Branch `backup/design-0.34.1-journal`. Die Zwischenstufen „Apple pur“ und „Skizzenbuch“ wurden auf Wunsch nicht gesichert.

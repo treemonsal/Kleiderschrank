@@ -120,7 +120,7 @@ test('Neue Nutzer sehen Fortschritt und erhalten keine verfrühte Shopping-Auffo
     name: 'Persönliche Shopping-Beratung',
     exact: true,
   })
-  await expect(card.getByText('Noch gesperrt', { exact: true })).toBeVisible()
+  await expect(card.getByText(/^Zuerst deinen Stil/)).toBeVisible()
   await expect(
     card.getByRole('listitem').filter({ hasText: '7 Tragetage' }),
   ).toContainText('0 / 7')

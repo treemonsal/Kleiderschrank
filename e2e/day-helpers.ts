@@ -44,6 +44,13 @@ export async function stepDay(page: Page, offset: -1 | 1) {
       before,
     before,
   )
+  // A swipe lets the new card spring in; continue once it is at rest, as
+  // a person would. (On Sundays tomorrow is not in the strip.)
+  await page.waitForFunction(() => {
+    const card = document.querySelector('.daily-look')
+    const transform = card ? getComputedStyle(card).transform : 'none'
+    return transform === 'none' || /, 0, 0\)$/.test(transform)
+  })
 }
 
 /** Selects a day in the Journal calendar, paging months as needed. */

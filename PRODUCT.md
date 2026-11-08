@@ -1,5 +1,9 @@
 # MyStyle
 
+## Version 0.38.0 – Charcoal & Sand
+
+- Ruhiges, immer dunkles Design (design/CHARCOAL_SAND.md): flach, ohne Leuchten, das Wichtigste gross, keine bedeutungslosen Badges oder Erklärtexte. Funktionen und gespeicherte Daten bleiben unverändert; entfernt wurde nur die dekorative Farbbilanz.
+
 ## Version 0.37.0 – Aussortieren, Wärme, mehr Varianten
 
 - Stücke werden aussortiert statt gelöscht: Sie verschwinden aus Raster, Vorschlägen, „Passt gut zu“, Chat und Einkaufsberatung, aber Tragetage, Looks und Bewertungen bleiben. Zurückholen jederzeit; endgültiges Löschen nur aus dem Archiv mit Bestätigung (wie bisher mit abhängigen Looks).

@@ -91,17 +91,8 @@ export function AISettings({ onConnected }: { onConnected?: () => void }) {
       <div className="section-heading">
         <h2>Kostenlose KI</h2>
       </div>
-      {!communityActive && (
-        <p className="muted section-intro">
-          Fotos erkennen und freistellen, Chat und Kaufideen.
-        </p>
-      )}
       <div className="settings-card ai-connection community-settings">
-        <h3>
-          {communityActive
-            ? 'Kostenlose Community-KI ist aktiv'
-            : 'Kostenlose Community-KI'}
-        </h3>
+        {communityActive && <h3>Kostenlose Community-KI ist aktiv</h3>}
         {communityActive && (
           <p className="muted">
             Neue Fotos werden automatisch erkannt und freigestellt.

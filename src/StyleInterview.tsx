@@ -163,11 +163,9 @@ export function StyleInterviewPanel({
               : 'Stilgespräch'
             : 'Acht Fragen zu deinem Stil'}
       </h3>
-      {!expanded && (
+      {!expanded && completed && (
         <p className="muted">
-          {completed
-            ? `${answers.length} bestätigte Antworten für persönlichere Beratung.`
-            : 'Optional · acht Fragen'}
+          {answers.length} bestätigte Antworten für persönlichere Beratung.
         </p>
       )}
       {expanded && (

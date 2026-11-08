@@ -269,11 +269,7 @@ export function OutfitView({
     <div className="view outfits-view">
       <header className="page-heading journal-heading">
         <h1>Looks</h1>
-        <p className="page-sub">
-          {state?.outfits.length ?? 0} gespeichert ·{' '}
-          {state?.outfits.filter((outfit) => outfit.favorite).length ?? 0}{' '}
-          Favoriten
-        </p>
+        <p className="page-sub">{state?.outfits.length ?? 0} gespeichert</p>
       </header>
       {!state ? (
         <p className="muted">Deine Looks werden geladen …</p>
@@ -283,7 +279,6 @@ export function OutfitView({
             className="card look-composer"
             aria-label="Neu zusammenstellen"
           >
-            <p className="card-kicker">Neu zusammenstellen</p>
             <div className="outfit-tabs" role="group" aria-label="Anlass">
               {OCCASIONS.map((item) => (
                 <button

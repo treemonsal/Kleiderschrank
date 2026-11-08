@@ -83,11 +83,6 @@ export function OutfitPieces({
             </div>
           ))}
         </div>
-        {onSwap && (
-          <figcaption>
-            Antippen öffnet ein Teil, der Pfeil tauscht es.
-          </figcaption>
-        )}
       </figure>
     )
   }
