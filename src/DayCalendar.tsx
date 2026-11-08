@@ -121,9 +121,6 @@ export function DayCalendar({
           )
         })}
       </div>
-      <p className="calendar-ring-legend">
-        Farbring: getragen · gestrichelter Kreis: geplant
-      </p>
     </>
   )
 }

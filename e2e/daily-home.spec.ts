@@ -386,7 +386,7 @@ test('Schliessen während Standortfreigabe verhindert späten Wetterabruf und ir
   await page.evaluate(() =>
     (window as unknown as { finishLocation: () => void }).finishLocation(),
   )
-  await expect(page.locator('.home-weather')).toContainText('Ort auswählen')
+  await expect(page.locator('.home-weather')).toHaveText('Wetter')
   expect(calls).toHaveLength(0)
   await expect(
     page.getByText('Wetter für Mein Standort gespeichert.', { exact: true }),
@@ -448,7 +448,7 @@ test('Vergessen eines Orts wird von einer verspäteten automatischen Aktualisier
   await expect(page.getByRole('dialog')).not.toBeVisible()
   release()
   await page.reload()
-  await expect(page.locator('.home-weather')).toContainText('Ort auswählen')
+  await expect(page.locator('.home-weather')).toHaveText('Wetter')
   expect(calls).toBe(1)
 })
 

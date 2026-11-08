@@ -347,13 +347,13 @@ export function StyleProfileCard({
           <SlidersHorizontal size={20} />
           {invitation ? 'Stilcheck' : 'Dein Stilprofil'}
         </h2>
-        <p className="muted">
-          {invitation
-            ? 'Eine Minute für passendere Looks.'
-            : completed
+        {!invitation && (
+          <p className="muted">
+            {completed
               ? `${state.preferences.styles.join(', ') || 'Stil bleibt offen'} · ${state.preferences.colors.join(', ') || 'Farben bleiben offen'}`
               : 'Drei Fragen zu deinem Stil.'}
-        </p>
+          </p>
+        )}
         <div className="style-check-actions">
           <button className="button secondary" onClick={() => setOpen(true)}>
             {completed ? 'Stilprofil bearbeiten' : 'Stilcheck starten'}

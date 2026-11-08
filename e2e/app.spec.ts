@@ -84,9 +84,13 @@ test('Kleidung mit echtem Foto bleibt lokal; Bearbeiten, Filtern, Favorisieren u
       .getByRole('button', { name: 'Sommerhemd öffnen' })
       .getByRole('img', { name: 'Favorit' }),
   ).toBeVisible()
-  await page.getByRole('button', { name: 'Schuhe', exact: true }).click()
+  // Empty categories stay out of the way; an empty filter says so.
+  await expect(
+    page.getByRole('button', { name: 'Schuhe', exact: true }),
+  ).toHaveCount(0)
+  await page.getByRole('button', { name: 'Nur Wäsche' }).click()
   await expect(page.getByText('Hier liegt gerade nichts.')).toBeVisible()
-  await page.getByRole('button', { name: 'Alle', exact: true }).click()
+  await page.getByRole('button', { name: 'Nur Wäsche' }).click()
   await page.getByRole('button', { name: 'Nur Favoriten' }).click()
   await expect(
     page.getByRole('button', { name: 'Sommerhemd öffnen' }),
@@ -301,7 +305,7 @@ for (const width of [375, 390, 430]) {
   })
 }
 
-test('Gedämpfte Beschriftungen und Aktionen bleiben auf Papierflächen lesbar', async ({
+test('Gedämpfte Beschriftungen und Aktionen bleiben auf dem dunklen Grund lesbar', async ({
   page,
 }) => {
   await page.goto('/')
@@ -354,7 +358,7 @@ test('Gedämpfte Beschriftungen und Aktionen bleiben auf Papierflächen lesbar',
     '.bottom-nav button',
   ])
   await page.getByRole('button', { name: 'Garderobe', exact: true }).click()
-  await contrast(['.category-tabs button', '.collection-toolbar'])
+  await contrast(['.category-tabs button', '.page-sub'])
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

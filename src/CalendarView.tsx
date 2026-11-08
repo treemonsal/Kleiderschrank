@@ -187,9 +187,7 @@ export function CalendarView({
             <span className={`calendar-status ${entry.status}`}>
               {entry.status === 'worn' ? 'Getragen' : 'Geplant'}
             </span>
-          ) : day === today ? (
-            <span className="calendar-status">Offen</span>
-          ) : (
+          ) : day === today ? null : (
             <button className="text-button" onClick={() => select(today)}>
               Zu heute
             </button>

@@ -109,10 +109,10 @@ test('Reduzierte Bewegung blendet Sheets nur ein und aus', async ({ page }) => {
   await expect(page.getByRole('dialog')).toHaveCount(0)
 })
 
-test('Claude-Farben, Systemschrift und Lucide-Symbole, auch bei dunkler Geräteeinstellung', async ({
+test('Charcoal und Sand, Systemschrift und Lucide-Symbole, auch bei heller Geräteeinstellung', async ({
   page,
 }) => {
-  await page.emulateMedia({ colorScheme: 'dark' })
+  await page.emulateMedia({ colorScheme: 'light' })
   await page.goto('/')
   await expect(
     page.getByRole('button', { name: 'Erstes Stück hinzufügen', exact: true }),
@@ -140,12 +140,12 @@ test('Claude-Farben, Systemschrift und Lucide-Symbole, auch bei dunkler Gerätee
       today: today ? getComputedStyle(today).backgroundColor : null,
     }
   })
-  // Anthropic's palette: Light ground, Dark text and buttons, Orange today.
-  expect(look.body).toBe('rgb(250, 249, 245)')
-  expect(look.text).toBe('rgb(20, 20, 19)')
-  expect(look.primary).toBe('rgb(20, 20, 19)')
-  expect(look.today).toBe('rgb(217, 119, 87)')
-  expect(look.blur).toContain('blur')
+  // Charcoal ground, warm light ink and buttons, sand for today; no glow.
+  expect(look.body).toBe('rgb(35, 35, 37)')
+  expect(look.text).toBe('rgb(238, 230, 216)')
+  expect(look.primary).toBe('rgb(238, 230, 216)')
+  expect(look.today).toBe('rgb(217, 200, 169)')
+  expect(look.blur).not.toContain('blur')
   expect(look.font).toContain('-apple-system')
   expect(look.font).not.toContain('Caveat')
   expect(look.stroke).toBe('1.5px')
@@ -183,4 +183,81 @@ test('Das Datum passt sich an und bleibt danach ruhig, auch mit reduzierter Bewe
     )
   })
   expect(fits).toBe(true)
+})
+
+test('Flach und ruhig: kein Leuchten, keine Box in der Box, konzentrische Ecken', async ({
+  page,
+}) => {
+  const stamp = '2026-01-01T00:00:00.000Z'
+  const piece = (id: string, category: string, color: string) => ({
+    id,
+    name: id,
+    category,
+    color,
+    brand: '',
+    seasons: [],
+    styles: [],
+    notes: '',
+    favorite: false,
+    createdAt: stamp,
+    updatedAt: stamp,
+  })
+  await page.goto('/')
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
+  await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
+    name: 'flat.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(
+      JSON.stringify({
+        app: 'MyStyle',
+        version: 4,
+        garments: [
+          piece('Hemd', 'Oberteile', 'Weiss'),
+          piece('Chino', 'Hosen', 'Beige'),
+          piece('Sneaker', 'Schuhe', 'Weiss'),
+        ],
+        outfits: [],
+        feedback: [],
+        preferences: null,
+        calendar: [],
+        weather: null,
+      }),
+    ),
+  })
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Sicherung importieren', exact: true })
+    .click()
+  await page.getByRole('button', { name: 'Heute', exact: true }).click()
+  await expect(page.locator('.figure-tile').first()).toBeVisible()
+  const shape = await page.evaluate(() => {
+    const glowing = [...document.querySelectorAll('body *')].filter((node) => {
+      const style = getComputedStyle(node)
+      return (
+        (style.boxShadow !== 'none' && !style.boxShadow.includes('inset')) ||
+        style.backdropFilter.includes('blur') ||
+        style.textShadow !== 'none'
+      )
+    })
+    const plate = getComputedStyle(document.querySelector('.figure-plate')!)
+    const tile = document.querySelector('.figure-tile > .outfit-piece')!
+    const swap = document.querySelector('.figure-tile .piece-swap')!
+    const t = tile.getBoundingClientRect(),
+      s = swap.getBoundingClientRect()
+    return {
+      glowing: glowing.map((node) => node.className).slice(0, 5),
+      plate: plate.backgroundColor,
+      tileRadius: parseFloat(getComputedStyle(tile).borderTopRightRadius),
+      inset: t.right - s.right,
+      swapRadius: s.width / 2,
+    }
+  })
+  expect(shape.glowing).toEqual([])
+  expect(shape.plate).toBe('rgba(0, 0, 0, 0)')
+  // The swap button sits in the tile's corner on the same curve.
+  expect(
+    Math.abs(shape.tileRadius - (shape.inset + shape.swapRadius)),
+  ).toBeLessThan(1)
 })

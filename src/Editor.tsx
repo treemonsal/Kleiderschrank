@@ -154,7 +154,6 @@ export function Editor({
               <div className="photo-picker-empty">
                 <ImagePlus size={32} strokeWidth={1.3} />
                 <p>Foto hinzufügen</p>
-                <span>Mehrere auf einmal, auch per Ziehen oder Einsetzen.</span>
               </div>
             )}
             {processing && (
@@ -284,7 +283,7 @@ export function Editor({
             </p>
           )}
           <label className="field">
-            Name <span className="required-hint">Pflichtfeld</span>
+            Name
             <input
               ref={name}
               autoComplete="off"

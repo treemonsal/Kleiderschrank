@@ -181,10 +181,7 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
         className={`shopping-card${evidence.ready ? ' is-ready' : ''}`}
         aria-label="Persönliche Shopping-Beratung"
       >
-        <div className="shopping-head">
-          <h2 className="card-kicker">Einkaufsberatung</h2>
-          <span>{evidence.ready ? 'Bereit' : 'Noch gesperrt'}</span>
-        </div>
+        <h2 className="card-kicker">Einkaufsberatung</h2>
         <p className="shopping-title">
           {evidence.ready
             ? 'Bereit: bis zu drei Kaufideen, die zu deinen Looks passen.'
@@ -243,8 +240,7 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
           </button>
         )}
         <p className="shopping-budget">
-          Budget {config.maxPriceCHF} CHF pro Stück · keine automatischen
-          Bestellungen
+          Budget {config.maxPriceCHF} CHF pro Stück
         </p>
         {!evidence.ready && enabled && (
           <button

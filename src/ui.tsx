@@ -138,7 +138,7 @@ export function GarmentPicture({
           loading={large ? 'eager' : 'lazy'}
           fallback={
             <div className="photo-placeholder">
-              <GarmentSketch category={item.category} color={item.color} />
+              <GarmentSketch category={item.category} />
               <span>Foto nicht verfügbar</span>
             </div>
           }
@@ -186,7 +186,9 @@ export function GarmentCard({
             )}
           </span>
           <span className="garment-meta">
-            {[item.brand, `${worn}× getragen`].filter(Boolean).join(' · ')}
+            {[item.brand, worn > 0 && `${worn}× getragen`]
+              .filter(Boolean)
+              .join(' · ')}
           </span>
         </span>
       </button>
