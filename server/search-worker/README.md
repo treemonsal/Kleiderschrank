@@ -1,6 +1,6 @@
 # Such-Server für „Kleidung online suchen“
 
-Ein kleiner Cloudflare Worker (kostenlos). Er hält den SerpApi-Schlüssel geheim, sucht über Google Bilder (Schweiz, Deutsch) und lädt gewählte Produktbilder für die App. Nur MyStyle selbst darf ihn aufrufen (`ALLOWED_ORIGINS` in `index.js`). Suchergebnisse werden einen Tag zwischengespeichert.
+Ein kleiner Cloudflare Worker (kostenlos). Er hält den SerpApi-Schlüssel geheim, sucht über Google Bilder (Schweiz, Deutsch) und lädt gewählte Produktbilder für die App. Nur MyStyle selbst (https://mystyle.hahntim518.workers.dev) darf ihn aufrufen (`ALLOWED_ORIGINS` in `index.js`). Läuft seit 9. November 2026 als `mystyle-suche.hahntim518.workers.dev`. Suchergebnisse werden einen Tag zwischengespeichert.
 
 ## Einrichten (etwa 15 Minuten, keine Kreditkarte)
 

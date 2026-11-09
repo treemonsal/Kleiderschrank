@@ -11,7 +11,7 @@ import {
  * secret and loads the chosen product image. Without a configured address
  * the feature stays hidden.
  */
-export const PUBLIC_SEARCH_URL = ''
+export const PUBLIC_SEARCH_URL = 'https://mystyle-suche.hahntim518.workers.dev'
 
 export function searchEndpoint(): string {
   const override = (

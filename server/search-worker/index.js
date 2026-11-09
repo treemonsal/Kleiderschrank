@@ -8,7 +8,7 @@
  * searches a month last. Nothing about the person is stored.
  */
 export const ALLOWED_ORIGINS = [
-  'https://treemonsal.github.io',
+  'https://mystyle.hahntim518.workers.dev',
   'http://localhost:5173',
   'http://127.0.0.1:4173',
 ]

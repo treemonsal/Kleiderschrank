@@ -89,7 +89,10 @@ describe('Produktsuche in der App', () => {
 })
 
 const env = { SERPAPI_KEY: 'geheim' }
-const from = (path: string, origin = 'https://treemonsal.github.io') =>
+const from = (
+  path: string,
+  origin = 'https://mystyle.hahntim518.workers.dev',
+) =>
   new Request(`https://suche.example.workers.dev${path}`, {
     headers: { Origin: origin },
   })
@@ -127,7 +130,7 @@ describe('Such-Server (Cloudflare Worker)', () => {
     const response = await handle(from('/search?q=jeans'), env, fetcher)
     expect(response.status).toBe(200)
     expect(response.headers.get('Access-Control-Allow-Origin')).toBe(
-      'https://treemonsal.github.io',
+      'https://mystyle.hahntim518.workers.dev',
     )
     const body = await response.json()
     expect(body.results).toEqual([

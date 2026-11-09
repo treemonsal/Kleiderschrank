@@ -1,5 +1,13 @@
 # Entwicklungsplan
 
+## Umzug zu GitLab und Cloudflare (9. November 2026)
+
+- [x] Code privat auf GitLab
+- [x] App bei Cloudflare unter mystyle.hahntim518.workers.dev
+- [x] Online-Suche live mit echtem SerpApi-Schlüssel
+- [ ] Tim: neue Adresse bei Google (OAuth) eintragen, dann Anmeldung und Drive-Abgleich live prüfen
+- [ ] Gefundene Shop-Bilder automatisch freistellen
+
 ## Version 0.41.0 – Home, Plus, Profil
 
 - [x] Untere Leiste Home · + · Profil, flach und vollbreit (youtube.com als Vorbild)
@@ -13,7 +21,7 @@
 - [x] Suche in der Garderobe mit beliebten Suchen; Ergebnisse aus der Google-Bildersuche (SerpApi, gratis 250 pro Monat)
 - [x] „Hinzufügen“ legt das Stück mit Bild, Kategorie, Farbe und Marke direkt ab; unklare Kategorie öffnet den Editor
 - [x] Eigener Cloudflare Worker hält den Schlüssel geheim und lädt die Bilder (server/search-worker)
-- [ ] Tim: SerpApi- und Cloudflare-Konto anlegen, Worker einrichten (Anleitung in server/search-worker/README.md)
+- [x] SerpApi- und Cloudflare-Konto, Worker eingerichtet (9. November 2026)
 - [ ] Danach: gefundene Stücke automatisch freistellen, wenn die kostenlose KI aktiv ist
 
 ## Version 0.39.0 – Schwarz & Salbei

@@ -131,6 +131,10 @@ test('Ein aufgebrauchtes Suchkontingent wird verständlich erklärt', async ({
 test('Ohne eingerichteten Such-Server bleibt die Suche verborgen', async ({
   page,
 }) => {
+  // The built app has a search address; an empty override stands for none.
+  await page.addInitScript(() => {
+    ;(window as { __MYSTYLE_SEARCH_URL__?: string }).__MYSTYLE_SEARCH_URL__ = ''
+  })
   await page.goto('/')
   await page.getByRole('button', { name: 'Hinzufügen', exact: true }).click()
   await expect(

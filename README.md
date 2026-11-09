@@ -2,7 +2,7 @@
 
 Dein persönlicher Kleiderschrank als iPhone-PWA: ein Tageslook aus deinen eigenen Stücken, ein Journal deiner getragenen Tage und ein freiwilliger KI-Stylist. Jede Person hat auf ihrem Gerät einen eigenen Bestand, ohne Anmeldung oder laufende Kosten.
 
-**[App öffnen](https://treemonsal.github.io/Kleiderschrank/)** · Version **0.41.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
+**[App öffnen](https://mystyle.hahntim518.workers.dev/)** · Version **0.41.0** · [iPhone-Prüfliste](docs/IPHONE_CHECK.md)
 
 Auf dem iPhone in Safari öffnen, **Teilen → Zum Home-Bildschirm → Hinzufügen**, danach einmal vollständig online laden. Updates über den Hinweis in der App übernehmen. Keine Website-Daten löschen: Die Sammlung liegt auf dem Gerät.
 
@@ -66,7 +66,7 @@ Bei einem App-Update erst Eingaben speichern, dann den eingeblendeten Updatehinw
 
 ## Auf allen Geräten
 
-Unter **Einstellungen → Auf allen Geräten → Mit Google anmelden** liegt der Kleiderschrank zusätzlich im versteckten App-Ordner des eigenen Google Drive. Auf jedem Gerät, auf dem man sich mit demselben Konto anmeldet, wird automatisch abgeglichen: beim Start, beim Zurückkehren in die App, alle paar Minuten und kurz nach Änderungen. Neuere Änderungen gewinnen; Gelöschtes kommt nicht zurück. Fotos werden einzeln und nur einmal hochgeladen. Jede Person nutzt ihr eigenes Konto. Die Anmeldung gilt eine Stunde und erneuert sich beim nächsten App-Start mit einer kurzen Weiterleitung. Die Google-Einrichtung ist erledigt ([docs/GOOGLE_SYNC.md](docs/GOOGLE_SYNC.md)). Sicherungen per Export bleiben trotzdem sinnvoll. [Datenschutzerklärung](https://treemonsal.github.io/Kleiderschrank/datenschutz.html) und [Nutzungsbedingungen](https://treemonsal.github.io/Kleiderschrank/nutzungsbedingungen.html) sind in den Einstellungen verlinkt.
+Unter **Einstellungen → Auf allen Geräten → Mit Google anmelden** liegt der Kleiderschrank zusätzlich im versteckten App-Ordner des eigenen Google Drive. Auf jedem Gerät, auf dem man sich mit demselben Konto anmeldet, wird automatisch abgeglichen: beim Start, beim Zurückkehren in die App, alle paar Minuten und kurz nach Änderungen. Neuere Änderungen gewinnen; Gelöschtes kommt nicht zurück. Fotos werden einzeln und nur einmal hochgeladen. Jede Person nutzt ihr eigenes Konto. Die Anmeldung gilt eine Stunde und erneuert sich beim nächsten App-Start mit einer kurzen Weiterleitung. Die Google-Einrichtung ist erledigt ([docs/GOOGLE_SYNC.md](docs/GOOGLE_SYNC.md)). Sicherungen per Export bleiben trotzdem sinnvoll. [Datenschutzerklärung](https://mystyle.hahntim518.workers.dev/datenschutz.html) und [Nutzungsbedingungen](https://mystyle.hahntim518.workers.dev/nutzungsbedingungen.html) sind in den Einstellungen verlinkt.
 
 ## Tests
 
@@ -85,13 +85,13 @@ In der vorbereiteten Cloud-Umgebung wird automatisch `/usr/bin/chromium` verwend
 
 Die Wetter-Browserprüfungen verwenden kontrollierte API-Antworten, Fehler und eine Testposition; sie übertragen keinen echten Gerätestandort. Nach der Domainfreigabe wurden am 15. Oktober 2026 beide echten Endpunkte per HTTPS erfolgreich erreicht: Zürcher Ortssuche und sieben Vorhersagetage mit erwarteten Einheiten/Zeitzone. Die öffentliche App ist ebenfalls über HTTPS erreichbar; Skripte, Styles, Manifest, Icons, Service Worker, Worker, Modell und WASM wurden mit HTTP 200 und korrekten Binär-Prüfsummen bestätigt. Cloud-Chromiums zusätzlicher Live-Browserabruf scheitert weiterhin am Vertrauen in das Cloud-Proxy-Zertifikat (`ERR_CERT_AUTHORITY_INVALID`). Reales Browser-CORS und echtes iPhone/Safari sind dadurch nicht nachgewiesen. Keine TLS-Prüfung wurde abgeschaltet.
 
-## GitHub-Prüfungen und Veröffentlichung
+## Veröffentlichung (Cloudflare) und Code (GitLab)
 
-Die App besteht aus statischen Dateien in `dist/`. Das öffentliche Repository verwendet kostenlose Standard-Runner und GitHub Pages. Sichtbarkeit und Tarif werden nicht automatisch geändert; private Repositories werden in den Workflows übersprungen.
+Seit 9. November 2026 liegt der Code privat auf GitLab (`hahntim518/kleiderschrank`) und die App bei Cloudflare, beides kostenlos. GitHub wird nicht mehr gebraucht.
 
-- **App prüfen** (`.github/workflows/checks.yml`) prüft bei relevanten Pushes und Pull Requests Format, Datentests, Produktionsbuild und alle Chromium-Browserfälle. Dokumentations- und Backup-Änderungen allein starten keinen solchen Lauf. Der Workflow ist auch manuell ausführbar. Bei Browserfehlern werden Testdiagnosen sieben Tage aufbewahrt.
-- **MyStyle auf GitHub Pages** (`.github/workflows/pages.yml`) bleibt bewusst manuell: **Actions → MyStyle auf GitHub Pages → Run workflow**. Er prüft Format und Daten, baut für den Pages-Unterpfad und veröffentlicht nur bei erfolgreichem Build. Normale Code-Pushes allein ändern die Live-App nicht.
-- Alle verwendeten Actions sind an geprüfte Commit-SHAs gebunden. Node folgt `.nvmrc`; der Runner ist Ubuntu 24.04. Die Prüfungen benötigen nur Lesezugriff, ausschliesslich der Deployment-Job erhält Pages-/OIDC-Schreibrechte.
+- **App:** Worker `mystyle` (`server/site-worker/index.js`) liefert den Build aus dem kostenlosen KV-Speicher `mystyle-site` unter https://mystyle.hahntim518.workers.dev aus. Veröffentlichen: `VITE_BASE_PATH=/ npm run build`, dann `CF_ACCOUNT=<Konto-ID> python3 server/site-worker/deploy.py dist` (Cloudflare-Schlüssel mit Workers- und KV-Rechten). Nur geänderte Dateien werden geschrieben (Gratis-Grenze 1000 Schreibvorgänge pro Tag).
+- **Suche:** Worker `mystyle-suche` (`server/search-worker`), Schlüssel als Cloudflare-Secret `SERPAPI_KEY`.
+- **Prüfen:** vor jeder Veröffentlichung lokal `npm test`, `npm run build` und `npm run test:e2e`. Die alten GitHub-Workflows in `.github/` laufen nicht mehr.
 
 Für einen lokalen Build der Projektseite:
 
