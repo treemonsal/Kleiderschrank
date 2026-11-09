@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Check, LoaderCircle, Plus, Search } from 'lucide-react'
-import { saveGarment, storageError } from './db'
+import { analyzePhoto, readAIConnection } from './cloud-ai'
+import { attachCutout, db, saveGarment, storageError } from './db'
 import { preparePhoto } from './photos'
 import { readPhotoPixels } from './photo-color'
 import {
@@ -16,7 +17,8 @@ import {
 } from './product-search'
 import { ErrorMessage, Sheet } from './ui'
 
-type Status = 'adding' | 'added'
+/** 'cutting': already in the wardrobe, the free AI is cutting it out. */
+type Status = 'adding' | 'cutting' | 'added' | 'kept'
 
 /** Search the web for a piece and put it into the wardrobe with one tap. */
 export function ProductSearch({
@@ -77,7 +79,7 @@ export function ProductSearch({
       }
       const photo = await preparePhoto(file)
       const color = dominantColor(await readPhotoPixels(photo))
-      await saveGarment({
+      const id = await saveGarment({
         name,
         category,
         color,
@@ -88,6 +90,33 @@ export function ProductSearch({
         favorite: false,
         photo,
       })
+      const connection = readAIConnection()
+      if (connection?.enabled && !signal.aborted) {
+        // Like a photo of your own: with the free AI on, the piece is cut
+        // out right away. The original stays if this fails or the piece
+        // was edited meanwhile.
+        setStatus((current) => ({ ...current, [result.image]: 'cutting' }))
+        let cut = false
+        try {
+          const saved = await db.garments.get(id)
+          const { cutout } = await analyzePhoto(
+            photo,
+            connection,
+            signal,
+            'cutout',
+          )
+          if (saved && cutout)
+            cut = await attachCutout(id, saved.updatedAt, cutout)
+        } catch {
+          // Keeps the shop photo; the note below says so.
+        }
+        if (!signal.aborted)
+          setStatus((current) => ({
+            ...current,
+            [result.image]: cut ? 'added' : 'kept',
+          }))
+        return
+      }
       if (!signal.aborted)
         setStatus((current) => ({ ...current, [result.image]: 'added' }))
     } catch (caught) {
@@ -154,6 +183,8 @@ export function ProductSearch({
           {results.map((result) => {
             const name = cleanTitle(result.title, searched)
             const state = status[result.image]
+            const inside =
+              state === 'added' || state === 'kept' || state === 'cutting'
             return (
               <li key={result.image}>
                 <img
@@ -165,24 +196,33 @@ export function ProductSearch({
                 <span className="product-name">{name}</span>
                 <span className="product-source">{result.source}</span>
                 <button
-                  className={`button ${state === 'added' ? 'secondary' : 'primary'}`}
+                  className={`button ${inside ? 'secondary' : 'primary'}`}
                   aria-label={
-                    state === 'added'
+                    inside
                       ? `${name} liegt im Kleiderschrank`
                       : `${name} in den Kleiderschrank`
                   }
                   disabled={!!state}
                   onClick={() => void add(result)}
                 >
-                  {state === 'adding' ? (
+                  {state === 'adding' || state === 'cutting' ? (
                     <LoaderCircle className="spin" size={16} />
-                  ) : state === 'added' ? (
+                  ) : inside ? (
                     <Check size={16} />
                   ) : (
                     <Plus size={16} />
                   )}
-                  {state === 'added' ? 'Drin' : 'Hinzufügen'}
+                  {state === 'cutting'
+                    ? 'Freistellen'
+                    : inside
+                      ? 'Drin'
+                      : 'Hinzufügen'}
                 </button>
+                {state === 'kept' && (
+                  <span className="product-source" role="status">
+                    Freistellen hat nicht geklappt, das Shopfoto bleibt.
+                  </span>
+                )}
               </li>
             )
           })}

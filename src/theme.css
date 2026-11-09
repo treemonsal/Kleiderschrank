@@ -2908,3 +2908,76 @@ body {
   display: grid;
   gap: 16px;
 }
+
+/* 0.42.0 – Selber zusammenstellen: each row swipes sideways like in Fits,
+   arrows for keyboard and VoiceOver, the name of the chosen piece below. */
+.manual-look {
+  margin-top: 28px;
+}
+.look-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+}
+.look-row-step {
+  width: 44px;
+  height: 44px;
+  background: none;
+  color: var(--c-ink-2);
+}
+.look-row-step:disabled {
+  opacity: 0.25;
+}
+.look-row-track {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.look-row-track::-webkit-scrollbar {
+  display: none;
+}
+.look-row-slide {
+  display: grid;
+  flex: 0 0 100%;
+  height: 112px;
+  place-items: center;
+  scroll-snap-align: center;
+}
+.look-row-slide .garment-picture,
+.look-row-slide .photo-placeholder,
+.look-row-slide img {
+  width: auto;
+  max-width: 100%;
+  height: 112px;
+  object-fit: contain;
+}
+.look-row-slide.is-empty span {
+  display: grid;
+  width: 96px;
+  height: 84px;
+  place-items: center;
+  border-radius: var(--r-control);
+  background: var(--c-fill);
+  color: var(--c-ink-2);
+  font-size: 0.85rem;
+}
+.look-row-name {
+  grid-column: 1 / -1;
+  margin: 0;
+  overflow: hidden;
+  color: var(--c-ink-2);
+  font-size: 0.8rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.manual-look .look-result-actions {
+  margin-top: 16px;
+}

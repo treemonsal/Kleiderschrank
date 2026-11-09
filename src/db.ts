@@ -496,6 +496,34 @@ export async function saveGarment(
   )
   return garment.id
 }
+/**
+ * Adds a cut-out to a piece that has none yet, but only while the piece is
+ * exactly as it was when the cut-out started (no edit in between).
+ * Returns false when the piece changed or is gone; nothing is written then.
+ */
+export async function attachCutout(
+  id: string,
+  expectedUpdatedAt: string,
+  cutout: Blob,
+  database = db,
+): Promise<boolean> {
+  return database.transaction('rw', database.garments, async () => {
+    const current = await database.garments.get(id)
+    if (!current || current.cutout || current.updatedAt !== expectedUpdatedAt)
+      return false
+    const next: Garment = {
+      ...current,
+      cutout,
+      updatedAt: new Date(
+        Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
+      ).toISOString(),
+    }
+    const items = await database.garments.toArray()
+    assertWardrobeCapacity([...items.filter((item) => item.id !== id), next])
+    await database.garments.put(next)
+    return true
+  })
+}
 export async function toggleFavorite(
   item: Garment,
   database = db,

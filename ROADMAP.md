@@ -1,12 +1,16 @@
 # Entwicklungsplan
 
+## Version 0.42.0 – Selber zusammenstellen
+
+- [x] Reihen wischen auf Home (Jacke, Oberteil/Kleid, Hose, Schuhe, Accessoire), Speichern und Für heute
+- [x] Gefundene Shop-Bilder mit kostenloser KI gleich freistellen
+
 ## Umzug zu GitLab und Cloudflare (9. November 2026)
 
 - [x] Code privat auf GitLab
 - [x] App bei Cloudflare unter mystyle.hahntim518.workers.dev
 - [x] Online-Suche live mit echtem SerpApi-Schlüssel
 - [ ] Tim: neue Adresse bei Google (OAuth) eintragen, dann Anmeldung und Drive-Abgleich live prüfen
-- [ ] Gefundene Shop-Bilder automatisch freistellen
 
 ## Version 0.41.0 – Home, Plus, Profil
 
@@ -22,7 +26,6 @@
 - [x] „Hinzufügen“ legt das Stück mit Bild, Kategorie, Farbe und Marke direkt ab; unklare Kategorie öffnet den Editor
 - [x] Eigener Cloudflare Worker hält den Schlüssel geheim und lädt die Bilder (server/search-worker)
 - [x] SerpApi- und Cloudflare-Konto, Worker eingerichtet (9. November 2026)
-- [ ] Danach: gefundene Stücke automatisch freistellen, wenn die kostenlose KI aktiv ist
 
 ## Version 0.39.0 – Schwarz & Salbei
 

@@ -1,5 +1,10 @@
 # MyStyle
 
+## Version 0.42.0 – Selber zusammenstellen
+
+- Wie bei Fits: Auf Home unter den Vorschlägen Reihen für Jacke, Oberteil oder Kleid, Hose, Schuhe und Accessoire seitlich wischen, dann speichern oder für heute wählen. Nur tragbare Stücke (nicht aussortiert, nicht in der Wäsche), Favoriten zuerst; ein Kleid ersetzt die Hose.
+- Online gefundene Stücke werden bei aktiver kostenloser KI gleich freigestellt. Das Shopfoto bleibt, wenn es nicht klappt oder das Stück inzwischen bearbeitet wurde.
+
 ## Version 0.41.0 – Home, Plus, Profil
 
 - Aufbau wie Fits: unten nur **Home**, **+** und **Profil**, flach über die ganze Breite wie bei youtube.com. Home vereint Tageslook und Weitere Looks. **+** öffnet ein Blatt von unten (Foto, Galerie, Online suchen, ohne Foto). Profil zeigt Name, Zahlen, alle Kleider und die gespeicherten Outfits; Journal und Einstellungen sitzen oben rechts im Profil. Funktionen und Daten unverändert, neu nur der optionale Profilname (Sicherungsformat 8, optional).

@@ -140,7 +140,10 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
   await page
     .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
     .click()
-  await page.getByRole('button', { name: 'Speichern', exact: true }).click()
+  await page
+    .getByRole('article', { name: 'Vorschlag' })
+    .getByRole('button', { name: 'Speichern', exact: true })
+    .click()
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await pickJournalDay(page, '2026-10-16')

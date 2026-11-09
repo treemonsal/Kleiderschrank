@@ -144,3 +144,78 @@ test('Ohne eingerichteten Such-Server bleibt die Suche verborgen', async ({
     page.getByRole('button', { name: 'Online suchen', exact: true }),
   ).toHaveCount(0)
 })
+
+test('Mit kostenloser KI wird ein gefundenes Stück gleich freigestellt', async ({
+  page,
+}) => {
+  await withSearch(page)
+  const B = 'https://zhengpeng7-birefnet-demo.hf.space'
+  const cut = await readFile('public/icon-512.png')
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'mystyle-photo-ai',
+      JSON.stringify({
+        mode: 'community',
+        url: 'https://prithivmlmods-qwen3-vl-outpost.hf.space',
+        code: '',
+        enabled: true,
+      }),
+    )
+  })
+  const calls: string[] = []
+  await page.route('https://*.hf.space/**', (route) => {
+    const url = route.request().url()
+    calls.push(url)
+    if (url === B + '/gradio_api/upload')
+      return route.fulfill({ json: ['/tmp/gradio/test/garment.jpg'] })
+    if (url === B + '/gradio_api/call/image')
+      return route.fulfill({ json: { event_id: 'b'.repeat(32) } })
+    if (url === B + '/gradio_api/call/image/' + 'b'.repeat(32))
+      return route.fulfill({
+        contentType: 'text/event-stream',
+        body: `event: complete\ndata: ${JSON.stringify([[null, { url: `${B}/gradio_api/file=/tmp/gradio/cutout.png` }]])}\n\n`,
+      })
+    if (url === `${B}/gradio_api/file=/tmp/gradio/cutout.png`)
+      return route.fulfill({ contentType: 'image/png', body: cut })
+    return route.fulfill({ status: 404, body: 'unexpected' })
+  })
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Hinzufügen', exact: true }).click()
+  await page.getByRole('button', { name: 'Online suchen', exact: true }).click()
+  const dialog = page.getByRole('dialog')
+  await dialog
+    .getByRole('button', { name: 'Nike Air Force 1', exact: true })
+    .click()
+  await dialog
+    .getByRole('button', { name: "Nike Air Force 1 '07 in den Kleiderschrank" })
+    .click()
+  await expect(
+    dialog.getByRole('button', {
+      name: "Nike Air Force 1 '07 liegt im Kleiderschrank",
+    }),
+  ).toContainText('Drin')
+  // Only the cut-out service is asked, never the recognition model.
+  expect(calls.every((url) => url.startsWith(B))).toBe(true)
+  const stored = await page.evaluate(
+    () =>
+      new Promise<{ photo: number; cutout: number }>((resolve, reject) => {
+        const open = indexedDB.open('mystyle-private-wardrobe')
+        open.onerror = () => reject(open.error)
+        open.onsuccess = () => {
+          const request = open.result
+            .transaction('garments')
+            .objectStore('garments')
+            .getAll()
+          request.onsuccess = () => {
+            const [item] = request.result as { photo?: Blob; cutout?: Blob }[]
+            resolve({
+              photo: item?.photo?.size ?? 0,
+              cutout: item?.cutout?.size ?? 0,
+            })
+          }
+        }
+      }),
+  )
+  expect(stored.photo).toBeGreaterThan(0)
+  expect(stored.cutout).toBeGreaterThan(0)
+})

@@ -22,6 +22,7 @@ import { LookBands } from './LookBands'
 import { useViewState } from './view-memory'
 import { chooseLookForToday } from './daily-choice'
 import { lookTitle } from './swatch'
+import { ManualLook } from './ManualLook'
 
 function colorTitle(ids: string[], items: Garment[]) {
   return lookTitle(
@@ -243,6 +244,13 @@ export function OutfitView({
       onToday()
     })
   const name = (id: string) => items.find((item) => item.id === id)?.name
+  // A hand-picked look keeps its accessory, or goes without one.
+  const withAccessory = (ids: string[]): OutfitOptions => ({
+    ...options,
+    includeAccessory: ids.some(
+      (id) => items.find((item) => item.id === id)?.category === 'Accessoires',
+    ),
+  })
   // „Zuletzt getragen“: most recently worn first, never worn after (newest).
   const byLastWorn = (state?.outfits ?? [])
     .map((outfit) => ({
@@ -354,6 +362,25 @@ export function OutfitView({
                 </article>
               )}
             </section>
+          )}
+          {mode === 'compose' && (
+            <ManualLook
+              items={items}
+              busy={busy}
+              isSaved={(ids) =>
+                state.outfits.some(
+                  (outfit) => outfitKey(outfit.garmentIds) === outfitKey(ids),
+                )
+              }
+              onSave={(ids) =>
+                void action(async () => {
+                  await saveOutfit(ids, withAccessory(ids))
+                  notify(`„${colorTitle(ids, items)}“ gespeichert.`)
+                })
+              }
+              onToday={(ids) => void pickForToday(ids, withAccessory(ids))}
+              onAdd={onAdd}
+            />
           )}
           {mode === 'saved' && !state.outfits.length && (
             <p className="muted">
