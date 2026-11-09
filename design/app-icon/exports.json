@@ -1,0 +1,37 @@
+{
+  "source": "monochrome-master.png",
+  "exports": [
+    {
+      "file": "public/apple-touch-icon-monochrome.png",
+      "legacyAlias": "public/apple-touch-icon.png",
+      "size": "180x180",
+      "opaque": true,
+      "artworkInset": 0,
+      "sha256": "5f0ef538c26e6848c061bea03e7523a4dd830aba011541bab3d27575f820dcf9"
+    },
+    {
+      "file": "public/icon-monochrome-192.png",
+      "legacyAlias": "public/icon-192.png",
+      "size": "192x192",
+      "opaque": true,
+      "artworkInset": 0,
+      "sha256": "8738e8de6cd123ed75835381b482d8b21ad7f1dad73f3f94cbdcd9118c3efea8"
+    },
+    {
+      "file": "public/icon-monochrome-512.png",
+      "legacyAlias": "public/icon-512.png",
+      "size": "512x512",
+      "opaque": true,
+      "artworkInset": 0,
+      "sha256": "10aa5a379b85ff7d15fc6f9c6f59b9581c69cea4cb797ae9fe70f01dfe3fd6e4"
+    },
+    {
+      "file": "public/icon-monochrome-maskable.png",
+      "legacyAlias": "public/icon-maskable.png",
+      "size": "512x512",
+      "opaque": true,
+      "artworkInset": 0.1,
+      "sha256": "2e5823f81a36b0fe4cfc523582686211b5c5cacddf22b418a07a3d7cc7df1509"
+    }
+  ]
+}
