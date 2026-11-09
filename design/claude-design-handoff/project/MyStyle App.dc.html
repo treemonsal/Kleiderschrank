@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-a7e90d40-d06f-4d40-967e-857a5a8d53ee/styles.css">
+<script src="_ds/classical-a7e90d40-d06f-4d40-967e-857a5a8d53ee/_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--color-neutral-200)}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-600)}button{font:inherit;color:inherit}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:56px;padding:48px 24px;box-sizing:border-box">
+
+<sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+<div style="max-width:300px;display:flex;flex-direction:column;gap:14px">
+  <div style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Neuentwurf · Kleiderschrank</div>
+  <h1 style="font-weight:400;font-size:46px;line-height:1;margin:0">MyStyle,<br><em>ein Garderobenjournal</em></h1>
+  <div style="height:1px;background:var(--color-divider)"></div>
+  <p style="font-size:14px;line-height:1.6;text-align:justify;hyphens:auto;margin:0;color:var(--color-neutral-800)">The app reads like a printed almanac of your own clothes. Every piece is shown as a cloth swatch in its recorded colour and weave, so the whole wardrobe stays legible before a single photo is taken.</p>
+  <p style="font-size:14px;line-height:1.6;text-align:justify;hyphens:auto;margin:0;color:var(--color-neutral-800)">Worn days become colour rings in the week strip and the journal. Your history is a palette, and nothing is invented for days without an entry.</p>
+  <div style="font-size:12px;line-height:1.7;color:var(--color-neutral-700)">Try: tap a figure to swap it · <em>Wärmer</em> for a preview · thumbs-up unlocks shopping · the speech bubble opens the stylist · <em>+</em> in Garderobe.</div>
+</div>
+</sc-if>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+<div style="height:100%;position:relative;background:var(--color-bg);overflow:hidden;font-family:var(--font-body);color:var(--color-text)">
+
+  <div ref="{{ scrollRef }}" style="position:absolute;inset:0;overflow-y:auto;padding:56px 0 120px">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 22px 10px">
+      <div style="font-family:var(--font-heading);font-style:italic;font-weight:600;font-size:23px;letter-spacing:-.01em">MyStyle</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-icon" aria-label="Stylist" onClick="{{ openChat }}" style="position:relative;width:44px;height:44px">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>
+          <sc-if value="{{ unread }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:10px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--color-accent);box-shadow:0 0 0 2px var(--color-bg)"></span></sc-if>
+        </button>
+      </div>
+    </div>
+
+    <sc-if value="{{ isHeute }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:0 22px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:4px 0 16px">
+        <div style="min-width:0">
+          <div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">{{ dayWeekdayLong }}</div>
+          <div style="font-family:var(--font-heading);font-weight:400;font-size:46px;line-height:1.02;letter-spacing:-.02em;font-variant-numeric:tabular-nums">{{ dayDateLabel }}</div>
+        </div>
+        <sc-if value="{{ isTodaySel }}" hint-placeholder-val="{{ true }}">
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding-bottom:4px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="M20 12h2"></path><path d="m19.07 4.93-1.41 1.41"></path><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"></path><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"></path></svg>
+            <span style="font-family:var(--font-heading);font-size:28px;line-height:1;font-variant-numeric:tabular-nums">8°–14°</span>
+          </div>
+          <div style="font-size:11.5px;color:var(--color-neutral-700)">Bewölkt · Zürich</div>
+        </div>
+        </sc-if>
+        <sc-if value="{{ notTodaySel }}" hint-placeholder-val="{{ false }}">
+        <button class="btn btn-ghost" onClick="{{ goToday }}" style="font-size:14px;padding-bottom:6px">Zu heute</button>
+        </sc-if>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);padding:10px 0 6px">
+        <sc-for list="{{ week }}" as="c" hint-placeholder-count="7">
+        <button onClick="{{ c.select }}" aria-label="{{ c.aria }}" style="background:none;border:0;padding:2px 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;min-height:44px">
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">{{ c.wd }}</span>
+          <span style="width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:{{ c.ring }};border:{{ c.border }};box-sizing:border-box;transition:background .6s">
+            <span style="width:31px;height:31px;border-radius:50%;background:var(--color-bg);display:grid;place-items:center;font-family:var(--font-heading);font-size:18px;font-weight:{{ c.fw }};font-variant-numeric:tabular-nums;color:{{ c.numColor }}">{{ c.d }}</span>
+          </span>
+          <span style="width:16px;height:1.5px;background:{{ c.mark }}"></span>
+        </button>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:16px;justify-content:center;padding:8px 0 0;font-size:10.5px;color:var(--color-neutral-700)">
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:conic-gradient(#b08a5e 0 33%,#2f3b52 0 66%,#e6dcc8 0)"></span>getragen, in seinen Farben</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:50%;border:1px dashed var(--color-neutral-500);box-sizing:border-box"></span>geplant</span>
+      </div>
+
+      <sc-if value="{{ hasLook }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin:24px 0 2px">
+        <span style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">{{ statusKicker }}</span>
+        <span style="font-size:11.5px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">{{ lookCount }}</span>
+      </div>
+      <h2 style="font-size:31px;font-weight:400;font-style:italic;margin:0 0 3px">{{ lookTitle }}</h2>
+      <div style="font-size:13px;color:var(--color-neutral-700);margin-bottom:14px">{{ lookMeta }}</div>
+
+      <div style="background:var(--color-surface);border:1px solid var(--color-divider);padding:9px;display:grid;grid-template-columns:1.12fr 1fr;grid-template-rows:170px 134px 98px;gap:8px">
+        <div onClick="{{ tiles.j.open }}" style="grid-row:1 / 3;grid-column:1;position:relative;display:flex;flex-direction:column;min-width:0;cursor:{{ tiles.j.cursor }};outline:{{ tiles.j.outline }};outline-offset:2px">
+          <div style="flex:1;background:{{ tiles.j.bg }}"></div>
+          <div style="background:var(--color-bg);padding:6px 8px 7px;display:flex;flex-direction:column;min-width:0">
+            <span style="font-size:9.5px;letter-spacing:.1em;color:var(--color-accent-700);font-variant-numeric:tabular-nums">ABB. 1 · JACKE</span>
+            <span style="font-family:var(--font-heading);font-weight:600;font-size:16px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tiles.j.name }}</span>
+          </div>
+          <sc-if value="{{ tiles.j.changed }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent" style="position:absolute;top:8px;left:8px">neu</span></sc-if>
+        </div>
+        <div onClick="{{ tiles.o.open }}" style="grid-row:1;grid-column:2;position:relative;display:flex;flex-direction:column;min-width:0;cursor:{{ tiles.o.cursor }};outline:{{ tiles.o.outline }};outline-offset:2px">
+          <div style="flex:1;background:{{ tiles.o.bg }}"></div>
+          <div style="background:var(--color-bg);padding:6px 8px 7px;display:flex;flex-direction:column;min-width:0">
+            <span style="font-size:9.5px;letter-spacing:.1em;color:var(--color-accent-700);font-variant-numeric:tabular-nums">ABB. 2 · OBERTEIL</span>
+            <span style="font-family:var(--font-heading);font-weight:600;font-size:16px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tiles.o.name }}</span>
+          </div>
+          <sc-if value="{{ tiles.o.changed }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent" style="position:absolute;top:8px;left:8px">neu</span></sc-if>
+        </div>
+        <div onClick="{{ tiles.h.open }}" style="grid-row:2;grid-column:2;position:relative;display:flex;flex-direction:column;min-width:0;cursor:{{ tiles.h.cursor }};outline:{{ tiles.h.outline }};outline-offset:2px">
+          <div style="flex:1;background:{{ tiles.h.bg }}"></div>
+          <div style="background:var(--color-bg);padding:6px 8px 7px;display:flex;flex-direction:column;min-width:0">
+            <span style="font-size:9.5px;letter-spacing:.1em;color:var(--color-accent-700);font-variant-numeric:tabular-nums">ABB. 3 · HOSE</span>
+            <span style="font-family:var(--font-heading);font-weight:600;font-size:16px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tiles.h.name }}</span>
+          </div>
+          <sc-if value="{{ tiles.h.changed }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent" style="position:absolute;top:8px;left:8px">neu</span></sc-if>
+        </div>
+        <div onClick="{{ tiles.s.open }}" style="grid-row:3;grid-column:1;position:relative;display:flex;flex-direction:column;min-width:0;cursor:{{ tiles.s.cursor }};outline:{{ tiles.s.outline }};outline-offset:2px">
+          <div style="flex:1;background:{{ tiles.s.bg }}"></div>
+          <div style="background:var(--color-bg);padding:5px 8px 6px;display:flex;flex-direction:column;min-width:0">
+            <span style="font-size:9.5px;letter-spacing:.1em;color:var(--color-accent-700);font-variant-numeric:tabular-nums">ABB. 4 · SCHUHE</span>
+            <span style="font-family:var(--font-heading);font-weight:600;font-size:15px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tiles.s.name }}</span>
+          </div>
+          <sc-if value="{{ tiles.s.changed }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent" style="position:absolute;top:6px;left:6px">neu</span></sc-if>
+        </div>
+        <div onClick="{{ tiles.a.open }}" style="grid-row:3;grid-column:2;position:relative;display:flex;flex-direction:column;min-width:0;cursor:{{ tiles.a.cursor }};outline:{{ tiles.a.outline }};outline-offset:2px">
+          <div style="flex:1;background:{{ tiles.a.bg }}"></div>
+          <div style="background:var(--color-bg);padding:5px 8px 6px;display:flex;flex-direction:column;min-width:0">
+            <span style="font-size:9.5px;letter-spacing:.1em;color:var(--color-accent-700);font-variant-numeric:tabular-nums">ABB. 5 · ACCESSOIRE</span>
+            <span style="font-family:var(--font-heading);font-weight:600;font-size:15px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tiles.a.name }}</span>
+          </div>
+          <sc-if value="{{ tiles.a.changed }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent" style="position:absolute;top:6px;left:6px">neu</span></sc-if>
+        </div>
+      </div>
+      <div style="font-size:11.5px;font-style:italic;color:var(--color-neutral-700);margin:7px 0 0">{{ figCaption }}</div>
+
+      <sc-if value="{{ showTodayActions }}" hint-placeholder-val="{{ true }}">
+        <p style="font-size:13.5px;line-height:1.6;text-align:justify;hyphens:auto;margin:16px 0 18px;color:var(--color-neutral-800)">{{ reasonText }}</p>
+
+        <sc-if value="{{ hasPreview }}" hint-placeholder-val="{{ false }}">
+        <div class="card" style="border-color:var(--color-accent);margin-bottom:14px">
+          <div class="card-kicker" style="color:var(--color-accent-700)">Vorschau · {{ previewLabel }}</div>
+          <div style="font-size:13.5px">{{ previewText }}</div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn btn-secondary" onClick="{{ discardPreview }}" style="min-height:40px">Verwerfen</button>
+            <button class="btn btn-primary" onClick="{{ applyPreview }}" style="min-height:40px">Übernehmen</button>
+          </div>
+        </div>
+        </sc-if>
+
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+          <span style="font-size:12px;color:var(--color-neutral-700);margin-right:2px">Verfeinern</span>
+          <sc-for list="{{ refineOpts }}" as="r" hint-placeholder-count="3">
+          <button class="btn btn-secondary" onClick="{{ r.go }}" style="min-height:40px;padding:6px 11px;font-size:14px;color:{{ r.color }};border-color:{{ r.border }}">{{ r.label }}</button>
+          </sc-for>
+        </div>
+
+        <button class="btn btn-primary" onClick="{{ markWorn }}" style="width:100%;min-height:50px;font-size:17px;gap:8px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+          Heute getragen
+        </button>
+      </sc-if>
+
+      <sc-if value="{{ wornToday }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;padding:12px 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
+          <span style="display:flex;align-items:center;gap:8px;font-family:var(--font-heading);font-size:18px;font-style:italic;color:var(--color-accent-700)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+            Im Journal vermerkt
+          </span>
+          <button class="btn btn-ghost" onClick="{{ undoWorn }}" style="min-height:40px">Rückgängig</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTodaySel }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:18px">
+        <span style="font-family:var(--font-heading);font-size:18px">Wie gefällt dir der Look?</span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary btn-icon" aria-label="Gefällt mir" onClick="{{ rateUp }}" style="width:44px;height:44px;color:{{ upColor }};border-color:{{ upBorder }};background:{{ upBg }}">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path></svg>
+          </button>
+          <button class="btn btn-secondary btn-icon" aria-label="Gefällt mir nicht" onClick="{{ rateDown }}" style="width:44px;height:44px;color:{{ downColor }};border-color:{{ downBorder }};background:{{ downBg }}">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"></path><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path></svg>
+          </button>
+        </div>
+      </div>
+      <sc-if value="{{ showReasons }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:12px">
+        <div style="font-size:12px;color:var(--color-neutral-700);margin-bottom:8px">Grund angeben — freiwillig</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ reasons }}" as="rs" hint-placeholder-count="4">
+          <button class="btn btn-secondary" onClick="{{ rs.pick }}" style="min-height:36px;padding:5px 11px;font-size:13.5px;color:{{ rs.color }};border-color:{{ rs.border }}">{{ rs.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ hasNote }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:18px;padding:14px 0;border-top:1px solid var(--color-divider);display:flex;gap:12px">
+        <span style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700);padding-top:3px">Notiz</span>
+        <span style="font-family:var(--font-heading);font-size:19px;font-style:italic;line-height:1.3">{{ dayNote }}</span>
+      </div>
+      </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ noLook }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:48px 8px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="font-family:var(--font-heading);font-size:64px;font-weight:400;line-height:1;color:var(--color-accent);font-variant-numeric:tabular-nums">{{ dayNum }}</div>
+        <div style="font-family:var(--font-heading);font-size:24px;font-style:italic">Noch nichts geplant</div>
+        <p style="font-size:13.5px;color:var(--color-neutral-700);max-width:270px;margin:0">Für diesen Tag gibt es keinen Eintrag. Du kannst den heutigen Vorschlag schon einmal einplanen.</p>
+        <button class="btn btn-primary" onClick="{{ planDay }}" style="min-height:44px;margin-top:6px">Heutigen Look einplanen</button>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isTodaySel }}" hint-placeholder-val="{{ true }}">
+      <div class="card" style="margin-top:26px;gap:6px;padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span class="card-kicker" style="color:var(--color-accent-700)">Stilgespräch</span>
+          <span style="font-size:11px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">3 von 8</span>
+        </div>
+        <div style="font-family:var(--font-heading);font-size:21px;line-height:1.2">Frierst du schnell, oder ist dir eher warm?</div>
+        <div style="height:2px;background:var(--color-neutral-300);margin:6px 0 2px;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:37.5%;background:var(--color-accent)"></span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px;color:var(--color-neutral-700)">Freiwillig · wirkt auf Wärmeregeln</span>
+          <button class="btn btn-ghost" onClick="{{ openChat }}" style="min-height:40px">Antworten</button>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isGarderobe }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:0 22px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;padding:4px 0 6px">
+        <div>
+          <h1 style="font-weight:400;font-size:44px;margin:0;line-height:1">Garderobe</h1>
+          <div style="font-size:12.5px;color:var(--color-neutral-700);margin-top:6px;font-variant-numeric:tabular-nums">{{ wardrobeSub }}</div>
+        </div>
+        <button class="btn btn-primary btn-icon" aria-label="Stück hinzufügen" onClick="{{ openAdd }}" style="width:46px;height:46px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+        </button>
+      </div>
+
+      <div style="display:flex;gap:18px;overflow-x:auto;border-bottom:1px solid var(--color-divider);margin:14px -22px 0;padding:0 22px;scrollbar-width:none">
+        <sc-for list="{{ cats }}" as="ct" hint-placeholder-count="6">
+        <button onClick="{{ ct.pick }}" style="background:none;border:0;padding:10px 0 9px;cursor:pointer;white-space:nowrap;font-family:var(--font-heading);font-size:17px;font-weight:{{ ct.fw }};color:{{ ct.color }};box-shadow:{{ ct.line }}">{{ ct.label }} <span style="font-family:var(--font-body);font-size:10.5px;color:var(--color-neutral-600);font-variant-numeric:tabular-nums">{{ ct.n }}</span></button>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;gap:8px;margin:14px 0 16px">
+        <button class="btn btn-secondary" onClick="{{ toggleFav }}" style="min-height:36px;padding:5px 12px;font-size:13.5px;color:{{ favChip.color }};border-color:{{ favChip.border }}">Favoriten</button>
+        <button class="btn btn-secondary" onClick="{{ toggleLaundry }}" style="min-height:36px;padding:5px 12px;font-size:13.5px;color:{{ lauChip.color }};border-color:{{ lauChip.border }};gap:6px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h3"></path><path d="M17 6h.01"></path><rect width="18" height="20" x="3" y="2" rx="2"></rect><circle cx="12" cy="13" r="5"></circle><path d="M12 18a2.5 2.5 0 0 0 0-5 2.5 2.5 0 0 1 0-5"></path></svg>
+          In der Wäsche
+        </button>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <div style="display:flex;height:12px;border:1px solid var(--color-divider);padding:2px;background:var(--color-surface)">
+          <sc-for list="{{ colorBand }}" as="cb" hint-placeholder-count="12"><span style="flex:{{ cb.w }};background:{{ cb.c }}"></span></sc-for>
+        </div>
+        <div style="font-size:11px;font-style:italic;color:var(--color-neutral-700);margin-top:5px">Farbbilanz, gewichtet nach Tragehäufigkeit</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 14px">
+        <sc-for list="{{ gridItems }}" as="it" hint-placeholder-count="6">
+        <div onClick="{{ it.open }}" style="cursor:pointer;display:flex;flex-direction:column;gap:7px;min-width:0">
+          <div style="background:var(--color-surface);padding:6px;border:1px solid var(--color-divider);position:relative">
+            <div style="aspect-ratio:4 / 5;background:{{ it.bg }};opacity:{{ it.op }}"></div>
+            <sc-if value="{{ it.laundry }}" hint-placeholder-val="{{ false }}"><span class="tag tag-neutral" style="position:absolute;left:12px;bottom:12px">In der Wäsche</span></sc-if>
+          </div>
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-family:var(--font-heading);font-weight:600;font-size:17px;line-height:1.15;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.name }}</span>
+              <sc-if value="{{ it.fav }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg></sc-if>
+            </div>
+            <div style="font-size:11.5px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">{{ it.meta }}</div>
+          </div>
+        </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ gridEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:40px 0;text-align:center;font-family:var(--font-heading);font-size:20px;font-style:italic;color:var(--color-neutral-700)">Hier liegt gerade nichts.</div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isLooks }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:0 22px">
+      <h1 style="font-weight:400;font-size:44px;margin:4px 0 0;line-height:1">Looks</h1>
+      <div style="font-size:12.5px;color:var(--color-neutral-700);margin-top:6px;font-variant-numeric:tabular-nums">{{ looksSub }}</div>
+
+      <div class="card" style="margin:20px 0 26px;padding:16px;gap:12px">
+        <span class="card-kicker" style="color:var(--color-accent-700)">Neu zusammenstellen</span>
+        <div style="display:flex;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden">
+          <sc-for list="{{ occasions }}" as="oc" hint-placeholder-count="3">
+          <button onClick="{{ oc.pick }}" style="flex:1;background:none;border:0;border-left:{{ oc.sep }};padding:9px 0;min-height:40px;cursor:pointer;font-size:13.5px;color:{{ oc.color }};box-shadow:{{ oc.ring }}">{{ oc.label }}</button>
+          </sc-for>
+        </div>
+        <button class="btn btn-primary" onClick="{{ generate }}" style="min-height:44px;font-size:15px">Aus der Garderobe vorschlagen</button>
+        <sc-if value="{{ hasGenerated }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:9px;padding-top:6px;border-top:1px solid var(--color-divider)">
+          <div style="display:flex;height:64px;background:var(--color-surface);padding:5px;gap:3px;border:1px solid var(--color-divider);margin-top:8px">
+            <sc-for list="{{ generated.bands }}" as="b" hint-placeholder-count="5"><span style="flex:{{ b.w }};background:{{ b.bg }}"></span></sc-for>
+          </div>
+          <div style="font-family:var(--font-heading);font-size:21px;font-style:italic">{{ generated.name }}</div>
+          <div style="font-size:12px;color:var(--color-neutral-700)">{{ generated.pieces }}</div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn btn-secondary" onClick="{{ saveGenerated }}" style="min-height:40px">Speichern</button>
+            <button class="btn btn-primary" onClick="{{ useGenerated }}" style="min-height:40px">Für heute</button>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--color-divider);padding-bottom:8px;margin-bottom:18px">
+        <span style="font-family:var(--font-heading);font-size:22px">Gespeichert</span>
+        <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Zuletzt getragen</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <sc-for list="{{ savedLooks }}" as="lk" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;height:72px;background:var(--color-surface);padding:5px;gap:3px;border:1px solid var(--color-divider)">
+            <sc-for list="{{ lk.bands }}" as="b" hint-placeholder-count="5"><span style="flex:{{ b.w }};background:{{ b.bg }}"></span></sc-for>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:baseline;gap:8px">
+                <span style="font-size:11px;color:var(--color-accent-700);font-variant-numeric:tabular-nums">{{ lk.no }}</span>
+                <span style="font-family:var(--font-heading);font-weight:600;font-size:19px;line-height:1.15">{{ lk.name }}</span>
+              </div>
+              <div style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">{{ lk.meta }}</div>
+            </div>
+            <button class="btn btn-icon" aria-label="Favorit" onClick="{{ lk.toggleFav }}" style="width:44px;height:44px;color:{{ lk.heartColor }}">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="{{ lk.heartFill }}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+            </button>
+            <button class="btn btn-secondary" onClick="{{ lk.use }}" style="min-height:40px;padding:6px 12px">Für heute</button>
+          </div>
+        </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isJournal }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:0 22px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end">
+        <h1 style="font-weight:400;font-size:44px;margin:4px 0 0;line-height:1">Journal</h1>
+        <span style="font-family:var(--font-heading);font-size:19px;font-style:italic;padding-bottom:4px">Oktober 2026</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));margin-top:18px;border-top:1px solid var(--color-divider);padding-top:10px;row-gap:4px">
+        <sc-for list="{{ weekdayHeads }}" as="wh" hint-placeholder-count="7"><span style="text-align:center;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700);padding-bottom:4px">{{ wh }}</span></sc-for>
+        <sc-for list="{{ monthCells }}" as="mc" hint-placeholder-count="35">
+        <button onClick="{{ mc.select }}" disabled="{{ mc.blank }}" style="background:none;border:0;padding:3px 0;cursor:pointer;display:grid;place-items:center;min-height:46px;visibility:{{ mc.vis }}">
+          <span style="width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:{{ mc.ring }};border:{{ mc.border }};box-sizing:border-box;outline:{{ mc.sel }};outline-offset:2px">
+            <span style="width:31px;height:31px;border-radius:50%;background:var(--color-bg);display:grid;place-items:center;font-family:var(--font-heading);font-size:16px;font-variant-numeric:tabular-nums;color:{{ mc.color }};font-weight:{{ mc.fw }}">{{ mc.d }}</span>
+          </span>
+        </button>
+        </sc-for>
+      </div>
+
+      <div style="border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);padding:14px 0;margin-top:8px;display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-family:var(--font-heading);font-size:19px">{{ jSel.label }}</span>
+          <span style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">{{ jSel.status }}</span>
+        </div>
+        <sc-if value="{{ jSel.has }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;height:40px;background:var(--color-surface);padding:4px;gap:3px;border:1px solid var(--color-divider)">
+            <sc-for list="{{ jSel.bands }}" as="b" hint-placeholder-count="5"><span style="flex:{{ b.w }};background:{{ b.bg }}"></span></sc-for>
+          </div>
+          <div style="font-size:12.5px;color:var(--color-neutral-700)">{{ jSel.text }}</div>
+        </sc-if>
+        <sc-if value="{{ jSel.none }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;font-style:italic;color:var(--color-neutral-700)">Kein Eintrag. Nachträglich wird nichts erfunden.</div>
+        </sc-if>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;margin:22px 0 26px">
+        <div style="padding-right:14px;border-right:1px solid var(--color-divider)">
+          <div style="font-family:var(--font-heading);font-weight:400;font-size:46px;line-height:1;font-variant-numeric:tabular-nums">{{ wornDays }}</div>
+          <div style="font-size:12px;color:var(--color-neutral-700);margin-top:4px">Tragetage im Oktober</div>
+        </div>
+        <div style="padding-left:16px">
+          <div style="font-family:var(--font-heading);font-weight:400;font-size:46px;line-height:1;font-variant-numeric:tabular-nums">{{ wornPieces }}</div>
+          <div style="font-size:12px;color:var(--color-neutral-700);margin-top:4px">verschiedene Stücke getragen</div>
+        </div>
+      </div>
+
+      <div style="font-family:var(--font-heading);font-size:22px;border-bottom:1px solid var(--color-divider);padding-bottom:8px;margin-bottom:4px">Lange nicht getragen</div>
+      <sc-for list="{{ forgotten }}" as="fg" hint-placeholder-count="3">
+      <div onClick="{{ fg.open }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--color-divider);cursor:pointer">
+        <span style="width:42px;height:42px;flex:none;border:4px solid var(--color-surface);outline:1px solid var(--color-divider);background:{{ fg.bg }}"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-family:var(--font-heading);font-weight:600;font-size:17px">{{ fg.name }}</div>
+          <div style="font-size:12px;color:var(--color-neutral-700)">{{ fg.meta }}</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-600)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+      </div>
+      </sc-for>
+
+      <div class="card" style="margin-top:26px;padding:16px;gap:10px;border-color:{{ shopBorder }}">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span class="card-kicker" style="color:var(--color-accent-700)">Einkaufsberatung</span>
+          <span style="font-size:11px;color:var(--color-neutral-700)">{{ shopState }}</span>
+        </div>
+        <div style="font-family:var(--font-heading);font-size:21px;line-height:1.2">{{ shopTitle }}</div>
+        <sc-for list="{{ shopConds }}" as="sc" hint-placeholder-count="3">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+          <span style="width:18px;height:18px;border-radius:50%;border:1px solid {{ sc.ring }};display:grid;place-items:center;color:var(--color-accent-700);flex:none">
+            <sc-if value="{{ sc.done }}" hint-placeholder-val="{{ true }}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+          </span>
+          <span style="flex:1">{{ sc.label }}</span>
+          <span style="font-variant-numeric:tabular-nums;color:var(--color-neutral-700)">{{ sc.val }}</span>
+        </div>
+        </sc-for>
+        <div style="font-size:11.5px;color:var(--color-neutral-700)">Budget 50 CHF pro Stück · keine automatischen Bestellungen</div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:22px;padding:12px 0;border-top:1px solid var(--color-divider)">
+        <div>
+          <div style="font-size:13.5px">Sicherung</div>
+          <div style="font-size:11.5px;color:var(--color-neutral-700)">{{ backupText }}</div>
+        </div>
+        <button class="btn btn-secondary" onClick="{{ doBackup }}" style="min-height:40px">Jetzt sichern</button>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;bottom:0;background:var(--color-bg);border-top:1px solid var(--color-divider);padding:0 10px 26px;z-index:10">
+    <div style="position:relative;display:grid;grid-template-columns:repeat(4,1fr)">
+      <span style="position:absolute;top:-1px;height:1.5px;width:25%;left:{{ tabLeft }};transition:left .38s cubic-bezier(.3,.7,.2,1);display:flex;justify-content:center"><span style="width:34px;background:var(--color-accent)"></span></span>
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+      <button onClick="{{ t.go }}" style="background:none;border:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 0 4px;min-height:50px">
+        <span style="font-family:var(--font-heading);font-size:11px;letter-spacing:.12em;color:{{ t.numColor }}">{{ t.num }}</span>
+        <span style="font-family:var(--font-heading);font-size:16px;font-weight:{{ t.fw }};color:{{ t.color }}">{{ t.label }}</span>
+      </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:20;background:color-mix(in srgb, var(--color-neutral-900) 38%, transparent);opacity:{{ backdropOp }};pointer-events:{{ backdropPe }};transition:opacity .3s"></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;z-index:21;max-height:82%;overflow-y:auto;background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;box-shadow:var(--shadow-lg);padding:10px 22px 40px;transform:{{ sheetTf }};transition:transform .38s cubic-bezier(.3,.7,.2,1)">
+    <div style="width:38px;height:3px;border-radius:2px;background:var(--color-neutral-400);margin:0 auto 14px"></div>
+
+    <sc-if value="{{ isSwap }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Tauschen · {{ swapCat }}</div>
+      <h3 style="font-weight:400;font-style:italic;font-size:27px;margin:2px 0 12px">Was stattdessen?</h3>
+      <sc-for list="{{ swapList }}" as="sw" hint-placeholder-count="4">
+      <button onClick="{{ sw.pick }}" disabled="{{ sw.disabled }}" style="width:100%;background:none;border:0;border-top:1px solid var(--color-divider);padding:10px 0;display:flex;align-items:center;gap:12px;cursor:pointer;text-align:left;opacity:{{ sw.op }}">
+        <span style="width:52px;height:52px;flex:none;border:4px solid var(--color-surface);outline:1px solid var(--color-divider);background:{{ sw.bg }}"></span>
+        <span style="flex:1;min-width:0;display:flex;flex-direction:column">
+          <span style="font-family:var(--font-heading);font-weight:600;font-size:18px">{{ sw.name }}</span>
+          <span style="font-size:12px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">{{ sw.meta }}</span>
+        </span>
+        <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-accent-700)">{{ sw.flag }}</span>
+      </button>
+      </sc-for>
+    </sc-if>
+
+    <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div style="width:120px;flex:none;background:var(--color-surface);padding:6px;border:1px solid var(--color-divider)"><div style="aspect-ratio:4 / 5;background:{{ det.bg }}"></div></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">{{ det.cat }}</div>
+          <h3 style="font-weight:400;font-size:29px;margin:2px 0 6px;line-height:1.05">{{ det.name }}</h3>
+          <div style="font-family:var(--font-heading);font-size:40px;line-height:1;font-variant-numeric:tabular-nums">{{ det.worn }}<span style="font-family:var(--font-body);font-size:12px;color:var(--color-neutral-700);margin-left:6px">× getragen</span></div>
+          <div style="font-size:12px;color:var(--color-neutral-700);margin-top:4px">zuletzt {{ det.last }}</div>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <sc-for list="{{ det.rows }}" as="dr" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:96px 1fr;padding:8px 0;border-top:1px solid var(--color-divider);font-size:13.5px">
+          <span style="color:var(--color-neutral-700)">{{ dr.k }}</span><span>{{ dr.v }}</span>
+        </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ det.hasPairs }}" hint-placeholder-val="{{ true }}">
+      <div style="border-top:1px solid var(--color-divider);padding-top:12px">
+        <div style="font-size:12px;color:var(--color-neutral-700);margin-bottom:8px">Passt gut zu</div>
+        <div style="display:flex;gap:10px">
+          <sc-for list="{{ det.pairs }}" as="pp" hint-placeholder-count="3">
+          <div style="flex:1;min-width:0">
+            <div style="height:46px;border:4px solid var(--color-surface);outline:1px solid var(--color-divider);background:{{ pp.bg }}"></div>
+            <div style="font-size:11.5px;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ pp.name }}</div>
+          </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+      <div style="display:flex;gap:8px;margin-top:20px">
+        <button class="btn btn-secondary" onClick="{{ det.toggleLaundry }}" style="flex:1;min-height:44px;gap:7px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h3"></path><path d="M17 6h.01"></path><rect width="18" height="20" x="3" y="2" rx="2"></rect><circle cx="12" cy="13" r="5"></circle><path d="M12 18a2.5 2.5 0 0 0 0-5 2.5 2.5 0 0 1 0-5"></path></svg>
+          {{ det.laundryLabel }}
+        </button>
+        <button class="btn btn-secondary btn-icon" aria-label="Favorit" onClick="{{ det.toggleFav }}" style="width:44px;height:44px;color:{{ det.heartColor }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="{{ det.heartFill }}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+        </button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isAdd }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Neues Stück</div>
+      <h3 style="font-weight:400;font-style:italic;font-size:27px;margin:2px 0 14px">{{ addTitle }}</h3>
+
+      <sc-if value="{{ addStep0 }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ pickPhoto }}" style="width:100%;height:230px;background:none;border:1px dashed var(--color-neutral-500);border-radius:var(--radius-md);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;color:var(--color-neutral-700)">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+          <span style="font-family:var(--font-heading);font-size:19px;color:var(--color-text)">Foto aufnehmen oder wählen</span>
+          <span style="font-size:12px">Bleibt auf dem Gerät, bis du die Erkennung startest</span>
+        </button>
+      </sc-if>
+
+      <sc-if value="{{ addStep1 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--color-surface);padding:6px;border:1px solid var(--color-divider)">
+          <div style="height:210px;background:repeating-linear-gradient(135deg, var(--color-neutral-300) 0 1px, transparent 1px 9px), var(--color-neutral-200);display:grid;place-items:center;font-size:11px;letter-spacing:.1em;color:var(--color-neutral-700)">IMG_2214.HEIC · ORIGINAL</div>
+        </div>
+        <p style="font-size:12.5px;line-height:1.55;color:var(--color-neutral-700);margin:12px 0 14px;text-align:justify">Für die Erkennung geht nur dieses Foto an Qwen3-VL (Community-Dienst). Alle Angaben bleiben korrigierbar; das Original bleibt erhalten.</p>
+        <button class="btn btn-primary" onClick="{{ analyze }}" style="width:100%;min-height:48px;font-size:16px">Angaben erkennen</button>
+      </sc-if>
+
+      <sc-if value="{{ addStep2 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--color-surface);padding:6px;border:1px solid var(--color-divider)">
+          <div style="height:210px;background:repeating-linear-gradient(135deg, var(--color-neutral-300) 0 1px, transparent 1px 9px), var(--color-neutral-200)"></div>
+        </div>
+        <div style="height:1.5px;background:var(--color-neutral-300);margin:16px 0 8px;position:relative;overflow:hidden"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ progressW }};background:var(--color-accent);transition:width 1.6s cubic-bezier(.4,.1,.3,1)"></span></div>
+        <div style="font-size:13px;font-style:italic;color:var(--color-neutral-700)">Erkenne Kategorie, Farbe und Saison, stelle frei …</div>
+      </sc-if>
+
+      <sc-if value="{{ addStep3 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <div style="width:112px;flex:none;background:var(--color-surface);padding:6px;border:1px solid var(--color-divider)"><div style="aspect-ratio:4 / 5;background:{{ newBg }}"></div></div>
+          <div class="field" style="flex:1;min-width:0">
+            <label>Name</label>
+            <input class="input" value="{{ addName }}" onChange="{{ onAddName }}" style="font-family:var(--font-heading);font-size:18px">
+            <div style="font-size:11.5px;color:var(--color-neutral-700);margin-top:8px">Freigestellt · Original bleibt gespeichert</div>
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <sc-for list="{{ newRows }}" as="nr" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:96px 1fr auto;align-items:center;padding:8px 0;border-top:1px solid var(--color-divider);font-size:13.5px">
+            <span style="color:var(--color-neutral-700)">{{ nr.k }}</span><span>{{ nr.v }}</span><span class="tag tag-accent">erkannt</span>
+          </div>
+          </sc-for>
+        </div>
+        <button class="btn btn-primary" onClick="{{ saveNew }}" style="width:100%;min-height:48px;font-size:16px;margin-top:14px">In die Garderobe legen</button>
+      </sc-if>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;inset:0;z-index:30;background:var(--color-bg);display:flex;flex-direction:column;transform:{{ chatTf }};transition:transform .42s cubic-bezier(.3,.7,.2,1)">
+    <div style="padding:58px 14px 10px 22px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--color-divider)">
+      <div style="flex:1">
+        <div style="font-family:var(--font-heading);font-size:26px;font-style:italic;line-height:1.05">Der Stylist</div>
+        <div style="font-size:11.5px;color:var(--color-neutral-700)">Qwen3-VL · sieht Angaben, keine Fotos</div>
+      </div>
+      <button class="btn btn-icon" aria-label="Schliessen" onClick="{{ closeChat }}" style="width:44px;height:44px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+      </button>
+    </div>
+    <div ref="{{ chatRef }}" style="flex:1;overflow-y:auto;padding:18px 22px 10px;display:flex;flex-direction:column;gap:18px">
+      <div style="text-align:center;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-600)">Sonntag, 25. Oktober</div>
+      <sc-for list="{{ msgs }}" as="m" hint-placeholder-count="3">
+        <sc-if value="{{ m.user }}" hint-placeholder-val="{{ false }}">
+          <div style="align-self:flex-end;max-width:80%;border:1px solid var(--color-divider);border-radius:var(--radius-lg) var(--radius-lg) 2px var(--radius-lg);padding:9px 13px;font-size:14px;line-height:1.5">{{ m.text }}</div>
+        </sc-if>
+        <sc-if value="{{ m.bot }}" hint-placeholder-val="{{ true }}">
+          <div style="max-width:92%;display:flex;flex-direction:column;gap:10px">
+            <p style="font-family:var(--font-heading);font-size:19px;line-height:1.4;margin:0;text-wrap:pretty">{{ m.text }}</p>
+            <sc-if value="{{ m.hasLook }}" hint-placeholder-val="{{ false }}">
+              <div class="card" style="padding:10px;gap:8px">
+                <div style="display:flex;height:44px;gap:3px">
+                  <sc-for list="{{ m.bands }}" as="b" hint-placeholder-count="5"><span style="flex:{{ b.w }};background:{{ b.bg }}"></span></sc-for>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:12px;color:var(--color-neutral-700)">{{ m.lookText }}</span>
+                  <button class="btn btn-ghost" onClick="{{ m.apply }}" style="min-height:36px">Übernehmen</button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </sc-for>
+      <sc-if value="{{ typing }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:var(--font-heading);font-style:italic;font-size:16px;color:var(--color-neutral-700)">Der Stylist schreibt …</div>
+      </sc-if>
+    </div>
+    <div style="display:flex;gap:6px;overflow-x:auto;padding:6px 22px 10px;scrollbar-width:none">
+      <sc-for list="{{ prompts }}" as="pr" hint-placeholder-count="3">
+      <button class="btn btn-secondary" onClick="{{ pr.send }}" style="white-space:nowrap;min-height:36px;padding:5px 12px;font-size:13.5px">{{ pr.label }}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:8px;padding:0 14px 34px 22px;align-items:center">
+      <input class="input" placeholder="Frag nach einem Look …" value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" style="min-height:46px;font-size:15px">
+      <button class="btn btn-primary btn-icon" aria-label="Senden" onClick="{{ sendDraft }}" style="width:46px;height:46px;flex:none">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:50%;bottom:104px;z-index:40;transform:translateX(-50%) translateY({{ toastY }});opacity:{{ toastOp }};transition:opacity .3s, transform .3s;pointer-events:none;background:var(--color-surface);border:1px solid var(--color-divider);box-shadow:var(--shadow-md);border-radius:var(--radius-md);padding:9px 14px;font-size:13px;white-space:nowrap">{{ toastText }}</div>
+</div>
+</x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Heute&quot;,&quot;Garderobe&quot;,&quot;Looks&quot;,&quot;Journal&quot;],&quot;default&quot;:&quot;Heute&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;fabricTexture&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;showNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const TEX = {
+  knit: 'repeating-linear-gradient(90deg, rgba(0,0,0,.075) 0 2px, rgba(255,255,255,.05) 2px 5px)',
+  denim: 'repeating-linear-gradient(135deg, rgba(255,255,255,.09) 0 1px, transparent 1px 4px)',
+  cord: 'repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 3px, rgba(255,255,255,.06) 3px 7px)',
+  wool: 'repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 3px)',
+  stripe: 'repeating-linear-gradient(0deg, #2c3445 0 7px, transparent 7px 19px)',
+  leather: 'linear-gradient(140deg, rgba(255,255,255,.13), rgba(0,0,0,.16))',
+  oxford: 'repeating-linear-gradient(0deg, rgba(60,80,110,.09) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgba(60,80,110,.09) 0 1px, transparent 1px 3px)',
+  quilt: 'repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 22px), linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.08))',
+  plain: 'linear-gradient(transparent, transparent)'
+};
+const ITEMS = [
+  { id: 'j1', name: 'Wollmantel', cat: 'Jacken', color: '#b08a5e', colorName: 'Camel', brand: 'Arket', tex: 'wool', worn: 9, last: '21. Okt.', season: 'Herbst, Winter', style: 'Klassisch', fav: true },
+  { id: 'j2', name: 'Jeansjacke', cat: 'Jacken', color: '#4d6280', colorName: 'Denim', brand: "Levi's", tex: 'denim', worn: 12, last: '23. Okt.', season: 'Frühling, Herbst', style: 'Lässig' },
+  { id: 'j3', name: 'Steppjacke', cat: 'Jacken', color: '#5e6146', colorName: 'Oliv', brand: 'Uniqlo', tex: 'quilt', worn: 6, last: '24. Okt.', season: 'Herbst, Winter', style: 'Sportlich' },
+  { id: 'j4', name: 'Trenchcoat', cat: 'Jacken', color: '#c2ab84', colorName: 'Beige', brand: 'Mango', tex: 'plain', worn: 7, last: '22. Okt.', season: 'Frühling, Herbst', style: 'Klassisch', fav: true },
+  { id: 'o1', name: 'Strickpullover', cat: 'Oberteile', color: '#e6dcc8', colorName: 'Creme', brand: 'COS', tex: 'knit', worn: 14, last: '21. Okt.', season: 'Herbst, Winter', style: 'Klassisch', fav: true },
+  { id: 'o2', name: 'Oxfordhemd', cat: 'Oberteile', color: '#dfe5ec', colorName: 'Hellblau', brand: 'Uniqlo', tex: 'oxford', worn: 11, last: '22. Okt.', season: 'Ganzjährig', style: 'Klassisch' },
+  { id: 'o3', name: 'Rollkragen', cat: 'Oberteile', color: '#3a3a3c', colorName: 'Anthrazit', brand: 'Arket', tex: 'knit', worn: 8, last: '15. Okt.', season: 'Herbst, Winter', style: 'Minimal' },
+  { id: 'o4', name: 'T-Shirt', cat: 'Oberteile', color: '#f4f1ea', colorName: 'Weiss', brand: 'COS', tex: 'plain', worn: 21, last: '9. Okt.', season: 'Ganzjährig', style: 'Minimal', laundry: true },
+  { id: 'o5', name: 'Cardigan', cat: 'Oberteile', color: '#6c2f37', colorName: 'Bordeaux', brand: '& Other Stories', tex: 'knit', worn: 3, last: '2. Sep.', season: 'Herbst', style: 'Romantisch' },
+  { id: 'o6', name: 'Streifenshirt', cat: 'Oberteile', color: '#f1ede4', colorName: 'Navy/Weiss', brand: 'Petit Bateau', tex: 'stripe', worn: 7, last: '23. Okt.', season: 'Frühling, Sommer', style: 'Maritim', fav: true },
+  { id: 'h1', name: 'Chino', cat: 'Hosen', color: '#c9b48f', colorName: 'Sand', brand: 'Uniqlo', tex: 'plain', worn: 10, last: '23. Okt.', season: 'Ganzjährig', style: 'Lässig' },
+  { id: 'h2', name: 'Dunkle Jeans', cat: 'Hosen', color: '#2f3b52', colorName: 'Dunkelblau', brand: 'A.P.C.', tex: 'denim', worn: 18, last: '21. Okt.', season: 'Ganzjährig', style: 'Klassisch', fav: true },
+  { id: 'h3', name: 'Wollhose', cat: 'Hosen', color: '#7b7a7a', colorName: 'Grau', brand: 'COS', tex: 'wool', worn: 6, last: '22. Okt.', season: 'Herbst, Winter', style: 'Klassisch' },
+  { id: 'h4', name: 'Cordhose', cat: 'Hosen', color: '#6a4b33', colorName: 'Braun', brand: 'Arket', tex: 'cord', worn: 4, last: '8. Sep.', season: 'Herbst, Winter', style: 'Lässig', laundry: true },
+  { id: 's1', name: 'Lederstiefel', cat: 'Schuhe', color: '#5a3d2b', colorName: 'Braun', brand: 'Red Wing', tex: 'leather', worn: 13, last: '24. Okt.', season: 'Herbst, Winter', style: 'Klassisch' },
+  { id: 's2', name: 'Sneaker', cat: 'Schuhe', color: '#ecebe6', colorName: 'Weiss', brand: 'Veja', tex: 'leather', worn: 22, last: '23. Okt.', season: 'Ganzjährig', style: 'Lässig' },
+  { id: 's3', name: 'Loafer', cat: 'Schuhe', color: '#232222', colorName: 'Schwarz', brand: 'Sebago', tex: 'leather', worn: 6, last: '22. Okt.', season: 'Ganzjährig', style: 'Klassisch' },
+  { id: 'a1', name: 'Wollschal', cat: 'Accessoires', color: '#9c9894', colorName: 'Grau meliert', brand: 'Acne', tex: 'wool', worn: 7, last: '24. Okt.', season: 'Herbst, Winter', style: 'Minimal' },
+  { id: 'a2', name: 'Ledergürtel', cat: 'Accessoires', color: '#4a3324', colorName: 'Dunkelbraun', brand: 'Hermès', tex: 'leather', worn: 15, last: '22. Okt.', season: 'Ganzjährig', style: 'Klassisch' },
+  { id: 'a3', name: 'Mütze', cat: 'Accessoires', color: '#2c3445', colorName: 'Navy', brand: 'Arket', tex: 'knit', worn: 2, last: '14. März', season: 'Winter', style: 'Lässig' },
+  { id: 'a4', name: 'Umhängetasche', cat: 'Accessoires', color: '#8a5a33', colorName: 'Cognac', brand: 'Bellroy', tex: 'leather', worn: 9, last: '23. Okt.', season: 'Ganzjährig', style: 'Klassisch' }
+];
+const LOOKS = [
+  { id: 'L1', name: 'Sonntagsmantel', occ: 'Freizeit', look: { j: 'j1', o: 'o1', h: 'h2', s: 's1', a: 'a1' }, fav: true },
+  { id: 'L2', name: 'Büro, Donnerstag', occ: 'Büro', look: { j: 'j4', o: 'o2', h: 'h3', s: 's3', a: 'a2' } },
+  { id: 'L3', name: 'Matrose', occ: 'Freizeit', look: { j: 'j2', o: 'o6', h: 'h1', s: 's2', a: 'a4' }, fav: true },
+  { id: 'L4', name: 'Abend in Grau', occ: 'Abend', look: { j: 'j4', o: 'o3', h: 'h2', s: 's3', a: 'a2' } },
+  { id: 'L5', name: 'Herbstwald', occ: 'Freizeit', look: { j: 'j3', o: 'o1', h: 'h1', s: 's1', a: 'a1' } },
+  { id: 'L6', name: 'Weisses Hemd', occ: 'Büro', look: { j: 'j2', o: 'o2', h: 'h2', s: 's2', a: 'a2' } }
+];
+const ENTRIES = { 1: 'L3', 2: 'L2', 3: 'L5', 5: 'L6', 6: 'L2', 7: 'L4', 8: 'L1', 9: 'L3', 12: 'L2', 13: 'L6', 14: 'L5', 15: 'L4', 16: 'L3', 19: 'L2', 20: 'L6', 21: 'L1', 22: 'L2', 23: 'L3', 24: 'L5' };
+const NOTES = { 24: 'Abendessen bei Lea', 22: 'Präsentation', 15: 'Theater' };
+const SLOTS = ['j', 'o', 'h', 's', 'a'];
+const SLOT_CAT = { j: 'Jacken', o: 'Oberteile', h: 'Hosen', s: 'Schuhe', a: 'Accessoires' };
+const SLOT_W = { j: 1.25, o: 1.1, h: 1.1, s: 0.6, a: 0.45 };
+const WD = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+const WDL = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+const TODAY = 25;
+const wdOf = d => (d + 3) % 7;
+const REFINE = {
+  'Wärmer': { look: { j: 'j3', h: 'h3' }, text: 'Steppjacke statt Wollmantel, Wollhose statt Jeans. Für den Abend unter 10 °C.' },
+  'Ruhiger': { look: { o: 'o3', s: 's3' }, text: 'Anthrazit statt Creme, Loafer statt Stiefel — nur noch Camel als Akzent.' },
+  'Ähnlich': { look: { s: 's2' }, text: 'Eine Änderung: Sneaker statt Lederstiefel. Der Rest bleibt.' }
+};
+const GEN = {
+  'Alltag': { name: 'Sand und Denim', look: { j: 'j2', o: 'o1', h: 'h1', s: 's2', a: 'a4' } },
+  'Büro': { name: 'Grau mit Trench', look: { j: 'j4', o: 'o3', h: 'h3', s: 's3', a: 'a2' } },
+  'Abend': { name: 'Camel bei Nacht', look: { j: 'j1', o: 'o3', h: 'h2', s: 's3', a: 'a2' } }
+};
+const TAB_KEYS = ['heute', 'garderobe', 'looks', 'journal'];
+
+class Component extends DCLogic {
+  scrollRef = React.createRef();
+  chatRef = React.createRef();
+  state = {
+    tab: TAB_KEYS[['Heute', 'Garderobe', 'Looks', 'Journal'].indexOf(this.props.startTab ?? 'Heute')] || 'heute',
+    day: TODAY, look: { ...LOOKS[0].look }, preview: null, worn: false, rating: null, reason: null,
+    planned: { 26: 'L2' }, sheet: null, sheetKind: 'swap', swapSlot: 'j', detailId: 'j1',
+    cat: 'Alle', favOnly: false, laundryOnly: false, items: ITEMS.map(i => ({ ...i })),
+    addStep: 0, addName: 'Wollschal', progress: false, looks: LOOKS.map(l => ({ ...l })),
+    occasion: 'Alltag', generated: null, jDay: TODAY, toast: null, unread: true, chat: false,
+    draft: '', typing: false, backedUp: false,
+    msgs: [
+      { bot: true, text: 'Guten Morgen. Bei 8 bis 14 Grad und Wolken habe ich den camelfarbenen Wollmantel mit dem cremefarbenen Strick gewählt. Der Mantel hing seit vier Tagen.' },
+      { user: true, text: 'Passt das auch, wenn ich abends essen gehe?' },
+      { bot: true, text: 'Ja. Tausch die Lederstiefel gegen die schwarzen Loafer, dann wirkt er am Abend ruhiger. Alles andere kann bleiben.', look: { j: 'j1', o: 'o1', h: 'h2', s: 's3', a: 'a1' }, lookText: 'Eine Änderung · Loafer' }
+    ]
+  };
+
+  item(id) { return this.state.items.find(i => i.id === id); }
+  bg(it) { return (this.props.fabricTexture ?? true) ? `${TEX[it.tex] || TEX.plain}, ${it.color}` : it.color; }
+  ring(look) { const cs = SLOTS.map(s => this.item(look[s]).color); return `conic-gradient(${cs.map((c, i) => `${c} ${i * 20}% ${(i + 1) * 20}%`).join(', ')})`; }
+  bands(look) { return SLOTS.map(s => ({ w: SLOT_W[s], bg: this.bg(this.item(look[s])) })); }
+  entryFor(d) {
+    if (d === TODAY) return this.state.worn ? { kind: 'worn', look: this.state.look } : null;
+    if (ENTRIES[d]) return { kind: 'worn', look: LOOKS.find(l => l.id === ENTRIES[d]).look, name: LOOKS.find(l => l.id === ENTRIES[d]).name, occ: LOOKS.find(l => l.id === ENTRIES[d]).occ };
+    const p = this.state.planned[d];
+    if (p) { const L = typeof p === 'string' ? LOOKS.find(l => l.id === p) : { look: p, name: 'Eingeplant', occ: 'Freizeit' }; return { kind: 'planned', look: L.look, name: L.name, occ: L.occ }; }
+    return null;
+  }
+  ringFor(d) {
+    const e = this.entryFor(d);
+    if (!e) return { ring: 'transparent', border: '1px solid transparent' };
+    if (e.kind === 'planned') return { ring: 'transparent', border: '1px dashed var(--color-neutral-500)' };
+    return { ring: this.ring(e.look), border: '0' };
+  }
+  showToast(t) { clearTimeout(this._tt); this.setState({ toast: t }); this._tt = setTimeout(() => this.setState({ toast: null }), 2200); }
+  goTab(k) {
+    if (k === this.state.tab && this.scrollRef.current) { this.scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    this.setState({ tab: k }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0;
+  }
+  componentDidUpdate(_, ps) {
+    if (this.chatRef.current && (ps.msgs.length !== this.state.msgs.length || ps.typing !== this.state.typing)) {
+      const el = this.chatRef.current; el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    }
+  }
+  componentWillUnmount() { clearTimeout(this._tt); clearTimeout(this._at); clearTimeout(this._ct); }
+  ratingsCount() { return 2 + (this.state.rating ? 1 : 0); }
+  positiveCount() { return 1 + (this.state.rating === 'up' ? 1 : 0); }
+  shopUnlocked() { return this.ratingsCount() >= 3 && this.positiveCount() >= 2; }
+
+  send(text) {
+    const t = (text || '').trim(); if (!t || this.state.typing) return;
+    this.setState(s => ({ msgs: [...s.msgs, { user: true, text: t }], draft: '', typing: true }));
+    let r;
+    if (/büro|morgen/i.test(t)) r = { bot: true, text: 'Morgen ist „Büro, Donnerstag“ schon eingeplant: Trenchcoat, Oxfordhemd, graue Wollhose und Loafer. Bei 6 bis 11 Grad würde ich nur den Wollschal ergänzen.', look: { ...LOOKS[1].look, a: 'a1' }, lookText: 'Geplanter Look · mit Schal' };
+    else if (/winter|fehlt/i.test(t)) r = { bot: true, text: 'Dir fehlt vor allem eine warme, ruhige Hose. Die Cordhose ist oft in der Wäsche, die Wollhose trägt allein alle kalten Bürotage. Die Einkaufsberatung kann danach konkret suchen, bis 50 CHF.' };
+    else if (/pack|berlin|reise/i.test(t)) r = { bot: true, text: 'Für drei Tage Berlin reichen acht Teile: Wollmantel, Strickpullover, Rollkragen, Oxfordhemd, dunkle Jeans, Wollhose, Lederstiefel und der Schal. Daraus ergeben sich vier vollständige Looks.' };
+    else r = { bot: true, text: 'In deiner Garderobe dominieren Camel, Creme und Navy. Damit lässt sich fast alles ruhig kombinieren. Möchtest du daraus einen Look für heute?' };
+    clearTimeout(this._ct);
+    this._ct = setTimeout(() => this.setState(s => ({ msgs: [...s.msgs, r], typing: false })), 1300);
+  }
+
+  renderVals() {
+    const S = this.state;
+    const isToday = S.day === TODAY;
+    const shown = S.preview ? S.preview.look : S.look;
+    const entry = isToday ? { kind: S.worn ? 'worn' : 'suggest', look: S.look } : this.entryFor(S.day);
+    const canEdit = isToday && !S.worn;
+
+    const week = [22, 23, 24, 25, 26, 27, 28].map(d => {
+      const r = this.ringFor(d); const sel = d === S.day; const td = d === TODAY;
+      return { d, wd: WD[wdOf(d)], ...r, fw: sel ? 600 : 400, numColor: td ? 'var(--color-accent-700)' : 'var(--color-text)', mark: sel ? 'var(--color-accent)' : 'transparent', aria: `${WDL[wdOf(d)]}, ${d}. Oktober`, select: () => this.setState({ day: d, preview: null }) };
+    });
+
+    const tiles = {};
+    if (entry) SLOTS.forEach(s => {
+      const lk = isToday ? shown : entry.look; const it = this.item(lk[s]);
+      const changed = !!(S.preview && S.preview.look[s] !== S.look[s]);
+      tiles[s] = { name: it.name, bg: this.bg(it), changed, outline: changed ? '1.5px solid var(--color-accent)' : 'none', cursor: canEdit ? 'pointer' : 'default',
+        open: () => { if (!canEdit) return; this.setState({ sheet: true, sheetKind: 'swap', swapSlot: s }); } };
+    });
+
+    const lk = entry ? (isToday ? shown : entry.look) : null;
+    const statusKicker = !entry ? '' : isToday ? (S.worn ? 'Getragen · heute' : 'Tageslook · Vorschlag') : entry.kind === 'worn' ? 'Getragen' : 'Geplant';
+    const lookTitle = !entry ? '' : (isToday ? `${this.item(lk.j).colorName} & ${this.item(lk.o).colorName}` : entry.name);
+    const lookMeta = !entry ? '' : isToday ? 'Freizeit · für 8–14 °C, bewölkt' : `${entry.occ} · ${entry.kind === 'worn' ? 'im Journal bestätigt' : 'noch nicht getragen'}`;
+
+    const swapCat = SLOT_CAT[S.swapSlot];
+    const swapList = S.items.filter(i => i.cat === swapCat).map(i => {
+      const cur = S.look[S.swapSlot] === i.id;
+      return { name: i.name, bg: this.bg(i), meta: `${i.brand} · ${i.worn}× · zuletzt ${i.last}`, flag: cur ? 'aktuell' : i.laundry ? 'Wäsche' : '', disabled: !!i.laundry, op: i.laundry ? 0.45 : 1,
+        pick: () => { if (i.laundry) return; this.setState(st => ({ look: { ...st.look, [st.swapSlot]: i.id }, preview: null, sheet: null })); if (!cur) this.showToast(`${i.name} eingesetzt`); } };
+    });
+
+    const det = (() => {
+      const it = this.item(S.detailId) || S.items[0];
+      const pairIds = [];
+      LOOKS.forEach(L => { if (Object.values(L.look).includes(it.id)) Object.values(L.look).forEach(x => { if (x !== it.id && !pairIds.includes(x) && this.item(x).cat !== it.cat) pairIds.push(x); }); });
+      const pairs = pairIds.slice(0, 3).map(x => ({ name: this.item(x).name, bg: this.bg(this.item(x)) }));
+      return { name: it.name, cat: it.cat, bg: this.bg(it), worn: it.worn, last: it.last,
+        rows: [{ k: 'Farbe', v: it.colorName }, { k: 'Marke', v: it.brand }, { k: 'Saison', v: it.season }, { k: 'Stil', v: it.style }],
+        pairs, hasPairs: pairs.length > 0, laundryLabel: it.laundry ? 'Ist wieder sauber' : 'In die Wäsche',
+        heartColor: it.fav ? 'var(--color-accent)' : 'var(--color-text)', heartFill: it.fav ? 'var(--color-accent)' : 'none',
+        toggleLaundry: () => { this.setState(st => ({ items: st.items.map(x => x.id === it.id ? { ...x, laundry: !x.laundry } : x) })); this.showToast(it.laundry ? `${it.name} ist wieder verfügbar` : `${it.name} liegt in der Wäsche`); },
+        toggleFav: () => this.setState(st => ({ items: st.items.map(x => x.id === it.id ? { ...x, fav: !x.fav } : x) })) };
+    })();
+
+    const catNames = ['Alle', 'Oberteile', 'Hosen', 'Jacken', 'Schuhe', 'Accessoires'];
+    const cats = catNames.map(c => { const a = S.cat === c; return { label: c, n: c === 'Alle' ? S.items.length : S.items.filter(i => i.cat === c).length, fw: a ? 600 : 400, color: a ? 'var(--color-text)' : 'var(--color-neutral-700)', line: a ? 'inset 0 -1.5px 0 var(--color-accent)' : 'none', pick: () => this.setState({ cat: c }) }; });
+    const gridItems = S.items.filter(i => (S.cat === 'Alle' || i.cat === S.cat) && (!S.favOnly || i.fav) && (!S.laundryOnly || i.laundry))
+      .map(i => ({ ...i, laundry: !!i.laundry, fav: !!i.fav, bg: this.bg(i), op: i.laundry ? 0.5 : 1, meta: `${i.brand} · ${i.worn}× getragen`, open: () => this.setState({ sheet: true, sheetKind: 'detail', detailId: i.id }) }));
+    const laundryCount = S.items.filter(i => i.laundry).length;
+    const colorBand = [...S.items].sort((a, b) => b.worn - a.worn).map(i => ({ w: Math.max(i.worn, 1), c: i.color }));
+    const chip = on => ({ color: on ? 'var(--color-accent-700)' : 'var(--color-text)', border: on ? 'var(--color-accent)' : 'var(--color-divider)' });
+
+    const occasions = ['Alltag', 'Büro', 'Abend'].map((o, i) => { const a = S.occasion === o; return { label: o, color: a ? 'var(--color-accent-700)' : 'var(--color-text)', ring: a ? 'inset 0 0 0 1px var(--color-accent)' : 'none', sep: i ? '1px solid var(--color-divider)' : '0', pick: () => this.setState({ occasion: o, generated: null }) }; });
+    const g = S.generated;
+    const generated = g ? { name: g.name, bands: this.bands(g.look), pieces: SLOTS.map(s => this.item(g.look[s]).name).join(' · ') } : { name: '', bands: [], pieces: '' };
+    const useLook = (look, name) => { this.setState({ look: { ...look }, preview: null, worn: false, day: TODAY, tab: 'heute', rating: null }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; this.showToast(`„${name}“ ist dein Tageslook`); };
+    const lastWorn = id => { const ds = Object.keys(ENTRIES).filter(d => ENTRIES[d] === id).map(Number); return ds.length ? `${Math.max(...ds)}. Okt.` : 'noch nie'; };
+    const savedLooks = S.looks.map((L, i) => ({ no: String(i + 1).padStart(2, '0'), name: L.name, bands: this.bands(L.look),
+      meta: `${L.occ} · ${Object.values(ENTRIES).filter(x => x === L.id).length}× · zuletzt ${lastWorn(L.id)}`,
+      heartColor: L.fav ? 'var(--color-accent)' : 'var(--color-neutral-700)', heartFill: L.fav ? 'var(--color-accent)' : 'none',
+      toggleFav: () => this.setState(st => ({ looks: st.looks.map(x => x.id === L.id ? { ...x, fav: !x.fav } : x) })),
+      use: () => useLook(L.look, L.name) }));
+
+    const lead = wdOf(1) === 0 ? 6 : wdOf(1) - 1;
+    const monthCells = [];
+    for (let i = 0; i < lead; i++) monthCells.push({ d: '', blank: true, vis: 'hidden', ring: 'transparent', border: '0', sel: 'none', color: 'inherit', fw: 400, select: () => {} });
+    for (let d = 1; d <= 31; d++) { const r = this.ringFor(d); monthCells.push({ d, blank: false, vis: 'visible', ...r, sel: S.jDay === d ? '1px solid var(--color-accent)' : 'none', color: d === TODAY ? 'var(--color-accent-700)' : d > TODAY ? 'var(--color-neutral-600)' : 'var(--color-text)', fw: d === TODAY ? 600 : 400, select: () => this.setState({ jDay: d }) }); }
+    const je = this.entryFor(S.jDay);
+    const jSel = { label: `${WDL[wdOf(S.jDay)]}, ${S.jDay}. Oktober`, has: !!je, none: !je,
+      status: !je ? (S.jDay === TODAY ? 'Offen' : '') : je.kind === 'worn' ? 'Getragen' : 'Geplant',
+      bands: je ? this.bands(je.look) : [], text: je ? `${je.name || 'Tageslook'} · ${SLOTS.map(s => this.item(je.look[s]).name).join(', ')}${NOTES[S.jDay] ? ' — ' + NOTES[S.jDay] : ''}` : '' };
+    const wornDayList = Object.keys(ENTRIES).map(Number).concat(S.worn ? [TODAY] : []);
+    const pieceSet = new Set(); wornDayList.forEach(d => Object.values(this.entryFor(d).look).forEach(x => pieceSet.add(x)));
+    const forgotten = ['o5', 'a3', 'h4'].map(id => { const i = this.item(id); return { name: i.name, bg: this.bg(i), meta: `zuletzt ${i.last} · ${i.worn}× insgesamt${i.laundry ? ' · in der Wäsche' : ''}`, open: () => this.setState({ sheet: true, sheetKind: 'detail', detailId: id }) }; });
+    const unlocked = this.shopUnlocked();
+    const shopConds = [
+      { label: 'Stilprofil bestätigt', val: '', done: true },
+      { label: '7 Tragetage in zwei Wochen', val: `${wornDayList.filter(d => d >= 12).length} / 7`, done: true },
+      { label: '3 Lookbewertungen, 2 positiv', val: `${this.ratingsCount()} / 3`, done: unlocked }
+    ].map(c => ({ ...c, ring: c.done ? 'var(--color-accent)' : 'var(--color-neutral-400)' }));
+
+    const tabs = [['I', 'Heute'], ['II', 'Garderobe'], ['III', 'Looks'], ['IV', 'Journal']].map(([num, label], i) => { const a = S.tab === TAB_KEYS[i]; return { num, label, fw: a ? 600 : 400, color: a ? 'var(--color-text)' : 'var(--color-neutral-700)', numColor: a ? 'var(--color-accent-700)' : 'var(--color-neutral-600)', go: () => this.goTab(TAB_KEYS[i]) }; });
+
+    const newItem = { name: S.addName, cat: 'Accessoires', color: '#8f4a2f', tex: 'wool' };
+    const sheetOpen = !!S.sheet;
+    const reasonsList = ['Zu auffällig', 'Zu warm', 'Passt nicht zum Anlass', 'Ohne Grund'];
+
+    return {
+      showNotes: this.props.showNotes ?? true,
+      scrollRef: this.scrollRef, chatRef: this.chatRef,
+      unread: S.unread,
+      openChat: () => this.setState({ chat: true, unread: false }),
+      closeChat: () => this.setState({ chat: false }),
+      isHeute: S.tab === 'heute', isGarderobe: S.tab === 'garderobe', isLooks: S.tab === 'looks', isJournal: S.tab === 'journal',
+      dayWeekdayLong: WDL[wdOf(S.day)] + (isToday ? ' · heute' : ''), dayDateLabel: `${S.day}. Oktober`, dayNum: S.day,
+      isTodaySel: isToday, notTodaySel: !isToday, goToday: () => this.setState({ day: TODAY }),
+      week, hasLook: !!entry, noLook: !entry, statusKicker, lookTitle, lookMeta, lookCount: '5 Teile', tiles,
+      figCaption: canEdit ? 'Abb. 1–5. Antippen, um ein Teil zu tauschen.' : isToday ? 'Abb. 1–5. Bestätigt, keine Änderungen mehr.' : 'Abb. 1–5. Aus dem Journal.',
+      showTodayActions: canEdit, wornToday: isToday && S.worn,
+      reasonText: 'Gewählt für 8 bis 14 Grad und Wolken. Der Wollmantel hing seit vier Tagen, Camel und Creme gehören zu deinen Lieblingsfarben, und die Stiefel halten den Nieselregen am Nachmittag aus.',
+      hasPreview: !!S.preview, previewLabel: S.preview ? S.preview.label : '', previewText: S.preview ? S.preview.text : '',
+      discardPreview: () => this.setState({ preview: null }),
+      applyPreview: () => { this.setState(st => ({ look: st.preview.look, preview: null })); this.showToast('Look angepasst'); },
+      refineOpts: Object.keys(REFINE).map(k => { const a = S.preview && S.preview.label === k; return { label: k, color: a ? 'var(--color-accent-700)' : 'var(--color-text)', border: a ? 'var(--color-accent)' : 'var(--color-divider)', go: () => this.setState(st => st.preview && st.preview.label === k ? { preview: null } : { preview: { label: k, text: REFINE[k].text, look: { ...st.look, ...REFINE[k].look } } }) }; }),
+      markWorn: () => { this.setState({ worn: true, preview: null }); this.showToast('Im Journal vermerkt · 25. Oktober'); },
+      undoWorn: () => this.setState({ worn: false }),
+      upColor: S.rating === 'up' ? 'var(--color-accent-700)' : 'var(--color-text)', upBorder: S.rating === 'up' ? 'var(--color-accent)' : 'var(--color-divider)', upBg: S.rating === 'up' ? 'var(--color-accent-100)' : 'transparent',
+      downColor: S.rating === 'down' ? 'var(--color-accent-700)' : 'var(--color-text)', downBorder: S.rating === 'down' ? 'var(--color-accent)' : 'var(--color-divider)', downBg: S.rating === 'down' ? 'var(--color-accent-100)' : 'transparent',
+      rateUp: () => { const was = this.shopUnlocked(); const next = S.rating === 'up' ? null : 'up'; this.setState({ rating: next, reason: null }); if (next === 'up' && !was) this.showToast('Danke · Einkaufsberatung freigeschaltet'); },
+      rateDown: () => this.setState({ rating: S.rating === 'down' ? null : 'down', reason: null }),
+      showReasons: S.rating === 'down' && isToday,
+      reasons: reasonsList.map(r => { const a = S.reason === r; return { label: r, color: a ? 'var(--color-accent-700)' : 'var(--color-text)', border: a ? 'var(--color-accent)' : 'var(--color-divider)', pick: () => { this.setState({ reason: r }); this.showToast('Gemerkt, nur für diese Kombination'); } }; }),
+      hasNote: !isToday && !!NOTES[S.day], dayNote: NOTES[S.day] || '',
+      planDay: () => { this.setState(st => ({ planned: { ...st.planned, [st.day]: { ...st.look } } })); this.showToast(`Für den ${S.day}. Oktober geplant`); },
+
+      wardrobeSub: `${S.items.length} Stücke · ${laundryCount} in der Wäsche`,
+      openAdd: () => this.setState({ sheet: true, sheetKind: 'add', addStep: 0, addName: 'Wollschal', progress: false }),
+      cats, favChip: chip(S.favOnly), lauChip: chip(S.laundryOnly),
+      toggleFav: () => this.setState({ favOnly: !S.favOnly }), toggleLaundry: () => this.setState({ laundryOnly: !S.laundryOnly }),
+      colorBand, gridItems, gridEmpty: gridItems.length === 0,
+
+      looksSub: `${S.looks.length} gespeichert · ${S.looks.filter(l => l.fav).length} Favoriten`,
+      occasions, generate: () => this.setState({ generated: { ...GEN[S.occasion] } }),
+      hasGenerated: !!g, generated,
+      saveGenerated: () => { if (!g) return; this.setState(st => ({ looks: [{ id: 'G' + Date.now(), name: g.name, occ: st.occasion === 'Alltag' ? 'Freizeit' : st.occasion, look: g.look }, ...st.looks], generated: null })); this.showToast(`„${g.name}“ gespeichert`); },
+      useGenerated: () => g && useLook(g.look, g.name),
+      savedLooks,
+
+      weekdayHeads: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'], monthCells, jSel,
+      wornDays: wornDayList.length, wornPieces: pieceSet.size, forgotten,
+      shopConds, shopBorder: unlocked ? 'var(--color-accent)' : 'var(--color-divider)', shopState: unlocked ? 'Bereit' : 'Noch gesperrt',
+      shopTitle: unlocked ? 'Bereit: bis zu drei Kaufideen, die zu deinen Looks passen.' : 'Noch eine Bewertung, dann kann die Beratung starten.',
+      backupText: S.backedUp ? 'Gerade gesichert · 21 Stücke, 6 Looks' : 'Zuletzt vor 9 Tagen · neue Änderungen',
+      doBackup: () => { this.setState({ backedUp: true }); this.showToast('Sicherung in Dateien abgelegt'); },
+
+      tabs, tabLeft: `${TAB_KEYS.indexOf(S.tab) * 25}%`,
+
+      backdropOp: sheetOpen ? 1 : 0, backdropPe: sheetOpen ? 'auto' : 'none', sheetTf: sheetOpen ? 'translateY(0)' : 'translateY(105%)',
+      closeSheet: () => this.setState({ sheet: null }),
+      isSwap: S.sheetKind === 'swap', isDetail: S.sheetKind === 'detail', isAdd: S.sheetKind === 'add',
+      swapCat, swapList, det,
+      addTitle: ['Fotografieren', 'Foto gewählt', 'Wird erkannt', 'Bitte prüfen'][S.addStep],
+      addStep0: S.addStep === 0, addStep1: S.addStep === 1, addStep2: S.addStep === 2, addStep3: S.addStep === 3,
+      pickPhoto: () => this.setState({ addStep: 1 }),
+      analyze: () => { this.setState({ addStep: 2, progress: false }); setTimeout(() => this.setState({ progress: true }), 40); clearTimeout(this._at); this._at = setTimeout(() => this.setState({ addStep: 3 }), 1750); },
+      progressW: S.progress ? '100%' : '0%',
+      newBg: this.bg(newItem), addName: S.addName, onAddName: e => this.setState({ addName: e.target.value }),
+      newRows: [{ k: 'Kategorie', v: 'Accessoires' }, { k: 'Farbe', v: 'Rostbraun' }, { k: 'Saison', v: 'Herbst, Winter' }, { k: 'Stil', v: 'Klassisch' }],
+      saveNew: () => { const n = { id: 'n' + Date.now(), name: S.addName || 'Neues Stück', cat: 'Accessoires', color: '#8f4a2f', colorName: 'Rostbraun', brand: 'Unbekannt', tex: 'wool', worn: 0, last: 'noch nie', season: 'Herbst, Winter', style: 'Klassisch' };
+        this.setState(st => ({ items: [n, ...st.items], sheet: null, cat: 'Alle', favOnly: false, laundryOnly: false })); this.showToast(`${n.name} liegt jetzt in der Garderobe`); },
+
+      chatTf: S.chat ? 'translateY(0)' : 'translateY(102%)',
+      msgs: S.msgs.map(m => ({ user: !!m.user, bot: !!m.bot, text: m.text, hasLook: !!m.look, bands: m.look ? this.bands(m.look) : [], lookText: m.lookText || 'Vorschlag',
+        apply: () => { if (!m.look) return; this.setState({ look: { ...m.look }, worn: false, preview: null, chat: false, day: TODAY, tab: 'heute' }); this.showToast('Vorschlag übernommen'); } })),
+      typing: S.typing,
+      prompts: ['Was trage ich morgen ins Büro?', 'Was fehlt mir für den Winter?', 'Packliste für drei Tage Berlin'].map(p => ({ label: p, send: () => this.send(p) })),
+      draft: S.draft, onDraft: e => this.setState({ draft: e.target.value }),
+      onDraftKey: e => { if (e.key === 'Enter') this.send(S.draft); }, sendDraft: () => this.send(S.draft),
+
+      toastText: S.toast || '', toastOp: S.toast ? 1 : 0, toastY: S.toast ? '0' : '8px'
+    };
+  }
+}
+</script>
+</body>
+</html>

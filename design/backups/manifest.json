@@ -1,0 +1,28 @@
+{
+  "baseline": "92d9ea45ca6c229804f5bc33bfd090c573d9a885",
+  "tag": "design-backup/platinum-0.14.0",
+  "files": [
+    "src/App.tsx",
+    "src/styles.css",
+    "src/ui.tsx",
+    "src/OutfitView.tsx",
+    "src/PhotoAssistant.tsx",
+    "src/AISettings.tsx",
+    "src/main.tsx",
+    "src/DailyOutfit.tsx",
+    "src/editorial.css",
+    "src/GarmentSketch.tsx",
+    "index.html",
+    "vite.config.ts",
+    "e2e/app.spec.ts",
+    "e2e/calendar-weather.spec.ts",
+    "e2e/motion.spec.ts",
+    "e2e/outfits.spec.ts",
+    "e2e/photo-color.spec.ts"
+  ],
+  "sha256": {
+    "platinum-0.14.0.tar.gz": "e54e52ef004afd95242c96519ff292814608ce88d95124d43900d19f60e1a50d",
+    "editorial-0.15.0.patch.gz": "3424ecec88b0b85d7577cd103990545649bedd1677645662edf33400b7551983"
+  },
+  "verification": "Reverse restores 15 baseline files byte-for-byte and removes 2 added files. Forward restores all 17 current files."
+}
