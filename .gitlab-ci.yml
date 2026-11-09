@@ -1,0 +1,23 @@
+# MyStyle auf GitLab Pages. Läuft bei jedem Push auf main.
+# Öffentliche Werte (keine Geheimnisse): Google-Client-ID steht im Code,
+# die Adresse des Such-Workers kommt aus der CI-Variablen SEARCH_URL.
+image: node:22
+
+pages:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  script:
+    - npm ci --cache .npm --prefer-offline --no-fund --no-audit
+    - npm test
+    - VITE_BASE_PATH=/ VITE_SEARCH_URL="$SEARCH_URL" npm run build
+  artifacts:
+    paths:
+      - dist
+  publish: dist
