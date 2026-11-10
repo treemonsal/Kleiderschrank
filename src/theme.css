@@ -3076,3 +3076,11 @@ body {
 .tab-bar > button.nav-add:active .nav-add-icon {
   transform: scale(0.94);
 }
+
+/* Areas that only receive focus from the app (the page after switching
+   tabs or closing a piece, headings in dialogs) are not controls: Safari
+   drew a sage frame around the whole page. Real controls keep their ring. */
+[tabindex='-1']:focus,
+[tabindex='-1']:focus-visible {
+  outline: none;
+}

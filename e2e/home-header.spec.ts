@@ -154,3 +154,34 @@ test('Home und Profil ohne überflüssige Texte und Knöpfe', async ({ page }) =
   }))
   expect(heights.doc).toBeGreaterThanOrEqual(heights.screen)
 })
+
+test('Nach dem Schliessen eines Stücks bekommt die Seite keinen Rahmen', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Hinzufügen', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Ohne Foto eintragen', exact: true })
+    .click()
+  await page
+    .getByRole('dialog')
+    .getByLabel('Name', { exact: false })
+    .fill('Hemd')
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'In die Garderobe legen' })
+    .click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
+  await page.getByRole('button', { name: 'Hemd öffnen', exact: true }).click()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  // Also the page focused by switching tabs (as with the keyboard).
+  await page.locator('#main-content').focus()
+  const outlines = await page.evaluate(() =>
+    [...document.querySelectorAll('[tabindex="-1"]')].map(
+      (node) => getComputedStyle(node).outlineStyle,
+    ),
+  )
+  expect(outlines.every((style) => style === 'none')).toBe(true)
+})

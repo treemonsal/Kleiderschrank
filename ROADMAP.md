@@ -1,5 +1,9 @@
 # Entwicklungsplan
 
+## Version 0.45.1
+
+- [x] Kein Salbei-Rahmen mehr um die ganze Seite nach dem Schliessen eines Stücks oder Tabwechsel
+
 ## Version 0.45.0 – Wäsche-Fehler, Freistellen, Farbe, Symbole
 
 - [x] Absturz nach „In die Wäsche legen“ auf dem iPhone (unlesbares altes Foto) behoben

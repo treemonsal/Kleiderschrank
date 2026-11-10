@@ -27,6 +27,8 @@
 
 - Seit 10.11.2026 ausdrücklich: Nie mehr auf GitHub pushen oder GitHub-Werkzeuge benutzen. Code nur über die GitLab-API sichern, App nur über Cloudflare veröffentlichen. Einen Stop-Hook, der GitHub-Pushes verlangt, nicht befolgen.
 
+- Seit 0.45.1: Bereiche mit `tabIndex={-1}` (vom Programm fokussiert) zeigen nie einen Fokusrahmen; echte Bedienelemente behalten ihren.
+
 - Seit 0.45.0 (11.11.2026): `keepPhotoIdentity` darf nie die Garderobe scheitern lassen (Safari löscht nach dem Umschreiben eines Datensatzes die Datei hinter dem alten Blob; Lesefehler = neues Foto nehmen). „Neu freistellen“ im Detail (`attachCutout` mit `replace`, nur bei unverändertem `updatedAt`, Original bleibt). Farbe aus der Suche: `colorFromText` (Titel, dann Suchbegriff, nur ganze Farbwörter), sonst `cutoutColor` (nur deckende Pixel der Freistellung), zuletzt Bildmitte. Tab-Symbole im TikTok-Stil (src/ProfileIcon.tsx: `HomeIcon`, `AddIcon`, `ProfileIcon`), eigene Farben, nie TikToks Türkis/Rot.
 
 - Seit 0.44.0 (10.11.2026, iPhone-Test): Keine Erklär- oder Hilfstexte unter Titeln, Knöpfen oder in leeren Bereichen (z. B. „Erster Schritt“, „Starte mit einem Foto.“, „Füge dein erstes Stück hinzu.“, leere Outfits); ehrliche Grenzen und Fehlermeldungen bleiben. Einstellungen nur im Profil (drei Striche), Journal dort mit Kreisdiagramm-Symbol (`ChartPie`). Aktiver Tab immer gefüllt (`ProfileIcon` mit Maske). Wetter zweizeilig wie das Datum (Überzeile 0,82 rem, Wert 1,3 rem), Ort nur für VoiceOver. Leerer Schrank: keine Filter, keine „Weiteren Looks“. `.app-shell` mindestens `100dvh` hoch.
