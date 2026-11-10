@@ -1,5 +1,12 @@
 # MyStyle
 
+## Version 0.45.0 – Wäsche-Fehler, Freistellen, Farbe, Symbole
+
+- Behoben: Ein Stück in die Wäsche legen (oder favorisieren) liess auf dem iPhone die ganze Garderobe abstürzen und das Bild verschwinden. Safari löscht beim Umschreiben die alte Fotodatei; der Fotovergleich fällt jetzt auf das neue Foto zurück.
+- „Neu freistellen“ (Schere) im geöffneten Stück: neuer Versuch, das Originalfoto bleibt.
+- Farbe gefundener Stücke zuerst aus Titel oder Suche („Schwarze Hose“ = Schwarz), sonst aus dem freigestellten Stück, erst zuletzt aus der Bildmitte.
+- Tab-Leiste mit Symbolen wie bei TikTok: rundes Haus, weisse Plus-Kachel, Person; aktiv gefüllt.
+
 ## Version 0.44.0 – Aufgeräumt nach dem iPhone-Test
 
 - Home ohne Erklärtexte („Erster Schritt“, Hinweise unter Titel und Knopf) und ohne Einstellungen-Knopf; Einstellungen nur noch im Profil. Bei leerem Schrank keine „Weiteren Looks“.

@@ -120,7 +120,10 @@ test('Schwarz mit Salbei, Systemschrift und Lucide-Symbole, auch bei heller Ger√
   const look = await page.evaluate(() => {
     const nav = getComputedStyle(document.querySelector('.tab-bar')!)
     const icon = getComputedStyle(
-      document.querySelector('.tab-bar button:not(.active) svg')!,
+      // Tab icons are drawn like TikTok's (0.45.0): an even 1.8 px line.
+      document.querySelector(
+        '.tab-bar button:not(.active):not(.nav-add) svg path',
+      )!,
     )
     const add = getComputedStyle(
       document.querySelector('.daily-look .button.primary, .button.primary')!,
@@ -150,7 +153,7 @@ test('Schwarz mit Salbei, Systemschrift und Lucide-Symbole, auch bei heller Ger√
   expect(look.blur).not.toContain('blur')
   expect(look.font).toContain('-apple-system')
   expect(look.font).not.toContain('Caveat')
-  expect(look.stroke).toBe('1.5px')
+  expect(look.stroke).toBe('1.8px')
   expect(look.filter).toBe('none')
 })
 

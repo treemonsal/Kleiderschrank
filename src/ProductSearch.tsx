@@ -8,6 +8,8 @@ import {
   POPULAR_SEARCHES,
   SearchError,
   cleanTitle,
+  colorFromText,
+  cutoutColor,
   dominantColor,
   fetchProductImage,
   guessBrand,
@@ -78,7 +80,10 @@ export function ProductSearch({
         return
       }
       const photo = await preparePhoto(file)
-      const color = dominantColor(await readPhotoPixels(photo))
+      // Words beat pixels: "Schwarze Hose" is black even if the photo shows
+      // a model in front of a brown wall.
+      const named = colorFromText(result.title) || colorFromText(searched)
+      const color = named || dominantColor(await readPhotoPixels(photo))
       const id = await saveGarment({
         name,
         category,
@@ -105,8 +110,16 @@ export function ProductSearch({
             signal,
             'cutout',
           )
-          if (saved && cutout)
-            cut = await attachCutout(id, saved.updatedAt, cutout)
+          if (saved && cutout) {
+            // Without a named colour the cut-out decides: only the piece
+            // itself votes, not its background.
+            const better = named
+              ? ''
+              : cutoutColor(await readPhotoPixels(cutout).catch(() => null))
+            cut = await attachCutout(id, saved.updatedAt, cutout, db, {
+              color: better || undefined,
+            })
+          }
         } catch {
           // Keeps the shop photo; the note below says so.
         }

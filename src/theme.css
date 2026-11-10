@@ -3057,3 +3057,22 @@ body {
 .closet-empty h2 {
   margin-bottom: 16px;
 }
+
+/* 0.45.0 – Tab bar icons like TikTok: drawn at their own size, no pill
+   behind them; the add tile is a white rounded rectangle. */
+.tab-bar .nav-icon,
+.tab-bar > button.active .nav-icon {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+}
+.tab-bar .nav-icon.nav-add-icon {
+  width: 46px;
+  height: 31px;
+  color: var(--c-ink);
+}
+.tab-bar > button.nav-add:active .nav-add-icon {
+  transform: scale(0.94);
+}

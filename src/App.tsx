@@ -13,16 +13,17 @@ import {
   LoaderCircle,
   MessageCircle,
   Pencil,
+  Scissors,
   Plus,
   Trash2,
   WifiOff,
   X,
   ChartPie,
-  CirclePlus,
-  House,
   Menu,
 } from 'lucide-react'
+import { analyzePhoto, readAIConnection } from './cloud-ai'
 import {
+  attachCutout,
   db,
   deleteGarment,
   setArchived,
@@ -48,7 +49,7 @@ import { WARMTH_LABELS } from './warmth'
 import { searchEndpoint } from './product-search'
 import { AddSheet } from './AddSheet'
 import { NameSheet } from './NameSheet'
-import { ProfileIcon } from './ProfileIcon'
+import { AddIcon, HomeIcon, ProfileIcon } from './ProfileIcon'
 import {
   restorePageScroll,
   scrollSectionIntoView,
@@ -294,6 +295,47 @@ function Detail({
   const [confirm, setConfirm] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [cutting, setCutting] = useState(false)
+  const cutWork = useRef<AbortController | null>(null)
+  // Closing the piece stops a running cut-out.
+  useEffect(() => () => cutWork.current?.abort(), [])
+  /** A new try when the first cut-out failed or looks wrong. */
+  async function recut() {
+    const connection = readAIConnection()
+    if (!item.photo) return
+    if (!connection?.enabled) {
+      setError(
+        'Freistellen braucht die kostenlose KI. Du schaltest sie in den Einstellungen ein.',
+      )
+      return
+    }
+    const controller = new AbortController()
+    cutWork.current = controller
+    setCutting(true)
+    setError('')
+    try {
+      const { cutout } = await analyzePhoto(
+        item.photo,
+        connection,
+        controller.signal,
+        'cutout',
+      )
+      if (!cutout)
+        throw new Error(
+          'Das Freistellen hat kein Bild geliefert. Versuche es nochmals.',
+        )
+      const saved = await attachCutout(item.id, item.updatedAt, cutout, db, {
+        replace: true,
+      })
+      if (!saved)
+        setError('Das Stück wurde inzwischen geändert. Versuche es nochmals.')
+    } catch (caught) {
+      if (controller.signal.aborted) return
+      setError(caught instanceof Error ? caught.message : storageError(caught))
+    } finally {
+      if (!controller.signal.aborted) setCutting(false)
+    }
+  }
   async function archive(archived: boolean) {
     setBusy(true)
     setError('')
@@ -392,6 +434,20 @@ function Detail({
               <LaundryIcon size={16} />
               {item.inLaundry ? 'Aus der Wäsche nehmen' : 'In die Wäsche legen'}
             </button>
+            {item.photo && (
+              <button
+                className="icon-button detail-recut"
+                aria-label={cutting ? 'Wird freigestellt' : 'Neu freistellen'}
+                disabled={busy || cutting}
+                onClick={() => void recut()}
+              >
+                {cutting ? (
+                  <LoaderCircle className="spin" size={18} />
+                ) : (
+                  <Scissors size={18} strokeWidth={1.6} />
+                )}
+              </button>
+            )}
             <button
               data-motion="heart"
               className={`icon-button detail-heart ${item.favorite ? 'is-favorite' : ''}`}
@@ -984,13 +1040,7 @@ export default function App() {
           aria-label="Home"
           onClick={() => navigate('home')}
         >
-          <House
-            className="nav-icon"
-            size={24}
-            strokeWidth={view === 'home' ? 2.2 : 1.7}
-            fill={view === 'home' ? 'currentColor' : 'none'}
-            aria-hidden="true"
-          />
+          <HomeIcon filled={view === 'home'} />
           <span aria-hidden="true">Home</span>
         </button>
         <button
@@ -999,12 +1049,7 @@ export default function App() {
           aria-haspopup="dialog"
           onClick={() => setAdding(true)}
         >
-          <CirclePlus
-            className="nav-icon"
-            size={34}
-            strokeWidth={1.3}
-            aria-hidden="true"
-          />
+          <AddIcon />
         </button>
         <button
           className={view !== 'home' ? 'active' : ''}

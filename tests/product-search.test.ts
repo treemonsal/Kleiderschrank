@@ -5,6 +5,8 @@ import {
   guessBrand,
   guessCategory,
   parseResults,
+  colorFromText,
+  cutoutColor,
 } from '../src/product-search'
 // @ts-expect-error plain JavaScript worker without type declarations
 import {
@@ -204,5 +206,35 @@ describe('Such-Server (Cloudflare Worker)', () => {
       thumbnail: `https://t/${i}`,
     }))
     expect(toResults({ images_results: many })).toHaveLength(24)
+  })
+})
+
+describe('Farbe aus Titel und Freistellung', () => {
+  it('liest die Farbe aus Shoptitel oder Suche', () => {
+    expect(colorFromText('Schwarze Hose | Zalando')).toBe('Schwarz')
+    expect(colorFromText('Levi’s 501 Dunkelblaue Jeans')).toBe('Blau')
+    expect(colorFromText('Nike Air Force 1 White')).toBe('Weiss')
+    expect(colorFromText('Off-White Hoodie')).toBe('Weiss')
+    expect(colorFromText('Olivgrüne Feldjacke')).toBe('Grün')
+    expect(colorFromText('Strickpullover in Beigeton')).toBe('Beige')
+    expect(colorFromText('Navy Chino Slim')).toBe('Blau')
+  })
+
+  it('erfindet keine Farbe aus ähnlichen Wörtern', () => {
+    expect(colorFromText('Rotation Sneaker')).toBe('')
+    expect(colorFromText('Brotbeutel')).toBe('')
+    expect(colorFromText('Carhartt Hoodie')).toBe('')
+    expect(colorFromText('Sandalen')).toBe('')
+  })
+
+  it('lässt beim Freigestellten nur das Stück selbst abstimmen', () => {
+    // 10 transparent brown pixels (background) and 4 opaque black ones.
+    const data: number[] = []
+    for (let i = 0; i < 10; i++) data.push(140, 101, 80, 0)
+    for (let i = 0; i < 4; i++) data.push(30, 30, 32, 255)
+    expect(
+      cutoutColor({ width: 14, height: 1, data: new Uint8ClampedArray(data) }),
+    ).toBe('Schwarz')
+    expect(cutoutColor(null)).toBe('')
   })
 })

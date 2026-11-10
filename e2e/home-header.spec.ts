@@ -128,9 +128,14 @@ test('Home und Profil ohne überflüssige Texte und Knöpfe', async ({ page }) =
   ).toHaveCount(0)
   await expect(page.locator('#more-looks')).toHaveCount(0)
   // The active tab icon is filled, as Home's is.
-  await expect(page.locator('.bottom-nav button.active mask')).toHaveCount(0)
+  await expect(
+    page.locator('.bottom-nav button.active [data-filled]'),
+  ).toHaveCount(1)
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
-  await expect(page.locator('.bottom-nav button.active mask')).toHaveCount(1)
+  await expect(
+    page.locator('.bottom-nav button.active [data-filled]'),
+  ).toHaveCount(1)
+  await expect(page.locator('.bottom-nav [data-filled]')).toHaveCount(1)
   await expect(
     page.getByRole('button', { name: 'Einstellungen öffnen', exact: true }),
   ).toBeVisible()

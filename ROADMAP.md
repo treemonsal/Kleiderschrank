@@ -1,5 +1,13 @@
 # Entwicklungsplan
 
+## Version 0.45.0 – Wäsche-Fehler, Freistellen, Farbe, Symbole
+
+- [x] Absturz nach „In die Wäsche legen“ auf dem iPhone (unlesbares altes Foto) behoben
+- [x] Neu freistellen im Stück
+- [x] Farbe aus Titel/Suche und Freistellung statt Bildmitte
+- [x] TikTok-artige Symbole in der Tab-Leiste
+- [ ] Auf dem iPhone bestätigen: Wäsche und Favorit ohne Fehler
+
 ## Version 0.44.0 – Aufgeräumt nach dem iPhone-Test
 
 - [x] Erklärtexte auf Home und im Profil entfernt, Einstellungen nur im Profil

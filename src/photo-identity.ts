@@ -29,7 +29,14 @@ export async function sameBlob(a: Blob, b: Blob): Promise<boolean> {
 
 async function stable(next: Blob | undefined, previous: Blob | undefined) {
   if (!next || !previous) return next
-  return (await sameBlob(next, previous)) ? previous : next
+  try {
+    return (await sameBlob(next, previous)) ? previous : next
+  } catch {
+    // Safari deletes the file behind the old Blob once its record is
+    // rewritten (laundry, favourite). The old one is unreadable then, so the
+    // fresh Blob is shown; this comparison must never fail the wardrobe.
+    return next
+  }
 }
 
 export async function keepPhotoIdentity(

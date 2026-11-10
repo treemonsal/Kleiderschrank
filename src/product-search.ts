@@ -43,6 +43,71 @@ export function dominantColor(pixels: PhotoPixels): string {
   return [...votes].sort((a, b) => b[1] - a[1])[0]?.[0] ?? ''
 }
 
+/** Colour words in shop titles and searches, German and English. */
+const COLOR_WORDS: [string, RegExp][] = [
+  [
+    'Weiss',
+    /^(weiss|weiß|white|offwhite|off-white|creme-?weiss|ivory|elfenbein)/,
+  ],
+  ['Schwarz', /^(schwarz|black|noir)/],
+  ['Grau', /^(grau|grey|gray|anthrazit|silber|silver|charcoal)/],
+  ['Beige', /^(beige|creme|cream|sand|ecru|camel|khaki|nude|taupe)/],
+  ['Braun', /^(braun|brown|cognac|mokka|mocca|schoko|chocolate|tabak)/],
+  ['Blau', /^(blau|blue|navy|marine|türkis|petrol|indigo)/],
+  ['Grün', /^(grün|gruen|green|oliv|olive|salbei|sage|mint)/],
+  ['Rot', /^(rot|red|bordeaux|burgund|weinrot|burgundy)/],
+  ['Rosa', /^(rosa|pink|rose|altrosa)/],
+  ['Gelb', /^(gelb|yellow|senf|mustard)/],
+  ['Violett', /^(violett|lila|purple|flieder|lavendel|lavender)/],
+]
+const COLOR_PREFIX = /^(hell|dunkel|mittel|tief)/
+
+/**
+ * The colour a shop title or a search names, e.g. "Schwarze Hose" → Schwarz.
+ * Only whole words count (a colour word plus German endings), so "Rotation"
+ * or "Brot" never become red. The first named colour wins.
+ */
+export function colorFromText(text: string): string {
+  for (const word of text.toLowerCase().split(/[^a-zäöüß-]+/)) {
+    const name = wordColor(word)
+    if (name) return name
+  }
+  return ''
+}
+
+/** "dunkelblaue" → Blau; "olivgrüne" → Grün (both parts name a colour). */
+function wordColor(raw: string): string {
+  const word = raw.replace(COLOR_PREFIX, '')
+  for (const [name, pattern] of COLOR_WORDS) {
+    const match = word.match(pattern)
+    if (!match) continue
+    const rest = word.slice(match[0].length).replace(/^-/, '')
+    if (/^(e|er|es|en|em|s|\w*ton)?$/.test(rest) || wordColor(rest)) return name
+  }
+  return ''
+}
+
+/**
+ * Main colour of a cut-out: every opaque pixel votes, so a background or a
+ * model's skin around the piece no longer decides.
+ */
+export function cutoutColor(pixels: PhotoPixels | null): string {
+  if (!pixels) return ''
+  const votes = new Map<string, number>()
+  const step = Math.max(1, Math.floor((pixels.width * pixels.height) / 4000))
+  for (let i = 0; i < pixels.width * pixels.height; i += step) {
+    const at = i * 4
+    if (pixels.data[at + 3] < 200) continue
+    const name = nearestWardrobeColor([
+      pixels.data[at],
+      pixels.data[at + 1],
+      pixels.data[at + 2],
+    ]).name
+    votes.set(name, (votes.get(name) ?? 0) + 1)
+  }
+  return [...votes].sort((a, b) => b[1] - a[1])[0]?.[0] ?? ''
+}
+
 export interface ProductResult {
   title: string
   source: string

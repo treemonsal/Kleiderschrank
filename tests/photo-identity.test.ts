@@ -54,4 +54,22 @@ describe('photo identity', () => {
     )
     expect(next.photo).toBe(replaced)
   })
+  it('shows the new Blob instead of failing when Safari deleted the old one', async () => {
+    // Safari removes the file behind a Blob once its record is rewritten
+    // (e.g. into the laundry); reading the old Blob then throws.
+    const gone = bytes(30)
+    Object.defineProperty(gone, 'slice', {
+      value: () => gone,
+    })
+    Object.defineProperty(gone, 'arrayBuffer', {
+      value: () => Promise.reject(new DOMException('gone', 'NotReadableError')),
+    })
+    const fresh = bytes(30)
+    const [next] = await keepPhotoIdentity(
+      [{ ...garment(fresh), inLaundry: true }],
+      new Map([['a', { photo: gone }]]),
+    )
+    expect(next.photo).toBe(fresh)
+    expect(next.inLaundry).toBe(true)
+  })
 })

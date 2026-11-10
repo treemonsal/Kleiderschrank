@@ -497,26 +497,44 @@ export async function saveGarment(
   return garment.id
 }
 /**
- * Adds a cut-out to a piece that has none yet, but only while the piece is
- * exactly as it was when the cut-out started (no edit in between).
- * Returns false when the piece changed or is gone; nothing is written then.
+ * Adds a cut-out to a piece, but only while the piece is exactly as it was
+ * when the cut-out started (no edit in between). Without `replace` a piece
+ * that already has a cut-out stays as it is; with it a new try replaces the
+ * old cut-out (the original photo always stays). `color` updates the main
+ * colour read from the cut-out. Returns false when nothing was written.
  */
 export async function attachCutout(
   id: string,
   expectedUpdatedAt: string,
   cutout: Blob,
   database = db,
+  options: { replace?: boolean; color?: string } = {},
 ): Promise<boolean> {
   return database.transaction('rw', database.garments, async () => {
     const current = await database.garments.get(id)
-    if (!current || current.cutout || current.updatedAt !== expectedUpdatedAt)
+    if (
+      !current ||
+      !current.photo ||
+      (current.cutout && !options.replace) ||
+      current.updatedAt !== expectedUpdatedAt
+    )
       return false
     const next: Garment = {
       ...current,
       cutout,
+      ...(options.color ? { color: options.color } : {}),
       updatedAt: new Date(
         Math.max(Date.now(), Date.parse(current.updatedAt) + 1),
       ).toISOString(),
+    }
+    if (options.color) {
+      // The main colour never repeats among the secondary ones.
+      const secondary = cleanSecondaryColors(
+        current.secondaryColors,
+        options.color,
+      )
+      if (secondary.length) next.secondaryColors = secondary
+      else delete next.secondaryColors
     }
     const items = await database.garments.toArray()
     assertWardrobeCapacity([...items.filter((item) => item.id !== id), next])
