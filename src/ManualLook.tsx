@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react'
 import type { Garment } from './model'
 import {
   chosenLook,
@@ -12,17 +12,13 @@ import {
 } from './manual-look'
 import { GarmentPicture } from './ui'
 
-/**
- * One row: swipe sideways (native scroll snapping) or use the arrows.
- * Optional rows begin with an empty "Ohne" slide.
- */
+/** One row: swipe sideways (native scroll snapping) or use the arrows. */
 function Row({
   row,
   index,
   onChange,
 }: {
   row: LookRow
-  /** -1 = Ohne */
   index: number
   onChange: (index: number) => void
 }) {
@@ -31,16 +27,15 @@ function Row({
   // Slide an arrow asked for; scrolling that is still on its way there must
   // not pick a piece halfway.
   const target = useRef<number | null>(null)
-  const offset = row.optional ? 1 : 0
-  const slides = row.items.length + offset
+  const slides = row.items.length
   const current = chosenPiece(row, { [row.id]: index })
   function go(next: number) {
-    const clamped = Math.max(-offset, Math.min(row.items.length - 1, next))
+    const clamped = Math.max(0, Math.min(slides - 1, next))
     onChange(clamped)
-    target.current = clamped + offset
+    target.current = clamped
     const list = track.current
     list?.scrollTo({
-      left: (clamped + offset) * list.clientWidth,
+      left: clamped * list.clientWidth,
       behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
         ? 'auto'
         : 'smooth',
@@ -51,7 +46,7 @@ function Row({
       <button
         className="icon-button look-row-step"
         aria-label={`Vorheriges ${row.label}`}
-        disabled={index + offset <= 0}
+        disabled={index <= 0}
         onClick={() => go(index - 1)}
       >
         <ChevronLeft size={20} />
@@ -71,16 +66,11 @@ function Row({
               else target.current = null
               return
             }
-            const next = Math.max(0, Math.min(slides - 1, slide)) - offset
+            const next = Math.max(0, Math.min(slides - 1, slide))
             if (next !== index) onChange(next)
           }, 90)
         }}
       >
-        {row.optional && (
-          <li className="look-row-slide is-empty" aria-hidden={index !== -1}>
-            <span />
-          </li>
-        )}
         {row.items.map((item, position) => (
           <li
             key={item.id}
@@ -99,8 +89,9 @@ function Row({
       >
         <ChevronRight size={20} />
       </button>
-      <p className="look-row-name" aria-live="polite">
-        {current?.name ?? `Ohne ${row.label}`}
+      {/* Pictures speak, as in the wardrobe; the name is for VoiceOver. */}
+      <p className="look-row-name sr-only" aria-live="polite">
+        {current?.name}
       </p>
     </section>
   )
@@ -127,13 +118,39 @@ export function ManualLook({
   const dress = wearsDress(rows, choice)
   const look = chosenLook(rows, choice)
   const missing = missingRows(rows, choice)
+  const optional = rows.filter((row) => row.optional && row.items.length)
+  // Jacket and accessory stay away until asked for: three rows by default.
   const shown = rows.filter(
-    (row) => row.items.length && !(dress && row.id === 'bottom'),
+    (row) =>
+      row.items.length &&
+      !(dress && row.id === 'bottom') &&
+      (!row.optional || (choice[row.id] ?? -1) >= 0),
   )
   const saved = !!look && isSaved(look)
   return (
     <section className="manual-look" aria-label="Selber zusammenstellen">
-      <h2 className="home-section-title">Selber zusammenstellen</h2>
+      <div className="manual-look-head">
+        <h2 className="home-section-title">Selber zusammenstellen</h2>
+        {optional.map((row) => {
+          const on = (choice[row.id] ?? -1) >= 0
+          return (
+            <button
+              key={row.id}
+              className={`look-layer${on ? ' active' : ''}`}
+              aria-pressed={on}
+              onClick={() =>
+                setChoice((current) => ({
+                  ...current,
+                  [row.id]: on ? -1 : 0,
+                }))
+              }
+            >
+              {on ? <Minus size={15} /> : <Plus size={15} />}
+              {row.label}
+            </button>
+          )
+        })}
+      </div>
       {shown.map((row) => (
         <Row
           key={row.id}

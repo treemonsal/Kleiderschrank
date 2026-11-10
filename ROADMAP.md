@@ -1,5 +1,10 @@
 # Entwicklungsplan
 
+## Version 0.43.0 – Ruhigeres Home
+
+- [x] Datum und Wetter kleiner, Looktitel als einziges grosses Element
+- [x] Zusammenstellen kürzer: drei Reihen, Jacke und Accessoire zuschaltbar
+
 ## Version 0.42.0 – Selber zusammenstellen
 
 - [x] Reihen wischen auf Home (Jacke, Oberteil/Kleid, Hose, Schuhe, Accessoire), Speichern und Für heute
@@ -18,7 +23,7 @@
 - [x] Home = Tageslook plus Weitere Looks (früher Heute und Looks)
 - [x] + öffnet ein Blatt von unten: Foto aufnehmen, Galerie, Online suchen, ohne Foto
 - [x] Profil mit Name (Google-Konto oder selbst gewählt), Zahlen, Kleidung und Outfits; Journal oben rechts
-- [ ] Home weiter beruhigen: Datum und Wetter kleiner, Tageslook als einziges grosses Element
+- [x] Home weiter beruhigen (0.43.0)
 
 ## Version 0.40.0 – Kleidung online suchen
 

@@ -1,5 +1,10 @@
 # MyStyle
 
+## Version 0.43.0 – Ruhigeres Home
+
+- Der Looktitel ist das einzige grosse Element oben; Datum und Wetter sind eine ruhige Zeile über der Woche.
+- Selber zusammenstellen zeigt drei Reihen; Jacke und Accessoire werden mit einer Pille zugeschaltet. Namen nur noch für VoiceOver, wie in der Garderobe.
+
 ## Version 0.42.0 – Selber zusammenstellen
 
 - Wie bei Fits: Auf Home unter den Vorschlägen Reihen für Jacke, Oberteil oder Kleid, Hose, Schuhe und Accessoire seitlich wischen, dann speichern oder für heute wählen. Nur tragbare Stücke (nicht aussortiert, nicht in der Wäsche), Favoriten zuerst; ein Kleid ersetzt die Hose.

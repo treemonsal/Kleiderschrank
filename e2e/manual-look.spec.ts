@@ -30,9 +30,9 @@ test('Selber zusammenstellen: Reihen wechseln, speichern und für heute wählen'
   await board.scrollIntoViewIfNeeded()
   const top = board.getByRole('region', { name: 'Oberteil' })
   await expect(top.locator('.look-row-name')).toHaveText('Blaues Shirt')
-  await expect(
-    board.getByRole('region', { name: 'Jacke' }).locator('.look-row-name'),
-  ).toHaveText('Ohne Jacke')
+  // Three rows by default; the jacket waits behind its pill.
+  await expect(board.locator('.look-row')).toHaveCount(3)
+  await expect(board.getByRole('region', { name: 'Jacke' })).toHaveCount(0)
 
   // A dress replaces the trousers row.
   // Sorted by name: Blaues Shirt, Sommerkleid, Weisses Hemd.
@@ -46,7 +46,13 @@ test('Selber zusammenstellen: Reihen wechseln, speichern und für heute wählen'
   ).toBeDisabled()
   await expect(board.getByRole('region', { name: 'Hose' })).toBeVisible()
 
-  await board.getByRole('button', { name: 'Nächstes Jacke' }).click()
+  await board.getByRole('button', { name: 'Jacke', exact: true }).click()
+  await expect(
+    board.getByRole('button', { name: 'Jacke', exact: true }),
+  ).toHaveAttribute('aria-pressed', 'true')
+  await expect(
+    board.getByRole('region', { name: 'Jacke' }).locator('.look-row-name'),
+  ).toHaveText('Parka')
   await board.getByRole('button', { name: 'Speichern', exact: true }).click()
   await expect(
     board.getByRole('button', { name: 'Gespeichert', exact: true }),
