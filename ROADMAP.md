@@ -1,5 +1,12 @@
 # Entwicklungsplan
 
+## Version 0.44.0 – Aufgeräumt nach dem iPhone-Test
+
+- [x] Erklärtexte auf Home und im Profil entfernt, Einstellungen nur im Profil
+- [x] Wetter und Datum optisch auf einer Linie
+- [x] Kreisdiagramm für das Journal, gefülltes Profil-Symbol
+- [x] Lücke unter der Tab-Leiste bei kurzen Ansichten (Mindesthöhe der Seite); auf dem iPhone noch bestätigen
+
 ## Version 0.43.0 – Ruhigeres Home
 
 - [x] Datum und Wetter kleiner, Looktitel als einziges grosses Element

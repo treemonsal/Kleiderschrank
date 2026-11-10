@@ -39,6 +39,7 @@ async function openPicker(page: Page) {
   ).toBeVisible()
 }
 async function exportData(page: Page) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -218,6 +219,7 @@ for (const width of [375, 390, 430]) {
   }, testInfo) => {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
+    await page.getByRole('button', { name: 'Profil', exact: true }).click()
     await page
       .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
       .click()

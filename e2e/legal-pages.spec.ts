@@ -4,6 +4,7 @@ test('Datenschutz und Nutzungsbedingungen sind aus den Einstellungen erreichbar'
   page,
 }) => {
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -18,7 +19,7 @@ test('Datenschutz und Nutzungsbedingungen sind aus den Einstellungen erreichbar'
   ).toBeVisible()
   await page.getByRole('link', { name: 'Zurück zu MyStyle' }).click()
   await expect(
-    page.getByRole('button', { name: 'Einstellungen öffnen', exact: true }),
+    page.getByRole('button', { name: 'Profil', exact: true }),
   ).toBeVisible()
   // Pages must not scroll sideways, even on the smallest phone.
   await page.setViewportSize({ width: 320, height: 640 })

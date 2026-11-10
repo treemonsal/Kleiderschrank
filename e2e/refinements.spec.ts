@@ -6,6 +6,7 @@ test.use({ timezoneId: 'Etc/UTC' })
 async function seed(page: Page) {
   await page.goto('/')
   const data = refinementFixture(await page.evaluate(() => Date.now()))
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -24,6 +25,7 @@ async function seed(page: Page) {
   await page.getByRole('button', { name: 'Home', exact: true }).click()
 }
 async function exported(page: Page) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

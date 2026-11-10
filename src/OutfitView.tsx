@@ -382,11 +382,6 @@ export function OutfitView({
               onAdd={onAdd}
             />
           )}
-          {mode === 'saved' && !state.outfits.length && (
-            <p className="muted">
-              Speichere auf Home einen Vorschlag. Hier findest du ihn wieder.
-            </p>
-          )}
           {mode === 'saved' && (
             <div className="saved-looks">
               {byLastWorn.map(({ outfit, worn }, index) => {

@@ -39,6 +39,7 @@ const garments = [
   updatedAt: stamp,
 }))
 async function importData(page: Page, data?: unknown) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -68,6 +69,7 @@ async function importData(page: Page, data?: unknown) {
   await page.getByRole('button', { name: 'Home', exact: true }).click()
 }
 async function exported(page: Page) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -188,6 +190,7 @@ test('Später verschwindet dauerhaft und lässt den Stilcheck unter Mehr erreich
   await expect(invite).not.toBeVisible()
   await page.reload()
   await expect(invite).not.toBeVisible()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

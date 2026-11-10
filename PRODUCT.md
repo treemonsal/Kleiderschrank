@@ -1,5 +1,12 @@
 # MyStyle
 
+## Version 0.44.0 – Aufgeräumt nach dem iPhone-Test
+
+- Home ohne Erklärtexte („Erster Schritt“, Hinweise unter Titel und Knopf) und ohne Einstellungen-Knopf; Einstellungen nur noch im Profil. Bei leerem Schrank keine „Weiteren Looks“.
+- Wetter wie das Datum zweizeilig (kleine Überzeile, grosser Wert), damit beide Blöcke für das Auge auf einer Linie stehen; der Ort ist nur noch für VoiceOver da.
+- Profil: Journal mit Kreisdiagramm-Symbol, gefülltes Profil-Symbol im aktiven Tab wie bei Home, keine Filter und Erklärtexte bei leerem Schrank, kein Text bei leeren Outfits.
+- Die Seite ist nie kürzer als der Bildschirm, damit die Tab-Leiste bei kurzen Ansichten unten bleibt.
+
 ## Version 0.43.0 – Ruhigeres Home
 
 - Der Looktitel ist das einzige grosse Element oben; Datum und Wetter sind eine ruhige Zeile über der Woche.

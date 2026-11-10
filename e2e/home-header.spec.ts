@@ -9,6 +9,7 @@ async function importWeather(
   place: string,
 ) {
   const fetchedAt = new Date(`${day}T06:00:00Z`).toISOString()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -85,3 +86,66 @@ for (const width of [320, 375, 390, 430])
         ),
       ).toBe(true)
     })
+
+test('Datum und Wetter stehen auf einer Linie: Überzeilen oben, Werte unten', async ({
+  page,
+}) => {
+  await page.clock.install({ time: new Date('2026-11-10T07:13:00Z') })
+  await page.goto('/')
+  await importWeather(page, '2026-11-10', 80, 'Mein Standort')
+  const kicker = await page.locator('.journal-date .kicker').boundingBox()
+  const date = await page.locator('.journal-date .home-date').boundingBox()
+  const label = await page.locator('.home-weather-label').boundingBox()
+  const range = await page.locator('.weather-range').boundingBox()
+  // Judged by eye: the two small lines share a top, the values a bottom.
+  expect(Math.abs(kicker!.y - label!.y)).toBeLessThanOrEqual(3)
+  expect(
+    Math.abs(date!.y + date!.height - (range!.y + range!.height)),
+  ).toBeLessThanOrEqual(3)
+  // Only two lines: the place is spoken, not shown.
+  await expect(page.locator('.home-weather')).not.toContainText(
+    'Regenschauer\nMein',
+  )
+  await expect(page.locator('.home-weather .sr-only')).toContainText(
+    'Mein Standort',
+  )
+})
+
+test('Home und Profil ohne überflüssige Texte und Knöpfe', async ({ page }) => {
+  await page.goto('/')
+  await expect(
+    page.getByRole('button', { name: 'Erstes Stück hinzufügen', exact: true }),
+  ).toBeVisible()
+  for (const text of [
+    'Starte mit einem Foto.',
+    'Für deinen ersten Look brauchst du',
+    'Erster Schritt',
+  ])
+    await expect(page.getByText(text, { exact: false })).toHaveCount(0)
+  // Settings live in the profile; an empty wardrobe hides the composer.
+  await expect(
+    page.getByRole('button', { name: 'Einstellungen öffnen', exact: true }),
+  ).toHaveCount(0)
+  await expect(page.locator('#more-looks')).toHaveCount(0)
+  // The active tab icon is filled, as Home's is.
+  await expect(page.locator('.bottom-nav button.active mask')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
+  await expect(page.locator('.bottom-nav button.active mask')).toHaveCount(1)
+  await expect(
+    page.getByRole('button', { name: 'Einstellungen öffnen', exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('group', { name: 'Kategorie filtern' }),
+  ).toHaveCount(0)
+  await expect(page.getByText('Füge dein erstes Stück hinzu.')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Outfits', exact: true }).click()
+  await expect(
+    page.getByText('Speichere auf Home', { exact: false }),
+  ).toHaveCount(0)
+  // The page is never shorter than the screen, so the tab bar stays put.
+  const heights = await page.evaluate(() => ({
+    doc: document.documentElement.scrollHeight,
+    screen: window.innerHeight,
+  }))
+  expect(heights.doc).toBeGreaterThanOrEqual(heights.screen)
+})

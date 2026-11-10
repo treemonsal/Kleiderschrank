@@ -19,6 +19,7 @@ const garments = ['Oberteile', 'Hosen', 'Schuhe', 'Jacken', 'Accessoires'].map(
   }),
 )
 async function importData(page: Page, extra: Record<string, unknown> = {}) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -610,6 +611,7 @@ test('Ein Teil tauschen bleibt nach Neustart erhalten, der Rest bleibt gleich un
   await expect(
     look.getByRole('button', { name: `${newTop} öffnen`, exact: true }),
   ).toBeVisible()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

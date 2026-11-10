@@ -84,6 +84,7 @@ async function addPiece(page: Page, name: string, category: string) {
 }
 
 async function signIn(page: Page) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -93,6 +94,7 @@ async function signIn(page: Page) {
   await expect(page.locator('.toast')).toContainText(
     'Angemeldet als tim@example.com',
   )
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -108,6 +110,7 @@ test('Ohne eingerichtete Google-Anmeldung zeigt die App keinen Anmeldeknopf', as
     ).__MYSTYLE_GOOGLE_CLIENT_ID__ = ''
   })
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -154,6 +157,7 @@ test('Zwei Geräte mit demselben Google-Konto teilen Stücke und Löschungen', a
       )
       .not.toContain('Graue Hose')
 
+    await a.getByRole('button', { name: 'Profil', exact: true }).click()
     await a
       .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
       .click()
@@ -169,6 +173,7 @@ test('Zwei Geräte mit demselben Google-Konto teilen Stücke und Löschungen', a
     ).toBeVisible()
 
     // Signing out keeps everything on the device.
+    await a.getByRole('button', { name: 'Profil', exact: true }).click()
     await a
       .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
       .click()

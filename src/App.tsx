@@ -17,9 +17,7 @@ import {
   Trash2,
   WifiOff,
   X,
-  Settings,
-  CalendarDays,
-  CircleUserRound,
+  ChartPie,
   CirclePlus,
   House,
   Menu,
@@ -50,6 +48,7 @@ import { WARMTH_LABELS } from './warmth'
 import { searchEndpoint } from './product-search'
 import { AddSheet } from './AddSheet'
 import { NameSheet } from './NameSheet'
+import { ProfileIcon } from './ProfileIcon'
 import {
   restorePageScroll,
   scrollSectionIntoView,
@@ -133,9 +132,12 @@ function Home({
           notify={notify}
         />
       </div>
-      <section id="more-looks" aria-label="Weitere Looks">
-        {more}
-      </section>
+      {/* Nothing to combine yet: the first piece comes first. */}
+      {items.length > 0 && (
+        <section id="more-looks" aria-label="Weitere Looks">
+          {more}
+        </section>
+      )}
     </div>
   )
 }
@@ -171,72 +173,77 @@ function Wardrobe({
     category !== 'Alle' || favorites || laundryOnly || showArchive
   return (
     <div className="wardrobe-view">
-      <div
-        className="category-tabs text-tabs"
-        role="group"
-        aria-label="Kategorie filtern"
-      >
-        {['Alle', ...CATEGORIES]
-          .filter(
-            (c) =>
-              c === 'Alle' ||
-              c === category ||
-              base.some((item) => item.category === c),
-          )
-          .map((c) => (
-            <button
-              key={c}
-              className={category === c ? 'active' : ''}
-              aria-label={c}
-              aria-pressed={category === c}
-              onClick={() => setCategory(c)}
-            >
-              {c}{' '}
-              <small>
-                {c === 'Alle'
-                  ? base.length
-                  : base.filter((item) => item.category === c).length}
-              </small>
-            </button>
-          ))}
-      </div>
-      <div className="filter-chips">
-        <button
-          className={`chip ${favorites ? 'active' : ''}`}
-          data-motion="heart"
-          aria-label="Nur Favoriten"
-          aria-pressed={favorites}
-          onClick={() => setFavorites(!favorites)}
-        >
-          <Heart
-            size={14}
-            strokeWidth={1.6}
-            fill={favorites ? 'currentColor' : 'none'}
-          />
-          Favoriten
-        </button>
-        <button
-          className={`chip ${laundryOnly ? 'active' : ''}`}
-          data-motion="laundry"
-          aria-label="Nur Wäsche"
-          aria-pressed={laundryOnly}
-          onClick={() => setLaundryOnly(!laundryOnly)}
-        >
-          <LaundryIcon size={15} />
-          In der Wäsche
-        </button>
-        {archived.length > 0 && (
-          <button
-            className={`chip ${showArchive ? 'active' : ''}`}
-            aria-label="Nur aussortierte Stücke"
-            aria-pressed={showArchive}
-            onClick={() => setArchiveOnly(!showArchive)}
+      {/* Filters only once there is something to filter. */}
+      {items.length > 0 && (
+        <>
+          <div
+            className="category-tabs text-tabs"
+            role="group"
+            aria-label="Kategorie filtern"
           >
-            <Archive size={14} strokeWidth={1.6} />
-            Aussortiert
-          </button>
-        )}
-      </div>
+            {['Alle', ...CATEGORIES]
+              .filter(
+                (c) =>
+                  c === 'Alle' ||
+                  c === category ||
+                  base.some((item) => item.category === c),
+              )
+              .map((c) => (
+                <button
+                  key={c}
+                  className={category === c ? 'active' : ''}
+                  aria-label={c}
+                  aria-pressed={category === c}
+                  onClick={() => setCategory(c)}
+                >
+                  {c}{' '}
+                  <small>
+                    {c === 'Alle'
+                      ? base.length
+                      : base.filter((item) => item.category === c).length}
+                  </small>
+                </button>
+              ))}
+          </div>
+          <div className="filter-chips">
+            <button
+              className={`chip ${favorites ? 'active' : ''}`}
+              data-motion="heart"
+              aria-label="Nur Favoriten"
+              aria-pressed={favorites}
+              onClick={() => setFavorites(!favorites)}
+            >
+              <Heart
+                size={14}
+                strokeWidth={1.6}
+                fill={favorites ? 'currentColor' : 'none'}
+              />
+              Favoriten
+            </button>
+            <button
+              className={`chip ${laundryOnly ? 'active' : ''}`}
+              data-motion="laundry"
+              aria-label="Nur Wäsche"
+              aria-pressed={laundryOnly}
+              onClick={() => setLaundryOnly(!laundryOnly)}
+            >
+              <LaundryIcon size={15} />
+              In der Wäsche
+            </button>
+            {archived.length > 0 && (
+              <button
+                className={`chip ${showArchive ? 'active' : ''}`}
+                aria-label="Nur aussortierte Stücke"
+                aria-pressed={showArchive}
+                onClick={() => setArchiveOnly(!showArchive)}
+              >
+                <Archive size={14} strokeWidth={1.6} />
+                Aussortiert
+              </button>
+            )}
+          </div>
+        </>
+      )}
       {filtered.length ? (
         <div className="garment-grid">
           {filtered.map((item) => (
@@ -252,9 +259,6 @@ function Wardrobe({
         <div className="closet-empty">
           {!hasFilters && <EmptyIllustration />}
           <h2>{hasFilters ? 'Hier liegt gerade nichts.' : 'Noch leer'}</h2>
-          <p>
-            {hasFilters ? 'Anderer Filter?' : 'Füge dein erstes Stück hinzu.'}
-          </p>
           {!hasFilters && (
             <button className="button primary" onClick={onAdd}>
               <Plus size={18} /> Stück hinzufügen
@@ -797,7 +801,7 @@ export default function App() {
               aria-label="Journal"
               onClick={() => navigate('journal')}
             >
-              <CalendarDays size={21} strokeWidth={1.5} />
+              <ChartPie size={21} strokeWidth={1.6} />
             </button>
           ) : (
             <button
@@ -825,18 +829,16 @@ export default function App() {
                 : 'Ungelesene Antwort deines Stylisten'}
             </span>
           )}
-          <button
-            className={`profile-button ${view === 'settings' ? 'active' : ''}`}
-            aria-label="Einstellungen öffnen"
-            aria-current={view === 'settings' ? 'page' : undefined}
-            onClick={() => navigate('settings')}
-          >
-            {view === 'wardrobe' ? (
+          {/* Settings belong to the profile, like in Fits. */}
+          {view === 'wardrobe' && (
+            <button
+              className="profile-button"
+              aria-label="Einstellungen öffnen"
+              onClick={() => navigate('settings')}
+            >
               <Menu size={21} strokeWidth={1.5} />
-            ) : (
-              <Settings size={20} strokeWidth={1.5} />
-            )}
-          </button>
+            </button>
+          )}
         </div>
       </header>
       {offline && (
@@ -1010,12 +1012,7 @@ export default function App() {
           aria-label="Profil"
           onClick={() => navigate('wardrobe')}
         >
-          <CircleUserRound
-            className="nav-icon"
-            size={24}
-            strokeWidth={view !== 'home' ? 2.2 : 1.7}
-            aria-hidden="true"
-          />
+          <ProfileIcon filled={view !== 'home'} />
           <span aria-hidden="true">Profil</span>
         </button>
       </nav>

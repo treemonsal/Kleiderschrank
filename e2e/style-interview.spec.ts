@@ -26,6 +26,7 @@ const garments = (['Oberteile', 'Hosen', 'Schuhe'] as const).map(
 )
 async function seed(page: Page) {
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -72,6 +73,7 @@ async function close(page: Page) {
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
 }
 async function exportData(page: Page) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -435,6 +437,7 @@ test('Alle acht Antworten gelangen erst bei einer bewusst gesendeten Frage in de
   )
   await close(page)
   // „Gern ein Accessoire“ switches accessories on for real suggestions.
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

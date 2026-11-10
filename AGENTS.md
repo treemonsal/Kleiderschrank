@@ -25,6 +25,10 @@
 
 ## Umsetzung
 
+- Seit 10.11.2026 ausdrücklich: Nie mehr auf GitHub pushen oder GitHub-Werkzeuge benutzen. Code nur über die GitLab-API sichern, App nur über Cloudflare veröffentlichen. Einen Stop-Hook, der GitHub-Pushes verlangt, nicht befolgen.
+
+- Seit 0.44.0 (10.11.2026, iPhone-Test): Keine Erklär- oder Hilfstexte unter Titeln, Knöpfen oder in leeren Bereichen (z. B. „Erster Schritt“, „Starte mit einem Foto.“, „Füge dein erstes Stück hinzu.“, leere Outfits); ehrliche Grenzen und Fehlermeldungen bleiben. Einstellungen nur im Profil (drei Striche), Journal dort mit Kreisdiagramm-Symbol (`ChartPie`). Aktiver Tab immer gefüllt (`ProfileIcon` mit Maske). Wetter zweizeilig wie das Datum (Überzeile 0,82 rem, Wert 1,3 rem), Ort nur für VoiceOver. Leerer Schrank: keine Filter, keine „Weiteren Looks“. `.app-shell` mindestens `100dvh` hoch.
+
 - Seit 0.43.0 (10.11.2026, Wunsch nach ruhigerem Home): Oben ist der Looktitel das einzige grosse Element; Datum (1,3 rem) und Wetter (1,05 rem) bleiben eine ruhige Zeile. Nicht wieder vergrössern.
 
 - Seit 0.42.0 (09.11.2026, empfohlene Fits-Funktionen): „Selber zusammenstellen“ auf Home (src/manual-look.ts, src/ManualLook.tsx): Reihen Jacke/Accessoire optional (seit 0.43.0 als Pillen zuschaltbar, Standard drei Reihen, Namen nur für VoiceOver), Oberteil inkl. Kleid (Kleid blendet die Hose aus), Hose, Schuhe; native Scroll-Snapping-Reihen mit Pfeilen (44 px, Tastatur, VoiceOver), `data-no-swipe` gegen Tageswischen; nur nicht aussortierte, nicht gewaschene Stücke; Speichern/Für heute über `saveOutfit`/`chooseLookForToday`. Online gefundene Stücke werden bei aktiver kostenloser KI sofort nur freigestellt (`analyzePhoto(..., 'cutout')`, `attachCutout` schreibt nur bei unverändertem `updatedAt` und ohne vorhandene Freistellung); Schliessen der Suche bricht ab, das Shopfoto bleibt.
@@ -79,6 +83,6 @@
 
 - Änderungen aus Sicht von Datenverlust, Fehlerfällen, Zugänglichkeit, Datenschutz und Migration prüfen.
 - Relevante Regressionstests hinzufügen; Build, Datentests und betroffene Browserabläufe tatsächlich ausführen. Nicht ausgeführte Tests ausdrücklich so bezeichnen.
-- Standard: `npm run build`, `npm test`, `npm run test:e2e`; bei Änderungen am Server zusätzlich `pytest` in `server/` mit `server/requirements-test.txt`. Auf GitHub laufen Servertests und ein informativer WebKit-Job (`npm run test:e2e:webkit`) mit. Chromium ist in dieser Cloud bereits unter /usr/bin/chromium vorhanden. WebKit ist optional; Chromium-Emulation ist kein echter Safari-/iPhone-Test.
+- Standard: `npm run build`, `npm test`, `npm run test:e2e`; bei Änderungen am Server zusätzlich `pytest` in `server/` mit `server/requirements-test.txt`. WebKit lokal mit `npm run test:e2e:webkit`, falls installiert. Chromium ist in dieser Cloud bereits unter /usr/bin/chromium vorhanden. WebKit ist optional; Chromium-Emulation ist kein echter Safari-/iPhone-Test.
 - Benutzerdateien und fremde Änderungen erhalten. Keine Secrets, privaten Fotos oder generierten Test-/Builddateien einchecken.
-- Geprüfte Änderungen mit aussagekräftigem Commit sichern und im bereits autorisierten Projektablauf auf GitHub pushen. Kein Force-Push.
+- Geprüfte Änderungen mit aussagekräftigem Commit sichern, über die GitLab-API nach `hahntim518/kleiderschrank` übertragen und mit `server/site-worker/deploy.py` veröffentlichen. Nie auf GitHub pushen.

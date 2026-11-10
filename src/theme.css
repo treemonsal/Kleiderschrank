@@ -3013,3 +3013,47 @@ body {
 .daily-look h1 {
   font-size: 1.85rem;
 }
+
+/* 0.44.0 – Date and weather read as one row: each is a small grey line over
+   a larger value of the same size, so tops and baselines meet by eye. */
+.journal-day-head {
+  align-items: flex-end;
+}
+.journal-date,
+.journal-day-head .home-weather {
+  gap: 3px;
+}
+.journal-date .kicker,
+.journal-day-head .home-weather .home-weather-label {
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  color: var(--c-ink-2);
+}
+.journal-day-head .home-weather {
+  justify-content: flex-end;
+  padding: 0;
+}
+.journal-day-head .journal-date .home-date,
+.journal-day-head .weather-range {
+  font-size: 1.3rem;
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--c-ink);
+}
+.journal-day-head .home-weather-line {
+  gap: 6px;
+  color: var(--c-ink-2);
+  line-height: 1.1;
+}
+
+/* The page is never shorter than the screen. A short view (an empty tab)
+   otherwise lets iOS lift the fixed tab bar and leave a gap below it. */
+.app-shell {
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.closet-empty h2 {
+  margin-bottom: 16px;
+}

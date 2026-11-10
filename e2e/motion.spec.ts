@@ -1,5 +1,22 @@
 import { test, expect } from './base'
 
+/** Filters appear once the wardrobe holds a piece. */
+async function onePiece(page: import('./base').Page) {
+  await page.getByRole('button', { name: 'Hinzufügen', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Ohne Foto eintragen', exact: true })
+    .click()
+  await page
+    .getByRole('dialog')
+    .getByLabel('Name', { exact: false })
+    .fill('Hemd')
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'In die Garderobe legen' })
+    .click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+}
+
 test('Menüleiste bleibt auch während der Seitenanimation vor dem Inhalt sichtbar', async ({
   page,
 }) => {
@@ -75,6 +92,7 @@ test('Wäschetrommel dreht und startet bei erneutem Tippen neu, während der Fil
   page,
 }) => {
   await page.goto('/')
+  await onePiece(page)
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   const laundry = page.getByRole('button', { name: 'Nur Wäsche', exact: true })
   await laundry.click()
@@ -108,6 +126,7 @@ test('Herz reagiert auf Tippen; Bewegung reduzieren stoppt laufendes Feedback un
   page,
 }) => {
   await page.goto('/')
+  await onePiece(page)
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   const heart = page.getByRole('button', { name: 'Nur Favoriten', exact: true })
   await heart.click()
@@ -148,6 +167,20 @@ test('Schnelle Tabwechsel behalten die letzte Auswahl, auch beim sofortigen Zur�
   await expect(
     page.getByRole('button', { name: 'Erstes Stück hinzufügen', exact: true }),
   ).toBeVisible()
+  // One piece, so Home shows the look composer (an empty wardrobe hides it).
+  await page.getByRole('button', { name: 'Hinzufügen', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Ohne Foto eintragen', exact: true })
+    .click()
+  await page
+    .getByRole('dialog')
+    .getByLabel('Name', { exact: false })
+    .fill('Hemd')
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'In die Garderobe legen' })
+    .click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
   const nav = page.getByRole('navigation', { name: 'Hauptnavigation' })
   await nav.evaluate((node) => {
     const buttons = node.querySelectorAll('button')
@@ -207,6 +240,7 @@ test('Ohne optionale Animations- und Resize-APIs bleiben Filter, Navigation und 
     })
   })
   await page.goto('/')
+  await onePiece(page)
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   const laundry = page.getByRole('button', { name: 'Nur Wäsche', exact: true })
   await laundry.click()

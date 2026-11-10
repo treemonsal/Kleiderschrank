@@ -15,6 +15,7 @@ const base = ['Oberteile', 'Hosen', 'Schuhe', 'Jacken'].map((category, i) => ({
   updatedAt: stamp,
 }))
 async function importItems(page: Page, alternative = true) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -49,6 +50,7 @@ async function importItems(page: Page, alternative = true) {
   ).toBeVisible()
 }
 async function exportData(page: Page) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

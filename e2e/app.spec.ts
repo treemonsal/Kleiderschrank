@@ -129,6 +129,7 @@ test('Sicherung exportiert Fotos und stellt sie wieder her; fehlerhafte Dateien 
 }) => {
   await page.goto('/')
   await addGarment(page, 'Mein Mantel', true)
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -144,6 +145,7 @@ test('Sicherung exportiert Fotos und stellt sie wieder her; fehlerhafte Dateien 
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page.getByRole('button', { name: 'Mein Mantel öffnen' }).click()
   await sortOutAndDelete(page, 'Mein Mantel')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -270,13 +272,18 @@ for (const width of [375, 390, 430]) {
       expect(bounds!.width).toBeGreaterThanOrEqual(44)
       expect(bounds!.height).toBeGreaterThanOrEqual(44)
     }
+    await page.getByRole('button', { name: 'Profil', exact: true }).click()
     await page
       .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
       .click()
+    // Settings open from the profile; the header keeps only the stylist.
+    await expect(
+      page.getByRole('heading', { name: 'Einstellungen', exact: true }),
+    ).toBeVisible()
     await expect(
       page.getByRole('button', { name: 'Einstellungen öffnen', exact: true }),
-    ).toHaveAttribute('aria-current', 'page')
-    // Settings sit outside the four tabs, so no tab is marked.
+    ).toHaveCount(0)
+    // Settings sit outside the tabs, so no tab is marked as the page.
     await expect(page.locator('.bottom-nav [aria-current]')).toHaveCount(0)
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
     expect(
@@ -359,6 +366,7 @@ test('Gedämpfte Beschriftungen und Aktionen bleiben auf dem dunklen Grund lesba
   ])
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await contrast(['.profile-tabs button', '.profile-stats dt'])
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

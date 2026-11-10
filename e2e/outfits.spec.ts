@@ -78,6 +78,7 @@ test('Looks aus echtem Bestand vorschlagen, speichern, benennen, favorisieren, f
   await expect(
     page.getByRole('heading', { name: 'Mein Bürolook', exact: true }),
   ).toBeVisible()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -136,12 +137,17 @@ test('Fehlende Kleidung wird erklärt und Löschungen entfernen abhängige Looks
   page,
 }) => {
   await page.goto('/')
+  // An empty wardrobe hides the composer; with only a shirt it explains.
+  await expect(
+    page.getByRole('button', { name: 'Aus der Garderobe vorschlagen' }),
+  ).toHaveCount(0)
+  await create(page, 'Gürtel', 'Accessoires')
   await page.getByRole('button', { name: 'Home', exact: true }).click()
   await page
     .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
     .click()
   await expect(
-    page.getByText('Für diese Auswahl fehlen passende Schuhe.', {
+    page.locator('#more-looks').getByText('Für diese Auswahl fehlen passende', {
       exact: false,
     }),
   ).toBeVisible()
@@ -190,6 +196,7 @@ test('Eine gefälschte Bildsignatur reicht nicht für einen gültigen Import', a
 }) => {
   await page.goto('/')
   await create(page, 'Original', 'Oberteile')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -232,8 +239,11 @@ for (const width of [375, 390, 430]) {
   }, testInfo) => {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
+    await create(page, 'Hemd', 'Oberteile')
     await page.getByRole('button', { name: 'Home', exact: true }).click()
-    await expect(page.getByRole('heading', { name: 'Looks' })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: 'Weitere Looks' }),
+    ).toBeVisible()
     expect(
       await page.evaluate(
         () =>
@@ -299,6 +309,7 @@ test('„Zuletzt getragen“ sortiert gespeicherte Looks nach dem letzten Traget
     createdAt: stamp,
     updatedAt: stamp,
   })
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

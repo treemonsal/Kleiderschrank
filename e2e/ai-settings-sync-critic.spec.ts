@@ -19,6 +19,7 @@ async function mockProviders(context: BrowserContext) {
   })
 }
 async function activate(page: Page) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -98,6 +99,7 @@ async function seed(page: Page, chat = false) {
         }
       : {}),
   }
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -119,6 +121,7 @@ test('Geöffnete KI-Einstellungen folgen anderem Fenster und erhalten ungespeich
 }) => {
   await mockProviders(context)
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -230,6 +233,7 @@ test('Ein externer Verbindungswechsel verhindert die späte eigene Aktivierung u
   })
   try {
     await page.goto('/')
+    await page.getByRole('button', { name: 'Profil', exact: true }).click()
     await page
       .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
       .click()

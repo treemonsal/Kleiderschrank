@@ -36,6 +36,7 @@ async function seed(page: Page) {
     createdAt: stamp,
     updatedAt: stamp,
   }
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

@@ -36,6 +36,7 @@ const legacy = {
   preferences: null,
 }
 async function previewImport(page: Page, data: unknown) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

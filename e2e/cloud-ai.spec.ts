@@ -85,6 +85,7 @@ test('Neues Foto startet die KI automatisch, übernimmt die Freistellung und beh
     .click()
   await expect.poll(photoType).toBe('image/png')
   await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -191,6 +192,7 @@ test('Verbindung benötigt Foto-Freigabe; Ausschalten verhindert weitere Uploads
     return route.fulfill({ json: { attributes, cutout: null } })
   })
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -239,6 +241,7 @@ test('Original verwenden speichert ohne Freistellung und erhält das Foto', asyn
     .getByRole('button', { name: 'Original verwenden', exact: true })
     .click()
   await page.getByRole('button', { name: 'In die Garderobe legen' }).click()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

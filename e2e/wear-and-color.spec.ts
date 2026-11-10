@@ -46,6 +46,7 @@ test('Journal zeigt selten getragene Stücke zuerst und Skizzen zeigen die Farbe
 }) => {
   await page.clock.install({ time: new Date(now) })
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -105,6 +106,7 @@ test('Ohne bestätigte Tragetage zeigt das Journal die neuesten statt vergessene
   page,
 }) => {
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

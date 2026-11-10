@@ -20,6 +20,7 @@ async function seed(page: Page) {
       updatedAt: '2026-01-01T00:00:00.000Z',
     }),
   )
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -176,6 +177,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
     path: testInfo.outputPath('calendar-worn-390.png'),
     fullPage: true,
   })
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -456,6 +458,7 @@ for (const width of [375, 390, 430]) {
       path: testInfo.outputPath(`calendar-${width}.png`),
       fullPage: true,
     })
+    await page.getByRole('button', { name: 'Profil', exact: true }).click()
     await page
       .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
       .click()

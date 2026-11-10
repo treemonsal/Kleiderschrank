@@ -81,6 +81,7 @@ async function seed(page: Page) {
     createdAt: stamp,
     updatedAt: stamp,
   }
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -211,6 +212,7 @@ test('Gespeicherte Outfit-Favoriten und Wäschewechsel erhalten echte Fotos und 
     )
     .toBe(true)
   await expect(card.getByText('In der Wäsche', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -357,6 +359,7 @@ test('Eigener Server deaktiviert keine Community-Freigabe; gesperrter Speicher z
     ),
   )
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

@@ -85,6 +85,7 @@ async function mock(
   return calls
 }
 async function activate(page: Page) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -132,6 +133,7 @@ test('Widerruf in einem anderen Fenster stoppt eine laufende Fotoanalyse und erh
     ).toBeVisible()
     const other = await context.newPage()
     await other.goto('/')
+    await other.getByRole('button', { name: 'Profil', exact: true }).click()
     await other
       .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
       .click()
@@ -198,6 +200,7 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
   )
   expect(calls).toHaveLength(before)
   await page.getByRole('button', { name: 'Schliessen', exact: true }).click()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -208,6 +211,7 @@ test('Community-KI benötigt Freigabe, füllt alle Merkmale und sendet gespeiche
     page.getByText('Anbieter, Datenschutz und Freigabe', { exact: true }),
   ).toBeVisible()
   await page.reload()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -312,6 +316,7 @@ test('Widerruf während Verbindungsprüfung kann durch späte Antworten nicht r�
       .catch(() => {})
   })
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

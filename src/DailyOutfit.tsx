@@ -188,9 +188,7 @@ export function DailyOutfit({
         ? 'Geplant · nicht bestätigt'
         : 'Eingeplant'
     : isToday
-      ? items.length
-        ? ''
-        : 'Erster Schritt'
+      ? ''
       : past
         ? 'Rückblick'
         : 'Planung'
@@ -221,33 +219,32 @@ export function DailyOutfit({
             onClick={() => setWeatherOpen(true)}
             aria-label="Wetter anzeigen und Ort ändern"
           >
+            {/* Two lines like the date beside it: a small label over the
+                larger value, so both blocks share their top and baseline. */}
             {state?.weather && forecast ? (
               <>
+                <small className="home-weather-label">
+                  {fresh ? weatherLabel(forecast.code) : 'Stand veraltet'}
+                  <span className="sr-only">
+                    , {state.weather.location.name}
+                  </span>
+                </small>
                 <span className="home-weather-line">
                   <WeatherSymbol code={forecast.code} size={20} />
                   <span className="weather-range">
                     {Math.round(forecast.min)}°–{Math.round(forecast.max)}°
                   </span>
                 </span>
-                <small>
-                  <span>{weatherLabel(forecast.code)}</span>
-                  <span>
-                    {fresh ? state.weather.location.name : 'Stand veraltet'}
-                  </span>
-                </small>
               </>
             ) : (
               <>
+                {state?.weather && (
+                  <small className="home-weather-label">Nicht aktuell</small>
+                )}
                 <span className="home-weather-line">
                   <WeatherSymbol code={forecast?.code} size={20} />
                   <span className="weather-range">Wetter</span>
                 </span>
-                {state?.weather && (
-                  <small>
-                    <span>Vorhersage</span>
-                    <span>nicht aktuell</span>
-                  </small>
-                )}
               </>
             )}
           </button>
@@ -318,13 +315,8 @@ export function DailyOutfit({
               <h1>
                 {recorded?.name ?? (isToday ? colorTitle : 'Vergangener Tag')}
               </h1>
-              {(entry && !worn && past) ||
-              (isToday && !entry && !items.length) ? (
-                <p className="muted">
-                  {entry
-                    ? 'Geplant, noch nicht bestätigt.'
-                    : 'Für deinen ersten Look brauchst du Schuhe und ein Oberteil mit Hose oder ein Kleid.'}
-                </p>
+              {entry && !worn && past ? (
+                <p className="muted">Geplant, noch nicht bestätigt.</p>
               ) : null}
             </header>
           )}
@@ -534,13 +526,13 @@ export function DailyOutfit({
                     : 'Erstes Stück hinzufügen'}
                 </button>
               )}
-              <p>
-                {entry
-                  ? 'Der verknüpfte Look ist nicht mehr verfügbar.'
-                  : items.length
-                    ? automatic?.missing
-                    : 'Starte mit einem Foto.'}
-              </p>
+              {(entry || items.length > 0) && (
+                <p>
+                  {entry
+                    ? 'Der verknüpfte Look ist nicht mehr verfügbar.'
+                    : automatic?.missing}
+                </p>
+              )}
               {items.length > 0 && (
                 <button className="text-button" onClick={onOutfits}>
                   Looks öffnen <ArrowRight size={16} />

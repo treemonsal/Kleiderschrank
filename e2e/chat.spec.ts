@@ -20,6 +20,7 @@ const garments = (['Oberteile', 'Hosen', 'Schuhe', 'Oberteile'] as const).map(
   }),
 )
 async function importData(page: Page, data?: unknown) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -71,6 +72,7 @@ async function open(page: Page, activate = true) {
   return dialog
 }
 async function exportData(page: Page) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

@@ -42,6 +42,7 @@ async function editor(page: Page) {
   await page.getByText('Hintergrund mit KI entfernen', { exact: false }).click()
 }
 async function exportData(page: Page) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

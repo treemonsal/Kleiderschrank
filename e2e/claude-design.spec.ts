@@ -205,6 +205,7 @@ test('Flach und ruhig: kein Leuchten, keine Box in der Box, konzentrische Ecken'
     updatedAt: stamp,
   })
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

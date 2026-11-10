@@ -39,6 +39,7 @@ const look = {
   updatedAt: stamp,
 }
 async function importData(page: Page, calendar: unknown[] = []) {
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -109,6 +110,7 @@ test('Heute getragen legt ein zweimal getragenes Oberteil automatisch in die Wä
 test('Alltag-Einstellungen bleiben gespeichert', async ({ page }) => {
   await page.goto('/')
   await importData(page)
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -143,6 +145,7 @@ test('Alltag-Einstellungen bleiben gespeichert', async ({ page }) => {
     )
     .toBe('cold/false')
   await page.reload()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -169,6 +172,7 @@ test('Ohne Preisfeld bleiben gespeicherte Preise beim Bearbeiten erhalten', asyn
   await dialog.getByLabel('Name', { exact: false }).fill('Leinenhemd weiss')
   await dialog.getByRole('button', { name: 'Änderungen speichern' }).click()
   await expect(dialog).not.toBeVisible()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

@@ -50,6 +50,7 @@ test('Ein Stück bekommt eine Hauptfarbe und bis zu drei Zweitfarben, die gesich
     .getByRole('dialog')
     .getByRole('button', { name: 'Schliessen', exact: true })
     .click()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
@@ -73,6 +74,7 @@ test('Die eingerichtete Google-Anmeldung leitet mit der App-Kennung zu Google', 
     return route.fulfill({ body: 'Google' })
   })
   await page.goto('/')
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()

@@ -6,6 +6,7 @@ async function seed(page: Page) {
   await page.goto('/')
   const now = await page.evaluate(() => Date.now()),
     data = shoppingFixture(now)
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
     .click()
