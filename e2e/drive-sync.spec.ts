@@ -79,7 +79,9 @@ async function addPiece(page: Page, name: string, category: string) {
   await dialog
     .getByRole('combobox', { name: 'Kategorie', exact: true })
     .selectOption(category)
-  await dialog.getByRole('button', { name: 'In die Garderobe legen' }).click()
+  await dialog
+    .getByRole('button', { name: 'In den Kleiderschrank legen' })
+    .click()
   await expect(dialog).not.toBeVisible()
 }
 
@@ -91,9 +93,17 @@ async function signIn(page: Page) {
   await page
     .getByRole('button', { name: 'Mit Google anmelden', exact: true })
     .click()
-  await expect(page.locator('.toast')).toContainText(
-    'Angemeldet als tim@example.com',
-  )
+  await expect
+    .poll(() =>
+      page
+        .evaluate(() => localStorage.getItem('mystyle-google-sync') ?? '')
+        .catch(() => ''),
+    )
+    .toContain('tim@example.com')
+  // Signing in shows no message any more (11.11.2026).
+  await expect(
+    page.locator('.toast', { hasText: 'Angemeldet als' }),
+  ).toHaveCount(0)
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page
     .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
@@ -214,9 +224,17 @@ test('Eine abgelaufene Anmeldung wird beim App-Start mit einer Weiterleitung ern
       )
     })
     const page = await device(context, drive)
-    await expect(page.locator('.toast')).toContainText(
-      'Angemeldet als tim@example.com',
-    )
+    await expect
+      .poll(() =>
+        page
+          .evaluate(() => localStorage.getItem('mystyle-google-sync') ?? '')
+          .catch(() => ''),
+      )
+      .toContain('tim@example.com')
+    // Signing in shows no message any more (11.11.2026).
+    await expect(
+      page.locator('.toast', { hasText: 'Angemeldet als' }),
+    ).toHaveCount(0)
     expect(signIns.at(-1)?.searchParams.get('login_hint')).toBe(
       'tim@example.com',
     )

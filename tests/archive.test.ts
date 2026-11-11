@@ -60,7 +60,7 @@ afterEach(async () => {
 })
 
 describe('Aussortieren statt löschen', () => {
-  it('behält Tragetage, Looks und Bewertungen und nimmt das Stück aus Vorschlägen', async () => {
+  it('behält Tragetage, Outfits und Bewertungen und nimmt das Stück aus Vorschlägen', async () => {
     const db = await fresh()
     const day = localDay()
     await markWorn(ids, DEFAULT_OUTFIT_OPTIONS, day, null, db)

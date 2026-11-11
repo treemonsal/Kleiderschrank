@@ -288,8 +288,8 @@ export function WeatherPanel({
                   }
                   notify(
                     value
-                      ? 'Wetter wird für deine Looks berücksichtigt.'
-                      : 'Wetter für Looks ausgeschaltet.',
+                      ? 'Wetter wird für deine Outfits berücksichtigt.'
+                      : 'Wetter für Outfits ausgeschaltet.',
                   )
                 })
               }}

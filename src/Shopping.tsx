@@ -184,7 +184,7 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
         <h2 className="card-kicker">Einkaufsberatung</h2>
         <p className="shopping-title">
           {evidence.ready
-            ? 'Bereit: bis zu drei Kaufideen, die zu deinen Looks passen.'
+            ? 'Bereit: bis zu drei Kaufideen, die zu deinen Outfits passen.'
             : !evidence.profile
               ? 'Zuerst deinen Stil kennenlernen, dann passende Kaufideen.'
               : evidence.days < 7
@@ -192,8 +192,8 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
                 : evidence.span < 14
                   ? `Noch ${14 - evidence.span} ${14 - evidence.span === 1 ? 'Tag' : 'Tage'} sammeln, dann kann die Beratung starten.`
                   : evidence.ratings < 3
-                    ? `Noch ${3 - evidence.ratings} ${3 - evidence.ratings === 1 ? 'Look' : 'Looks'} bewerten, dann kann die Beratung starten.`
-                    : `Noch ${2 - evidence.likes} ${2 - evidence.likes === 1 ? 'Look' : 'Looks'} positiv bewerten, dann kann die Beratung starten.`}
+                    ? `Noch ${3 - evidence.ratings} ${3 - evidence.ratings === 1 ? 'Outfit' : 'Outfits'} bewerten, dann kann die Beratung starten.`
+                    : `Noch ${2 - evidence.likes} ${2 - evidence.likes === 1 ? 'Outfit' : 'Outfits'} positiv bewerten, dann kann die Beratung starten.`}
         </p>
         <ul className="shopping-conditions">
           {[
@@ -264,7 +264,7 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
           }}
         >
           <p className="muted">
-            Persönliche Ergänzungen für deine vorhandenen Looks. Die Links
+            Persönliche Ergänzungen für deine vorhandenen Outfits. Die Links
             öffnen Suchideen mit Preisfilter bei Zalando Schweiz; aktuelle
             Angebote und Preise stehen im Shop.
           </p>
@@ -349,7 +349,7 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
             <div>
               <p className="ai-progress" role="status">
                 <LoaderCircle className="spin" size={18} />
-                Deine Garderobe wird auf passende Ergänzungen geprüft …
+                Dein Kleiderschrank wird auf passende Ergänzungen geprüft …
               </p>
               <button
                 className="button secondary"
@@ -386,7 +386,7 @@ export function ShoppingCard({ hideLocked = false }: { hideLocked?: boolean }) {
               {result.length === 0 ? (
                 <p>
                   Die KI sieht gerade keine sinnvolle Ergänzung. Du kannst
-                  zuerst neue Looks aus deinem Bestand ausprobieren.
+                  zuerst neue Outfits aus deinem Bestand ausprobieren.
                 </p>
               ) : (
                 result.map((idea, index) => {

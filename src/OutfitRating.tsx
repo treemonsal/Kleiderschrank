@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { haptic } from './haptics'
 import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { db, setOutfitFeedback, storageError, toggleOutfitLike } from './db'
 import type { Occasion, OutfitFeedback } from './outfit-model'
@@ -35,14 +36,14 @@ export function OutfitRating({
           reason === 'occasion'
             ? `Für ${occasion} gemerkt. Dein allgemeiner Geschmack bleibt unverändert.`
             : reason === 'bold'
-              ? 'Gemerkt: Ähnliche Looks mit weniger Farbakzenten werden stärker gewichtet.'
+              ? 'Gemerkt: Ähnliche Outfits mit weniger Farbakzenten werden stärker gewichtet.'
               : 'Bewertung gespeichert. Rückgängig geht unter Einstellungen → Dein Stilprofil.',
         )
       } else {
         const active = await toggleOutfitLike(ids, db, occasion)
         notify(
           active
-            ? 'Gefällt dir: Ähnliche Looks werden stärker berücksichtigt.'
+            ? 'Gefällt dir: Ähnliche Outfits werden stärker berücksichtigt.'
             : 'Positive Bewertung zurückgenommen.',
         )
       }
@@ -73,7 +74,7 @@ export function OutfitRating({
             ? 'Gefällt dir'
             : rejected
               ? 'Passt nicht'
-              : 'Wie gefällt dir der Look?'}
+              : 'Wie gefällt dir das Outfit?'}
         </span>
         <span className="rating-buttons">
           <button
@@ -82,7 +83,10 @@ export function OutfitRating({
             aria-label={`${label}: Gefällt mir`}
             aria-pressed={liked}
             disabled={disabled || busy}
-            onClick={() => void rate()}
+            onClick={() => {
+              haptic()
+              void rate()
+            }}
           >
             <ThumbsUp size={19} strokeWidth={1.5} />
           </button>

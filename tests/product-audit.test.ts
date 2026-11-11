@@ -148,7 +148,7 @@ describe('Empfehlungen mit nachvollziehbarer Gewichtung', () => {
       )
     }
   })
-  it('findet bei Ablehnung eines Looks eine andere Jacke für dieselbe vollständige Basis', () => {
+  it('findet bei Ablehnung eines Outfits eine andere Jacke für dieselbe vollständige Basis', () => {
     const items = [
       ...base,
       item('jacket-a', 'Jacken'),
@@ -266,7 +266,7 @@ describe('Direkte Tagesauswahl und kontrollierbares Feedback', () => {
     ).toEqual(selected)
   })
   it.each(['laundry', 'edited', 'deleted', 'incomplete', 'planned'] as const)(
-    '„Für heute“ verweigert veraltete oder unvollständige Looks ohne Schreibvorgang: %s',
+    '„Für heute“ verweigert veraltete oder unvollständige Outfits ohne Schreibvorgang: %s',
     async (change) => {
       const db = await database(),
         day = localDay()

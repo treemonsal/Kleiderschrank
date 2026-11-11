@@ -1,3 +1,4 @@
+import { isAvatar } from './avatar'
 import { parseShoppingPreferences } from './shopping-model'
 import {
   CATEGORIES,
@@ -135,6 +136,10 @@ export async function createBackup(
 }
 function text(value: unknown, max: number): string {
   if (typeof value !== 'string' || value.length > max) throw invalid()
+  return value
+}
+function avatar(value: unknown): string {
+  if (!isAvatar(value)) throw invalid()
   return value
 }
 function identifier(value: unknown): string {
@@ -495,6 +500,7 @@ export function parseFullBackup(
       ...(item.displayName === undefined
         ? {}
         : { displayName: text(item.displayName, 40) }),
+      ...(item.avatar === undefined ? {} : { avatar: avatar(item.avatar) }),
       ...(item.dailySelection === undefined
         ? {}
         : {

@@ -1,4 +1,4 @@
-import { expect, test } from './base'
+import { expect, test, otherOutfit } from './base'
 import { stepDay } from './day-helpers'
 
 test('Leere Garderobe führt direkt zum ersten Stück statt in eine leere Outfit-Auswahl', async ({
@@ -12,12 +12,12 @@ test('Leere Garderobe führt direkt zum ersten Stück statt in eine leere Outfit
   await expect(add).toBeVisible()
   await expect(add).toHaveCount(1)
   await expect(
-    page.getByRole('button', { name: 'Looks öffnen', exact: true }),
+    page.getByRole('button', { name: 'Anderes Outfit', exact: true }),
   ).toHaveCount(0)
 
   await stepDay(page, -1)
   await expect(
-    page.getByRole('button', { name: 'Looks öffnen', exact: true }),
+    page.getByRole('button', { name: 'Anderes Outfit', exact: true }),
   ).toHaveCount(0)
   await page.getByRole('button', { name: 'Zu heute', exact: true }).click()
   await add.click()
@@ -34,16 +34,16 @@ test('Mit ersten Stücken bleibt die Anpassung einer unvollständigen Auswahl er
     .click()
   await page.getByLabel('Name', { exact: false }).fill('Mein Leinenhemd')
   await page
-    .getByRole('button', { name: 'In die Garderobe legen', exact: true })
+    .getByRole('button', { name: 'In den Kleiderschrank legen', exact: true })
     .click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await page.getByRole('button', { name: 'Home', exact: true }).click()
-  await page.getByRole('button', { name: 'Looks öffnen', exact: true }).click()
-  await expect(
-    page.getByRole('heading', { name: 'Weitere Looks', exact: true }),
-  ).toBeVisible()
+  await otherOutfit(page)
   await page
-    .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
+    .getByRole('button', {
+      name: 'Aus dem Kleiderschrank vorschlagen',
+      exact: true,
+    })
     .click()
   await expect(
     page

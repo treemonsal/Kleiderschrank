@@ -300,3 +300,166 @@ test('Misslungenes Freistellen lässt sich im Stück wiederholen', async ({
   expect(sizes[0]).toBeGreaterThan(0)
   expect(sizes[1]).toBeGreaterThan(0)
 })
+
+test('Nach dem Hinzufügen: Angaben sehen, rückgängig machen oder ändern', async ({
+  page,
+}) => {
+  await withSearch(page)
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Hinzufügen', exact: true }).click()
+  await page.getByRole('button', { name: 'Online suchen', exact: true }).click()
+  const dialog = page.getByRole('dialog')
+  await dialog
+    .getByRole('button', { name: 'Nike Air Force 1', exact: true })
+    .click()
+  await dialog
+    .getByRole('button', { name: "Nike Air Force 1 '07 in den Kleiderschrank" })
+    .click()
+  await expect(dialog.locator('.product-added').first()).toContainText('Schuhe')
+  await dialog
+    .getByRole('button', {
+      name: "Nike Air Force 1 '07: Hinzufügen rückgängig",
+    })
+    .click()
+  await expect(
+    dialog.getByRole('button', {
+      name: "Nike Air Force 1 '07 in den Kleiderschrank",
+    }),
+  ).toBeEnabled()
+  const count = () =>
+    page.evaluate(
+      () =>
+        new Promise<number>((resolve) => {
+          const open = indexedDB.open('mystyle-private-wardrobe')
+          open.onsuccess = () => {
+            const request = open.result
+              .transaction('garments')
+              .objectStore('garments')
+              .count()
+            request.onsuccess = () => resolve(request.result)
+          }
+        }),
+    )
+  expect(await count()).toBe(0)
+  await dialog
+    .getByRole('button', { name: "Nike Air Force 1 '07 in den Kleiderschrank" })
+    .click()
+  await dialog
+    .getByRole('button', { name: "Nike Air Force 1 '07: Angaben ändern" })
+    .click()
+  await expect(
+    page.getByRole('dialog').getByLabel('Name', { exact: false }),
+  ).toHaveValue("Nike Air Force 1 '07")
+  expect(await count()).toBe(1)
+})
+
+test('Freistellungen werden auf dem Gerät gerade gerückt und zentriert', async ({
+  page,
+}) => {
+  await withSearch(page)
+  await page.goto('/')
+  // A cut-out held at an angle, off centre, on a transparent background.
+  const tilted = await page.evaluate(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 400
+    canvas.height = 300
+    const c = canvas.getContext('2d')!
+    c.translate(120, 160)
+    c.rotate((14 * Math.PI) / 180)
+    c.fillStyle = '#202020'
+    c.fillRect(-50, -110, 100, 220)
+    return canvas.toDataURL('image/png').split(',')[1]
+  })
+  const B = 'https://zhengpeng7-birefnet-demo.hf.space'
+  await page.evaluate(() =>
+    localStorage.setItem(
+      'mystyle-photo-ai',
+      JSON.stringify({
+        mode: 'community',
+        url: 'https://prithivmlmods-qwen3-vl-outpost.hf.space',
+        code: '',
+        enabled: true,
+      }),
+    ),
+  )
+  await page.route('https://*.hf.space/**', (route) => {
+    const url = route.request().url()
+    if (url === B + '/gradio_api/upload')
+      return route.fulfill({ json: ['/tmp/gradio/test/garment.jpg'] })
+    if (url === B + '/gradio_api/call/image')
+      return route.fulfill({ json: { event_id: 'b'.repeat(32) } })
+    if (url === B + '/gradio_api/call/image/' + 'b'.repeat(32))
+      return route.fulfill({
+        contentType: 'text/event-stream',
+        body: `event: complete\ndata: ${JSON.stringify([[null, { url: `${B}/gradio_api/file=/tmp/gradio/cutout.png` }]])}\n\n`,
+      })
+    if (url === `${B}/gradio_api/file=/tmp/gradio/cutout.png`)
+      return route.fulfill({
+        contentType: 'image/png',
+        body: Buffer.from(tilted, 'base64'),
+      })
+    return route.fulfill({ status: 404, body: 'unexpected' })
+  })
+  await page.reload()
+  await page.getByRole('button', { name: 'Hinzufügen', exact: true }).click()
+  await page.getByRole('button', { name: 'Online suchen', exact: true }).click()
+  const dialog = page.getByRole('dialog')
+  await dialog
+    .getByRole('button', { name: 'Nike Air Force 1', exact: true })
+    .click()
+  await dialog
+    .getByRole('button', { name: "Nike Air Force 1 '07 in den Kleiderschrank" })
+    .click()
+  await expect(
+    dialog.getByRole('button', {
+      name: "Nike Air Force 1 '07 liegt im Kleiderschrank",
+    }),
+  ).toContainText('Drin', { timeout: 20000 })
+  const shape = await page.evaluate(async () => {
+    const blob = await new Promise<Blob>((resolve) => {
+      const open = indexedDB.open('mystyle-private-wardrobe')
+      open.onsuccess = () => {
+        const request = open.result
+          .transaction('garments')
+          .objectStore('garments')
+          .getAll()
+        request.onsuccess = () => resolve(request.result[0].cutout)
+      }
+    })
+    const image = await createImageBitmap(blob)
+    const canvas = new OffscreenCanvas(image.width, image.height)
+    const c = canvas.getContext('2d')!
+    c.drawImage(image, 0, 0)
+    const { data } = c.getImageData(0, 0, image.width, image.height)
+    // Width of the opaque band in the middle row vs. its height in the
+    // middle column: upright, the band is about 100 × 220 again.
+    let left = -1,
+      right = -1,
+      top = -1,
+      bottom = -1
+    const y = Math.floor(image.height / 2),
+      x = Math.floor(image.width / 2)
+    for (let i = 0; i < image.width; i++)
+      if (data[(y * image.width + i) * 4 + 3] > 128) {
+        if (left < 0) left = i
+        right = i
+      }
+    for (let j = 0; j < image.height; j++)
+      if (data[(j * image.width + x) * 4 + 3] > 128) {
+        if (top < 0) top = j
+        bottom = j
+      }
+    return {
+      width: image.width,
+      height: image.height,
+      band: right - left + 1,
+      tall: bottom - top + 1,
+      centre: (left + right) / 2 / image.width,
+    }
+  })
+  expect(shape.width).toBe(shape.height)
+  expect(shape.band).toBeGreaterThan(90)
+  expect(shape.band).toBeLessThan(112)
+  expect(shape.tall).toBeGreaterThan(205)
+  expect(Math.abs(shape.centre - 0.5)).toBeLessThan(0.03)
+})

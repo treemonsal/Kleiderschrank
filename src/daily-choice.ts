@@ -10,7 +10,7 @@ import { weatherFresh } from './weather'
 import { UserFacingError } from './constraints'
 
 /**
- * „Für heute“ from Looks: makes a saved or generated look today's selection.
+ * „Für heute“ from Outfits: makes a saved or generated look today's selection.
  * Refused when today is already in the journal or a piece changed, went to
  * the laundry, disappeared or no longer suits today's saved weather.
  */
@@ -26,7 +26,7 @@ export async function chooseLookForToday(
     const day = localDay()
     if (await database.calendar.get(day))
       throw new UserFacingError(
-        'Für heute ist schon ein Look im Journal eingetragen.',
+        'Für heute ist schon ein Outfit im Journal eingetragen.',
       )
     const preferences =
       (await database.preferences.get('personal')) ?? DEFAULT_PREFERENCES
@@ -54,7 +54,7 @@ export async function chooseLookForToday(
       )
     )
       throw new UserFacingError(
-        'Ein Teil dieses Looks liegt in der Wäsche, fehlt oder passt nicht zum heutigen Wetter.',
+        'Ein Teil dieses Outfits liegt in der Wäsche, fehlt oder passt nicht zum heutigen Wetter.',
       )
     const updatedAt = new Date(
       Math.max(Date.now(), Date.parse(preferences.updatedAt) + 1),

@@ -105,7 +105,7 @@ export async function saveChatLook(messageId: string, database = db) {
       )
     )
       throw new UserFacingError(
-        'Dieser Look ist inzwischen nicht mehr verfügbar. Frage nach einer neuen Kombination.',
+        'Dieses Outfit ist inzwischen nicht mehr verfügbar. Frage nach einer neuen Kombination.',
       )
     return saveOutfit(message.look.garmentIds, message.look.options, database)
   })

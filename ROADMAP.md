@@ -1,5 +1,15 @@
 # Entwicklungsplan
 
+## Version 0.46.0 – Feinschliff
+
+- [x] Wörter, Home mit „Anderes Outfit“, Stilcheck später
+- [x] Erster Start, Profilbild, Nullen weg
+- [x] Filterzeile, Raster, Langdruck-Menü
+- [x] Suche: ändern und rückgängig
+- [x] Ausrichten auf dem Gerät (ohne KI-Kontingent)
+- [x] Zurück, Randwischen, Übergänge, Einblenden, Startbilder, Haptik, Statusleiste
+- [ ] Auf dem iPhone prüfen: Kopf nicht mehr unscharf, Haptik spürbar (iOS 18 oder neuer)
+
 ## Version 0.45.1
 
 - [x] Kein Salbei-Rahmen mehr um die ganze Seite nach dem Schliessen eines Stücks oder Tabwechsel

@@ -117,7 +117,7 @@ export function Editor({
   return (
     <Sheet
       title={item ? 'Stück bearbeiten' : 'Neues Stück'}
-      eyebrow="Garderobe"
+      eyebrow="Kleiderschrank"
       onClose={onClose}
       dirty={dirty}
       closeDisabled={busy || processing}
@@ -500,7 +500,7 @@ export function Editor({
               ? 'Wird gespeichert …'
               : item
                 ? 'Änderungen speichern'
-                : 'In die Garderobe legen'}
+                : 'In den Kleiderschrank legen'}
           </button>
         </div>
       </form>

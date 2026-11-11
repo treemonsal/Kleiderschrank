@@ -68,7 +68,7 @@ export function chooseDailyOutfit(
             (item) => item.category === 'Accessoires',
           ),
         },
-        reasons: ['Diesen Look hast du für heute im Journal eingetragen.'],
+        reasons: ['Dieses Outfit hast du für heute im Journal eingetragen.'],
       }
   }
   const selection = preferences.dailySelection
@@ -88,7 +88,7 @@ export function chooseDailyOutfit(
     )
       return {
         garmentIds: selection.garmentIds,
-        name: 'Dein Look für heute',
+        name: 'Dein Outfit für heute',
         planned: false,
         customized: true,
         options: selection.options,
@@ -110,7 +110,7 @@ export function chooseDailyOutfit(
   )[0]
   return {
     garmentIds: candidate?.garmentIds ?? [],
-    name: 'Dein Look für heute',
+    name: 'Dein Outfit für heute',
     planned: false,
     options,
     reasons: candidate?.reasons ?? [],

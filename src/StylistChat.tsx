@@ -391,7 +391,7 @@ export function StylistChat({
                       <div className="chat-starters">
                         {[
                           'Was passt heute zu meinem Stil?',
-                          'Wie mache ich meinen Look eleganter?',
+                          'Wie mache ich mein Outfit eleganter?',
                           'Welche Farben kann ich kombinieren?',
                         ].map((text) => (
                           <button
@@ -453,7 +453,7 @@ export function StylistChat({
                               try {
                                 await saveChatLook(message.id)
                                 notify(
-                                  'Der Look aus deinem Gespräch ist gespeichert.',
+                                  'Das Outfit aus deinem Gespräch ist gespeichert.',
                                 )
                               } catch (error) {
                                 setError(storageError(error))
@@ -471,7 +471,7 @@ export function StylistChat({
                             ) : (
                               <Bookmark size={16} />
                             )}{' '}
-                            Look speichern
+                            Outfit speichern
                           </button>
                         </>
                       )}
@@ -530,7 +530,7 @@ export function StylistChat({
                         maxLength={MAX_CHAT_INPUT}
                         rows={2}
                         disabled={busy || saving || speech.listening}
-                        placeholder="Frag nach deinem nächsten Look …"
+                        placeholder="Frag nach deinem nächsten Outfit …"
                         onChange={(event) => setDraft(event.target.value)}
                       />
                     </label>

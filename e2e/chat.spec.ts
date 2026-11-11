@@ -221,13 +221,13 @@ test('Chat fragt einmal nach Freigabe, beantwortet Folgefragen, speichert echten
   await open(page)
   await page
     .getByRole('dialog')
-    .getByRole('button', { name: 'Look speichern', exact: true })
+    .getByRole('button', { name: 'Outfit speichern', exact: true })
     .first()
     .click()
   await expect(
     page
       .getByRole('dialog')
-      .getByRole('button', { name: 'Look speichern', exact: true })
+      .getByRole('button', { name: 'Outfit speichern', exact: true })
       .first(),
   ).toBeDisabled()
   await page

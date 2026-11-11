@@ -27,7 +27,7 @@ export async function saveCalendarEntry(
     )
   if (draft.status === 'worn' && draft.day > localDay())
     throw new UserFacingError(
-      'Ein zukünftiger Look kann noch nicht als getragen markiert werden.',
+      'Ein zukünftiges Outfit kann noch nicht als getragen markiert werden.',
     )
   await database.transaction(
     'rw',
@@ -43,7 +43,7 @@ export async function saveCalendarEntry(
       const outfit = await database.outfits.get(draft.outfitId)
       if (!outfit)
         throw new UserFacingError(
-          'Dieses Outfit ist nicht mehr vorhanden. Bitte wähle einen gespeicherten Look.',
+          'Dieses Outfit ist nicht mehr vorhanden. Bitte wähle ein gespeichertes Outfit.',
         )
       const pieces = await database.garments.bulkGet(outfit.garmentIds)
       if (
@@ -51,7 +51,7 @@ export async function saveCalendarEntry(
         !isCompleteOutfit(pieces as Garment[])
       )
         throw new UserFacingError(
-          'Dieser Look ist nicht mehr vollständig. Bitte prüfe seine Kleidungsstücke.',
+          'Dieses Outfit ist nicht mehr vollständig. Bitte prüfe seine Kleidungsstücke.',
         )
       if (!current && (await database.calendar.count()) >= MAX_CALENDAR_ENTRIES)
         throw new UserFacingError(

@@ -1,18 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { haptic } from './haptics'
 import { useLiveQuery } from 'dexie-react-hooks'
-import {
-  Check,
-  ArrowRight,
-  Plus,
-  CloudSun,
-  CloudOff,
-  Leaf,
-  Tag,
-} from 'lucide-react'
+import { Check, Plus, CloudSun, CloudOff, Leaf, Tag } from 'lucide-react'
 import type { Garment } from './model'
 import { db, storageError } from './db'
 import { OutfitRating } from './OutfitRating'
 import { StyleProfileCard } from './StyleProfile'
+import { StarterPicker } from './StarterPicker'
 import {
   DEFAULT_PREFERENCES,
   isCompleteOutfit,
@@ -35,7 +29,6 @@ import { OutfitSwap } from './OutfitSwap'
 import { WeatherSymbol } from './WeatherSymbol'
 import { recentWear } from './wear-history'
 import { OutfitPieces } from './OutfitPieces'
-import { EmptyIllustration } from './EmptyIllustration'
 import { ErrorMessage, Sheet } from './ui'
 import { lookTitle } from './swatch'
 
@@ -179,7 +172,7 @@ export function DailyOutfit({
     (look?.garmentIds ?? []).flatMap(
       (id) => items.find((item) => item.id === id) ?? [],
     ),
-    'Dein Look für heute',
+    'Dein Outfit für heute',
   )
   const badge = entry
     ? worn
@@ -305,21 +298,23 @@ export function DailyOutfit({
           data-day={day}
           data-day-busy={busy ? 'true' : undefined}
         >
-          {!emptyDay && (state || isToday) && (
-            <header>
-              {badge && (
-                <p className="eyebrow">
-                  <span>{badge}</span>
-                </p>
-              )}
-              <h1>
-                {recorded?.name ?? (isToday ? colorTitle : 'Vergangener Tag')}
-              </h1>
-              {entry && !worn && past ? (
-                <p className="muted">Geplant, noch nicht bestätigt.</p>
-              ) : null}
-            </header>
-          )}
+          {!emptyDay &&
+            (state || isToday) &&
+            (items.length > 0 || !isToday) && (
+              <header>
+                {badge && (
+                  <p className="eyebrow">
+                    <span>{badge}</span>
+                  </p>
+                )}
+                <h1>
+                  {recorded?.name ?? (isToday ? colorTitle : 'Vergangener Tag')}
+                </h1>
+                {entry && !worn && past ? (
+                  <p className="muted">Geplant, noch nicht bestätigt.</p>
+                ) : null}
+              </header>
+            )}
           {!state && items.length > 0 ? (
             <p role="status">Dein Tageslook wird geladen …</p>
           ) : state && look?.garmentIds.length ? (
@@ -399,7 +394,7 @@ export function DailyOutfit({
                 ) && <p className="muted">Ein Teil liegt in der Wäsche.</p>}
               {!complete && (
                 <p className="muted">
-                  Die Angaben dieses Looks haben sich geändert oder ein Stück
+                  Die Angaben dieses Outfits haben sich geändert oder ein Stück
                   fehlt. Prüfe den Eintrag im Journal.
                 </p>
               )}
@@ -437,6 +432,7 @@ export function DailyOutfit({
                     className="button primary daily-worn"
                     disabled={busy || !complete || !!previewIds}
                     onClick={async () => {
+                      haptic('success')
                       setBusy(true)
                       setError('')
                       try {
@@ -493,7 +489,7 @@ export function DailyOutfit({
               <h1>{past ? 'Nichts vermerkt' : 'Noch nichts geplant'}</h1>
               <p className="muted">
                 {entry
-                  ? 'Der verknüpfte Look ist nicht mehr verfügbar.'
+                  ? 'Das verknüpfte Outfit ist nicht mehr verfügbar.'
                   : past
                     ? 'Für diesen Tag gibt es keinen Eintrag. Nachträglich wird nichts erfunden.'
                     : 'Für diesen Tag gibt es noch keinen Eintrag.'}
@@ -506,44 +502,49 @@ export function DailyOutfit({
                   }
                 >
                   {!state?.outfits.length
-                    ? 'Looks zusammenstellen'
+                    ? 'Outfits zusammenstellen'
                     : entry
                       ? 'Tag bearbeiten'
                       : past
-                        ? 'Getragenen Look eintragen'
-                        : 'Look einplanen'}
+                        ? 'Getragenes Outfit eintragen'
+                        : 'Outfit einplanen'}
                 </button>
               )}
             </div>
           ) : isToday ? (
-            <div className="daily-look-empty">
-              {!items.length && <EmptyIllustration />}
-              {!entry && (
-                <button className="button primary daily-add" onClick={onAdd}>
-                  <Plus size={18} />
-                  {items.length
-                    ? 'Stück hinzufügen'
-                    : 'Erstes Stück hinzufügen'}
-                </button>
-              )}
-              {(entry || items.length > 0) && (
-                <p>
-                  {entry
-                    ? 'Der verknüpfte Look ist nicht mehr verfügbar.'
-                    : automatic?.missing}
-                </p>
-              )}
-              {items.length > 0 && (
-                <button className="text-button" onClick={onOutfits}>
-                  Looks öffnen <ArrowRight size={16} />
-                </button>
-              )}
-            </div>
+            !items.length && !entry ? (
+              <StarterPicker onAdd={onAdd} notify={notify} />
+            ) : (
+              <div className="daily-look-empty">
+                {!entry && (
+                  <button className="button primary daily-add" onClick={onAdd}>
+                    <Plus size={18} />
+                    {items.length
+                      ? 'Stück hinzufügen'
+                      : 'Erstes Stück hinzufügen'}
+                  </button>
+                )}
+                {(entry || items.length > 0) && (
+                  <p>
+                    {entry
+                      ? 'Das verknüpfte Outfit ist nicht mehr verfügbar.'
+                      : automatic?.missing}
+                  </p>
+                )}
+              </div>
+            )
           ) : null}
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </section>
       </div>
-      {isToday && <StyleProfileCard items={items} notify={notify} invitation />}
+      {/* The style check asks for effort, so it waits until the app has
+          given something back: a worn or rated outfit. */}
+      {isToday &&
+        !!state &&
+        (state.feedback.length > 0 ||
+          state.calendar.some((entry) => entry.status === 'worn')) && (
+          <StyleProfileCard items={items} notify={notify} invitation />
+        )}
       {swapping && state && look && isToday && !worn && (
         <OutfitSwap
           items={items}

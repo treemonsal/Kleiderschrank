@@ -3084,3 +3084,286 @@ body {
 [tabindex='-1']:focus-visible {
   outline: none;
 }
+
+/* 0.46.0 – Home holds today's outfit only; the rest opens from below. */
+.other-outfit {
+  margin-top: 20px;
+}
+.compose-sheet .look-composer {
+  margin-top: 4px;
+}
+
+/* Profile picture: own photo or Google's, cropped round. */
+.profile-avatar {
+  overflow: hidden;
+}
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.avatar-edit {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.avatar-edit .profile-avatar {
+  width: 72px;
+  height: 72px;
+  font-size: 1.6rem;
+}
+.avatar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.avatar-actions label.button {
+  position: relative;
+}
+
+/* First start: tap the basics you own. */
+.starter-title {
+  margin: 4px 0 12px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.starter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.starter-piece {
+  position: relative;
+  display: grid;
+  width: 100%;
+  gap: 6px;
+  padding: 8px 6px 10px;
+  border: 0;
+  border-radius: var(--r-control);
+  background: var(--sys-surface);
+  color: var(--c-ink-2);
+  font-size: 0.74rem;
+  line-height: 1.2;
+  text-align: center;
+}
+.starter-piece .garment-picture,
+.starter-piece .photo-placeholder {
+  aspect-ratio: 1;
+  height: auto;
+  border-radius: calc(var(--r-control) - 6px);
+}
+.starter-piece.active {
+  background: var(--c-fill);
+  color: var(--c-ink);
+  box-shadow: inset 0 0 0 2px var(--c-accent);
+}
+.starter-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--c-accent);
+  color: var(--c-ground);
+}
+.starter-actions {
+  display: grid;
+  gap: 10px;
+}
+.starter-google {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 16px;
+  border-radius: var(--r-card);
+  background: var(--sys-surface);
+}
+.starter-google p {
+  margin: 0;
+  color: var(--c-ink-2);
+}
+
+/* Profile filters in one row: categories scroll, the three toggles
+   (favourites, laundry, sorted out) sit at the end as round icons. */
+.wardrobe-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0 10px;
+}
+.wardrobe-filter-bar .category-tabs {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.wardrobe-filter-bar .category-tabs::-webkit-scrollbar {
+  display: none;
+}
+.wardrobe-filter-bar .filter-chips {
+  display: flex;
+  flex: none;
+  flex-wrap: nowrap;
+  gap: 4px;
+  margin: 0;
+}
+.wardrobe-filter-bar .chip {
+  position: relative;
+  display: grid;
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0;
+  place-items: center;
+  border-radius: 50%;
+}
+.wardrobe-filter-bar .chip::after {
+  /* 44 px touch target. */
+  content: '';
+  position: absolute;
+  inset: -3px;
+}
+
+/* Calm grid: every piece gets the same square and stands on its bottom. */
+.garment-grid .garment-picture.is-cutout img {
+  object-fit: contain;
+  object-position: center bottom;
+  padding: 8%;
+  box-sizing: border-box;
+}
+
+/* Search: what was added, with a quick change or undo. */
+.product-added {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 12px;
+  grid-column: 1 / -1;
+  color: var(--c-ink-2);
+  font-size: 0.8rem;
+}
+.product-added .text-button {
+  min-height: 32px;
+  font-size: 0.8rem;
+}
+
+/* 0.46.0 – App feel. Photos fade in once decoded instead of popping in. */
+.garment-picture img,
+.outfit-piece img,
+.detail-photo img {
+  transition: opacity 220ms ease;
+}
+.garment-picture img:not([data-loaded]),
+.outfit-piece img:not([data-loaded]) {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .garment-picture img,
+  .outfit-piece img,
+  .detail-photo img {
+    transition: none;
+  }
+}
+/* No web menu ("Bild sichern", "Kopieren") on a long press over the UI;
+   text in fields and the chat stays selectable. */
+button,
+img,
+.garment-card,
+.outfit-piece,
+.bottom-nav,
+.app-header {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Back to the profile from journal and settings, like an iOS back button. */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  min-height: 44px;
+  margin-left: -10px;
+  padding: 0 8px 0 0;
+  border: 0;
+  background: none;
+  color: var(--c-ink);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+/* Push and pop: the page slides; header and tab bar stay where they are. */
+main#main-content {
+  view-transition-name: page;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+::view-transition-old(page),
+::view-transition-new(page) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+html[data-nav='push']::view-transition-new(page) {
+  animation-name: page-in-right;
+}
+html[data-nav='push']::view-transition-old(page) {
+  animation-name: page-out-left;
+}
+html[data-nav='pop']::view-transition-new(page) {
+  animation-name: page-in-left;
+}
+html[data-nav='pop']::view-transition-old(page) {
+  animation-name: page-out-right;
+}
+@keyframes page-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes page-out-left {
+  to {
+    transform: translateX(-30%);
+    opacity: 0.4;
+  }
+}
+@keyframes page-in-left {
+  from {
+    transform: translateX(-30%);
+    opacity: 0.4;
+  }
+}
+@keyframes page-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+/* Four across keeps the whole first step on one screen. */
+.starter-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.starter-piece {
+  padding: 6px 4px 8px;
+  font-size: 0.7rem;
+}
+.starter .daily-add {
+  margin-bottom: 16px;
+}
+/* Once something is picked, adding it stays in reach above the tab bar. */
+.starter-actions {
+  position: sticky;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  z-index: 5;
+  padding: 10px 0;
+  background: var(--c-ground);
+}

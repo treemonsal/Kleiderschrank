@@ -178,7 +178,46 @@ export async function checkAIConnection(
     throw new Error('Dieser Server ist kein kompatibler MyStyle-KI-Server.')
   return data as { photo_tasks?: unknown }
 }
+/** Turns a fresh cut-out upright and centres it; on failure keeps it. */
+async function tidy(cutout: Blob): Promise<Blob> {
+  try {
+    const { tidyCutout } = await import('./tidy-cutout')
+    return await tidyCutout(cutout)
+  } catch {
+    return cutout
+  }
+}
+
+/**
+ * Recognition and cut-out. Every cut-out is then aligned on the device
+ * (tidy-cutout.ts): no extra AI request, the free quota stays untouched.
+ */
 export async function analyzePhoto(
+  photo: Blob,
+  connection: AIConnection,
+  signal: AbortSignal,
+  task: PhotoTask = 'all',
+  onPartial?: (part: AIPartial) => void,
+): Promise<AIResult> {
+  const result = await analyzePhotoOnline(
+    photo,
+    connection,
+    signal,
+    task,
+    onPartial &&
+      ((part) => {
+        if (!part.cutout) return onPartial(part)
+        void tidy(part.cutout).then((cutout) =>
+          signal.aborted ? undefined : onPartial({ ...part, cutout }),
+        )
+      }),
+  )
+  return result.cutout
+    ? { ...result, cutout: await tidy(result.cutout) }
+    : result
+}
+
+async function analyzePhotoOnline(
   photo: Blob,
   connection: AIConnection,
   signal: AbortSignal,

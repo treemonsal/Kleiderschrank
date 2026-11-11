@@ -74,7 +74,7 @@ export function OutfitSwap({
       }}
     >
       <p className="muted swap-intro">
-        Wähle ein verfügbares Stück derselben Kategorie. Der restliche Look
+        Wähle ein verfügbares Stück derselben Kategorie. Das restliche Outfit
         bleibt erhalten. Getragene Tage werden hier nicht geändert.
       </p>
       <label className="field">
@@ -110,7 +110,7 @@ export function OutfitSwap({
                       : null,
                 })
                 notify(
-                  'Dein Stück ist ausgetauscht. Der Rest des Looks bleibt erhalten.',
+                  'Dein Stück ist ausgetauscht. Der Rest des Outfits bleibt erhalten.',
                 )
                 onClose()
               } catch (error) {

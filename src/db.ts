@@ -158,7 +158,7 @@ export async function saveOutfit(
         id = crypto.randomUUID()
       await database.outfits.put({
         id,
-        name: lookTitle(garments as Garment[], `${options.occasion}-Look`),
+        name: lookTitle(garments as Garment[], `${options.occasion}-Outfit`),
         garmentIds: [...ids],
         occasion: options.occasion,
         season: options.season,
@@ -260,7 +260,7 @@ export async function updateOutfit(
       throw new UserFacingError('Dieses Outfit wurde bereits entfernt.')
     if ('name' in patch && existing.updatedAt !== patch.expectedUpdatedAt)
       throw new UserFacingError(
-        'Dieses Outfit wurde inzwischen geändert. Deine Eingabe bleibt hier sichtbar. Öffne den Look erneut, damit keine neueren Angaben überschrieben werden.',
+        'Dieses Outfit wurde inzwischen geändert. Deine Eingabe bleibt hier sichtbar. Öffne das Outfit erneut, damit keine neueren Angaben überschrieben werden.',
       )
     const name = ('name' in patch ? patch.name : existing.name).trim()
     if (!name || name.length > 100)
@@ -320,6 +320,7 @@ export async function updatePreferences(
       | 'autoLaundry'
       | 'comfort'
       | 'displayName'
+      | 'avatar'
       | 'backupReminder'
       | 'styleProfile'
       | 'shopping'
@@ -541,6 +542,65 @@ export async function attachCutout(
     await database.garments.put(next)
     return true
   })
+}
+/**
+ * The first start: several picked pieces (without photos) in one step.
+ * All or nothing, within the wardrobe's capacity.
+ */
+export async function addStarterPieces(
+  drafts: GarmentDraft[],
+  database = db,
+): Promise<string[]> {
+  const now = new Date().toISOString()
+  const garments: Garment[] = drafts.map((draft) => ({
+    ...draft,
+    id: crypto.randomUUID(),
+    createdAt: now,
+    updatedAt: now,
+  }))
+  await database.transaction('rw', database.garments, async () => {
+    assertWardrobeCapacity([
+      ...(await database.garments.toArray()),
+      ...garments,
+    ])
+    await database.garments.bulkAdd(garments)
+  })
+  return garments.map((item) => item.id)
+}
+/**
+ * Undo for a piece that was just added (e.g. from the search). Only while no
+ * outfit, day or rating uses it, so nothing else is ever deleted with it.
+ */
+export async function undoAddedGarment(
+  id: string,
+  database = db,
+): Promise<void> {
+  await database.transaction(
+    'rw',
+    [
+      database.garments,
+      database.outfits,
+      database.feedback,
+      database.preferences,
+    ],
+    async () => {
+      if (!(await database.garments.get(id))) return
+      const today = (await database.preferences.get('personal'))?.dailySelection
+      const used =
+        (await database.outfits
+          .filter((outfit) => outfit.garmentIds.includes(id))
+          .count()) +
+        (await database.feedback
+          .filter((entry) => entry.garmentIds.includes(id))
+          .count()) +
+        (today?.garmentIds.includes(id) ? 1 : 0)
+      if (used)
+        throw new UserFacingError(
+          'Das Stück wird schon in einem Outfit verwendet. Du kannst es im Profil aussortieren.',
+        )
+      await database.garments.delete(id)
+    },
+  )
 }
 export async function toggleFavorite(
   item: Garment,

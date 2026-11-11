@@ -25,7 +25,9 @@ async function addGarment(page: Page, name: string, photo = false) {
   await dialog
     .getByRole('button', { name: 'Minimalistisch', exact: true })
     .click()
-  await dialog.getByRole('button', { name: 'In die Garderobe legen' }).click()
+  await dialog
+    .getByRole('button', { name: 'In den Kleiderschrank legen' })
+    .click()
   await expect(dialog).not.toBeVisible()
   await expect(
     page.getByRole('button', { name: `${name} öffnen` }),
@@ -250,8 +252,9 @@ for (const width of [375, 390, 430]) {
     )
     await page.goto('/')
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'luxe')
+    // The empty wardrobe starts with the basics to tap.
     await expect(
-      page.getByRole('heading', { name: 'Dein Look für heute' }),
+      page.getByRole('heading', { name: 'Was besitzt du?' }),
     ).toBeVisible()
     expect(
       await page.evaluate(

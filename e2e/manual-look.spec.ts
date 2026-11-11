@@ -1,4 +1,4 @@
-import { test, expect, type Page } from './base'
+import { test, expect, type Page, otherOutfit } from './base'
 import type { Category } from '../src/model'
 
 async function create(page: Page, name: string, category: Category) {
@@ -11,7 +11,9 @@ async function create(page: Page, name: string, category: Category) {
   await dialog
     .getByRole('combobox', { name: 'Kategorie', exact: true })
     .selectOption(category)
-  await dialog.getByRole('button', { name: 'In die Garderobe legen' }).click()
+  await dialog
+    .getByRole('button', { name: 'In den Kleiderschrank legen' })
+    .click()
   await expect(dialog).not.toBeVisible()
 }
 
@@ -26,6 +28,7 @@ test('Selber zusammenstellen: Reihen wechseln, speichern und für heute wählen'
   await create(page, 'Sneaker', 'Schuhe')
   await create(page, 'Parka', 'Jacken')
   await page.getByRole('button', { name: 'Home', exact: true }).click()
+  await otherOutfit(page)
   const board = page.getByRole('region', { name: 'Selber zusammenstellen' })
   await board.scrollIntoViewIfNeeded()
   const top = board.getByRole('region', { name: 'Oberteil' })
@@ -67,7 +70,7 @@ test('Selber zusammenstellen: Reihen wechseln, speichern und für heute wählen'
     ).toBeVisible()
 
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
-  await expect(page.locator('.profile-stats')).toContainText(/Looks\s*1/)
+  await expect(page.locator('.profile-stats')).toContainText(/Outfits\s*1/)
 })
 
 test('Selber zusammenstellen nennt fehlende Reihen', async ({ page }) => {
@@ -75,6 +78,7 @@ test('Selber zusammenstellen nennt fehlende Reihen', async ({ page }) => {
   await create(page, 'Hemd', 'Oberteile')
   await create(page, 'Hose', 'Hosen')
   await page.getByRole('button', { name: 'Home', exact: true }).click()
+  await otherOutfit(page)
   const board = page.getByRole('region', { name: 'Selber zusammenstellen' })
   await expect(board.getByRole('status')).toContainText(
     'Dafür fehlen noch: Schuhe.',
@@ -91,6 +95,7 @@ test('Wischen in einer Reihe wählt das sichtbare Stück', async ({ page }) => {
   await create(page, 'Chino', 'Hosen')
   await create(page, 'Loafer', 'Schuhe')
   await page.getByRole('button', { name: 'Home', exact: true }).click()
+  await otherOutfit(page)
   const top = page
     .getByRole('region', { name: 'Selber zusammenstellen' })
     .getByRole('region', { name: 'Oberteil' })

@@ -29,6 +29,8 @@ export interface GoogleSession {
   email: string
   /** Stable account id; the sync base is kept per account. */
   sub: string
+  /** Google profile picture (https), shown when no own picture is chosen. */
+  picture?: string
 }
 
 export const GOOGLE_SESSION_CHANGED = 'mystyle-google-session'
@@ -77,7 +79,7 @@ export function startGoogleSignIn(hint?: string) {
     client_id: clientId,
     redirect_uri: redirectUri(),
     response_type: 'token',
-    scope: `${DRIVE_SCOPE} openid email`,
+    scope: `${DRIVE_SCOPE} openid email profile`,
     include_granted_scopes: 'true',
     state,
     ...(hint ? { login_hint: hint } : { prompt: 'select_account' }),
@@ -143,6 +145,10 @@ export async function completeGoogleSignIn(
       expiresAt: Date.now() + Number(params.get('expires_in') ?? 3600) * 1000,
       email: user.email,
       sub: user.sub,
+      ...(typeof user.picture === 'string' &&
+      user.picture.startsWith('https://')
+        ? { picture: user.picture }
+        : {}),
     }
     writeSession(session)
     return { session }

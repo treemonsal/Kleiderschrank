@@ -109,7 +109,7 @@ describe('Vorschläge nach ausgeschöpften bevorzugten Suchfenstern', () => {
       ),
     ).toBe(true)
   })
-  it('respektiert auch im erweiterten Suchfenster Wäsche und ausdrücklich ausgeschlossene Looks', () => {
+  it('respektiert auch im erweiterten Suchfenster Wäsche und ausdrücklich ausgeschlossene Outfits', () => {
     const tops = Array.from({ length: 19 }, (_, i) =>
       garment(`top-${i}`, 'Oberteile', { favorite: i < 18 }),
     )

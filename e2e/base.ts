@@ -134,3 +134,20 @@ export const test = playwrightTest.extend<{ newDevice: NewDevice }>({
     await use(first ?? (await context.newPage()))
   },
 })
+
+/** Opens the "Anderes Outfit" sheet from Home unless it is already open. */
+export async function otherOutfit(page: import('@playwright/test').Page) {
+  const sheet = page.getByRole('dialog', { name: 'Anderes Outfit' })
+  if (await sheet.isVisible()) return
+  await page
+    .getByRole('button', { name: 'Anderes Outfit', exact: true })
+    .click()
+  await sheet.waitFor()
+}
+
+/** Closes an open sheet, e.g. before using the tab bar behind it. */
+export async function closeSheet(page: import('@playwright/test').Page) {
+  if (!(await page.getByRole('dialog').first().isVisible())) return
+  await page.keyboard.press('Escape')
+  await page.getByRole('dialog').first().waitFor({ state: 'hidden' })
+}

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from './base'
+import { test, expect, type Page, otherOutfit, closeSheet } from './base'
 import { readFile } from 'node:fs/promises'
 import { pickJournalDay } from './day-helpers'
 
@@ -89,6 +89,11 @@ async function mockWeather(page: Page, fail: () => boolean = () => false) {
 }
 /** Weather lives in a sheet behind the forecast on Heute. */
 async function openWeather(page: Page) {
+  // Close the outfit sheet first; the weather lives on Home behind it.
+  if (await page.getByRole('dialog', { name: 'Anderes Outfit' }).isVisible()) {
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+  }
   await page
     .locator('.bottom-nav')
     .getByRole('button', { name: 'Home', exact: true })
@@ -105,8 +110,12 @@ async function suggest(page: Page) {
     .click()
     .catch(() => {})
   await page.getByRole('button', { name: 'Home', exact: true }).click()
+  await otherOutfit(page)
   await page
-    .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
+    .getByRole('button', {
+      name: 'Aus dem Kleiderschrank vorschlagen',
+      exact: true,
+    })
     .click()
   return page.getByRole('article', { name: 'Vorschlag' })
 }
@@ -131,25 +140,30 @@ async function manualWeather(page: Page) {
   ).toBeVisible()
 }
 
-test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her und entfernt abhängige Tage', async ({
+test('Kalender plant und bestätigt Outfits, stellt sie aus Sicherungen wieder her und entfernt abhängige Tage', async ({
   page,
   context,
 }, testInfo) => {
   await page.clock.install({ time: fixedTime })
   await page.goto('/')
   await seed(page)
+  await otherOutfit(page)
   await page
-    .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
+    .getByRole('button', {
+      name: 'Aus dem Kleiderschrank vorschlagen',
+      exact: true,
+    })
     .click()
   await page
     .getByRole('article', { name: 'Vorschlag' })
     .getByRole('button', { name: 'Speichern', exact: true })
     .click()
+  await closeSheet(page)
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await pickJournalDay(page, '2026-10-16')
   await page
-    .getByRole('button', { name: 'Look einplanen', exact: true })
+    .getByRole('button', { name: 'Outfit einplanen', exact: true })
     .click()
   const dialog = page.getByRole('dialog')
   await expect(
@@ -165,7 +179,7 @@ test('Kalender plant und bestätigt Looks, stellt sie aus Sicherungen wieder her
   ).toHaveCount(0)
   await pickJournalDay(page, '2026-10-15')
   await page
-    .getByRole('button', { name: 'Look einplanen', exact: true })
+    .getByRole('button', { name: 'Outfit einplanen', exact: true })
     .click()
   await page
     .getByRole('dialog')

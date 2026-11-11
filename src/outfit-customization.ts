@@ -84,7 +84,7 @@ export async function swapDailyPiece(
 ): Promise<void> {
   if (input.day !== localDay())
     throw new UserFacingError(
-      'Einzelne Teile kannst du im heutigen, noch nicht getragenen Look tauschen.',
+      'Einzelne Teile kannst du im heutigen, noch nicht getragenen Outfit tauschen.',
     )
   await database.transaction(
     'rw',
@@ -105,7 +105,7 @@ export async function swapDailyPiece(
         entry?.status === 'worn'
       )
         throw new UserFacingError(
-          'Der Tag wurde inzwischen geändert. Öffne den Look erneut.',
+          'Der Tag wurde inzwischen geändert. Öffne das Outfit erneut.',
         )
       const selection =
         preferences.dailySelection?.day === input.day
@@ -113,7 +113,7 @@ export async function swapDailyPiece(
           : undefined
       if ((selection?.updatedAt ?? null) !== input.expectedSelection)
         throw new UserFacingError(
-          'Deine Tagesauswahl wurde inzwischen geändert. Öffne den Look erneut.',
+          'Deine Tagesauswahl wurde inzwischen geändert. Öffne das Outfit erneut.',
         )
       if (entry) {
         const original = await database.outfits.get(entry.outfitId)
@@ -121,7 +121,7 @@ export async function swapDailyPiece(
           !original ||
           outfitKey(original.garmentIds) !== outfitKey(input.ids)
         )
-          throw new UserFacingError('Dieser Look wurde inzwischen geändert.')
+          throw new UserFacingError('Dieses Outfit wurde inzwischen geändert.')
       } else if (
         selection &&
         outfitKey(selection.garmentIds) !== outfitKey(input.ids)

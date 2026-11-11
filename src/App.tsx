@@ -19,9 +19,12 @@ import {
   WifiOff,
   X,
   ChartPie,
+  ChevronLeft,
   Menu,
+  Shuffle,
 } from 'lucide-react'
 import { analyzePhoto, readAIConnection } from './cloud-ai'
+import { haptic } from './haptics'
 import {
   attachCutout,
   db,
@@ -99,15 +102,13 @@ function Home({
   onOpen,
   onOutfits,
   notify,
-  more,
 }: {
   items: Garment[]
   onAdd: () => void
   onOpen: (id: string) => void
+  /** Opens the sheet with other outfits (suggest or build one). */
   onOutfits: () => void
   notify: (message: string) => void
-  /** Further looks below today's: the former Looks page. */
-  more: React.ReactNode
 }) {
   const today = localDay(new Date(useClock()))
   const [chosenDay, setChosenDay] = useViewState<string | null>(
@@ -133,11 +134,15 @@ function Home({
           notify={notify}
         />
       </div>
-      {/* Nothing to combine yet: the first piece comes first. */}
+      {/* Home shows today's outfit only; everything else waits in a sheet. */}
       {items.length > 0 && (
-        <section id="more-looks" aria-label="Weitere Looks">
-          {more}
-        </section>
+        <button
+          className="button secondary full other-outfit"
+          onClick={onOutfits}
+        >
+          <Shuffle size={17} />
+          Anderes Outfit
+        </button>
       )}
     </div>
   )
@@ -158,6 +163,8 @@ function Wardrobe({
   const [favorites, setFavorites] = useViewState('wardrobe.favorites', false)
   const [laundryOnly, setLaundryOnly] = useViewState('wardrobe.laundry', false)
   const [archiveOnly, setArchiveOnly] = useViewState('wardrobe.archive', false)
+  const [menu, setMenu] = useState<Garment | null>(null)
+  const [menuError, setMenuError] = useState('')
   // Sorted-out pieces have their own list; everything else shows the rest.
   const active = items.filter((item) => !item.archivedAt)
   const archived = items.filter((item) => item.archivedAt)
@@ -176,7 +183,7 @@ function Wardrobe({
     <div className="wardrobe-view">
       {/* Filters only once there is something to filter. */}
       {items.length > 0 && (
-        <>
+        <div className="wardrobe-filter-bar">
           <div
             className="category-tabs text-tabs"
             role="group"
@@ -206,7 +213,7 @@ function Wardrobe({
                 </button>
               ))}
           </div>
-          <div className="filter-chips">
+          <div className="filter-chips" role="group" aria-label="Filter">
             <button
               className={`chip ${favorites ? 'active' : ''}`}
               data-motion="heart"
@@ -215,11 +222,10 @@ function Wardrobe({
               onClick={() => setFavorites(!favorites)}
             >
               <Heart
-                size={14}
-                strokeWidth={1.6}
+                size={17}
+                strokeWidth={1.7}
                 fill={favorites ? 'currentColor' : 'none'}
               />
-              Favoriten
             </button>
             <button
               className={`chip ${laundryOnly ? 'active' : ''}`}
@@ -228,8 +234,7 @@ function Wardrobe({
               aria-pressed={laundryOnly}
               onClick={() => setLaundryOnly(!laundryOnly)}
             >
-              <LaundryIcon size={15} />
-              In der Wäsche
+              <LaundryIcon size={18} />
             </button>
             {archived.length > 0 && (
               <button
@@ -238,12 +243,11 @@ function Wardrobe({
                 aria-pressed={showArchive}
                 onClick={() => setArchiveOnly(!showArchive)}
               >
-                <Archive size={14} strokeWidth={1.6} />
-                Aussortiert
+                <Archive size={17} strokeWidth={1.7} />
               </button>
             )}
           </div>
-        </>
+        </div>
       )}
       {filtered.length ? (
         <div className="garment-grid">
@@ -253,6 +257,11 @@ function Wardrobe({
               item={item}
               worn={wear.get(item.id)?.count ?? 0}
               onOpen={() => onOpen(item.id)}
+              onMenu={() => {
+                haptic()
+                setMenuError('')
+                setMenu(item)
+              }}
             />
           ))}
         </div>
@@ -266,6 +275,70 @@ function Wardrobe({
             </button>
           )}
         </div>
+      )}
+      {menu && (
+        <Sheet
+          title={menu.name}
+          className="piece-menu"
+          onClose={() => setMenu(null)}
+        >
+          <div className="add-options">
+            {(
+              [
+                [
+                  menu.favorite ? 'Favorit entfernen' : 'Als Favorit markieren',
+                  <Heart
+                    key="h"
+                    size={22}
+                    strokeWidth={1.6}
+                    fill={menu.favorite ? 'currentColor' : 'none'}
+                  />,
+                  () => toggleFavorite(menu),
+                ],
+                ...(menu.archivedAt
+                  ? []
+                  : [
+                      [
+                        menu.inLaundry
+                          ? 'Aus der Wäsche nehmen'
+                          : 'In die Wäsche legen',
+                        <LaundryIcon key="l" size={22} />,
+                        () => setLaundry(menu.id, !menu.inLaundry),
+                      ] as const,
+                    ]),
+              ] as const
+            ).map(([label, icon, run]) => (
+              <button
+                key={label}
+                className="add-option"
+                onClick={async () => {
+                  haptic()
+                  try {
+                    await run()
+                    setMenu(null)
+                  } catch (caught) {
+                    setMenuError(storageError(caught))
+                  }
+                }}
+              >
+                {icon}
+                <span>{label}</span>
+              </button>
+            ))}
+            <button
+              className="add-option"
+              onClick={() => {
+                const id = menu.id
+                setMenu(null)
+                onOpen(id)
+              }}
+            >
+              <ArrowRight size={22} strokeWidth={1.6} />
+              <span>Öffnen</span>
+            </button>
+          </div>
+          {menuError && <ErrorMessage>{menuError}</ErrorMessage>}
+        </Sheet>
       )}
     </div>
   )
@@ -420,6 +493,7 @@ function Detail({
               disabled={busy}
               aria-pressed={!!item.inLaundry}
               onClick={async () => {
+                haptic()
                 setBusy(true)
                 setError('')
                 try {
@@ -457,6 +531,7 @@ function Detail({
               aria-pressed={item.favorite}
               disabled={busy}
               onClick={async () => {
+                haptic()
                 setBusy(true)
                 setError('')
                 try {
@@ -560,6 +635,7 @@ function Profile({
   items,
   wear,
   name,
+  picture,
   looks,
   wornDays,
   onOpen,
@@ -571,6 +647,8 @@ function Profile({
   items: Garment[]
   wear: Map<string, WearStats>
   name: string
+  /** Own picture or the Google one; initials without. */
+  picture?: string
   looks: number
   wornDays: number
   onOpen: (id: string) => void
@@ -584,6 +662,8 @@ function Profile({
     'clothes',
   )
   const pieces = items.filter((item) => !item.archivedAt).length
+  const [brokenPicture, setBrokenPicture] = useState(false)
+  useEffect(() => setBrokenPicture(false), [picture])
   const initials =
     name
       .split(/\s+|\./)
@@ -595,22 +675,36 @@ function Profile({
     <div className="view profile-view">
       <section className="profile-head" aria-label="Profil">
         <span className="profile-avatar" aria-hidden="true">
-          {initials}
+          {picture && !brokenPicture ? (
+            <img
+              src={picture}
+              alt=""
+              referrerPolicy="no-referrer"
+              onError={() => setBrokenPicture(true)}
+            />
+          ) : (
+            initials
+          )}
         </span>
-        <dl className="profile-stats">
-          <div>
-            <dt>Stücke</dt>
-            <dd>{pieces}</dd>
-          </div>
-          <div>
-            <dt>Looks</dt>
-            <dd>{looks}</dd>
-          </div>
-          <div>
-            <dt>Getragen</dt>
-            <dd>{wornDays}</dd>
-          </div>
-        </dl>
+        {/* Numbers only once they say something: no row of zeros. */}
+        {pieces + looks + wornDays > 0 && (
+          <dl className="profile-stats">
+            {(
+              [
+                ['Stücke', pieces],
+                ['Outfits', looks],
+                ['Getragen', wornDays],
+              ] as const
+            )
+              .filter(([, value]) => value > 0)
+              .map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+          </dl>
+        )}
       </section>
       <div className="profile-actions">
         <button className="button secondary" onClick={onEditName}>
@@ -697,14 +791,17 @@ export default function App() {
   const [batch, setBatch] = useState<File[] | null>(null)
   const [searching, setSearching] = useState(false)
   const [adding, setAdding] = useState(false)
+  const [composing, setComposing] = useState(false)
   const [naming, setNaming] = useState(false)
   const google = useGoogleSession()
-  const profileName = useLiveQuery(
-    async () => (await db.preferences.get('personal'))?.displayName,
-    [],
-  )
+  const profile = useLiveQuery(async () => {
+    const preferences = await db.preferences.get('personal')
+    return { name: preferences?.displayName, avatar: preferences?.avatar }
+  }, [])
+  const profileName = profile?.name
   const displayName =
     profileName?.trim() || google?.email?.split('@')[0] || 'Profil'
+  const profilePicture = profile?.avatar ?? google?.picture
   // Images dragged in from another window or pasted; key restarts handling.
   const [incoming, setIncoming] = useState<{ files: File[]; key: number }>()
   const [dragging, setDragging] = useState(false)
@@ -814,18 +911,70 @@ export default function App() {
     }
   }, [])
   function navigate(next: View, after?: () => void) {
-    // Animate the mounted page in CSS, keeping the fixed navigation in front.
     // Commit before scroll/focus actions so they target the selected page.
-    cancelScroll.current?.()
-    scrollPositions.current[view] = window.scrollY
-    const top =
-      next === view || after ? 0 : (scrollPositions.current[next] ?? 0)
-    flushSync(() => setView(next))
-    if (next !== view)
-      document.getElementById('main-content')?.focus({ preventScroll: true })
-    cancelScroll.current = restorePageScroll(top)
-    after?.()
+    const go = () => {
+      cancelScroll.current?.()
+      scrollPositions.current[view] = window.scrollY
+      const top =
+        next === view || after ? 0 : (scrollPositions.current[next] ?? 0)
+      flushSync(() => setView(next))
+      if (next !== view)
+        document.getElementById('main-content')?.focus({ preventScroll: true })
+      cancelScroll.current = restorePageScroll(top)
+      after?.()
+    }
+    // Journal and settings slide in from the right and back out, like an
+    // iOS navigation stack; the tabs themselves switch at once, as on iOS.
+    const pushed = (v: View) => v === 'journal' || v === 'settings'
+    const direction =
+      view === 'wardrobe' && pushed(next)
+        ? 'push'
+        : pushed(view) && next === 'wardrobe'
+          ? 'pop'
+          : null
+    const transition = (
+      document as Document & {
+        startViewTransition?: (update: () => void) => unknown
+      }
+    ).startViewTransition
+    if (
+      !direction ||
+      !transition ||
+      matchMedia('(prefers-reduced-motion: reduce)').matches
+    )
+      return go()
+    document.documentElement.dataset.nav = direction
+    transition.call(document, go)
   }
+  // Swipe from the left edge goes back from journal and settings.
+  useEffect(() => {
+    if (view !== 'journal' && view !== 'settings') return
+    let start: { x: number; y: number } | null = null
+    const down = (event: TouchEvent) => {
+      const touch = event.touches[0]
+      start =
+        event.touches.length === 1 && touch.clientX < 28
+          ? { x: touch.clientX, y: touch.clientY }
+          : null
+    }
+    const up = (event: TouchEvent) => {
+      const touch = event.changedTouches[0]
+      if (!start || !touch) return
+      const dx = touch.clientX - start.x
+      const dy = Math.abs(touch.clientY - start.y)
+      start = null
+      if (dx > 70 && dy < dx / 2 && !document.querySelector('dialog[open]')) {
+        haptic()
+        navigate('wardrobe')
+      }
+    }
+    window.addEventListener('touchstart', down, { passive: true })
+    window.addEventListener('touchend', up)
+    return () => {
+      window.removeEventListener('touchstart', down)
+      window.removeEventListener('touchend', up)
+    }
+  })
   const selected = items?.find((i) => i.id === selectedId)
   useEffect(() => {
     if (items && selectedId && !items.some((item) => item.id === selectedId)) {
@@ -841,6 +990,15 @@ export default function App() {
       <header className="app-header">
         {view === 'wardrobe' ? (
           <h1 className="wordmark profile-name">{displayName}</h1>
+        ) : view === 'journal' || view === 'settings' ? (
+          <button
+            className="back-button"
+            aria-label="Zurück zum Profil"
+            onClick={() => navigate('wardrobe')}
+          >
+            <ChevronLeft size={26} strokeWidth={2} />
+            <span aria-hidden="true">Profil</span>
+          </button>
         ) : (
           <button
             className="wordmark"
@@ -954,32 +1112,15 @@ export default function App() {
             items={items}
             onAdd={() => setEditor('new')}
             onOpen={setSelectedId}
-            onOutfits={() =>
-              document
-                .getElementById('more-looks')
-                ?.scrollIntoView({ behavior: 'smooth' })
-            }
+            onOutfits={() => setComposing(true)}
             notify={notify}
-            more={
-              <Suspense fallback={<Loading />}>
-                <OutfitView
-                  items={items}
-                  mode="compose"
-                  onAdd={() => setAdding(true)}
-                  onToday={() => {
-                    presetView('home.day', null)
-                    window.scrollTo({ top: 0, behavior: 'smooth' })
-                  }}
-                  notify={notify}
-                />
-              </Suspense>
-            }
           />
         ) : view === 'wardrobe' ? (
           <Profile
             items={items}
             wear={wear}
             name={displayName}
+            picture={profilePicture}
             looks={wearData?.outfits.length ?? 0}
             wornDays={
               wearData?.calendar.filter((entry) => entry.status === 'worn')
@@ -1014,11 +1155,7 @@ export default function App() {
               items={items}
               wear={wear}
               onOpen={setSelectedId}
-              onLooks={() =>
-                navigate('home', () => {
-                  cancelScroll.current = scrollSectionIntoView('more-looks')
-                })
-              }
+              onLooks={() => navigate('home', () => setComposing(true))}
               onBackup={() =>
                 navigate('settings', () => {
                   cancelScroll.current = scrollSectionIntoView('backup-section')
@@ -1061,6 +1198,32 @@ export default function App() {
           <span aria-hidden="true">Profil</span>
         </button>
       </nav>
+      {composing && items && (
+        <Sheet
+          title="Anderes Outfit"
+          className="compose-sheet"
+          onClose={() => setComposing(false)}
+        >
+          <div id="more-looks">
+            <Suspense fallback={<Loading />}>
+              <OutfitView
+                items={items}
+                mode="compose"
+                onAdd={() => {
+                  setComposing(false)
+                  setAdding(true)
+                }}
+                onToday={() => {
+                  setComposing(false)
+                  presetView('home.day', null)
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+                notify={notify}
+              />
+            </Suspense>
+          </div>
+        </Sheet>
+      )}
       {adding && (
         <AddSheet
           onClose={() => setAdding(false)}
@@ -1089,6 +1252,8 @@ export default function App() {
       {naming && (
         <NameSheet
           current={profileName ?? ''}
+          avatar={profile?.avatar}
+          googlePicture={google?.picture}
           fallback={google?.email?.split('@')[0] ?? 'Profil'}
           onClose={() => setNaming(false)}
           notify={notify}
@@ -1115,8 +1280,8 @@ export default function App() {
             setSelectedId(null)
             notify(
               archived
-                ? 'Aussortiert. Tragetage und Looks bleiben im Journal; unter Garderobe → Aussortiert holst du es zurück.'
-                : 'Zurück in der Garderobe.',
+                ? 'Aussortiert. Tragetage und Outfits bleiben im Journal; unter Profil → Aussortiert holst du es zurück.'
+                : 'Zurück im Kleiderschrank.',
             )
           }}
         />
@@ -1125,6 +1290,12 @@ export default function App() {
         <Suspense fallback={null}>
           <ProductSearch
             onClose={() => setSearching(false)}
+            onEdit={async (id) => {
+              const piece = await db.garments.get(id)
+              if (!piece) return
+              setSearching(false)
+              setEditor(piece)
+            }}
             onUnclear={(file) => {
               setSearching(false)
               setIncoming({ files: [file], key: Date.now() })
@@ -1150,7 +1321,7 @@ export default function App() {
               if (editor === 'new' && view !== 'wardrobe') navigate('wardrobe')
               notify(
                 editor === 'new'
-                  ? 'Dein neues Stück liegt in der Garderobe.'
+                  ? 'Dein neues Stück liegt im Kleiderschrank.'
                   : 'Deine Änderungen sind gespeichert.',
               )
             }}

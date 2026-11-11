@@ -332,7 +332,7 @@ export function parseChatReply(
     )
   )
     throw new Error(
-      'Dieser Look ist nicht vollständig oder nicht verfügbar. Bitte lass die KI eine andere Kombination vorschlagen.',
+      'Dieses Outfit ist nicht vollständig oder nicht verfügbar. Bitte lass die KI eine andere Kombination vorschlagen.',
     )
   return {
     text: v.reply.trim(),

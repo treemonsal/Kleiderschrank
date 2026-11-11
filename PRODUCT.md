@@ -1,5 +1,16 @@
 # MyStyle
 
+## Version 0.46.0 – Feinschliff
+
+- Einheitliche Wörter: Outfits und Kleiderschrank.
+- Home zeigt nur das Outfit für heute; Vorschlagen und Selber zusammenstellen liegen im Blatt „Anderes Outfit“. Der Stilcheck kommt erst nach dem ersten getragenen oder bewerteten Outfit.
+- Erster Start: Grundstücke antippen und gemeinsam hinzufügen, Hinweis auf die Google-Anmeldung, keine Nullen im Profil.
+- Profilbild: eigenes Foto (klein, mitgesichert) oder das Google-Profilbild, sonst Initialen.
+- Profil mit einer Filterzeile und ruhigem Raster; langes Drücken öffnet Schnellaktionen statt des Webmenüs.
+- Suche: nach dem Hinzufügen Kategorie und Farbe sehen, ändern oder rückgängig machen.
+- Ausrichten: Jede Freistellung wird auf dem Gerät gerade gerückt (bis 20°), beschnitten und mittig gesetzt, ohne zusätzliche KI-Anfrage.
+- Journal und Einstellungen mit Zurück-Knopf, Wischen vom Rand und Übergang; Fotos blenden ein; Startbilder ohne weissen Blitz; deckende Statusleiste gegen den unscharfen Kopf; Haptik bei wichtigen Tipps (iOS-Schalter-Trick, Android Vibration). Kein Hinweis mehr bei der Google-Anmeldung.
+
 ## Version 0.45.0 – Wäsche-Fehler, Freistellen, Farbe, Symbole
 
 - Behoben: Ein Stück in die Wäsche legen (oder favorisieren) liess auf dem iPhone die ganze Garderobe abstürzen und das Bild verschwinden. Safari löscht beim Umschreiben die alte Fotodatei; der Fotovergleich fällt jetzt auf das neue Foto zurück.

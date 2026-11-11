@@ -175,7 +175,7 @@ export function DailyRefinement(props: RefinementProps) {
                     })),
                   })
                   setPreview(undefined)
-                  props.notify('Look angepasst.')
+                  props.notify('Outfit angepasst.')
                 } catch (error) {
                   setError(storageError(error))
                 } finally {

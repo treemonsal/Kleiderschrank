@@ -39,7 +39,7 @@ test('Ein Stück bekommt eine Hauptfarbe und bis zu drei Zweitfarben, die gesich
     .getByRole('button', { name: 'Zweitfarbe Rot', exact: true })
     .click()
   await dialog
-    .getByRole('button', { name: 'In die Garderobe legen', exact: true })
+    .getByRole('button', { name: 'In den Kleiderschrank legen', exact: true })
     .click()
   await expect(dialog).not.toBeVisible()
   await page

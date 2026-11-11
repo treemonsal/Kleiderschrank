@@ -75,6 +75,8 @@ export interface Preferences {
   comfort?: Comfort
   /** Name shown on the profile; without it the Google account or „Profil“. */
   displayName?: string
+  /** Own profile picture, a small square JPEG as data URL (see avatar.ts). */
+  avatar?: string
 }
 export const COMFORTS = ['cold', 'normal', 'warm'] as const
 export type Comfort = (typeof COMFORTS)[number]

@@ -91,9 +91,9 @@ export function missingOutfitMessage(
   if (!has('Schuhe'))
     return items.some((item) => item.category === 'Schuhe' && item.inLaundry)
       ? 'Passende Schuhe liegen in der Wäsche. Nimm ein sauberes Paar aus der Wäsche oder ergänze eines.'
-      : 'Für diese Auswahl fehlen passende Schuhe. Ergänze ein Paar in der Garderobe.'
+      : 'Für diese Auswahl fehlen passende Schuhe. Ergänze ein Paar im Kleiderschrank.'
   if (!has('Kleider') && !(has('Oberteile') && has('Hosen')))
-    return 'Für diese Auswahl brauchst du ein Kleid oder ein Oberteil mit Hose. Ergänze Stücke in der Garderobe.'
+    return 'Für diese Auswahl brauchst du ein Kleid oder ein Oberteil mit Hose. Ergänze Stücke im Kleiderschrank.'
   return 'Gerade gibt es keinen neuen Vorschlag. Versuche einen anderen Anlass oder nimm Ablehnungen im Stilprofil zurück.'
 }
 
@@ -290,7 +290,7 @@ export function generateOutfits(
     ]
     if (profile)
       reasons.push(
-        `Dein Stilprofil berücksichtigt ${profile.colorMood === 'neutral' ? 'ruhige Farben' : profile.colorMood === 'colorful' ? 'mehr Farbakzente' : 'eine ausgewogene Farbwahl'} und ${variety === 'familiar' ? 'vertraute Looks' : variety === 'explore' ? 'mehr Abwechslung' : 'eine Mischung aus Vertrautem und Neuem'}.`,
+        `Dein Stilprofil berücksichtigt ${profile.colorMood === 'neutral' ? 'ruhige Farben' : profile.colorMood === 'colorful' ? 'mehr Farbakzente' : 'eine ausgewogene Farbwahl'} und ${variety === 'familiar' ? 'vertraute Outfits' : variety === 'explore' ? 'mehr Abwechslung' : 'eine Mischung aus Vertrautem und Neuem'}.`,
       )
     if (selected.some((item) => profile?.avoidColors.includes(item.color)))
       reasons.push(
@@ -310,7 +310,7 @@ export function generateOutfits(
       )
     else if (accents.length <= 1)
       reasons.push(
-        'Neutrale Farben und höchstens ein Farbakzent halten den Look ruhig.',
+        'Neutrale Farben und höchstens ein Farbakzent halten das Outfit ruhig.',
       )
     else
       reasons.push(
@@ -360,7 +360,7 @@ export function generateOutfits(
     if (history && (history.pieces.size || history.combinations.size))
       reasons.push(
         history.combinations.has(key)
-          ? 'Dieser Look wurde kürzlich getragen. Bei wenig Auswahl kann er erneut erscheinen.'
+          ? 'Dieses Outfit wurde kürzlich getragen. Bei wenig Auswahl kann es erneut erscheinen.'
           : 'Kürzlich getragene Kombinationen und Stücke erhalten weniger Gewicht.',
       )
     if (weather) {

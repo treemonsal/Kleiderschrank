@@ -137,7 +137,7 @@ test('Schwarz mit Salbei, Systemschrift und Lucide-Symbole, auch bei heller Ger√
       text: getComputedStyle(document.body).color,
       blur:
         nav.backdropFilter || nav.getPropertyValue('-webkit-backdrop-filter'),
-      font: getComputedStyle(document.querySelector('h1')!).fontFamily,
+      font: getComputedStyle(document.querySelector('h1, h2')!).fontFamily,
       stroke: icon.strokeWidth,
       filter: icon.filter,
       primary: add.backgroundColor,

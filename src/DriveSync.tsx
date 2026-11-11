@@ -169,12 +169,9 @@ export function useDriveSync(
   useEffect(() => {
     void completeGoogleSignIn().then((result) => {
       if (result?.error) notify(result.error, true)
-      if (result?.session) {
-        notify(
-          `Angemeldet als ${result.session.email}. Dein Kleiderschrank wird abgeglichen.`,
-        )
-        void runSync(result.session)
-      }
+      // Signing in (also the silent renewal after a longer break) needs no
+      // message: syncing with the own Google account goes without saying.
+      if (result?.session) void runSync(result.session)
     })
   }, [notify])
   useEffect(() => {

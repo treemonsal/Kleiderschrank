@@ -193,7 +193,7 @@ function StyleCheck({
               <p className="preference-label">Diese Farben lieber seltener</p>
               {colorChoices(true)}
               <label className="field">
-                Wie farbig sollen deine Looks sein?
+                Wie farbig sollen deine Outfits sein?
                 <select
                   value={profile.colorMood}
                   onChange={(event) =>
@@ -258,7 +258,7 @@ function StyleCheck({
               <div className="style-check-summary">
                 <Check size={18} />
                 <p>
-                  Deine Auswahl gibt passenden Looks mehr Gewicht. Wetter,
+                  Deine Auswahl gibt passenden Outfits mehr Gewicht. Wetter,
                   saubere Kleidung und dein aktueller Anlass bleiben
                   entscheidend. Mit Daumen hoch oder runter verfeinerst du die
                   Auswahl.
@@ -406,7 +406,7 @@ export function StyleProfileCard({
           }}
         >
           {!state.feedback.length && (
-            <p>Noch keine Bewertungen. Nutze die Daumen an deinen Looks.</p>
+            <p>Noch keine Bewertungen. Nutze die Daumen an deinen Outfits.</p>
           )}
           <div className="feedback-history">
             {state.feedback.slice(0, 20).map((entry) => (

@@ -151,7 +151,7 @@ it('ein gescheiterter oder konkurrierender Trageeintrag hinterlässt kein neu ge
         null,
         db,
       ),
-    ).rejects.toThrow('zukünftiger')
+    ).rejects.toThrow('zukünftiges')
     expect(await db.outfits.count()).toBe(0)
     expect(await db.calendar.count()).toBe(0)
     await recordWornOutfit(

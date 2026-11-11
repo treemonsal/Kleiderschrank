@@ -47,7 +47,7 @@ test('Ein Bild aus einem anderen Fenster wird zum neuen Stück, ohne die App zu 
   ).toBeVisible()
   await dialog.getByLabel('Name', { exact: false }).fill('Gezogenes Hemd')
   await dialog
-    .getByRole('button', { name: 'In die Garderobe legen', exact: true })
+    .getByRole('button', { name: 'In den Kleiderschrank legen', exact: true })
     .click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await expect(

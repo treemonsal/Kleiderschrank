@@ -33,7 +33,10 @@ export function BackgroundRemoval({
     onBusy(true)
     try {
       const { removePhotoBackground } = await import('./background-removal')
-      const result = await removePhotoBackground(photo, next.signal, setStatus)
+      const raw = await removePhotoBackground(photo, next.signal, setStatus)
+      // Same alignment as online cut-outs, on the device.
+      const { tidyCutout } = await import('./tidy-cutout')
+      const result = await tidyCutout(raw).catch(() => raw)
       if (!next.signal.aborted) setPreview(result)
     } catch (err) {
       if (!next.signal.aborted)

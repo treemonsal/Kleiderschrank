@@ -174,14 +174,14 @@ describe('Kalender, Migration und vollständige Sicherung', () => {
     }))
     expect(wornCounts(entries, [outfit], '2026-10-15').get('piece-0')).toBe(1)
   })
-  it('verbietet zukünftige Tragetage und unbekannte Looks', async () => {
+  it('verbietet zukünftige Tragetage und unbekannte Outfits', async () => {
     await expect(
       saveCalendarEntry(
         { day: '2199-01-01', outfitId, status: 'worn', note: '' },
         null,
         db,
       ),
-    ).rejects.toThrow('zukünftiger')
+    ).rejects.toThrow('zukünftiges')
     await expect(
       saveCalendarEntry(
         { day: '2020-01-01', outfitId: 'missing', status: 'planned', note: '' },

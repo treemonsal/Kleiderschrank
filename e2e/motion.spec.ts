@@ -1,4 +1,4 @@
-import { test, expect } from './base'
+import { test, expect, otherOutfit } from './base'
 
 /** Filters appear once the wardrobe holds a piece. */
 async function onePiece(page: import('./base').Page) {
@@ -12,7 +12,7 @@ async function onePiece(page: import('./base').Page) {
     .fill('Hemd')
   await page
     .getByRole('dialog')
-    .getByRole('button', { name: 'In die Garderobe legen' })
+    .getByRole('button', { name: 'In den Kleiderschrank legen' })
     .click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
 }
@@ -178,7 +178,7 @@ test('Schnelle Tabwechsel behalten die letzte Auswahl, auch beim sofortigen Zur√
     .fill('Hemd')
   await page
     .getByRole('dialog')
-    .getByRole('button', { name: 'In die Garderobe legen' })
+    .getByRole('button', { name: 'In den Kleiderschrank legen' })
     .click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
   const nav = page.getByRole('navigation', { name: 'Hauptnavigation' })
@@ -211,13 +211,17 @@ test('Schnelle Tabwechsel behalten die letzte Auswahl, auch beim sofortigen Zur√
     nav.getByRole('button', { name: 'Home', exact: true }),
   ).toHaveAttribute('aria-current', 'page')
   await expect(
-    page.getByRole('heading', { name: 'Weitere Looks', exact: true }),
+    page.getByRole('button', { name: 'Anderes Outfit', exact: true }),
   ).toBeVisible()
+  await otherOutfit(page)
   await page
-    .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
+    .getByRole('button', {
+      name: 'Aus dem Kleiderschrank vorschlagen',
+      exact: true,
+    })
     .click()
   await expect(
-    page.getByRole('button', { name: 'Garderobe erg√§nzen', exact: true }),
+    page.getByRole('button', { name: 'Kleiderschrank erg√§nzen', exact: true }),
   ).toBeVisible()
   expect(errors).toEqual([])
 })

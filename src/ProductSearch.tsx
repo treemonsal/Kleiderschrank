@@ -1,7 +1,14 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Check, LoaderCircle, Plus, Search } from 'lucide-react'
 import { analyzePhoto, readAIConnection } from './cloud-ai'
-import { attachCutout, db, saveGarment, storageError } from './db'
+import {
+  attachCutout,
+  db,
+  saveGarment,
+  storageError,
+  undoAddedGarment,
+} from './db'
+import { haptic } from './haptics'
 import { preparePhoto } from './photos'
 import { readPhotoPixels } from './photo-color'
 import {
@@ -21,13 +28,22 @@ import { ErrorMessage, Sheet } from './ui'
 
 /** 'cutting': already in the wardrobe, the free AI is cutting it out. */
 type Status = 'adding' | 'cutting' | 'added' | 'kept'
+/** What was added, to check it at a glance, change it or take it back. */
+interface Added {
+  id: string
+  category: string
+  color: string
+}
 
 /** Search the web for a piece and put it into the wardrobe with one tap. */
 export function ProductSearch({
   onClose,
   onUnclear,
+  onEdit,
 }: {
   onClose: () => void
+  /** Opens the editor for a piece just added. */
+  onEdit: (id: string) => void
   /** No category could be read from the title: the editor takes over. */
   onUnclear: (file: File, name: string) => void
 }) {
@@ -37,6 +53,7 @@ export function ProductSearch({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [status, setStatus] = useState<Record<string, Status>>({})
+  const [added, setAdded] = useState<Record<string, Added>>({})
   const work = useRef(new AbortController())
   useEffect(() => {
     const controller = work.current
@@ -65,6 +82,7 @@ export function ProductSearch({
   }
 
   async function add(result: ProductResult) {
+    haptic()
     setStatus((current) => ({ ...current, [result.image]: 'adding' }))
     setError('')
     const signal = work.current.signal
@@ -95,6 +113,10 @@ export function ProductSearch({
         favorite: false,
         photo,
       })
+      setAdded((current) => ({
+        ...current,
+        [result.image]: { id, category, color },
+      }))
       const connection = readAIConnection()
       if (connection?.enabled && !signal.aborted) {
         // Like a photo of your own: with the free AI on, the piece is cut
@@ -119,6 +141,11 @@ export function ProductSearch({
             cut = await attachCutout(id, saved.updatedAt, cutout, db, {
               color: better || undefined,
             })
+            if (cut && better)
+              setAdded((current) => ({
+                ...current,
+                [result.image]: { id, category, color: better },
+              }))
           }
         } catch {
           // Keeps the shop photo; the note below says so.
@@ -141,6 +168,20 @@ export function ProductSearch({
     }
   }
 
+  async function undo(result: ProductResult) {
+    const piece = added[result.image]
+    if (!piece) return
+    haptic()
+    setError('')
+    try {
+      await undoAddedGarment(piece.id)
+      setAdded(({ [result.image]: _gone, ...rest }) => rest)
+      setStatus(({ [result.image]: _gone, ...rest }) => rest)
+    } catch (caught) {
+      setError(storageError(caught))
+    }
+  }
+
   const submit = (event: FormEvent) => {
     event.preventDefault()
     void run(query)
@@ -149,7 +190,7 @@ export function ProductSearch({
   return (
     <Sheet
       title="Kleidung suchen"
-      eyebrow="Garderobe"
+      eyebrow="Kleiderschrank"
       className="product-search"
       onClose={onClose}
     >
@@ -234,6 +275,31 @@ export function ProductSearch({
                 {state === 'kept' && (
                   <span className="product-source" role="status">
                     Freistellen hat nicht geklappt, das Shopfoto bleibt.
+                  </span>
+                )}
+                {added[result.image] && state !== 'adding' && (
+                  <span className="product-added">
+                    <span>
+                      {added[result.image].category}
+                      {added[result.image].color &&
+                        ` · ${added[result.image].color}`}
+                    </span>
+                    <button
+                      className="text-button"
+                      disabled={state === 'cutting'}
+                      aria-label={`${name}: Angaben ändern`}
+                      onClick={() => onEdit(added[result.image].id)}
+                    >
+                      Ändern
+                    </button>
+                    <button
+                      className="text-button"
+                      disabled={state === 'cutting'}
+                      aria-label={`${name}: Hinzufügen rückgängig`}
+                      onClick={() => void undo(result)}
+                    >
+                      Rückgängig
+                    </button>
                   </span>
                 )}
               </li>

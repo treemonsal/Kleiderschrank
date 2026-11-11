@@ -69,7 +69,7 @@ export function PlanEditor({
       >
         <fieldset disabled={busy}>
           <label className="field">
-            Gespeicherten Look wählen
+            Gespeichertes Outfit wählen
             <select
               required
               value={outfitId}
@@ -109,7 +109,7 @@ export function PlanEditor({
         </fieldset>
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <p className="micro-copy">
-          Ein gespeicherter Look pro Tag. Zukünftige Looks bleiben geplant.
+          Ein gespeichertes Outfit pro Tag. Zukünftige Outfits bleiben geplant.
         </p>
         <button className="button primary full" disabled={busy || !outfitId}>
           {busy ? 'Wird gespeichert …' : 'Tag speichern'}
@@ -220,7 +220,7 @@ export function CalendarView({
             {confirm ? (
               <div className="delete-confirm" role="alert">
                 <p>
-                  Diesen Eintrag entfernen? Der gespeicherte Look und deine
+                  Diesen Eintrag entfernen? Das gespeicherte Outfit und deine
                   Kleidung bleiben erhalten.
                 </p>
                 <div className="photo-actions">
@@ -300,7 +300,7 @@ export function CalendarView({
           <>
             <p className="journal-day-none">
               {entry
-                ? 'Der verknüpfte Look ist nicht mehr verfügbar.'
+                ? 'Das verknüpfte Outfit ist nicht mehr verfügbar.'
                 : day < today
                   ? 'Kein Eintrag. Nachträglich wird nichts erfunden.'
                   : 'Noch nichts geplant.'}
@@ -320,11 +320,11 @@ export function CalendarView({
                     {entry
                       ? 'Tag bearbeiten'
                       : day < today
-                        ? 'Getragenen Look eintragen'
-                        : 'Look einplanen'}
+                        ? 'Getragenes Outfit eintragen'
+                        : 'Outfit einplanen'}
                   </>
                 ) : (
-                  'Looks zusammenstellen'
+                  'Outfits zusammenstellen'
                 )}
               </button>
             </div>

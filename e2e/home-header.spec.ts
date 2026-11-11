@@ -169,7 +169,7 @@ test('Nach dem Schliessen eines Stücks bekommt die Seite keinen Rahmen', async 
     .fill('Hemd')
   await page
     .getByRole('dialog')
-    .getByRole('button', { name: 'In die Garderobe legen' })
+    .getByRole('button', { name: 'In den Kleiderschrank legen' })
     .click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await page.getByRole('button', { name: 'Profil', exact: true }).click()

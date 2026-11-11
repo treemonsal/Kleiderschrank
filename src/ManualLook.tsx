@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
+import { haptic } from './haptics'
 import { ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react'
 import type { Garment } from './model'
 import {
@@ -31,6 +32,7 @@ function Row({
   const current = chosenPiece(row, { [row.id]: index })
   function go(next: number) {
     const clamped = Math.max(0, Math.min(slides - 1, next))
+    haptic()
     onChange(clamped)
     target.current = clamped
     const list = track.current

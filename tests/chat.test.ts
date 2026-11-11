@@ -183,7 +183,7 @@ describe('Persönlicher, begrenzter Chat-Kontext', () => {
 })
 
 describe('Prüfbare Chat-Antworten und echte Look-Referenzen', () => {
-  it('erlaubt allgemeine Beratung auch ohne Kleidung und verknüpft vollständige Looks mit echten IDs', () => {
+  it('erlaubt allgemeine Beratung auch ohne Kleidung und verknüpft vollständige Outfits mit echten IDs', () => {
     const empty = buildChatContext(
       { ...data(), garments: [] },
       'Was bedeutet Casual?',

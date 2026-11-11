@@ -21,7 +21,9 @@ test('Im privaten Safari-Tab erklärt die App, warum kein Foto gespeichert wird'
     dialog.getByAltText('Vorschau des Kleidungsstücks'),
   ).toBeVisible()
   await dialog.getByLabel('Name', { exact: false }).fill('Weisses Hemd')
-  await dialog.getByRole('button', { name: 'In die Garderobe legen' }).click()
+  await dialog
+    .getByRole('button', { name: 'In den Kleiderschrank legen' })
+    .click()
   await expect(dialog.getByRole('alert')).toContainText(
     'Im privaten Surfen kann Safari keine Fotos speichern',
   )

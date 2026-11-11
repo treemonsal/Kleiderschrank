@@ -46,7 +46,7 @@ async function withDb(run: (db: WardrobeDatabase) => Promise<void>) {
   }
 }
 
-describe('Looks heissen nach ihren Farben', () => {
+describe('Outfits heissen nach ihren Farben', () => {
   it('nennt die zwei führenden Farben und fällt sonst auf den Anlass zurück', async () => {
     expect(lookTitle(pieces, 'Alltag-Look')).toBe('Grün & Grau')
     expect(
@@ -104,7 +104,7 @@ describe('„Heute getragen“ rückgängig machen', () => {
     })
   })
 
-  it('stellt einen geplanten Tag mit Notiz wieder her und behält bekannte Looks', async () => {
+  it('stellt einen geplanten Tag mit Notiz wieder her und behält bekannte Outfits', async () => {
     await withDb(async (db) => {
       const today = localDay()
       const outfitId = await saveOutfit(ids, DEFAULT_OUTFIT_OPTIONS, db)

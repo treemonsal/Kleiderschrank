@@ -64,7 +64,7 @@ describe('Outfit-Regeln und begrenzte Suche', () => {
       generateOutfits(closet.slice(0, 2), options, DEFAULT_PREFERENCES, []),
     ).toEqual([])
   })
-  it('kombiniert nur existierende eindeutige IDs zu vollständigen Looks', () => {
+  it('kombiniert nur existierende eindeutige IDs zu vollständigen Outfits', () => {
     const items = [
       ...closet,
       garment('dress', 'Kleider'),
@@ -231,7 +231,7 @@ describe('Migration und Datenintegrität', () => {
     )
     expect((await db.garments.get('top'))?.brand).toBe('Neue Marke')
   })
-  it('speichert vollständige Looks ohne Duplikate und verwirft fehlende oder falsche Referenzen', async () => {
+  it('speichert vollständige Outfits ohne Duplikate und verwirft fehlende oder falsche Referenzen', async () => {
     await db.garments.bulkPut(closet)
     const id = await saveOutfit(
       closet.map((item) => item.id),

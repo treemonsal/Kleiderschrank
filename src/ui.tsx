@@ -1,3 +1,4 @@
+import { useLongPress } from './useLongPress'
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { Heart, X } from 'lucide-react'
 import type { Garment } from './model'
@@ -95,7 +96,11 @@ export function PhotoImage({
       alt={alt}
       className={className}
       loading={loading}
-      onLoad={releaseUnused}
+      onLoad={(event) => {
+        // Fades in once decoded instead of popping in (see theme.css).
+        event.currentTarget.dataset.loaded = ''
+        releaseUnused()
+      }}
       onError={() => {
         if (retried.current !== source) {
           retried.current = source
@@ -156,14 +161,18 @@ export function GarmentCard({
   item,
   worn = 0,
   onOpen,
+  onMenu,
 }: {
   item: Garment
   /** Confirmed wear days, shown as „N× getragen“. */
   worn?: number
   onOpen: () => void
+  /** Long press: quick actions without opening the piece. */
+  onMenu?: () => void
 }) {
+  const press = useLongPress(() => onMenu?.())
   return (
-    <article className="garment-card">
+    <article className="garment-card" {...(onMenu ? press : {})}>
       <button
         className="garment-open"
         onClick={onOpen}

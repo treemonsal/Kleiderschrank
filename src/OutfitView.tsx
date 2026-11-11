@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { haptic } from './haptics'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Heart, Trash2 } from 'lucide-react'
 import type { Garment } from './model'
@@ -27,7 +28,7 @@ import { ManualLook } from './ManualLook'
 function colorTitle(ids: string[], items: Garment[]) {
   return lookTitle(
     ids.flatMap((id) => items.find((i) => i.id === id) ?? []),
-    'Neuer Look',
+    'Neues Outfit',
   )
 }
 
@@ -46,7 +47,7 @@ function SavedEditor({
   const [confirm, setConfirm] = useState(false)
   return (
     <Sheet
-      title="Look bearbeiten"
+      title="Outfit bearbeiten"
       closeDisabled={busy}
       dirty={!busy && name !== outfit.name}
       eyebrow="Gespeichert"
@@ -220,6 +221,7 @@ export function OutfitView({
     [items, occasion, seed, state, weather, today],
   )
   async function action(callback: () => Promise<unknown>) {
+    haptic('success')
     setBusy(true)
     setError('')
     try {
@@ -278,11 +280,8 @@ export function OutfitView({
     )
   return (
     <div className={`outfits-view outfits-${mode}`}>
-      {mode === 'compose' && (
-        <h2 className="home-section-title">Weitere Looks</h2>
-      )}
       {!state ? (
-        <p className="muted">Deine Looks werden geladen …</p>
+        <p className="muted">Deine Outfits werden geladen …</p>
       ) : (
         <>
           {mode === 'compose' && (
@@ -313,13 +312,13 @@ export function OutfitView({
                   setError('')
                 }}
               >
-                Aus der Garderobe vorschlagen
+                Aus dem Kleiderschrank vorschlagen
               </button>
               {seed !== null && !candidate && (
                 <div className="look-result" role="status">
                   <p>{missingOutfitMessage(items, options, weather)}</p>
                   <button className="button secondary" onClick={onAdd}>
-                    Garderobe ergänzen
+                    Kleiderschrank ergänzen
                   </button>
                 </div>
               )}

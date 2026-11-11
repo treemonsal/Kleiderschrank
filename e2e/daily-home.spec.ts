@@ -151,7 +151,7 @@ test('Tageslook erscheint ohne Klick und bleibt beim Neustart stabil', async ({
   await importData(page)
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
   await expect(
-    look.getByRole('heading', { name: 'Dein Look für heute' }),
+    look.getByRole('heading', { name: 'Dein Outfit für heute' }),
   ).toBeVisible()
   for (const name of ['Hemd', 'Hose', 'Sneaker', 'Jacke'])
     await expect(
@@ -519,7 +519,7 @@ for (const width of [375, 390, 430]) {
   })
 }
 
-test('Vergangene Pläne und zukünftige Looks bleiben klar von bestätigter Historie getrennt', async ({
+test('Vergangene Pläne und zukünftige Outfits bleiben klar von bestätigter Historie getrennt', async ({
   page,
 }) => {
   await page.clock.install({ time: new Date(now) })

@@ -1,8 +1,13 @@
-import { test, expect, type Page } from './base'
+import { test, expect, type Page, otherOutfit, closeSheet } from './base'
 import { readFile } from 'node:fs/promises'
 import type { Category } from '../src/model'
 
 async function create(page: Page, name: string, category: Category) {
+  // Adding happens from the tab bar, behind any open sheet.
+  if (await page.getByRole('dialog', { name: 'Anderes Outfit' }).isVisible()) {
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+  }
   await page.getByRole('button', { name: 'Hinzufügen', exact: true }).click()
   await page
     .getByRole('button', { name: 'Ohne Foto eintragen', exact: true })
@@ -12,7 +17,9 @@ async function create(page: Page, name: string, category: Category) {
   await dialog
     .getByRole('combobox', { name: 'Kategorie', exact: true })
     .selectOption(category)
-  await dialog.getByRole('button', { name: 'In die Garderobe legen' }).click()
+  await dialog
+    .getByRole('button', { name: 'In den Kleiderschrank legen' })
+    .click()
   await expect(dialog).not.toBeVisible()
 }
 async function wardrobe(page: Page) {
@@ -22,19 +29,24 @@ async function wardrobe(page: Page) {
   await page.getByRole('button', { name: 'Home', exact: true }).click()
 }
 
-test('Looks aus echtem Bestand vorschlagen, speichern, benennen, favorisieren, für heute wählen und vollständig sichern', async ({
+test('Outfits aus echtem Bestand vorschlagen, speichern, benennen, favorisieren, für heute wählen und vollständig sichern', async ({
   page,
 }, testInfo) => {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto('/')
   await wardrobe(page)
+  await otherOutfit(page)
   await page.getByRole('button', { name: 'Büro', exact: true }).click()
   await expect(
     page.getByRole('button', { name: 'Büro', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
+  await otherOutfit(page)
   await page
-    .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
+    .getByRole('button', {
+      name: 'Aus dem Kleiderschrank vorschlagen',
+      exact: true,
+    })
     .click()
   const result = page.getByRole('article', { name: 'Vorschlag' })
   await expect(result).toContainText('Hemd · Hose · Sneaker')
@@ -42,6 +54,7 @@ test('Looks aus echtem Bestand vorschlagen, speichern, benennen, favorisieren, f
   await expect(
     result.getByRole('button', { name: 'Gespeichert', exact: true }),
   ).toBeDisabled()
+  await closeSheet(page)
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page.getByRole('button', { name: 'Outfits', exact: true }).click()
   const saved = page.locator('.saved-look')
@@ -59,7 +72,7 @@ test('Looks aus echtem Bestand vorschlagen, speichern, benennen, favorisieren, f
   })
   await favorite.click()
   await expect(favorite).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.locator('.profile-stats')).toContainText(/Looks\s*1/)
+  await expect(page.locator('.profile-stats')).toContainText(/Outfits\s*1/)
   await page.screenshot({
     path: testInfo.outputPath('saved-outfit-iphone.png'),
     fullPage: true,
@@ -133,18 +146,22 @@ test('Looks aus echtem Bestand vorschlagen, speichern, benennen, favorisieren, f
   expect(errors).toEqual([])
 })
 
-test('Fehlende Kleidung wird erklärt und Löschungen entfernen abhängige Looks', async ({
+test('Fehlende Kleidung wird erklärt und Löschungen entfernen abhängige Outfits', async ({
   page,
 }) => {
   await page.goto('/')
   // An empty wardrobe hides the composer; with only a shirt it explains.
   await expect(
-    page.getByRole('button', { name: 'Aus der Garderobe vorschlagen' }),
+    page.getByRole('button', { name: 'Aus dem Kleiderschrank vorschlagen' }),
   ).toHaveCount(0)
   await create(page, 'Gürtel', 'Accessoires')
   await page.getByRole('button', { name: 'Home', exact: true }).click()
+  await otherOutfit(page)
   await page
-    .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
+    .getByRole('button', {
+      name: 'Aus dem Kleiderschrank vorschlagen',
+      exact: true,
+    })
     .click()
   await expect(
     page.locator('#more-looks').getByText('Für diese Auswahl fehlen passende', {
@@ -153,13 +170,18 @@ test('Fehlende Kleidung wird erklärt und Löschungen entfernen abhängige Looks
   ).toBeVisible()
   await expect(page.getByRole('article', { name: 'Vorschlag' })).toHaveCount(0)
   await wardrobe(page)
+  await otherOutfit(page)
   await page
-    .getByRole('button', { name: 'Aus der Garderobe vorschlagen', exact: true })
+    .getByRole('button', {
+      name: 'Aus dem Kleiderschrank vorschlagen',
+      exact: true,
+    })
     .click()
   await page
     .getByRole('article', { name: 'Vorschlag' })
     .getByRole('button', { name: 'Speichern', exact: true })
     .click()
+  await closeSheet(page)
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page.getByRole('button', { name: 'Outfits', exact: true }).click()
   await expect(page.locator('.saved-look')).toHaveCount(1)
@@ -188,7 +210,8 @@ test('Fehlende Kleidung wird erklärt und Löschungen entfernen abhängige Looks
     .click()
   await page.getByRole('button', { name: 'Outfits', exact: true }).click()
   await expect(page.locator('.saved-look')).toHaveCount(0)
-  await expect(page.locator('.profile-stats')).toContainText(/Looks\s*0/)
+  // Zero counts are hidden: no saved outfit, no number.
+  await expect(page.locator('.profile-stats')).not.toContainText('Outfits')
 })
 
 test('Eine gefälschte Bildsignatur reicht nicht für einen gültigen Import', async ({
@@ -241,9 +264,7 @@ for (const width of [375, 390, 430]) {
     await page.goto('/')
     await create(page, 'Hemd', 'Oberteile')
     await page.getByRole('button', { name: 'Home', exact: true }).click()
-    await expect(
-      page.getByRole('heading', { name: 'Weitere Looks' }),
-    ).toBeVisible()
+    await otherOutfit(page)
     expect(
       await page.evaluate(
         () =>
@@ -264,7 +285,7 @@ for (const width of [375, 390, 430]) {
   })
 }
 
-test('„Zuletzt getragen“ sortiert gespeicherte Looks nach dem letzten Tragetag', async ({
+test('„Zuletzt getragen“ sortiert gespeicherte Outfits nach dem letzten Tragetag', async ({
   page,
 }) => {
   await page.clock.install({ time: new Date('2026-10-20T10:00:00Z') })

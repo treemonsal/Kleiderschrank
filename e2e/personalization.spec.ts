@@ -52,10 +52,34 @@ async function importData(page: Page, data?: unknown) {
           app: 'MyStyle',
           version: 4,
           garments,
-          outfits: [],
+          // One outfit worn long ago: the style check invitation waits for
+          // a first worn or rated outfit.
+          outfits: [
+            {
+              id: 'worn-once',
+              name: 'Alltag',
+              garmentIds: ['blue', 'pants', 'shoes'],
+              occasion: 'Alltag',
+              season: 'Alle',
+              style: 'Alle',
+              favorite: false,
+              createdAt: stamp,
+              updatedAt: stamp,
+            },
+          ],
           feedback: [],
           preferences: null,
-          calendar: [],
+          calendar: [
+            {
+              id: '2026-01-02',
+              day: '2026-01-02',
+              outfitId: 'worn-once',
+              status: 'worn',
+              note: '',
+              createdAt: stamp,
+              updatedAt: stamp,
+            },
+          ],
           weather: null,
         },
       ),
@@ -97,7 +121,7 @@ async function completeStyleCheck(page: Page) {
     .click()
   await dialog
     .getByRole('combobox', {
-      name: 'Wie farbig sollen deine Looks sein?',
+      name: 'Wie farbig sollen deine Outfits sein?',
       exact: true,
     })
     .selectOption('neutral')
@@ -184,6 +208,7 @@ test('Später verschwindet dauerhaft und lässt den Stilcheck unter Mehr erreich
   page,
 }) => {
   await page.goto('/')
+  await importData(page)
   const invite = page.getByRole('region', { name: 'Persönlicher Stilcheck' })
   await expect(invite).toBeVisible()
   await invite.getByRole('button', { name: 'Später', exact: true }).click()
@@ -245,9 +270,12 @@ test('Tageslook lässt sich mit Grund ablehnen und die Bewertung gezielt zurück
   await expect(
     page
       .getByRole('dialog')
-      .getByText('Noch keine Bewertungen. Nutze die Daumen an deinen Looks.', {
-        exact: true,
-      }),
+      .getByText(
+        'Noch keine Bewertungen. Nutze die Daumen an deinen Outfits.',
+        {
+          exact: true,
+        },
+      ),
   ).toBeVisible()
   await page
     .getByRole('dialog')
@@ -314,9 +342,10 @@ test('Profil und Feedback sind per Sicherung auf einem zweiten Gerät nutzbar', 
   const context = await newDevice()
   const other = await context.newPage()
   await other.goto('/')
+  // A fresh device has nothing worn yet, so no style check is offered.
   await expect(
     other.getByRole('region', { name: 'Persönlicher Stilcheck' }),
-  ).toBeVisible()
+  ).toHaveCount(0)
   await importData(other, data)
   await expect(
     other.getByRole('region', { name: 'Persönlicher Stilcheck' }),
@@ -338,6 +367,7 @@ test('Stilcheck ist auf kleinem Bildschirm bedienbar und respektiert reduzierte 
   await page.setViewportSize({ width: 320, height: 740 })
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
+  await importData(page)
   await page
     .getByRole('button', { name: 'Stilcheck starten', exact: true })
     .click()

@@ -33,7 +33,7 @@ const items = [
 ]
 
 describe('Was passt dazu?', () => {
-  it('baut nur Looks mit dem gewählten Oberteil', () => {
+  it('baut nur Outfits mit dem gewählten Oberteil', () => {
     const looks = outfitsWith('t1', items, DEFAULT_PREFERENCES, [])
     expect(looks.length).toBeGreaterThan(0)
     for (const look of looks) {
@@ -50,7 +50,7 @@ describe('Was passt dazu?', () => {
     }
   })
 
-  it('zeigt Looks auch für ein Stück in der Wäsche, aber nicht mit anderen Wäschestücken', () => {
+  it('zeigt Outfits auch für ein Stück in der Wäsche, aber nicht mit anderen Wäschestücken', () => {
     const laundry = items.map((item) =>
       item.id === 'k1' || item.id === 's1'
         ? { ...item, inLaundry: true }

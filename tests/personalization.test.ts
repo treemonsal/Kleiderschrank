@@ -124,7 +124,7 @@ describe('Persönliche Auswahl statt rein dekorativem Fragebogen', () => {
     )[0]
     expect(changed.garmentIds).toContain('red')
   })
-  it('gewichtet unerwünschte Farben schwächer, ohne bei kleiner Garderobe komplette Looks zu verbieten', () => {
+  it('gewichtet unerwünschte Farben schwächer, ohne bei kleiner Garderobe komplette Outfits zu verbieten', () => {
     const preferences = profile({
       styleProfile: { ...DEFAULT_STYLE_PROFILE, avoidColors: ['Blau'] },
     })

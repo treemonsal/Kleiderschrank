@@ -61,6 +61,16 @@ async function seed(page: Page) {
             createdAt: stamp,
             updatedAt: stamp,
           },
+          // One worn day long ago: the style check invitation needs it.
+          {
+            id: '2026-01-02',
+            day: '2026-01-02',
+            outfitId: outfit.id,
+            status: 'worn',
+            note: '',
+            createdAt: stamp,
+            updatedAt: stamp,
+          },
         ],
         weather: null,
       }),

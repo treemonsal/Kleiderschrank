@@ -115,7 +115,7 @@ describe('Abgleichsregeln', () => {
 })
 
 describe('Abgleich über Google Drive', () => {
-  it('bringt Stücke mit identischen Fotos und Looks auf ein zweites Gerät, Fotos nur einmal', async () => {
+  it('bringt Stücke mit identischen Fotos und Outfits auf ein zweites Gerät, Fotos nur einmal', async () => {
     const drive = new FakeDrive()
     const a = device(),
       b = device()

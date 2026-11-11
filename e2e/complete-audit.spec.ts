@@ -1,4 +1,5 @@
 import { test, expect, type Page } from './fixtures'
+import { otherOutfit } from './base'
 import { readFile } from 'node:fs/promises'
 import { stepDay } from './day-helpers'
 
@@ -132,7 +133,10 @@ test('Bereichswechsel behalten Datum, Filter, Anlass und Scrollposition; erneute
   )
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(target)
   await page.getByRole('button', { name: 'Home', exact: true }).click()
+  await otherOutfit(page)
   await page.getByRole('button', { name: 'Abend', exact: true }).click()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
   await page.getByRole('button', { name: 'Home', exact: true }).click()
   await expect(page.locator('.daily-look')).toHaveAttribute('data-day', day!)
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
@@ -149,6 +153,7 @@ test('Bereichswechsel behalten Datum, Filter, Anlass und Scrollposition; erneute
   await page.getByRole('button', { name: 'Alle', exact: true }).click()
   await expect(page.locator('.garment-card')).toHaveCount(10)
   await page.getByRole('button', { name: 'Home', exact: true }).click()
+  await otherOutfit(page)
   await expect(
     page.getByRole('button', { name: 'Abend', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true')
@@ -311,7 +316,7 @@ test('Look- und Kalenderentwürfe sind geschützt, der Schliessen-Knopf bleibt i
   await page.getByRole('button', { name: 'Profil', exact: true }).click()
   await page.getByRole('button', { name: 'Journal', exact: true }).click()
   await page
-    .getByRole('button', { name: 'Look einplanen', exact: true })
+    .getByRole('button', { name: 'Outfit einplanen', exact: true })
     .click()
   dialog = page.getByRole('dialog')
   await dialog.getByLabel('Notiz zum Tag').fill('Unbestätigter Entwurf')
