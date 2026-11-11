@@ -1,5 +1,11 @@
 # Entwicklungsplan
 
+## Version 0.46.1
+
+- [x] Erster Start mit echten Produktfotos (ohne Person), beim Hinzufügen gespeichert und mit kostenloser KI freigestellt
+- [x] Plus in der Leiste als runde Kapsel
+- [x] Kategorienzeile im Profil scrollt nur seitlich
+
 ## Version 0.46.0 – Feinschliff
 
 - [x] Wörter, Home mit „Anderes Outfit“, Stilcheck später

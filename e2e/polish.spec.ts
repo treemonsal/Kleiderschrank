@@ -200,3 +200,64 @@ test('Startbilder für das iPhone und deckende Statusleiste', async ({
     page.locator('meta[name="apple-mobile-web-app-status-bar-style"]'),
   ).toHaveAttribute('content', 'black')
 })
+
+test('Erster Start zeigt echte Fotos und speichert sie mit', async ({
+  page,
+}) => {
+  const png = await import('node:fs/promises').then((fs) =>
+    fs.readFile('public/icon-192.png'),
+  )
+  await page.addInitScript(() => {
+    ;(
+      window as unknown as { __MYSTYLE_SEARCH_URL__: string }
+    ).__MYSTYLE_SEARCH_URL__ = 'https://suche.test'
+  })
+  let loaded = 0
+  await page.route('https://suche.test/image**', (route) => {
+    loaded++
+    return route.fulfill({
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      contentType: 'image/png',
+      body: png,
+    })
+  })
+  await page.goto('/')
+  const starter = page.getByRole('region', { name: 'Was besitzt du?' })
+  await expect(starter.locator('.starter-photo img')).toHaveCount(12)
+  expect(loaded).toBe(12)
+  await starter.getByRole('button', { name: 'Grauer Hoodie' }).click()
+  await starter.getByRole('button', { name: '1 Stück hinzufügen' }).click()
+  const photo = await page.evaluate(
+    () =>
+      new Promise<number>((resolve) => {
+        const open = indexedDB.open('mystyle-private-wardrobe')
+        open.onsuccess = () => {
+          const request = open.result
+            .transaction('garments')
+            .objectStore('garments')
+            .getAll()
+          request.onsuccess = () => resolve(request.result[0]?.photo?.size ?? 0)
+        }
+      }),
+  )
+  expect(photo).toBeGreaterThan(0)
+})
+
+test('Ohne Fotos bleiben die Zeichnungen, und die Kategorien scrollen nur seitlich', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const starter = page.getByRole('region', { name: 'Was besitzt du?' })
+  await expect(starter.locator('.starter-photo')).toHaveCount(0)
+  await expect(starter.locator('.photo-placeholder')).toHaveCount(12)
+  await starter.getByRole('button', { name: 'Blaue Jeans' }).click()
+  await starter.getByRole('button', { name: '1 Stück hinzufügen' }).click()
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
+  const row = page.getByRole('group', { name: 'Kategorie filtern' })
+  expect(
+    await row.evaluate((node) => {
+      const style = getComputedStyle(node)
+      return [style.overflowY, style.touchAction]
+    }),
+  ).toEqual(['hidden', 'pan-x'])
+})

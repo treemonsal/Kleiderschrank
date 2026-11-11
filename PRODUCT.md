@@ -1,5 +1,10 @@
 # MyStyle
 
+## Version 0.46.1
+
+- Erster Start mit echten Produktfotos statt Zeichnungen: zwölf einmal ausgesuchte Shopfotos ohne Person, geladen über den eigenen Such-Worker (keine Suche, kein SerpApi-Kontingent). Beim Hinzufügen werden sie als Foto gespeichert und bei aktiver kostenloser KI nacheinander freigestellt. Ohne Netz oder bei verschwundenem Shopbild bleibt die Zeichnung.
+- Plus in der Leiste als runde Kapsel; die Kategorienzeile im Profil scrollt nur seitlich.
+
 ## Version 0.46.0 – Feinschliff
 
 - Einheitliche Wörter: Outfits und Kleiderschrank.

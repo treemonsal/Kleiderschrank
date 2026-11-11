@@ -57,7 +57,7 @@ export function AddIcon() {
       viewBox="0 0 46 31"
       aria-hidden="true"
     >
-      <rect width="46" height="31" rx="9" fill="currentColor" />
+      <rect width="46" height="31" rx="15.5" fill="currentColor" />
       <path
         d="M23 9.5v12M17 15.5h12"
         stroke="var(--c-ground)"

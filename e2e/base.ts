@@ -62,6 +62,18 @@ function touchShim() {
 const usesProfile = (browserName: string) =>
   browserName === 'webkit' || process.env.MYSTYLE_E2E_PROFILE === '1'
 
+/**
+ * The built app knows the real search worker. Tests never call it: without
+ * a search address of their own (set by a later init script) the search
+ * and the first-start photos stay off, so nothing leaves the page.
+ */
+async function noRealSearch(context: BrowserContext) {
+  await context.addInitScript(() => {
+    const w = window as unknown as { __MYSTYLE_SEARCH_URL__?: string }
+    w.__MYSTYLE_SEARCH_URL__ ??= ''
+  })
+}
+
 export const test = playwrightTest.extend<{ newDevice: NewDevice }>({
   newDevice: async (
     { browser, browserName, playwright, launchOptions, headless },
@@ -109,25 +121,28 @@ export const test = playwrightTest.extend<{ newDevice: NewDevice }>({
     },
     use,
   ) => {
-    if (!usesProfile(browserName)) return use(regular)
-    await use(
-      await newDevice({
-        ...contextOptions,
-        baseURL,
-        deviceScaleFactor,
-        hasTouch,
-        isMobile,
-        locale,
-        offline,
-        permissions,
-        geolocation,
-        serviceWorkers,
-        timezoneId,
-        userAgent,
-        viewport,
-        colorScheme,
-      }),
-    )
+    if (!usesProfile(browserName)) {
+      await noRealSearch(regular)
+      return use(regular)
+    }
+    const device = await newDevice({
+      ...contextOptions,
+      baseURL,
+      deviceScaleFactor,
+      hasTouch,
+      isMobile,
+      locale,
+      offline,
+      permissions,
+      geolocation,
+      serviceWorkers,
+      timezoneId,
+      userAgent,
+      viewport,
+      colorScheme,
+    })
+    await noRealSearch(device)
+    await use(device)
   },
   page: async ({ context, browserName }, use) => {
     const [first] = usesProfile(browserName) ? context.pages() : []
