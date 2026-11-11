@@ -1,5 +1,11 @@
 # Entwicklungsplan
 
+## Version 0.47.0
+
+- [x] Shirt und Pullover als Schichten (KI, Name, Bearbeiten, Generator, Tauschen, Selber zusammenstellen)
+- [x] Büro/Abend ohne Trikot und Jogginghose (Namenserkennung)
+- [x] Planung mit einem Tipp entfernen, mit Rückgängig
+
 ## Version 0.46.1
 
 - [x] Erster Start mit echten Produktfotos (ohne Person), beim Hinzufügen gespeichert und mit kostenloser KI freigestellt

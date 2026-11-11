@@ -21,6 +21,7 @@ import { parsePhotoRef } from './sync-model'
 import { db } from './db'
 import { isDay, MAX_CALENDAR_ENTRIES, type CalendarEntry } from './calendar'
 import { isWarmth } from './warmth'
+import { isTopLayer } from './layers'
 import { parseSavedWeather, type WeatherState } from './weather'
 import {
   assertWardrobeCapacity,
@@ -49,6 +50,10 @@ export interface BackupData {
   calendar?: CalendarEntry[]
   weather?: WeatherState | null
   chat?: ChatSession | null
+}
+const layer = (value: unknown) => {
+  if (!isTopLayer(value)) throw invalid()
+  return value
 }
 const warmth = (value: unknown) => {
   if (!isWarmth(value)) throw invalid()
@@ -364,6 +369,7 @@ export function parseFullBackup(
           ? {}
           : { archivedAt: timestamp(item.archivedAt) }),
         ...(item.warmth === undefined ? {} : { warmth: warmth(item.warmth) }),
+        ...(item.layer === undefined ? {} : { layer: layer(item.layer) }),
         createdAt: timestamp(item.createdAt),
         updatedAt: timestamp(item.updatedAt),
         photo: original,

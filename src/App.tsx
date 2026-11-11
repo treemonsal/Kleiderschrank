@@ -49,6 +49,7 @@ import { useStylistInbox } from './stylist-inbox'
 import { carriesImage, imagesFromDrop, imagesFromPaste } from './image-drop'
 import { useDriveSync, useGoogleSession } from './DriveSync'
 import { WARMTH_LABELS } from './warmth'
+import { TOP_LAYER_LABELS, topLayer } from './layers'
 import { searchEndpoint } from './product-search'
 import { AddSheet } from './AddSheet'
 import { NameSheet } from './NameSheet'
@@ -466,6 +467,12 @@ function Detail({
                 item.secondaryColors?.length
                   ? `${item.color}, dazu ${item.secondaryColors.join(', ')}`
                   : item.color,
+              ],
+              [
+                'Art',
+                item.category === 'Oberteile'
+                  ? TOP_LAYER_LABELS[topLayer(item) ?? 'base']
+                  : '',
               ],
               ['Marke', item.brand],
               ['Saison', item.seasons.join(', ')],

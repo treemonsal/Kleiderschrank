@@ -3,6 +3,7 @@ import {
   chosenLook,
   lookRows,
   missingRows,
+  sweaterFits,
   wearsDress,
 } from '../src/manual-look'
 import type { Category, Garment } from '../src/model'
@@ -78,5 +79,30 @@ describe('Selber zusammenstellen', () => {
     ])
     expect(missingRows(dressOnly, {})).toEqual([])
     expect(chosenLook(dressOnly, {})).toEqual(['Kleid', 'S'])
+  })
+
+  it('legt einen Pullover nur über ein Shirt', () => {
+    const rows = lookRows([
+      piece('T-Shirt', 'Oberteile'),
+      piece('Hoodie', 'Oberteile'),
+      piece('Jeans', 'Hosen'),
+      piece('Sneaker', 'Schuhe'),
+    ])
+    const sweater = rows.find((row) => row.id === 'sweater')!
+    expect(sweater.items.map((item) => item.id)).toEqual(['Hoodie'])
+    // Top rows sort by name: Hoodie, T-Shirt. Shirt chosen, pullover over it.
+    expect(chosenLook(rows, { top: 1, sweater: 0 })).toEqual([
+      'Hoodie',
+      'T-Shirt',
+      'Jeans',
+      'Sneaker',
+    ])
+    // The hoodie as the top: no second pullover.
+    expect(sweaterFits(rows, { top: 0 })).toBe(false)
+    expect(chosenLook(rows, { top: 0, sweater: 0 })).toEqual([
+      'Hoodie',
+      'Jeans',
+      'Sneaker',
+    ])
   })
 })

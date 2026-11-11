@@ -11,6 +11,7 @@ import {
   WardrobeDatabase,
 } from '../src/db'
 import { DEFAULT_OUTFIT_OPTIONS } from '../src/outfit-model'
+import { restoreCalendarEntry } from '../src/calendar-db'
 import type { GarmentDraft } from '../src/model'
 
 const draft = (name: string, category: GarmentDraft['category']) => ({
@@ -86,5 +87,32 @@ describe('Profilbild, Startstücke und Rückgängig', () => {
     await saveOutfit([shirt, pants, shoes], DEFAULT_OUTFIT_OPTIONS, db)
     await expect(undoAddedGarment(shirt, db)).rejects.toThrow('Outfit')
     expect(await db.garments.get(shirt)).toBeDefined()
+  })
+})
+
+describe('Geplantes Outfit zurückholen', () => {
+  it('stellt den Tag nur wieder her, solange er leer ist', async () => {
+    const db = fresh()
+    const [a, b, c] = await addStarterPieces(
+      [
+        draft('Hemd', 'Oberteile'),
+        draft('Hose', 'Hosen'),
+        draft('Schuh', 'Schuhe'),
+      ],
+      db,
+    )
+    const outfitId = await saveOutfit([a, b, c], DEFAULT_OUTFIT_OPTIONS, db)
+    const entry = {
+      id: '2026-12-24',
+      day: '2026-12-24',
+      outfitId,
+      status: 'planned' as const,
+      note: '',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    }
+    await restoreCalendarEntry(entry, db)
+    expect(await db.calendar.get(entry.day)).toEqual(entry)
+    await expect(restoreCalendarEntry(entry, db)).rejects.toThrow('inzwischen')
   })
 })

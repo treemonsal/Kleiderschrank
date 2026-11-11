@@ -1,4 +1,5 @@
 import type { Garment, Season, Style } from './model'
+import { topLayer } from './layers'
 import type { StyleInterview } from './style-interview'
 import type { ShoppingPreferences } from './shopping-model'
 
@@ -105,18 +106,21 @@ export function feedbackKey(ids: string[], occasion?: Occasion): string {
 export function isCompleteOutfit(items: Garment[]): boolean {
   const count = (category: string) =>
     items.filter((item) => item.category === category).length
+  const tops = items.filter((item) => item.category === 'Oberteile')
+  // One top, or a shirt with a pullover over it (layers.ts).
+  const topsFit =
+    tops.length === 1 ||
+    (tops.length === 2 &&
+      tops.some((item) => topLayer(item) === 'base') &&
+      tops.some((item) => topLayer(item) === 'mid'))
   return (
     items.length >= 2 &&
-    items.length <= 5 &&
+    items.length <= 6 &&
     new Set(items.map((item) => item.id)).size === items.length &&
     count('Schuhe') === 1 &&
     count('Jacken') <= 1 &&
     count('Accessoires') <= 1 &&
-    ((count('Kleider') === 1 &&
-      count('Oberteile') === 0 &&
-      count('Hosen') === 0) ||
-      (count('Kleider') === 0 &&
-        count('Oberteile') === 1 &&
-        count('Hosen') === 1))
+    ((count('Kleider') === 1 && tops.length === 0 && count('Hosen') === 0) ||
+      (count('Kleider') === 0 && topsFit && count('Hosen') === 1))
   )
 }

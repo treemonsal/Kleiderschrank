@@ -227,20 +227,22 @@ test('Erster Start zeigt echte Fotos und speichert sie mit', async ({
   expect(loaded).toBe(12)
   await starter.getByRole('button', { name: 'Grauer Hoodie' }).click()
   await starter.getByRole('button', { name: '1 Stück hinzufügen' }).click()
-  const photo = await page.evaluate(
-    () =>
-      new Promise<number>((resolve) => {
-        const open = indexedDB.open('mystyle-private-wardrobe')
-        open.onsuccess = () => {
-          const request = open.result
-            .transaction('garments')
-            .objectStore('garments')
-            .getAll()
-          request.onsuccess = () => resolve(request.result[0]?.photo?.size ?? 0)
-        }
-      }),
-  )
-  expect(photo).toBeGreaterThan(0)
+  const photo = () =>
+    page.evaluate(
+      () =>
+        new Promise<number>((resolve) => {
+          const open = indexedDB.open('mystyle-private-wardrobe')
+          open.onsuccess = () => {
+            const request = open.result
+              .transaction('garments')
+              .objectStore('garments')
+              .getAll()
+            request.onsuccess = () =>
+              resolve(request.result[0]?.photo?.size ?? 0)
+          }
+        }),
+    )
+  await expect.poll(photo).toBeGreaterThan(0)
 })
 
 test('Ohne Fotos bleiben die Zeichnungen, und die Kategorien scrollen nur seitlich', async ({
@@ -260,4 +262,89 @@ test('Ohne Fotos bleiben die Zeichnungen, und die Kategorien scrollen nur seitli
       return [style.overflowY, style.touchAction]
     }),
   ).toEqual(['hidden', 'pan-x'])
+})
+
+test('Ein geplantes Outfit lässt sich mit einem Tipp entfernen und zurückholen', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const day = await page.evaluate(() => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  })
+  const stamp = '2026-01-01T00:00:00.000Z'
+  const garments = (['Oberteile', 'Hosen', 'Schuhe'] as const).map(
+    (category, index) => ({
+      id: `plan-${index}`,
+      name: ['Plan-Hemd', 'Plan-Hose', 'Plan-Schuhe'][index],
+      category,
+      color: 'Blau',
+      brand: '',
+      notes: '',
+      styles: [],
+      seasons: [],
+      favorite: false,
+      createdAt: stamp,
+      updatedAt: stamp,
+    }),
+  )
+  await page.getByRole('button', { name: 'Profil', exact: true }).click()
+  await page
+    .getByRole('button', { name: 'Einstellungen öffnen', exact: true })
+    .click()
+  await page.getByLabel('Sicherungsdatei', { exact: true }).setInputFiles({
+    name: 'plan.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(
+      JSON.stringify({
+        app: 'MyStyle',
+        version: 4,
+        garments,
+        outfits: [
+          {
+            id: 'plan-look',
+            name: 'Geplant',
+            garmentIds: garments.map((item) => item.id),
+            occasion: 'Alltag',
+            season: 'Alle',
+            style: 'Alle',
+            favorite: false,
+            createdAt: stamp,
+            updatedAt: stamp,
+          },
+        ],
+        feedback: [],
+        preferences: null,
+        calendar: [
+          {
+            id: day,
+            day,
+            outfitId: 'plan-look',
+            status: 'planned',
+            note: '',
+            createdAt: stamp,
+            updatedAt: stamp,
+          },
+        ],
+        weather: null,
+      }),
+    ),
+  })
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Sicherung importieren', exact: true })
+    .click()
+  await expect(page.getByRole('dialog')).not.toBeVisible()
+  await page.getByRole('button', { name: 'Home', exact: true }).click()
+  await page.getByRole('button', { name: 'Planung entfernen' }).click()
+  await expect(page.getByText('Planung entfernt')).toBeVisible()
+  await page.getByRole('button', { name: 'Rückgängig', exact: true }).click()
+  await expect(
+    page.getByRole('button', { name: 'Planung entfernen' }),
+  ).toBeVisible()
+  await page.getByRole('button', { name: 'Planung entfernen' }).click()
+  await page.reload()
+  await expect(
+    page.getByRole('button', { name: 'Planung entfernen' }),
+  ).toHaveCount(0)
 })

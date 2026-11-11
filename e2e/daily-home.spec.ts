@@ -578,14 +578,16 @@ test('Ein Teil tauschen bleibt nach Neustart erhalten, der Rest bleibt gleich un
   })
   await page.goto('/')
   const photo = `data:image/png;base64,${(await readFile('public/icon-192.png')).toString('base64')}`
-  const extraTop = { ...garments[0], id: 'other-top', name: 'Pullover' }
+  const extraTop = { ...garments[0], id: 'other-top', name: 'Poloshirt' }
   await importData(page, {
     garments: [...garments, { ...extraTop, photo, cutout: photo }],
   })
   const look = page.getByRole('region', { name: 'Dein Tageslook' })
   const before = await look.locator('.figure-caption > span').allTextContents()
-  const oldTop = before.find((name) => name === 'Hemd' || name === 'Pullover')!,
-    newTop = oldTop === 'Hemd' ? 'Pullover' : 'Hemd'
+  const oldTop = before.find(
+      (name) => name === 'Hemd' || name === 'Poloshirt',
+    )!,
+    newTop = oldTop === 'Hemd' ? 'Poloshirt' : 'Hemd'
   await look
     .getByRole('button', { name: `${oldTop} austauschen`, exact: true })
     .click()

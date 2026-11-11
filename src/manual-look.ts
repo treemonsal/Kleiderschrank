@@ -1,9 +1,10 @@
 import type { Category, Garment } from './model'
 import { isCompleteOutfit } from './outfit-model'
+import { topLayer } from './layers'
 
 /** One swipeable row of the "Selber zusammenstellen" board. */
 export interface LookRow {
-  id: 'jacket' | 'top' | 'bottom' | 'shoes' | 'accessory'
+  id: 'jacket' | 'sweater' | 'top' | 'bottom' | 'shoes' | 'accessory'
   label: string
   /** Optional rows start with "Ohne". */
   optional: boolean
@@ -17,6 +18,13 @@ const ROWS: {
   categories: Category[]
 }[] = [
   { id: 'jacket', label: 'Jacke', optional: true, categories: ['Jacken'] },
+  // Over the shirt; only pullovers (layers.ts), switched on like the jacket.
+  {
+    id: 'sweater',
+    label: 'Pullover',
+    optional: true,
+    categories: ['Oberteile'],
+  },
   {
     id: 'top',
     label: 'Oberteil',
@@ -42,7 +50,11 @@ export function lookRows(items: Garment[]): LookRow[] {
   return ROWS.map(({ categories, ...row }) => ({
     ...row,
     items: usable
-      .filter((item) => categories.includes(item.category))
+      .filter(
+        (item) =>
+          categories.includes(item.category) &&
+          (row.id !== 'sweater' || topLayer(item) === 'mid'),
+      )
       .sort(
         (a, b) =>
           Number(b.favorite) - Number(a.favorite) ||
@@ -63,6 +75,13 @@ export function chosenPiece(
   return index < 0 ? undefined : row.items[index]
 }
 
+/** A pullover over a pullover or a dress makes no sense: the row steps aside. */
+export function sweaterFits(rows: LookRow[], choice: LookChoice): boolean {
+  const top = rows.find((row) => row.id === 'top')
+  const chosen = top && chosenPiece(top, choice)
+  return !!chosen && topLayer(chosen) === 'base'
+}
+
 /** A dress replaces trousers, so the trousers row steps aside. */
 export function wearsDress(rows: LookRow[], choice: LookChoice): boolean {
   const top = rows.find((row) => row.id === 'top')
@@ -75,8 +94,12 @@ export function chosenLook(
   choice: LookChoice,
 ): string[] | null {
   const dress = wearsDress(rows, choice)
+  const sweater = sweaterFits(rows, choice)
   const pieces = rows
-    .filter((row) => !(dress && row.id === 'bottom'))
+    .filter(
+      (row) =>
+        !(dress && row.id === 'bottom') && !(!sweater && row.id === 'sweater'),
+    )
     .flatMap((row) => chosenPiece(row, choice) ?? [])
   return isCompleteOutfit(pieces) ? pieces.map((item) => item.id) : null
 }

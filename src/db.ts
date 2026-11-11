@@ -1,4 +1,5 @@
 import { isWarmth } from './warmth'
+import { isTopLayer } from './layers'
 import Dexie, { type Table } from 'dexie'
 import { parseStyleProfile } from './personalization'
 import { cleanSecondaryColors, COLORS, STYLES } from './model'
@@ -457,6 +458,8 @@ export async function saveGarment(
     updatedAt: now,
   }
   if (!isWarmth(garment.warmth)) delete garment.warmth
+  if (garment.category !== 'Oberteile' || !isTopLayer(garment.layer))
+    delete garment.layer
   const secondary = cleanSecondaryColors(draft.secondaryColors, draft.color)
   if (secondary.length) garment.secondaryColors = secondary
   else delete garment.secondaryColors

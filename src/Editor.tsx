@@ -24,6 +24,7 @@ import { BackgroundRemoval } from './BackgroundRemoval'
 import { PhotoAssistant } from './PhotoAssistant'
 import type { PhotoAttributes } from './cloud-ai'
 import { WARMTH_LABELS } from './warmth'
+import { TOP_LAYERS, TOP_LAYER_LABELS, topLayer } from './layers'
 
 export function Editor({
   item,
@@ -417,6 +418,32 @@ export function Editor({
               ))}
             </div>
           </div>
+          {draft.category === 'Oberteile' && (
+            <div className="field">
+              <span id="layer-label">Art</span>
+              <div
+                className="chips wrap"
+                role="group"
+                aria-labelledby="layer-label"
+              >
+                {TOP_LAYERS.map((layer) => {
+                  // Without a choice the name decides (layers.ts).
+                  const current = topLayer(draft)
+                  return (
+                    <button
+                      className={`chip ${current === layer ? 'active' : ''}`}
+                      key={layer}
+                      type="button"
+                      aria-pressed={current === layer}
+                      onClick={() => update('layer', layer)}
+                    >
+                      {TOP_LAYER_LABELS[layer]}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
           <div className="field">
             <span id="warmth-label">
               Wärme <span className="optional">optional</span>

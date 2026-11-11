@@ -1,4 +1,5 @@
 import type { Garment, Warmth } from './model'
+import { topLayer } from './layers'
 import type { WeatherDay } from './weather'
 
 /**
@@ -39,21 +40,32 @@ export function warmthFit(
 
 // A deliberately coarse proxy, not a material/insulation or safety assessment.
 export function warmthProxy(
-  items: Pick<Garment, 'category' | 'seasons' | 'warmth'>[],
+  items: (Pick<Garment, 'category' | 'seasons' | 'warmth'> &
+    Partial<Pick<Garment, 'name' | 'layer'>>)[],
 ) {
-  return items.reduce((sum, item) => {
-    if (item.category === 'Jacken')
-      // A thin jacket adds less than a thick one; unknown counts as before.
-      return sum + (item.warmth ? 2 + item.warmth : 4)
-    if (!['Oberteile', 'Hosen', 'Kleider'].includes(item.category)) return sum
-    if (item.warmth) return sum + (item.warmth - 2) * 1.5
-    return (
-      sum +
-      (item.seasons.includes('Winter')
-        ? 1
-        : item.seasons.length === 1 && item.seasons[0] === 'Sommer'
-          ? -0.5
-          : 0)
-    )
-  }, 0)
+  // A pullover over a shirt is a real extra layer.
+  const layered =
+    items.some(
+      (item) =>
+        item.category === 'Oberteile' &&
+        topLayer({ ...item, name: item.name ?? '' }) === 'mid',
+    ) && items.filter((item) => item.category === 'Oberteile').length === 2
+  return (
+    (layered ? 2 : 0) +
+    items.reduce((sum, item) => {
+      if (item.category === 'Jacken')
+        // A thin jacket adds less than a thick one; unknown counts as before.
+        return sum + (item.warmth ? 2 + item.warmth : 4)
+      if (!['Oberteile', 'Hosen', 'Kleider'].includes(item.category)) return sum
+      if (item.warmth) return sum + (item.warmth - 2) * 1.5
+      return (
+        sum +
+        (item.seasons.includes('Winter')
+          ? 1
+          : item.seasons.length === 1 && item.seasons[0] === 'Sommer'
+            ? -0.5
+            : 0)
+      )
+    }, 0)
+  )
 }

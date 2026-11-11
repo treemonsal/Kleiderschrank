@@ -7,6 +7,7 @@ import {
   chosenPiece,
   lookRows,
   missingRows,
+  sweaterFits,
   wearsDress,
   type LookChoice,
   type LookRow,
@@ -120,12 +121,18 @@ export function ManualLook({
   const dress = wearsDress(rows, choice)
   const look = chosenLook(rows, choice)
   const missing = missingRows(rows, choice)
-  const optional = rows.filter((row) => row.optional && row.items.length)
+  const sweater = sweaterFits(rows, choice)
+  // The pullover pill only appears over a shirt.
+  const optional = rows.filter(
+    (row) =>
+      row.optional && row.items.length && (row.id !== 'sweater' || sweater),
+  )
   // Jacket and accessory stay away until asked for: three rows by default.
   const shown = rows.filter(
     (row) =>
       row.items.length &&
       !(dress && row.id === 'bottom') &&
+      !(!sweater && row.id === 'sweater') &&
       (!row.optional || (choice[row.id] ?? -1) >= 0),
   )
   const saved = !!look && isSaved(look)

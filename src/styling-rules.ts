@@ -23,12 +23,58 @@ export const OCCASION_RANGE: Record<Occasion, [number, number]> = {
   Freizeit: [-2, 1],
 }
 
-/** Mean dress code of a piece's recorded styles, if any. */
-export function formality(item: Pick<Garment, 'styles'>): number | undefined {
-  if (!item.styles.length) return undefined
+/**
+ * Dress code read from the name when no style is recorded: a football
+ * jersey or track pants are sporty whatever the user forgot to tick, a
+ * blazer or a shirt is smart. Only clear words count; the rest stays open.
+ */
+const NAME_FORMALITY: [RegExp, number][] = [
+  [
+    /trikot|jersey|fussball|fußball|fan-?shirt|training|jogging|jogger|sweatpant|sporthose|laufhose|tank ?top|muscle|badehose|badeshort|bikini|flip ?flop|zehentrenner|crocs|badelatsch|laufschuh|running|turnschuh|leggings|radler/i,
+    -2,
+  ],
+  [
+    /hoodie|kapuzen|sweatshirt|cap\b|basecap|cargo|shorts\b|kurze hose|bermuda/i,
+    -1,
+  ],
+  [
+    /anzug|sakko|blazer|krawatte|fliege|abendkleid|pumps|oxford|derby|lederschuh|business|smoking/i,
+    2,
+  ],
+  [
+    /hemd|bluse|stoffhose|bügelfalte|loafer|mokassin|chelsea|rollkragen|cardigan|chino|polo/i,
+    1,
+  ],
+]
+
+function nameFormality(name: string): number | undefined {
+  for (const [pattern, level] of NAME_FORMALITY)
+    if (pattern.test(name)) return level
+  return undefined
+}
+
+/** Dress code of a piece: its recorded styles, else clear words in its name. */
+export function formality(
+  item: Pick<Garment, 'styles'> & { name?: string },
+): number | undefined {
+  if (!item.styles.length)
+    return item.name ? nameFormality(item.name) : undefined
   return (
     item.styles.reduce((sum, style) => sum + FORMALITY[style], 0) /
     item.styles.length
+  )
+}
+
+/** Clearly sporty pieces stay out of office and evening outfits. */
+export function tooCasualFor(
+  item: Pick<Garment, 'styles'> & { name?: string },
+  occasion: Occasion,
+): boolean {
+  const level = formality(item)
+  return (
+    (occasion === 'Büro' || occasion === 'Abend') &&
+    level !== undefined &&
+    level <= -1.5
   )
 }
 
@@ -39,7 +85,7 @@ function outside(level: number, occasion: Occasion) {
 
 /** Piece level: pieces outside the occasion's dress code score lower. */
 export function occasionItemScore(
-  item: Pick<Garment, 'styles'>,
+  item: Pick<Garment, 'styles'> & { name?: string },
   occasion: Occasion,
 ): number {
   const level = formality(item)
@@ -48,7 +94,7 @@ export function occasionItemScore(
 
 /** Look level: the whole outfit should meet the dress code on average. */
 export function occasionLookScore(
-  items: Pick<Garment, 'styles'>[],
+  items: (Pick<Garment, 'styles'> & { name?: string })[],
   occasion: Occasion,
 ): { score: number; note?: string } {
   const levels = items.flatMap((item) => formality(item) ?? [])
@@ -59,8 +105,9 @@ export function occasionLookScore(
     strict &&
     items.some(
       (item) =>
-        item.styles.length &&
-        item.styles.every((style) => style === 'Sportlich'),
+        (item.styles.length &&
+          item.styles.every((style) => style === 'Sportlich')) ||
+        tooCasualFor(item, occasion),
     )
   const gap = outside(mean, occasion)
   const score = -gap * 1.5 - (tooCasual ? 2 : 0)

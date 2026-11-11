@@ -110,6 +110,27 @@ export async function deleteCalendarEntry(
   })
 }
 
+/** Undo for a removed plan: only while that day is still empty. */
+export async function restoreCalendarEntry(
+  entry: CalendarEntry,
+  database = db,
+): Promise<void> {
+  await database.transaction(
+    'rw',
+    database.calendar,
+    database.outfits,
+    async () => {
+      if (await database.calendar.get(entry.day))
+        throw new UserFacingError(
+          'Für diesen Tag ist inzwischen etwas anderes eingetragen.',
+        )
+      if (!(await database.outfits.get(entry.outfitId)))
+        throw new UserFacingError('Das Outfit dieses Tages gibt es nicht mehr.')
+      await database.calendar.put(entry)
+    },
+  )
+}
+
 /** What „Heute getragen“ changed, so the same session can undo it. */
 export interface WornUndo {
   day: string

@@ -3387,3 +3387,13 @@ html[data-nav='pop']::view-transition-old(page) {
   overscroll-behavior: contain;
   touch-action: pan-x;
 }
+
+/* A planned day: removing the plan is one tap, with undo. */
+.plan-remove {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin-top: 6px;
+  color: var(--c-ink-2);
+}

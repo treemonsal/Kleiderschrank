@@ -1,3 +1,4 @@
+import { topLayer } from './layers'
 import { localDay } from './calendar'
 import {
   occasionItemScore,
@@ -5,6 +6,7 @@ import {
   patternHarmony,
   seasonFor,
   seasonScore,
+  tooCasualFor,
   wornTogetherScore,
 } from './styling-rules'
 import {
@@ -181,23 +183,33 @@ export function generateOutfits(
     const locked = refinement?.lockedIds.find((id) =>
       items.some((item) => item.id === id && item.category === category),
     )
-    return eligible
-      .filter(
-        (item) => item.category === category && (!locked || item.id === locked),
-      )
-      .sort(
-        (a, b) =>
-          suitability(b) +
-            (refinement?.currentIds.includes(b.id) ? 1000 : 0) +
-            noise(b.id, seed) * 0.75 -
-            (suitability(a) +
-              (refinement?.currentIds.includes(a.id) ? 1000 : 0) +
-              noise(a.id, seed) * 0.75) || a.id.localeCompare(b.id),
-      )
+    const inCategory = eligible.filter(
+      (item) => item.category === category && (!locked || item.id === locked),
+    )
+    // A football jersey never goes to the office while anything else fits.
+    const dressed = inCategory.filter(
+      (item) => !tooCasualFor(item, options.occasion),
+    )
+    return (dressed.length ? dressed : inCategory).sort(
+      (a, b) =>
+        suitability(b) +
+          (refinement?.currentIds.includes(b.id) ? 1000 : 0) +
+          noise(b.id, seed) * 0.75 -
+          (suitability(a) +
+            (refinement?.currentIds.includes(a.id) ? 1000 : 0) +
+            noise(a.id, seed) * 0.75) || a.id.localeCompare(b.id),
+    )
   }
-  const tops = group('Oberteile'),
+  const allTops = group('Oberteile'),
     bottoms = group('Hosen'),
     shoes = group('Schuhe')
+  // Pullovers go over a shirt (layers.ts): a pullover chosen as the top
+  // gets the best shirt underneath; a shirt gets a pullover when it is cool.
+  const shirts = allTops.filter((item) => topLayer(item) === 'base')
+  const sweaters = allTops.filter((item) => topLayer(item) === 'mid')
+  // On a known warm day a pullover stays in the wardrobe (shirts suffice).
+  const warmDay = !!weather && weather.min + offset >= 17
+  const tops = warmDay && shirts.length ? shirts : allTops
   const dresses = group('Kleider'),
     jackets = group('Jacken'),
     accessories = group('Accessoires')
@@ -219,12 +231,31 @@ export function generateOutfits(
     // version per base, so an unsuitable/random layer cannot hide a better alternative.
     const layers: (Garment | undefined)[] =
       needsLayer && jackets.length ? jackets : [undefined]
+    // A pullover over the shirt on cooler days (or when asked to be warmer).
+    const wearsShirt = base.some((item) => topLayer(item) === 'base')
+    const hasSweater = base.some((item) => topLayer(item) === 'mid')
+    const sweaterWeather =
+      refinement?.intent === 'warmer' ||
+      (weather
+        ? weather.min + offset < 17
+        : options.season === 'Herbst' || options.season === 'Winter')
+    const pullovers: (Garment | undefined)[] =
+      hasSweater && !wearsShirt && shirts.length
+        ? shirts.slice(0, 2)
+        : wearsShirt && !hasSweater && sweaterWeather && sweaters.length
+          ? [undefined, ...sweaters.slice(0, 2)]
+          : [undefined]
     const extras: (Garment | undefined)[] =
       options.includeAccessory && accessories.length ? accessories : [undefined]
     let winner: { selected: Garment[]; key: string; score: number } | undefined
-    function consider(layer: Garment | undefined, extra: Garment | undefined) {
+    function consider(
+      layer: Garment | undefined,
+      extra: Garment | undefined,
+      pullover?: Garment,
+    ) {
       const selected = [
         ...base,
+        ...(pullover ? [pullover] : []),
         ...(layer ? [layer] : []),
         ...(extra ? [extra] : []),
       ]
@@ -246,6 +277,14 @@ export function generateOutfits(
       score += patternHarmony(selected).score
       score += wornTogetherScore(selected, history?.together)
       score += 4 * (liked.get(key) ?? 0)
+      // The shirt under a pullover has to work on its own too, for when
+      // the pullover comes off during the day.
+      const over = pullover
+        ? selected.find((item) => topLayer(item) === 'mid')
+        : undefined
+      if (over)
+        score +=
+          0.6 * compatibility(selected.filter((item) => item !== over)).score
       score +=
         noise(key, seed) * (variety === 'explore' ? 0.8 : 0.35) -
         recentCombinationPenalty(key, history) *
@@ -255,17 +294,18 @@ export function generateOutfits(
       if (refinement) score -= refinementChanges(selected, refinement) * 100
       return { selected, key, score }
     }
-    for (const layer of layers.slice(0, 4))
-      for (const extra of extras.slice(0, 3)) {
-        const candidate = consider(layer, extra)
-        if (
-          candidate &&
-          (!winner ||
-            candidate.score > winner.score ||
-            (candidate.score === winner.score && candidate.key < winner.key))
-        )
-          winner = candidate
-      }
+    for (const pullover of pullovers)
+      for (const layer of layers.slice(0, 4))
+        for (const extra of extras.slice(0, 3)) {
+          const candidate = consider(layer, extra, pullover)
+          if (
+            candidate &&
+            (!winner ||
+              candidate.score > winner.score ||
+              (candidate.score === winner.score && candidate.key < winner.key))
+          )
+            winner = candidate
+        }
     if (!winner && (layers.length > 4 || extras.length > 3)) {
       // A distinct blocked key belongs to exactly one base. Searching until the
       // first valid extension costs at most the blocked extensions plus one;
@@ -288,6 +328,13 @@ export function generateOutfits(
         ? 'Kleid und Schuhe bilden die Basis.'
         : 'Oberteil, Hose und Schuhe bilden die Basis.',
     ]
+    if (
+      selected.some((item) => topLayer(item) === 'mid') &&
+      selected.some((item) => topLayer(item) === 'base')
+    )
+      reasons.push(
+        'Der Pullover kommt über das Shirt; das Shirt passt auch allein zu Hose und Schuhen.',
+      )
     if (profile)
       reasons.push(
         `Dein Stilprofil berücksichtigt ${profile.colorMood === 'neutral' ? 'ruhige Farben' : profile.colorMood === 'colorful' ? 'mehr Farbakzente' : 'eine ausgewogene Farbwahl'} und ${variety === 'familiar' ? 'vertraute Outfits' : variety === 'explore' ? 'mehr Abwechslung' : 'eine Mischung aus Vertrautem und Neuem'}.`,

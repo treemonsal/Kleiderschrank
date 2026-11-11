@@ -52,6 +52,8 @@ export interface Garment {
   washedAt?: string
   /** How warm the piece is, if recorded: 1 leicht, 2 mittel, 3 warm. */
   warmth?: Warmth
+  /** Tops only: next to the skin or over it (layers.ts); else from the name. */
+  layer?: 'base' | 'mid'
   /**
    * Sorted out: no longer suggested or listed in the wardrobe, but kept so
    * worn days, looks and ratings stay complete.

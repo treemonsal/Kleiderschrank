@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { haptic } from './haptics'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { Check, Plus, CloudSun, CloudOff, Leaf, Tag } from 'lucide-react'
+import {
+  Check,
+  Plus,
+  CloudSun,
+  CloudOff,
+  Leaf,
+  Tag,
+  Trash2,
+} from 'lucide-react'
 import type { Garment } from './model'
 import { db, storageError } from './db'
 import { OutfitRating } from './OutfitRating'
@@ -18,7 +26,13 @@ import { localDay, weekDays, type CalendarEntry } from './calendar'
 import { dayColors } from './calendar-colors'
 import { DayNumber, calendarDayDescription } from './DayCalendar'
 import { PlanEditor } from './CalendarView'
-import { markWorn, undoWorn, type WornUndo } from './calendar-db'
+import {
+  deleteCalendarEntry,
+  markWorn,
+  restoreCalendarEntry,
+  undoWorn,
+  type WornUndo,
+} from './calendar-db'
 import { weatherFresh, weatherLabel } from './weather'
 import { useClock } from './useWeather'
 import { WeatherPanel } from './WeatherPanel'
@@ -129,6 +143,7 @@ export function DailyOutfit({
   } | null>(null)
   const [previewIds, setPreviewIds] = useState<string[]>()
   const [undo, setUndo] = useState<WornUndo | null>(null)
+  const [removed, setRemoved] = useState<CalendarEntry | null>(null)
   const [swapping, setSwapping] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -168,6 +183,31 @@ export function DailyOutfit({
     // window must not remount this form and replace its unsaved draft.
     setEditing({ day, entry })
   }
+  // After removing a plan: the day may show the automatic outfit again, so
+  // the undo appears wherever the day is drawn.
+  const restoreLine = removed?.day === day && !entry && (
+    <p className="worn-line">
+      <span>Planung entfernt</span>
+      <button
+        className="text-button"
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true)
+          setError('')
+          try {
+            await restoreCalendarEntry(removed)
+            setRemoved(null)
+          } catch (error) {
+            setError(storageError(error))
+          } finally {
+            setBusy(false)
+          }
+        }}
+      >
+        Rückgängig
+      </button>
+    </p>
+  )
   const colorTitle = lookTitle(
     (look?.garmentIds ?? []).flatMap(
       (id) => items.find((item) => item.id === id) ?? [],
@@ -480,6 +520,29 @@ export function DailyOutfit({
                   <span>{entry.note}</span>
                 </p>
               )}
+              {restoreLine}
+              {entry && entry.status === 'planned' && (
+                <button
+                  className="text-button plan-remove"
+                  disabled={busy}
+                  onClick={async () => {
+                    haptic()
+                    setBusy(true)
+                    setError('')
+                    try {
+                      await deleteCalendarEntry(entry.day, entry.updatedAt)
+                      setRemoved(entry)
+                    } catch (error) {
+                      setError(storageError(error))
+                    } finally {
+                      setBusy(false)
+                    }
+                  }}
+                >
+                  <Trash2 size={16} />
+                  Planung entfernen
+                </button>
+              )}
             </>
           ) : emptyDay ? (
             <div className="day-empty">
@@ -487,6 +550,7 @@ export function DailyOutfit({
                 {Number(day.slice(8))}
               </span>
               <h1>{past ? 'Nichts vermerkt' : 'Noch nichts geplant'}</h1>
+              {restoreLine}
               <p className="muted">
                 {entry
                   ? 'Das verknüpfte Outfit ist nicht mehr verfügbar.'

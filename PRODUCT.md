@@ -1,5 +1,12 @@
 # MyStyle
 
+## Version 0.47.0 – Shirt und Pullover, Anlass, Planung
+
+- Oberteile haben eine Art: Shirt, Hemd, Top oder Pullover, Hoodie. Die Foto-KI erkennt sie, sonst der Name; im Bearbeiten wählbar. Ein Outfit darf ein Shirt mit Pullover darüber enthalten: bei kühlem Wetter kommt ein Pullover dazu, ein gewählter Pullover bekommt immer ein Shirt darunter, und dieses Shirt muss auch allein zu Hose und Schuhen passen. Bei warmem Wetter bleiben Pullover weg. Selber zusammenstellen hat dafür die Pille „Pullover“.
+- Büro und Abend: Stücke ohne Stilangabe werden auch am Namen erkannt (Trikot, Jogginghose, Shorts sportlich; Hemd, Blazer, Loafer schick). Klar sportliche Stücke kommen dort nicht vor, solange es eine Alternative gibt, auch nicht beim Tauschen.
+- Ein geplantes Outfit lässt sich mit einem Tipp entfernen („Planung entfernen“), mit Rückgängig.
+- Weiterhin höchstens ein Accessoire pro Outfit.
+
 ## Version 0.46.1
 
 - Erster Start mit echten Produktfotos statt Zeichnungen: zwölf einmal ausgesuchte Shopfotos ohne Person, geladen über den eigenen Such-Worker (keine Suche, kein SerpApi-Kontingent). Beim Hinzufügen werden sie als Foto gespeichert und bei aktiver kostenloser KI nacheinander freigestellt. Ohne Netz oder bei verschwundenem Shopbild bleibt die Zeichnung.

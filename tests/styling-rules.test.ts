@@ -155,3 +155,35 @@ describe('Bessere Outfitauswahl 0.34.0', () => {
     expect(wornTogether([['x', 'y']]).get('x|y')).toBe(1)
   })
 })
+
+describe('Anlass nach Namen (Büro ohne Fussballtrikot)', () => {
+  it('lässt ein Trikot ohne Stilangabe aus Büro und Abend weg', () => {
+    const items = [
+      piece('Deutschland Trikot', 'Oberteile', { favorite: true }),
+      piece('Weisses Hemd', 'Oberteile'),
+      piece('Jogginghose', 'Hosen', { favorite: true }),
+      piece('Chino', 'Hosen'),
+      piece('Loafer', 'Schuhe'),
+    ]
+    for (const occasion of ['Büro', 'Abend'] as const) {
+      const look = best(items, occasion)
+      expect(look).toContain('Weisses Hemd')
+      expect(look).toContain('Chino')
+      expect(look).not.toContain('Deutschland Trikot')
+    }
+    // For leisure the jersey is fine.
+    expect(best(items, 'Freizeit')).toContain('Deutschland Trikot')
+  })
+
+  it('nimmt das Trikot nur, wenn nichts anderes da ist', () => {
+    const items = [
+      piece('Fussball Trikot', 'Oberteile'),
+      piece('Chino', 'Hosen'),
+      piece('Loafer', 'Schuhe'),
+    ]
+    expect(best(items, 'Büro')).toContain('Fussball Trikot')
+    expect(
+      occasionLookScore([{ styles: [], name: 'Fussball Trikot' }], 'Büro').note,
+    ).toContain('locker')
+  })
+})

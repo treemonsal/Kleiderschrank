@@ -1,4 +1,6 @@
 import { db } from './db'
+import { topLayer } from './layers'
+import { tooCasualFor } from './styling-rules'
 import { createCompatibilityScorer } from './outfit-compatibility'
 import { localDay } from './calendar'
 import { eligibleGarments } from './generator'
@@ -43,10 +45,29 @@ export function replacementChoices(
       .filter((item) => item.verdict === 'rejected')
       .map((item) => item.id),
   )
-  return eligibleGarments(items, options, weather)
+  const all = eligibleGarments(items, options, weather)
+  // Office and evening: no football jersey while something smarter exists.
+  const dressed = all.filter(
+    (item) =>
+      item.category === target.category &&
+      !tooCasualFor(item, options.occasion),
+  )
+  return (
+    dressed.length > 1 || (dressed.length === 1 && dressed[0].id !== targetId)
+      ? all.filter(
+          (item) =>
+            item.category !== target.category ||
+            !tooCasualFor(item, options.occasion),
+        )
+      : all
+  )
     .filter(
       (item) =>
         item.category === target.category &&
+        // With shirt and pullover, a shirt is swapped for a shirt.
+        (target.category !== 'Oberteile' ||
+          !remaining.some((other) => other.category === 'Oberteile') ||
+          topLayer(item) === topLayer(target)) &&
         !ids.includes(item.id) &&
         !rejected.has(
           outfitKey(ids.map((id) => (id === targetId ? item.id : id))),
