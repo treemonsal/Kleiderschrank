@@ -3397,3 +3397,23 @@ html[data-nav='pop']::view-transition-old(page) {
   margin-top: 6px;
   color: var(--c-ink-2);
 }
+
+/* Several accessories: one row of small square tiles under the plate. */
+.figure-accessories {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.figure-accessories .figure-tile {
+  grid-area: auto;
+  aspect-ratio: 1;
+  min-width: 0;
+}
+.figure-accessories .figure-tile > .outfit-piece {
+  width: 100%;
+  height: 100%;
+}
+.figure-accessories .figure-caption {
+  display: none;
+}

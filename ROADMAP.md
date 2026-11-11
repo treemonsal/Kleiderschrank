@@ -1,5 +1,10 @@
 # Entwicklungsplan
 
+## Version 0.48.0
+
+- [x] Bis zu drei Accessoires pro Outfit (Art aus dem Namen, Ringe/Armbänder doppelt erlaubt)
+- [x] Accessoire-Reihe unter der Outfit-Tafel
+
 ## Version 0.47.0
 
 - [x] Shirt und Pullover als Schichten (KI, Name, Bearbeiten, Generator, Tauschen, Selber zusammenstellen)

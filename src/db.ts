@@ -136,7 +136,7 @@ export async function saveOutfit(
       const garments = await database.garments.bulkGet(ids)
       if (
         ids.length < 2 ||
-        ids.length > 6 ||
+        ids.length > 8 ||
         new Set(ids).size !== ids.length ||
         garments.some((item) => !item)
       )
@@ -185,7 +185,7 @@ export async function setOutfitFeedback(
     async () => {
       if (
         ids.length < 2 ||
-        ids.length > 6 ||
+        ids.length > 8 ||
         new Set(ids).size !== ids.length ||
         (await database.garments.bulkGet(ids)).some((item) => !item)
       )

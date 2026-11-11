@@ -1,4 +1,5 @@
 import { topLayer } from './layers'
+import { accessorySets } from './accessories'
 import { localDay } from './calendar'
 import {
   occasionItemScore,
@@ -245,19 +246,22 @@ export function generateOutfits(
         : wearsShirt && !hasSweater && sweaterWeather && sweaters.length
           ? [undefined, ...sweaters.slice(0, 2)]
           : [undefined]
-    const extras: (Garment | undefined)[] =
-      options.includeAccessory && accessories.length ? accessories : [undefined]
+    // Accessory sets: one piece or a sensible mix (accessories.ts).
+    const extras: Garment[][] =
+      options.includeAccessory && accessories.length
+        ? accessorySets(accessories)
+        : [[]]
     let winner: { selected: Garment[]; key: string; score: number } | undefined
     function consider(
       layer: Garment | undefined,
-      extra: Garment | undefined,
+      extra: Garment[],
       pullover?: Garment,
     ) {
       const selected = [
         ...base,
         ...(pullover ? [pullover] : []),
         ...(layer ? [layer] : []),
-        ...(extra ? [extra] : []),
+        ...extra,
       ]
       if (
         refinement &&
@@ -277,6 +281,8 @@ export function generateOutfits(
       score += patternHarmony(selected).score
       score += wornTogetherScore(selected, history?.together)
       score += 4 * (liked.get(key) ?? 0)
+      // A second or third accessory that fits finishes the outfit.
+      if (extra.length > 1) score += 0.35 * (extra.length - 1)
       // The shirt under a pullover has to work on its own too, for when
       // the pullover comes off during the day.
       const over = pullover
@@ -296,7 +302,7 @@ export function generateOutfits(
     }
     for (const pullover of pullovers)
       for (const layer of layers.slice(0, 4))
-        for (const extra of extras.slice(0, 3)) {
+        for (const extra of extras) {
           const candidate = consider(layer, extra, pullover)
           if (
             candidate &&
@@ -306,13 +312,17 @@ export function generateOutfits(
           )
             winner = candidate
         }
-    if (!winner && (layers.length > 4 || extras.length > 3)) {
+    const singles: Garment[][] =
+      options.includeAccessory && accessories.length
+        ? accessories.map((item) => [item])
+        : [[]]
+    if (!winner && (layers.length > 4 || singles.length > 3)) {
       // A distinct blocked key belongs to exactly one base. Searching until the
       // first valid extension costs at most the blocked extensions plus one;
       // it does not materialize the potentially large layer/accessory product.
       extensions: for (const layer of layers)
-        for (const extra of extras) {
-          winner = consider(layer, extra)
+        for (const extra of singles) {
+          winner = consider(layer, extra, pullovers[0])
           if (winner) break extensions
         }
     }

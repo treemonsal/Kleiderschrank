@@ -1,5 +1,6 @@
 import type { Garment, Season, Style } from './model'
 import { topLayer } from './layers'
+import { accessoriesFit } from './accessories'
 import type { StyleInterview } from './style-interview'
 import type { ShoppingPreferences } from './shopping-model'
 
@@ -115,11 +116,11 @@ export function isCompleteOutfit(items: Garment[]): boolean {
       tops.some((item) => topLayer(item) === 'mid'))
   return (
     items.length >= 2 &&
-    items.length <= 6 &&
+    items.length <= 8 &&
     new Set(items.map((item) => item.id)).size === items.length &&
     count('Schuhe') === 1 &&
     count('Jacken') <= 1 &&
-    count('Accessoires') <= 1 &&
+    accessoriesFit(items.filter((item) => item.category === 'Accessoires')) &&
     ((count('Kleider') === 1 && tops.length === 0 && count('Hosen') === 0) ||
       (count('Kleider') === 0 && topsFit && count('Hosen') === 1))
   )

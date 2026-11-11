@@ -281,7 +281,7 @@ function parseWornColors(value: unknown, status: unknown): string[] {
     status !== 'worn' ||
     !Array.isArray(value) ||
     value.length < 2 ||
-    value.length > 6
+    value.length > 8
   )
     throw invalid()
   return value.map((color) =>
@@ -394,7 +394,7 @@ export function parseFullBackup(
   )
     throw invalid()
   const references = (value: unknown): string[] => {
-    if (!Array.isArray(value) || value.length < 2 || value.length > 6)
+    if (!Array.isArray(value) || value.length < 2 || value.length > 8)
       throw invalid()
     const refs = value.map(identifier)
     if (new Set(refs).size !== refs.length || refs.some((id) => !ids.has(id)))

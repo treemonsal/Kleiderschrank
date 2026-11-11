@@ -1,11 +1,16 @@
 # MyStyle
 
+## Version 0.48.0 – Mehrere Accessoires
+
+- Ein Outfit kann bis zu drei Accessoires bekommen, frei gemischt: zum Beispiel Brille und zwei Ringe oder Halskette, Gürtel und Ring. Die Art wird am Namen erkannt; Ringe und Armbänder dürfen doppelt vorkommen, alles andere (Brille, Gürtel, Halskette, Uhr, Tasche, Mütze, Schal, Ohrringe) nur einmal. Mehrere Accessoires zählen nur, wenn sie das Outfit nach den Farbregeln nicht schwächen.
+- Bei mehreren Accessoires stehen sie als Reihe kleiner Bilder unter den Kleidern, jedes einzeln öffnen und tauschen.
+- Selber zusammenstellen wählt weiterhin ein Accessoire.
+
 ## Version 0.47.0 – Shirt und Pullover, Anlass, Planung
 
 - Oberteile haben eine Art: Shirt, Hemd, Top oder Pullover, Hoodie. Die Foto-KI erkennt sie, sonst der Name; im Bearbeiten wählbar. Ein Outfit darf ein Shirt mit Pullover darüber enthalten: bei kühlem Wetter kommt ein Pullover dazu, ein gewählter Pullover bekommt immer ein Shirt darunter, und dieses Shirt muss auch allein zu Hose und Schuhen passen. Bei warmem Wetter bleiben Pullover weg. Selber zusammenstellen hat dafür die Pille „Pullover“.
 - Büro und Abend: Stücke ohne Stilangabe werden auch am Namen erkannt (Trikot, Jogginghose, Shorts sportlich; Hemd, Blazer, Loafer schick). Klar sportliche Stücke kommen dort nicht vor, solange es eine Alternative gibt, auch nicht beim Tauschen.
 - Ein geplantes Outfit lässt sich mit einem Tipp entfernen („Planung entfernen“), mit Rückgängig.
-- Weiterhin höchstens ein Accessoire pro Outfit.
 
 ## Version 0.46.1
 
