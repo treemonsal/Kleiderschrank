@@ -88,7 +88,11 @@ export function OutfitRating({
               void rate()
             }}
           >
-            <ThumbsUp size={19} strokeWidth={1.5} />
+            <ThumbsUp
+              size={19}
+              strokeWidth={1.5}
+              fill={liked ? 'currentColor' : 'none'}
+            />
           </button>
           <button
             className={`icon-button ${rejected ? 'liked' : ''}`}
@@ -101,7 +105,11 @@ export function OutfitRating({
               setOpen(!open)
             }}
           >
-            <ThumbsDown size={19} strokeWidth={1.5} />
+            <ThumbsDown
+              size={19}
+              strokeWidth={1.5}
+              fill={rejected ? 'currentColor' : 'none'}
+            />
           </button>
         </span>
       </div>

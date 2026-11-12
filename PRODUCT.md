@@ -1,5 +1,9 @@
 # MyStyle
 
+## Version 0.48.1
+
+- Daumen hoch oder runter ist nach dem Antippen gefüllt.
+
 ## Version 0.48.0 – Mehrere Accessoires
 
 - Ein Outfit kann bis zu drei Accessoires bekommen, frei gemischt: zum Beispiel Brille und zwei Ringe oder Halskette, Gürtel und Ring. Die Art wird am Namen erkannt; Ringe und Armbänder dürfen doppelt vorkommen, alles andere (Brille, Gürtel, Halskette, Uhr, Tasche, Mütze, Schal, Ohrringe) nur einmal. Mehrere Accessoires zählen nur, wenn sie das Outfit nach den Farbregeln nicht schwächen.

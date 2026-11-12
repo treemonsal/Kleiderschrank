@@ -297,8 +297,10 @@ test('Likes bleiben nach Neustart erhalten und Zurücksetzen schützt das Stilpr
     name: 'Tageslook: Gefällt mir',
     exact: true,
   })
+  await expect(like.locator('svg')).toHaveAttribute('fill', 'none')
   await like.click()
   await expect(like).toHaveAttribute('aria-pressed', 'true')
+  await expect(like.locator('svg')).toHaveAttribute('fill', 'currentColor')
   await page.reload()
   await expect(like).toHaveAttribute('aria-pressed', 'true')
   const before = await exported(page)

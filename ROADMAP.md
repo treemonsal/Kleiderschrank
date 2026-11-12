@@ -1,5 +1,9 @@
 # Entwicklungsplan
 
+## Version 0.48.1
+
+- [x] Gewählter Daumen gefüllt
+
 ## Version 0.48.0
 
 - [x] Bis zu drei Accessoires pro Outfit (Art aus dem Namen, Ringe/Armbänder doppelt erlaubt)
