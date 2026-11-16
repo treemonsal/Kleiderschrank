@@ -150,6 +150,26 @@ body {
   font-size: 1rem;
   line-height: 1.35;
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+/* Wie eine App: kein Scrollbalken am Rand und kein Markieren, ausser in Eingabefeldern. */
+html,
+* {
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+}
+input,
+textarea,
+select,
+[contenteditable='true'] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
 }
 ::selection {
   background: color-mix(in srgb, var(--sys-tint) 28%, transparent);

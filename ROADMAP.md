@@ -1,5 +1,9 @@
 # Entwicklungsplan
 
+## Version 0.48.2
+
+- [x] Scrollbalken ausgeblendet, Markieren ausserhalb von Eingabefeldern aus
+
 ## Version 0.48.1
 
 - [x] Gewählter Daumen gefüllt

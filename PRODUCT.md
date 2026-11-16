@@ -1,5 +1,9 @@
 # MyStyle
 
+## Version 0.48.2
+
+- Kein Scrollbalken mehr am rechten Rand und kein blaues Markieren beim Antippen und Halten. Eingabefelder lassen sich weiter markieren.
+
 ## Version 0.48.1
 
 - Daumen hoch oder runter ist nach dem Antippen gefüllt.
