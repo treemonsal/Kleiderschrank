@@ -214,6 +214,7 @@ export function StarterPicker({
             <li key={piece.name}>
               <button
                 className={`starter-piece${on ? ' active' : ''}`}
+                aria-label={piece.name}
                 aria-pressed={on}
                 disabled={busy}
                 onClick={() => toggle(piece.name)}
@@ -225,7 +226,7 @@ export function StarterPicker({
                 ) : (
                   <GarmentPicture item={piece} />
                 )}
-                <span>{piece.name}</span>
+                <span>{piece.name.replace(/-/g, '\u2011')}</span>
                 {on && (
                   <span className="starter-check" aria-hidden="true">
                     <Check size={14} strokeWidth={3} />
